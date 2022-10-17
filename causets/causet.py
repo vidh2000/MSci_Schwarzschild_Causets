@@ -13,6 +13,7 @@ from typing import Set, Iterable, List, Any, Tuple, Iterator, Union, Optional
 from causets.causetevent import CausetEvent  # @UnresolvedImport
 
 import numpy as np
+import random
 import itertools
 
 
@@ -245,6 +246,12 @@ class Causet(object):
             return Causet.FromFutureMatrix(C)
 
 
+
+    ####################################################################
+    #___________________________________________________________________
+    # SET MODIFICATION
+    #___________________________________________________________________
+    ####################################################################
     @staticmethod
     def merge(pastSet: Iterable, futureSet: Iterable,
               disjoint: bool = False) -> 'Causet':
@@ -285,33 +292,71 @@ class Causet(object):
         if hasattr(self, '__diagram_coords'):
             delattr(self, '__diagram_coords')
 
+    def coarsegrain(self, card = None, perc : float = 0.2):
+        """
+        Coarse Grain the Causet by:
+        - removing <card> events, if card given;
+        - removing <int(perc * C.Card)> events, if card not given;\n
+        Default is card None and perc = 0.2.
+        """
+        if card is None:
+            card = int(len(self) * perc)
+        events = random.sample(self._events, k = card)
+        self.discard(events)
+        #for e in events: e.disjoin()
+    
+    def cgrain(self, card = None, perc : float = 0.2):
+        self.coarsegrain(card = card, perc = perc)
+
+
 
     ####################################################################
     #___________________________________________________________________
     # CAUSET REPRESENTATION & SAVING TO FILE
     #___________________________________________________________________
     ####################################################################
-    def nlabel (self, reverse = False) -> List[CausetEvent]:
+    def nlabel (self, method = "label", reverse = False) -> List[CausetEvent]:
         """
-        Turn Causet into list of events with a natural labelling.
+        Turn Causet into list of events with a natural labelling. Methods are:
+        - 'label': use labels (if created from causal matrix definitely best as
+        it preserves the indexing of the matrix, though note label is 1 not 0)
+        - 'past': by listing the set and sorting by cardinality of past
+        - 'causality': use SortedByCausality
         """
-        Clist = list(self)
         a = 1 if not reverse else -1      
-        Clist.sort(key = lambda e : a*e.PastCard)
+        if method == "label":
+            Clist = list(self)
+            Clist.sort(key = lambda e : a*e.Label)
+        elif method == "label":
+            Clist = list(self)
+            Clist.sort(key = lambda e : a*e.PastCard)
+        elif method == "causality":
+            Clist = self.sortedByCausality(reverse)
         return Clist
     
-    def nlist (self, reverse = False) -> List[CausetEvent]:
+    def nlist (self, method = "label", reverse = False) -> List[CausetEvent]:
         """
-        Turn Causet into list of events with a natural labelling.
+        Turn Causet into list of events with a natural labelling. Methods are:
+        - 'label': use labels (if created from causal matrix definitely best as
+        it preserves the indexing of the matrix, though note label is 1 not 0)
+        - 'past':      by listing the set and sorting by cardinality of past
+        - 'causality': use SortedByCausality
         """
-        Clist = list(self)
         a = 1 if not reverse else -1      
-        Clist.sort(key = lambda e : a*e.PastCard)
+        if method == "label":
+            Clist = list(self)
+            Clist.sort(key = lambda e : a*e.Label)
+        elif method == "label":
+            Clist = list(self)
+            Clist.sort(key = lambda e : a*e.PastCard)
+        elif method == "causality":
+            Clist = self.sortedByCausality(reverse)
         return Clist
 
     def CMatrix(self, 
                 labeledEvents: Optional[List[CausetEvent]] = None,
-                dtype: Any = int) -> np.ndarray:
+                dtype: Any = int,
+                method = "causality") -> np.ndarray:
         """
         Returns the logical causal matrix such that `C[i, j]` is 1 if 
         i preceds. 
@@ -319,7 +364,7 @@ class Causet(object):
         causality).
         """
         if labeledEvents is None:
-            labeledEvents = self.nlist()
+            labeledEvents = self.nlist(method)
         l: int = len(labeledEvents)
         C: np.ndarray = np.zeros((l, l), dtype)
         for i, a in enumerate(labeledEvents):
@@ -462,21 +507,21 @@ class Causet(object):
 
     ####################################################################
     #___________________________________________________________________
-    # PROPER CAUSAL SETS KINEMATICS
+    # PROPER CAUSAL SETS KINEMATICS ANALYSIS
     #___________________________________________________________________
     ####################################################################
+    def __len__(self):
+        """
+        len method returning cardinality
+        """
+        return len(self._events)
+
     @staticmethod
     def len(other: 'Causet') -> int:
         '''
         Returns the number of events (set cardinality) of some Causet instance. 
         '''
         return len(other._events)
-
-    def __len__(self):
-        """
-        len method returning cardinality
-        """
-        return len(self._events)
 
     @property
     def Card(self) -> int:
@@ -501,7 +546,7 @@ class Causet(object):
         N = len(A)
         nrelations = 0
         for ei in A:
-            nrelations += ei.PastCard()
+            nrelations += ei.PastCard
         fr = 2 * nrelations / ( N * (N-1) )
         return fr
 
@@ -733,32 +778,87 @@ class Causet(object):
                 includeBoundary: bool = True,
                 disjoin: bool = False) -> Set[CausetEvent]:
         """
-        Returns the causal interval (Alexandrov set) between events `a` and `b` 
-        or an empty set if not `a <= b`.
+        Returns the causal interval (Alexandrov set) between events 
+        `a` and `b` or an empty set if not `a <= b`.
         
         If `includeBoundary == True` (default), the events `a` and `b` are 
         included in the interval.
 
-        If 'isolate == True' (non default), events lose information about
-        the rest of the causet. 
+        If 'disjoin == True' (non default), events lose information about
+        the rest of the causet (and also embedding information).
         """
         if not a <= b:
-            A = set()
+            AinC = set()
         elif a == b:
-            if disjoin: a.disjoin()
-            A = {a}
+            AinC = {a}
         elif includeBoundary:
-            A = a.PresentOrFuture & b.PresentOrPast
-            if disjoin:
-                for e in A:
-                    e._prec = e._prec & a.PresentOrFuture()
-                    e._succ = e._succ & b.PresentOrPast()
+            AinC = a.PresentOrFuture & b.PresentOrPast
         else:
-            A = a.Future & b.Past
-            if disjoin:
-                for e in A:
-                    e._prec = e._prec & a.PresentOrFuture()
-                    e._succ = e._succ & b.PresentOrPast()
+            AinC = a.Future & b.Past
+        
+        if disjoin:
+            A = set()
+            for einC in AinC:
+                e = einC.copy()
+                e._prec = einC._prec & a.PresentOrFuture
+                e._succ = einC._succ & b.PresentOrPast
+                A.add(e)
+        else:
+            A = AinC
+
+        return A
+    
+    def RandomDisjoinedInterval(self, createmethod="matrix",
+                        listmethod = "causality", 
+                        includeBoundary: bool = True,
+                        size_constr = lambda s:s>20) -> Set[CausetEvent]:
+        """
+        Returns the Alexandrov set between random events, sijoined from the
+        rest of the causet.
+
+        Parameters
+        -----------
+        - createmethod: string.\n
+          - "matrix": create causal matrix with listmethod, slice useless
+          bits away and create A set from matrix.
+          - "set"   : create A set from Interval method.
+        
+        - includeBoundary: Bool\n
+            If True (default), the extremes are included in the interval.
+
+        - size_constr: Callable(int)->Bool\n
+            Constraint on A's size
+        """
+        N = len(self)
+        Clist = self.nlist(listmethod)
+        i = int(random.random()*N); a = Clist[i]
+        j = int(random.random()*N); b = Clist[j]
+        if Clist[i] <= Clist[j]:
+            a = Clist[i]
+            b = Clist[j]
+        else:
+            a = Clist[j]
+            b = Clist[i]
+        
+        i=0
+        while not i or not size_constr(len(A)):
+            i+=1
+
+            if createmethod == "matrix":
+                Am = self.CMatrix(listmethod)[i:j+1, i:j+1]
+                useless_es = []
+                for k in range(1, len(Am[0])-1):
+                    if Am[0][k]!=1 or Am[k][-1]!=1:
+                        useless_es.append(k)
+                if not includeBoundary:
+                    useless_es.append(0, len(Am[0]))
+                Am = np.delete(Am, useless_es, 0)
+                Am = np.delete(Am, useless_es, 1)
+                A = Causet().FromCausalMatrix(Am)._events
+            
+            if createmethod == "set":
+                Am = self.Interval(a, b, includeBoundary, True)
+
         return A
     
     @staticmethod
