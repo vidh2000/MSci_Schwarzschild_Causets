@@ -33,6 +33,7 @@ for i in range(N-1):
     for j in range(i+1, N):
         Cm[i,j] = 1
 C = Causet().FromCausalMatrix(Cm)
+print(C.CMatrix(method = "label") - Cm)
 print("Chain Link Matrix\n", C.LMatrix())
 Clist = C.nlist()
 print("Has ordering Frac = ", C.ord_fr(C.Interval(Clist[3], Clist[6],
@@ -55,8 +56,8 @@ Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ])
 C = Causet().FromCausalMatrix(Cm)
 print("\nChain Link Matrix\n", C.LMatrix())
-Clist = C.nlist(method="label")
-print(Clist)
+#Clist = C.nlist(method="label")
+#print(Clist)
 
 A = C.Interval(Clist[3], Clist[8], disjoin = True)
 print(f"Cardinality is {len(A)}")

@@ -177,19 +177,45 @@ class Causet(object):
 
     @staticmethod
     def FromCausalMatrix(C: np.ndarray) -> 'Causet':
-        '''
-        Returns `FromPastMatrix` of the transposed input. 
-        '''
-        return Causet.FromPastMatrix(C.T)
+        """
+        Converts a logical matrix into a `Causet` object. The entry `C[i, j]` 
+        has to be True or 1 if the event with index j is in the (link) past of 
+        event with index i. If the matrix has less rows than columns, empty 
+        rows are added after the last row. However, if the matrix has more rows 
+        than columns, a ValueError is raised. A ValueError is also raised if 
+        the matrix contains causal loops.
+        """
+        rowcount: int = C.shape[0]
+        colcount: int = C.shape[1]
+        if colcount < rowcount:
+            raise ValueError('The specified matrix cannot be extended ' +
+                             'to a square matrix.')
+        events: np.ndarray = np.array([CausetEvent(label=i)
+                                       for i in range(1, colcount + 1)])
+        e: CausetEvent
+        for i in range(rowcount):
+            e = events[i]
+            future: Set[CausetEvent] = set(events[np.where(C[i, :])[0]])
+            past: Set[CausetEvent] = set(events[np.where(C[:, i])[0]])
+            if (past & future) or (e in past) or (e in future):
+                raise ValueError('The causet is not anti-symmetric.')
+            e._prec = past
+            e._succ = future
+        # complete pasts and futures (if the input contains links only)
+        for i in range(colcount):
+            e = events[i]
+            e._prec = Causet.PastOf(e._prec, includePresent=True)
+            e._succ = Causet.FutureOf(e._succ, includePresent=True)
+        return Causet(set(events))
 
     @staticmethod
     def FromTCausalMatrix(C: np.ndarray) -> 'Causet':
-        '''
+        """
         Returns `FromPastMatrix` of the transposed input. 
-        '''
+        """
         return Causet.FromPastMatrix(C)
 
-    @staticmethod
+    @staticmethod #replaced by FromCausalMatrix
     def FromPastMatrix(C: np.ndarray) -> 'Causet':
         '''
         Converts a logical matrix into a `Causet` object. The entry `C[i, j]` 
@@ -222,7 +248,7 @@ class Causet(object):
             e._succ = Causet.FutureOf(e._succ, includePresent=True)
         return Causet(set(events))
 
-    @staticmethod
+    @staticmethod #replaced AND IMPROVED by FromTCausalMatrix
     def FromFutureMatrix(C: np.ndarray) -> 'Causet':
         '''
         Returns `FromPastMatrix` of the transposed input. 
@@ -303,7 +329,6 @@ class Causet(object):
             card = int(len(self) * perc)
         events = random.sample(self._events, k = card)
         self.discard(events)
-        #for e in events: e.disjoin()
     
     def cgrain(self, card = None, perc : float = 0.2):
         self.coarsegrain(card = card, perc = perc)
@@ -331,6 +356,7 @@ class Causet(object):
             Clist = list(self)
             Clist.sort(key = lambda e : a*e.PastCard)
         elif method == "causality":
+            Clist = list(self)
             Clist = self.sortedByCausality(reverse)
         return Clist
     
@@ -350,6 +376,7 @@ class Causet(object):
             Clist = list(self)
             Clist.sort(key = lambda e : a*e.PastCard)
         elif method == "causality":
+            Clist = list(self)
             Clist = self.sortedByCausality(reverse)
         return Clist
 
@@ -372,14 +399,6 @@ class Causet(object):
                 C[i, j] = 1 if a < b else 0
         return C
     
-    def FutureMatrix(self, 
-                    labeledEvents: Optional[List[CausetEvent]] = None,
-                    dtype: Any = bool) -> np.ndarray:
-        '''
-        Returns the transpose of `PastMatrix`.
-        '''
-        return self.PastMatrix(labeledEvents, dtype).T
-
     def CTMatrix(self, 
                 labeledEvents: Optional[List[CausetEvent]] = None,
                 dtype: Any = int) -> np.ndarray:
@@ -396,24 +415,6 @@ class Causet(object):
         for i, a in enumerate(labeledEvents):
             for j, b in enumerate(labeledEvents):
                 C[i, j] = 1 if a > b else 0
-        return C
-
-    def PastMatrix(self, 
-                labeledEvents: Optional[List[CausetEvent]] = None,
-                dtype: Any = bool) -> np.ndarray:
-        '''
-        Returns the logical causal past matrix such that `C[i, j]` is True if 
-        the event with index j is in the past of event with index i. 
-        The events are indexed by `labeledEvents` (by default sorted by 
-        causality).
-        '''
-        if labeledEvents is None:
-            labeledEvents = self.sortedByCausality()
-        l: int = len(labeledEvents)
-        C: np.ndarray = np.zeros((l, l), dtype)
-        for i, a in enumerate(labeledEvents):
-            for j, b in enumerate(labeledEvents):
-                C[i, j] = a > b
         return C
 
     def LMatrix(self, 
@@ -433,21 +434,6 @@ class Causet(object):
                 L[i, j] = a.isFutureLink(b)
         return L
 
-    def LinkFutureMatrix(self, 
-                        labelling: Optional[List[CausetEvent]] = None,
-                        dtype: Any = bool) -> np.ndarray:
-        '''
-        Returns the transpose of `LinkPastMatrix`.
-        '''
-        if labelling is None:
-            labelling = self.sortedByCausality()
-        l: int = len(labelling)
-        C: np.ndarray = np.zeros((l, l), dtype)
-        for i, a in enumerate(labelling):
-            for j, b in enumerate(labelling):
-                C[i, j] = a.isFutureLink(b)
-        return C
-
     def LTMatrix(self, 
                 labelling: Optional[List[CausetEvent]] = None,
                 dtype: Any = int) -> np.ndarray:
@@ -465,24 +451,6 @@ class Causet(object):
                 L[i, j] = a.isPastLink(b)
         return L
     
-    def LinkPastMatrix(self, 
-                    labelling: Optional[List[CausetEvent]] = None,
-                    dtype: Any = bool) -> np.ndarray:
-        '''
-        Returns the logical link past matrix such that `C[i, j]` is True if the 
-        event with index j is linked in the past to event with index i. 
-        The events are indexed with `labelling` (by default sorted by 
-        causality).
-        '''
-        if labelling is None:
-            labelling = self.sortedByCausality()
-        l: int = len(labelling)
-        C: np.ndarray = np.zeros((l, l), dtype)
-        for i, a in enumerate(labelling):
-            for j, b in enumerate(labelling):
-                C[i, j] = a.isPastLink(b)
-        return C
-
     def saveCAsCSV(self, filename: str, past = False) -> None:
         """
         Saves the causal matrix of this object to a text file with 
@@ -503,6 +471,103 @@ class Causet(object):
         L = self.LMatrix() if not past else self.LTMatrix()
         np.savetxt(filename, L, fmt='%.0f', delimiter=',')
     
+    # ENCAPSULATED INTO NLIST, BUT STILL VERY NECESSARY
+    def sortedByLabels(self, eventSet: Optional[Set[CausetEvent]] = None,
+                       reverse: bool = False) -> List[CausetEvent]:
+        '''
+        Returns the causet events `eventSet` (if None than the entire 
+        causet) as a list sorted ascending (default) or descending by 
+        their labels.
+        '''
+        if eventSet is None:
+            eventSet = self._events
+        unsortedList: List[CausetEvent] = list(eventSet)
+        sortedIndex: np.ndarray = \
+            np.argsort([e.Label for e in unsortedList])
+        sortedList: List[CausetEvent] = \
+            [unsortedList[i] for i in sortedIndex]
+        if reverse:
+            sortedList.reverse()
+        return sortedList
+
+    def sortedByCausality(self, eventSet: Optional[Set[CausetEvent]] = None,
+                          reverse: bool = False) -> List[CausetEvent]:
+        '''
+        Returns the causet events `eventSet` (if None than the entire causet) 
+        as a list sorted ascending (default) or descending by their causal 
+        relations.
+        '''
+        if eventSet is None:
+            eventSet = self._events
+        eList: List[CausetEvent] = self.sortedByLabels(eventSet, reverse=True)
+        c: int = len(eList)
+        for i in range(c):
+            for j in range(i):
+                if eList[i] < eList[j]:
+                    eList[i], eList[j] = eList[j], eList[i]
+        if reverse:
+            eList.reverse()
+        return eList    
+
+    # REPLACED BY C AND L TERMINOLOGY
+    def PastMatrix(self, 
+                labeledEvents: Optional[List[CausetEvent]] = None,
+                dtype: Any = bool) -> np.ndarray:
+        '''
+        Returns the logical causal past matrix such that `C[i, j]` is True if 
+        the event with index j is in the past of event with index i. 
+        The events are indexed by `labeledEvents` (by default sorted by 
+        causality).
+        '''
+        if labeledEvents is None:
+            labeledEvents = self.sortedByCausality()
+        l: int = len(labeledEvents)
+        C: np.ndarray = np.zeros((l, l), dtype)
+        for i, a in enumerate(labeledEvents):
+            for j, b in enumerate(labeledEvents):
+                C[i, j] = a > b
+        return C
+
+    def FutureMatrix(self, 
+                    labeledEvents: Optional[List[CausetEvent]] = None,
+                    dtype: Any = bool) -> np.ndarray:
+        '''
+        Returns the transpose of `PastMatrix`.
+        '''
+        return self.PastMatrix(labeledEvents, dtype).T
+
+    def LinkFutureMatrix(self, 
+                        labelling: Optional[List[CausetEvent]] = None,
+                        dtype: Any = bool) -> np.ndarray:
+        '''
+        Returns the transpose of `LinkPastMatrix`.
+        '''
+        if labelling is None:
+            labelling = self.sortedByCausality()
+        l: int = len(labelling)
+        C: np.ndarray = np.zeros((l, l), dtype)
+        for i, a in enumerate(labelling):
+            for j, b in enumerate(labelling):
+                C[i, j] = a.isFutureLink(b)
+        return C
+   
+    def LinkPastMatrix(self, 
+                    labelling: Optional[List[CausetEvent]] = None,
+                    dtype: Any = bool) -> np.ndarray:
+        '''
+        Returns the logical link past matrix such that `C[i, j]` is True if the 
+        event with index j is linked in the past to event with index i. 
+        The events are indexed with `labelling` (by default sorted by 
+        causality).
+        '''
+        if labelling is None:
+            labelling = self.sortedByCausality()
+        l: int = len(labelling)
+        C: np.ndarray = np.zeros((l, l), dtype)
+        for i, a in enumerate(labelling):
+            for j, b in enumerate(labelling):
+                C[i, j] = a.isPastLink(b)
+        return C
 
 
     ####################################################################
@@ -530,24 +595,81 @@ class Causet(object):
         '''
         return len(self._events)
 
-    def ord_fr(self, A: Set[CausetEvent]) -> float:
+    def ord_fr_A(self, A: Set[CausetEvent], den = "choose",
+                isdisjoined = True) -> float:
         """
         Find the ordering fraction of an Aexandrov Interval: 
         the ratio of actual relations over possible in such interval.
 
         Parameters:
-        - A: list of [CausetEvent]
-        Alexandrov Interval of which computing the ordering fraction
+        -----------
+        - A: list of [CausetEvent]\n
+            Alexandrov Interval of which computing the ordering fraction
+
+        - mode: string ('choose' or 'n2')\n
+            Use as denominator:
+            - 'choose' -> |A|(|A|-1)/2, i.e. |A| choose 2 (Default).
+            - 'n2'     -> (|A|^2)/2.
+        
+        - isdisjoined: Bool \n
+            If True, A is taken as having been disjoined from rest of
+            causet, meaning forall e in A e.Causal contains only events
+            in A.
 
         Return:
-        - Ordering fraction of Alexandrov Interval
-        This is nrelations / (N choose 2)
+        .......
+        - Ordering fraction of Alexandrov Interval\n
+            This is nrelations / (N choose 2)
         """
+        if den != 'choose' and den != 'n2':
+            raise ValueError ("den value is neither 'choose' nor 'n2'")
         N = len(A)
         nrelations = 0
-        for ei in A:
-            nrelations += ei.PastCard
-        fr = 2 * nrelations / ( N * (N-1) )
+        if isdisjoined:
+            for ei in A:
+                nrelations += ei.PastCard
+        else:
+            for ei in A:
+                nrelations += ei.PastCard & A
+        fr = 2 * nrelations / ( N * (N - den=='choose') )
+        return fr
+
+    def ord_fr_ab(self, a: CausetEvent, b: CausetEvent,
+                  den = "choose") -> float:
+        """
+        Find the ordering fraction of an interval between a and b: 
+        the ratio of actual relations over possible in such interval.
+
+        Parameters:
+        -----------
+        - a: CausetEvent\n
+        
+        - b: CausetEvent\n
+
+        - mode: string\n
+            Use as denominator:
+            - |A|(|A|-1)/2, i.e. |A| choose 2, for 'choose' (Default).
+            - (|A|^2)/2 for 'n2', 'n^2', 'squared'.
+
+        Return:
+        .......
+        - Ordering fraction of Alexandrov Interval\n
+            This is nrelations / (N choose 2)
+        """
+        if den != 'choose' and den != 'n2':
+            raise ValueError ("den value is neither 'choose' nor 'n2'")
+        afutr = a.PresentorFuture
+        bpast = b.PresentorPast
+        A = afutr & bpast
+        N = len(A)
+        nrelations = 0
+        if afutr > bpast:
+            for ei in A:
+                nrelations += len(ei.Future & bpast)
+        else:
+            for ei in A:
+                nrelations += len(afutr & ei.Past)
+        fr = 2 * nrelations / ( N * (N - den=='choose') )
         return fr
 
 
@@ -599,10 +721,9 @@ class Causet(object):
 
     ################################################################################
     #_______________________________________________________________________________
-    # ELEMENTS & LINKS
+    # LINKS
     #_______________________________________________________________________________
     ################################################################################
-
     def link(self) -> None:
         '''
         Computes the causal links between all events.
@@ -657,43 +778,6 @@ class Causet(object):
         Returns a set of events labelled by any value in `labels`.
         '''
         return {e for e in self._events if e.Label in labels}
-
-    def sortedByLabels(self, eventSet: Optional[Set[CausetEvent]] = None,
-                       reverse: bool = False) -> List[CausetEvent]:
-        '''
-        Returns the causet events `eventSet` (if None than the entire 
-        causet) as a list sorted ascending (default) or descending by 
-        their labels.
-        '''
-        if eventSet is None:
-            eventSet = self._events
-        unsortedList: List[CausetEvent] = list(eventSet)
-        sortedIndex: np.ndarray = \
-            np.argsort([e.Label for e in unsortedList])
-        sortedList: List[CausetEvent] = \
-            [unsortedList[i] for i in sortedIndex]
-        if reverse:
-            sortedList.reverse()
-        return sortedList
-
-    def sortedByCausality(self, eventSet: Optional[Set[CausetEvent]] = None,
-                          reverse: bool = False) -> List[CausetEvent]:
-        '''
-        Returns the causet events `eventSet` (if None than the entire causet) 
-        as a list sorted ascending (default) or descending by their causal 
-        relations.
-        '''
-        if eventSet is None:
-            eventSet = self._events
-        eList: List[CausetEvent] = self.sortedByLabels(eventSet, reverse=True)
-        c: int = len(eList)
-        for i in range(c):
-            for j in range(i):
-                if eList[i] < eList[j]:
-                    eList[i], eList[j] = eList[j], eList[i]
-        if reverse:
-            eList.reverse()
-        return eList    
 
 
     ###################################################################
@@ -776,17 +860,35 @@ class Causet(object):
     @staticmethod
     def Interval(a: CausetEvent, b: CausetEvent,
                 includeBoundary: bool = True,
-                disjoin: bool = False) -> Set[CausetEvent]:
+                disjoin: bool = False,
+                createmethod = "set") -> Set[CausetEvent]:
         """
         Returns the causal interval (Alexandrov set) between events 
         `a` and `b` or an empty set if not `a <= b`.
-        
-        If `includeBoundary == True` (default), the events `a` and `b` are 
-        included in the interval.
 
-        If 'disjoin == True' (non default), events lose information about
-        the rest of the causet (and also embedding information).
+        Parameters
+        -----------
+        - a: CausetEvent\n
+        
+        - b: CausetEvent\n
+
+        - includeBoundary: Bool\n
+            If True (default), the events `a` and `b` are 
+            included in the interval.
+
+        - disjoin: Bool\n
+            If True (non default), events lose information about
+            the rest of the causet (and also embedding information).
+        
+        - createmethod: str\n
+            - 'set': create from intersection of a.PresentOrFuture,\
+                    b.PresentOrPast and the Causet. Default. Only option\
+                    for disjoin == False. \n
+            - 'matrix': create by creating and slicing CausalMatrix.\n
         """
+        if createmethod != "set" and createmethod != "matrix":
+            raise AttributeError("createmethod neither 'set' nor 'matrix")
+
         if not a <= b:
             AinC = set()
         elif a == b:
@@ -796,16 +898,34 @@ class Causet(object):
         else:
             AinC = a.Future & b.Past
         
-        if disjoin:
+        if disjoin and createmethod == "set":
             A = set()
             for einC in AinC:
-                e = einC.copy()
+                l = einC.Label 
+                if l is None:
+                    e = CausetEvent()
+                elif isinstance(l, int):
+                    e = CausetEvent(label = l)
+                else:
+                    e = CausetEvent(label = f'{l}')
                 e._prec = einC._prec & a.PresentOrFuture
                 e._succ = einC._succ & b.PresentOrPast
                 A.add(e)
+
+        elif disjoin and createmethod == "matrix":
+            Am = AinC.CMatrix('label')\
+                [int(a.Label):int(b.Label)+1, int(a.Label):int(b.Label)+1]
+            useless_es = []
+            for k in range(1, len(Am[0])-1):
+                if Am[0][k]!=1 or Am[k][-1]!=1:
+                    useless_es.append(k)
+            if not includeBoundary:
+                useless_es.append(0, len(Am[0]))
+            Am = np.delete(Am, useless_es, 0)
+            Am = np.delete(Am, useless_es, 1)
+            A = Causet().FromCausalMatrix(Am)._events
         else:
             A = AinC
-
         return A
     
     def RandomDisjoinedInterval(self, createmethod="matrix",
