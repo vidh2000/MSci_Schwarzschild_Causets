@@ -336,8 +336,8 @@ class EmbeddedCauset(Causet):
             
             if counts[1]>=1000 and counts[0]==0:
                 print("The algorithm never found a suitable Alexandrov\n\
-                Interval, whereas it found 1000 unsuitable: probably\n\
-                you picked a too small causet. Returning [NaN, NaN]")
+Interval, whereas it found 1000 unsuitable: probably\n\
+you picked a too small causet. Returning [NaN, NaN]")
                 return np.nan, np.nan
             
             # pick two random elements
