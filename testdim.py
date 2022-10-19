@@ -26,23 +26,28 @@ dims = [  [1,2,3,4],       [2,3,4],
            [2,3,4],          [2]       ]
 
 #%% CHECK THAT INTERVAL AND ORDRING FRACTION WORK CORRECTLY
+
 #%%%CHAIN-LIKE CAUSET SHOULD HAVE 1
 N = 8
 Cm = np.zeros([N,N])
 for i in range(N-1):
     for j in range(i+1, N):
         Cm[i,j] = 1
+print("\nDifference between retrieved and original Cmatrix")
 C = Causet().FromCausalMatrix(Cm)
 print(C.CMatrix(method = "label") - Cm)
-print("Chain Link Matrix\n", C.LMatrix())
+print("\nChain Link Matrix\n", C.LMatrix())
 Clist = C.nlist()
-print("Has ordering Frac = ", C.ord_fr(C.Interval(Clist[3], Clist[6],
+print("Has ordering Frac = ", C.ord_fr_A(C.Interval(Clist[3], Clist[6],
                                                 disjoin = True)))
-
+print("Has ordering Frac = ", C.ord_fr_ab(Clist[3], Clist[6]))
+print("Should have 1\n")
+del N, i, j
 #%%%TRY A KNOWN CAUSET
 # Between 3 and 8 should have 0.9
 # Betwewn 2 and 8 should have 0.93
 # Between 3 and 9 should have 1
+
 Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -56,18 +61,24 @@ Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ])
 C = Causet().FromCausalMatrix(Cm)
 print("\nChain Link Matrix\n", C.LMatrix())
-#Clist = C.nlist(method="label")
+Clist = C.nlist(method="label")
 #print(Clist)
 
 A = C.Interval(Clist[3], Clist[8], disjoin = True)
 print(f"Cardinality is {len(A)}")
-print("Has ordering Frac = ", C.ord_fr(A))
+print("Has ordering Frac = ", C.ord_fr_A(A))
+print("Has ordering Frac = ", C.ord_fr_ab(Clist[3], Clist[8]))
+print("Should have 0.9\n")
 A = C.Interval(Clist[2], Clist[8], disjoin = True)
 print(f"Cardinality is {len(A)}")
-print("Has ordering Frac = ", C.ord_fr(A))
+print("Has ordering Frac = ", C.ord_fr_A(A))
+print("Has ordering Frac = ", C.ord_fr_ab(Clist[2], Clist[8]))
+print("Should have 0.93\n")
 A = C.Interval(Clist[3], Clist[9], disjoin = True)
 print(f"Cardinality is {len(A)}")
-print("Has ordering Frac = ", C.ord_fr(A))
+print("Has ordering Frac = ", C.ord_fr_A(A))
+print("Has ordering Frac = ", C.ord_fr_ab(Clist[3], Clist[9]))
+print("Should have 1\n")
 """ 
 A = C.Interval(Clist[2], Clist[8], disjoin = True)
 print(Clist[2], " preceeds ", Clist[3], " ? ",Clist[2]<=Clist[3])
@@ -81,7 +92,7 @@ try:
 except ZeroDivisionError:
     print("There was a division by zero in ordering fraction")
 """
-del N, Cm, C, i, j, Clist
+del Cm, C, Clist
 
 #%% CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
 Ns = [512, 384, 256, 192, 128, 64, 32]
@@ -99,7 +110,7 @@ for i in range(len(dims[0])):
         dim_std[i].append([])
         S: CoordinateShape = CoordinateShape(d, 'cylinder', 
                                             radius = radius,
-                                            duration=10, 
+                                            duration=4, 
                                             hollow=0.99)
         try:
             C: SprinkledCauset = SprinkledCauset(card=Ns[0],

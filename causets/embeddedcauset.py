@@ -333,6 +333,7 @@ class EmbeddedCauset(Causet):
         isample = 0
         counts = [0,0] #times it worked vs times it did not
         while isample < Nsamples:
+            
             if counts[1]>=1000 and counts[0]==0:
                 print("The algorithm never found a suitable Alexandrov\n\
                 Interval, whereas it found 1000 unsuitable: probably\n\
@@ -348,7 +349,7 @@ class EmbeddedCauset(Causet):
                 a = e1
                 b = e2
             elif e1 > e2:
-                a = e2;
+                a = e2
                 b = e1
             else:
                 counts[1] += 1
@@ -362,6 +363,7 @@ class EmbeddedCauset(Causet):
                     fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
                         destimates.append(1)
+                        isample += 1
                     else:
                         sol_i = optimizer(MM_to_solve, d0, fr_i,
                                             **optkwargs)
@@ -378,13 +380,14 @@ class EmbeddedCauset(Causet):
                             isample += 1
             
             elif self.IntervalCard(a,b) >= size_min:
-                counts[0] += 1
                 if ptime_constr(self.ptime(a, b)):
             #Note: switched order between intervalcard and ptime
             # as in generic spacetime ptime might take more.
+                    counts[0] += 1
                     fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
                         destimates.append(1)
+                        isample += 1
                     else:
                         sol_i = optimizer(MM_to_solve, d0, fr_i,
                                             **optkwargs)

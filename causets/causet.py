@@ -631,7 +631,7 @@ class Causet(object):
         else:
             for ei in A:
                 nrelations += ei.PastCard & A
-        fr = 2 * nrelations / ( N * (N - den=='choose') )
+        fr = 2 * nrelations / ( N * (N - (den=='choose')) )
         return fr
 
     def ord_fr_ab(self, a: CausetEvent, b: CausetEvent,
@@ -658,8 +658,8 @@ class Causet(object):
         """
         if den != 'choose' and den != 'n2':
             raise ValueError ("den value is neither 'choose' nor 'n2'")
-        afutr = a.PresentorFuture
-        bpast = b.PresentorPast
+        afutr = a.PresentOrFuture
+        bpast = b.PresentOrPast
         A = afutr & bpast
         N = len(A)
         nrelations = 0
@@ -669,7 +669,7 @@ class Causet(object):
         else:
             for ei in A:
                 nrelations += len(afutr & ei.Past)
-        fr = 2 * nrelations / ( N * (N - den=='choose') )
+        fr = 2 * nrelations / ( N * (N - (den=='choose')) )
         return fr
 
 
