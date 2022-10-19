@@ -282,6 +282,8 @@ class EmbeddedCauset(Causet):
             Minimum size of Alexandrov Sets on which apply estimators.\n
             Default is 20 elements.
         
+        Optimizer-Related Parameters
+        -------------------------
         - optimizer: callable(funct, guess, args, ....) -> list\n
             A function which takes as args: 
             - funct whose roots are to be found
@@ -331,63 +333,78 @@ class EmbeddedCauset(Causet):
         isample = 0
         counts = [0,0] #times it worked vs times it did not
         while isample < Nsamples:
-            if counts[1]-Nsamples>=1000 and counts[0]==0:
+            
+            if counts[1]>=1000 and counts[0]==0:
                 print("The algorithm never found a suitable Alexandrov\n\
                 Interval, whereas it found 1000 unsuitable: probably\n\
                 you picked a too small causet. Returning [NaN, NaN]")
                 return np.nan, np.nan
+            
             # pick two random elements
-            a, b = random.sample(self._events, k = 2)
+            e1, e2 = random.sample(self._events, k = 2)
+            if e1 == e2:
+                counts[1] += 1
+                continue
+            elif e1 < e2:
+                a = e1
+                b = e2
+            elif e1 > e2:
+                a = e2
+                b = e1
+            else:
+                counts[1] += 1
+                continue
+  
             # if linked, ptime respects the constraint, 
             # and the size of the interval is big enough
-            if CausetEvent.isCausalTo(a, b):
-                if ptime_constr is None:
-                    if self.IntervalCard(a,b) >= size_min:
-                        fr_i = self.ord_fr(self.Interval(a,b, 
-                                                disjoin=True))
-                        if fr_i == 1:
-                            destimates.append(1)
-                        else:
-                            sol_i = optimizer(MM_to_solve, d0, fr_i,
-                                                **optkwargs)
-                            if not (opt_flag_index is None):
-                                if sol_i[opt_flag_index] == 1: 
-                                    d_i= sol_i[opt_sol_index]
-                                    destimates.append(d_i)
-                                    isample += 1
-                                else:
-                                    continue
-                            else:
+            n = self.IntervalCard(a,b)
+            if ptime_constr is None:
+                if n >= size_min:
+                    fr_i = self.ord_fr_ab(a,b)
+                    if fr_i == 1:
+                        destimates.append(1)
+                        isample += 1
+                    else:
+                        sol_i = optimizer(MM_to_solve, d0, fr_i,
+                                            **optkwargs)
+                        if not (opt_flag_index is None):
+                            if sol_i[opt_flag_index] == 1: 
                                 d_i= sol_i[opt_sol_index]
                                 destimates.append(d_i)
                                 isample += 1
-                elif self.IntervalCard(a,b) >= size_min:
+                            else:
+                                continue
+                        else:
+                            d_i = sol_i[opt_sol_index]
+                            destimates.append(d_i)
+                            isample += 1
+            
+            elif n >= size_min:
+                if ptime_constr(self.ptime(a, b)):
+            #Note: switched order between intervalcard and ptime
+            # as in generic spacetime ptime might take more.
                     counts[0] += 1
-                    if ptime_constr(self.ptime(a, b)):
-                #Note: switched order between intervalcard and ptime
-                # as in generic spacetime ptime might take more.
-                        fr_i = self.ord_fr(self.Interval(a,b,
-                                        disjoin = True))
-                        if fr_i == 1:
-                            destimates.append(1)
-                        else:
-                            sol_i = optimizer(MM_to_solve, d0, fr_i,
-                                                **optkwargs)
-                            if not (opt_flag_index is None):
-                                if sol_i[opt_flag_index] == 1: 
-                                    d_i= sol_i[opt_sol_index]
-                                    destimates.append(d_i)
-                                    isample += 1
-                                else:
-                                    continue
-                            else:
+                    fr_i = self.ord_fr_ab(a,b)
+                    if fr_i == 1:
+                        destimates.append(1)
+                        isample += 1
+                    else:
+                        fr_i *= (n-1)/n
+                        sol_i = optimizer(MM_to_solve, d0, fr_i,
+                                            **optkwargs)
+                        if not (opt_flag_index is None):
+                            if sol_i[opt_flag_index] == 1: 
                                 d_i= sol_i[opt_sol_index]
                                 destimates.append(d_i)
                                 isample += 1
-                else:
-                    counts[1] += 1
-                    continue
+                            else:
+                                continue
+                        else:
+                            d_i= sol_i[opt_sol_index]
+                            destimates.append(d_i)
+                            isample += 1
             else:
+                counts[1] += 1
                 continue
 
         return np.mean(destimates), np.std(destimates)
