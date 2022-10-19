@@ -21,7 +21,8 @@ import matplotlib.pyplot as plt
 figname = "Minkowski 1+1 spacetime"
 S: CoordinateShape = CoordinateShape(2, 'cylinder', duration=2.0, hollow=0)
 S: CoordinateShape = CoordinateShape(2, 'cuboid', edges=[3,2])
-C: SprinkledCauset = SprinkledCauset(intensity=10.0,
+S: CoordinateShape = CoordinateShape(2, 'diamond', edges=[3,2])
+C: SprinkledCauset = SprinkledCauset(intensity=500.0,
                                      spacetime=FlatSpacetime(2),
                                      #spacetime="Minkowski",
                                      shape=S)
@@ -35,7 +36,7 @@ if len(dims) > 2:
     cplt.figure(figsize=(8.0, 8.0))
 S.plot(dims)  # plot the embedding shape
 # Add causet plots and show result:
-cplt.plot(C, dims=dims, events={'alpha': 1},
+cplt.plot(C, dims=dims, events={'alpha': 0.05},
           links={'alpha': 1, 'linewidth': 0.3}, labels=False)
 #cplt.plot(list(e.Cone), dims=dims, spacetime=C.Spacetime,
 #          events={'markerfacecolor': 'cs:darkblue'},
@@ -109,7 +110,7 @@ C: SprinkledCauset = SprinkledCauset(intensity=500.0,
 e: CausetEvent = C.CentralAntichain().pop()  # pick one event
 
 
-plt.figure("Minkowski 2+1 spacetime")
+plt.figure("Black hole 2D spacetime")
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 dims: List[int] = [1,0]  # choose the (order of) plot dimensions
 if len(dims) > 2:
