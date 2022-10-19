@@ -359,7 +359,7 @@ class EmbeddedCauset(Causet):
 
             if ptime_constr is None:
                 if self.IntervalCard(a,b) >= size_min:
-                    fr_i = self.ord_fr(a,b)
+                    fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
                         destimates.append(1)
                     else:
@@ -382,7 +382,7 @@ class EmbeddedCauset(Causet):
                 if ptime_constr(self.ptime(a, b)):
             #Note: switched order between intervalcard and ptime
             # as in generic spacetime ptime might take more.
-                    fr_i = self.ord_fr(a,b)
+                    fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
                         destimates.append(1)
                     else:
@@ -402,7 +402,7 @@ class EmbeddedCauset(Causet):
             else:
                 counts[1] += 1
                 continue
-            
+
         return np.mean(destimates), np.std(destimates)
 
 
