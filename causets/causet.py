@@ -606,7 +606,7 @@ class Causet(object):
         - A: list of [CausetEvent]\n
             Alexandrov Interval of which computing the ordering fraction
 
-        - mode: string ('choose' or 'n2')\n
+        - mode: string ('choose' or 'n2')
             Use as denominator:
             - 'choose' -> |A|(|A|-1)/2, i.e. |A| choose 2 (Default).
             - 'n2'     -> (|A|^2)/2.
@@ -646,14 +646,14 @@ class Causet(object):
         
         - b: CausetEvent\n
 
-        - mode: string\n
+        - mode: string
             Use as denominator:
-            - |A|(|A|-1)/2, i.e. |A| choose 2, for 'choose' (Default).
-            - (|A|^2)/2 for 'n2', 'n^2', 'squared'.
+            - 'choose' -> |A|(|A|-1)/2, i.e. |A| choose 2 (Default).
+            - 'n2'     -> (|A|^2)/2.
 
         Return:
         .......
-        - Ordering fraction of Alexandrov Interval\n
+        - Ordering fraction of Alexandrov Interval
             This is nrelations / (N choose 2)
         """
         if den != 'choose' and den != 'n2':

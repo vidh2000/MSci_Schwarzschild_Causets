@@ -357,9 +357,9 @@ class EmbeddedCauset(Causet):
   
             # if linked, ptime respects the constraint, 
             # and the size of the interval is big enough
-
+            n = self.IntervalCard(a,b)
             if ptime_constr is None:
-                if self.IntervalCard(a,b) >= size_min:
+                if n >= size_min:
                     fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
                         destimates.append(1)
@@ -375,11 +375,11 @@ class EmbeddedCauset(Causet):
                             else:
                                 continue
                         else:
-                            d_i= sol_i[opt_sol_index]
+                            d_i = sol_i[opt_sol_index]
                             destimates.append(d_i)
                             isample += 1
             
-            elif self.IntervalCard(a,b) >= size_min:
+            elif n >= size_min:
                 if ptime_constr(self.ptime(a, b)):
             #Note: switched order between intervalcard and ptime
             # as in generic spacetime ptime might take more.
@@ -389,6 +389,7 @@ class EmbeddedCauset(Causet):
                         destimates.append(1)
                         isample += 1
                     else:
+                        fr_i *= (n-1)/n
                         sol_i = optimizer(MM_to_solve, d0, fr_i,
                                             **optkwargs)
                         if not (opt_flag_index is None):

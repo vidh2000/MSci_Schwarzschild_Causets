@@ -95,8 +95,8 @@ except ZeroDivisionError:
 del Cm, C, Clist
 
 #%% CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
-Ns = [512, 384, 256, 192, 128, 64, 32]
-repetitions = 5
+Ns = [2048, 1546, 1024, 512, 256, 192,  128, 64, 32,  24, 16, 8]
+repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 radius = 1
 dim_est = []
@@ -110,8 +110,8 @@ for i in range(len(dims[0])):
         dim_std[i].append([])
         S: CoordinateShape = CoordinateShape(d, 'cylinder', 
                                             radius = radius,
-                                            duration=4, 
-                                            hollow=0.99)
+                                            duration=5, 
+                                            hollow=0)
         try:
             C: SprinkledCauset = SprinkledCauset(card=Ns[0],
                                             spacetime=FlatSpacetime(d), 
@@ -121,19 +121,25 @@ for i in range(len(dims[0])):
             C: SprinkledCauset = SprinkledCauset(card=Ns[0],
                                             spacetime=FlatSpacetime(d))
         for cut in tqdm(cuts, f"Dimension {d}"):
-            C.coarsegrain(card = cut)
+            if cut != 0:
+                C.coarsegrain(card = cut)
             MMd = C.MMdim_est(Nsamples = 20, 
                                 ptime_constr=lambda t:t<2*radius,
                                 size_min = min(50, int(len(C)/3)),
                                 full_output = True)
             dim_est[i][r].append(MMd[0]) # add to rth repetition 
-            dim_std[i][r].append(MMd[1]) # in ith dimension
+            #dim_std[i][r].append(MMd[1]) # in ith dimension
     #Average over repetitions:
-    dim_est[i] = np.nanmean(dim_est[i], axis = 0)
-    dim_std[i] = np.nanstd (dim_std[i], axis = 0)
+    try:
+        dim_est[i] = np.nanmean(dim_est[i], axis = 0)
+        dim_std[i] = np.nanstd (dim_est[i], axis = 0)
+    except TypeError:
+        beforeerror = dim_std[i]
+        dim_est[i] = np.nanmean(np.array(dim_est[i]), axis = 0)
+        dim_std[i] = np.nanstd (np.array(dim_est[i]), axis = 0)
+
 del d, i, r, cut
-del S, radius, repetitions, C
-del MMd
+del S, radius, repetitions
 
 plt.figure("MMFlatDim")
 Ns.reverse()
@@ -147,5 +153,31 @@ plt.ylabel("Dimension")
 plt.legend()
 plt.show()
 
+
+# %%
+from scipy.optimize import fsolve
+from scipy.special import gamma as spgamma
+
+def MM_drelation(d):
+            a = spgamma(d+1)
+            b = spgamma(d/2)
+            c = 4 * spgamma(3*d/2)
+            return a*b/c
+        
+def MM_to_solve(d, ord_fr):
+    return MM_drelation(d) - ord_fr/2
+
+print("Ordering Fraction -> d")
+print("1.00 -> ",fsolve(MM_to_solve, 2, 1))
+print("0.50 -> ",fsolve(MM_to_solve, 2, 0.5))
+print("0.40 -> ",fsolve(MM_to_solve, 2, 0.40))
+print("0.35 -> ",fsolve(MM_to_solve, 2, 0.35))
+print("0.30 -> ",fsolve(MM_to_solve, 2, 0.3))
+print("0.23 -> ",fsolve(MM_to_solve, 2, 8/35, full_output=1)[0])
+print("0.15 -> ",fsolve(MM_to_solve, 2, 0.15))
+print("0.12 -> ",fsolve(MM_to_solve, 2, 0.12))
+print("0.10 -> ",fsolve(MM_to_solve, 2, 0.1))
+print("0.08 -> ",fsolve(MM_to_solve, 2, 0.08))
+print("0.05 -> ",fsolve(MM_to_solve, 2, 0.05))
 
 # %%
