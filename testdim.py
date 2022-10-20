@@ -134,8 +134,8 @@ shapes = [['ball_hollow'    , ballh_ps],
           ['cuboid'         , cub_ps  ] ]
 
 Ns = [512, 384, 256, 192,  128, 64, 32,  24, 16, 8]# cardinalities to test
-repetitions = 10                                   #repetitions to average
-cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:]) #for coarse grain
+repetitions = 3                                    #repetitions to average
+cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])  #for coarse grain
 for sps in shapes:
     dim_est = []
     dim_std = []
@@ -162,7 +162,7 @@ for sps in shapes:
                 if cut != 0: C.coarsegrain(card = cut)
                 MMd = C.MMdim_est(Nsamples = 50, 
                                     ptime_constr=lambda t:t<1.5*r,
-                                    size_min = min(50, int(len(C)/3)),
+                                    size_min = min(50, int(len(C)/4)),
                                     full_output = True)
                 dim_est[i][rep].append(MMd[0]) # add to rth repetition 
                 #dim_std[i][r].append(MMd[1]) # in ith dimension
@@ -176,23 +176,27 @@ for sps in shapes:
                                     axis = 0)
             dim_est[i] = np.nanmean(np.array(dim_est[i], dtype=np.float64),
                                     axis = 0)
-
-    plt.figure(f"MMFlatDim {sps[0]}")
-    Ns.reverse()
-    for i in range(len(dims[0])-x):
-        plt.errorbar(Ns, np.flip(dim_est[i+x]), yerr = np.flip(dim_std[i]),
-                        fmt = ".", capsize = 4, 
-                        label = f"Dimension {dims[0][i]}")
-    plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
-    plt.xlabel("Cardinality")
-    plt.ylabel("Dimension")
-    plt.legend()
-    plt.xscale('log')
-    plt.show()
+    try:
+        plt.figure(f"MMFlatDim {sps[0]}")
+        #Ns.reverse()
+        for i in range(len(dims[0])-x):
+            ests = dim_est[i]#np.flip(dim_est[i])
+            stds = dim_std[i]#np.flip(dim_std[i])
+            lbl  = f"Dimension {dims[0][i+x]}"
+            plt.errorbar(Ns,ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+        plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
+        plt.xlabel("Cardinality")
+        plt.ylabel("Dimension")
+        plt.legend()
+        plt.xscale('log')
+        plt.show()
+    except TypeError:
+        continue
 
 del d, sps, i, rep, cut
 del S, Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
+del ests, stds, lbl
 
 
 # %%
