@@ -268,8 +268,9 @@ class EmbeddedCauset(Causet):
         Parameters:
         --------------------------
         - method: str \n
-            - 'many':
-            - '1big': 
+            - 'many': randomly sample.
+            - '1big': take all events with no past, all with no future
+            and apply estimator ro their combinations.
 
         - d0: float \n
             Initial guess for dimension.\n
