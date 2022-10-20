@@ -12,7 +12,7 @@ Created on 9 Oct 2020
 from __future__ import annotations
 from typing import List, Tuple  
 from causets.sprinkledcauset import SprinkledCauset  
-from causets.spacetimes import deSitterSpacetime  
+from causets.spacetimes import FlatSpacetime, deSitterSpacetime  
 from causets.shapes import CoordinateShape  
 from causets.causetevent import CausetEvent  
 import causets.causetplotting as cplt  
@@ -21,8 +21,9 @@ import causets.causetplotting as cplt
 # radius 1.0. Coordinates range over a hollow cylinder with height 3.0. 30% of
 # the cylinder interior is hollow.
 S: CoordinateShape = CoordinateShape(3, 'cylinder', duration=3.0, hollow=0.3)
-C: SprinkledCauset = SprinkledCauset(intensity=100.0,
-                                     spacetime=deSitterSpacetime(3), shape=S)
+S: CoordinateShape = CoordinateShape(3,"bicone",radius=1)
+C: SprinkledCauset = SprinkledCauset(intensity=5.0,
+                                     spacetime=FlatSpacetime(3), shape=S)
 e: CausetEvent = C.CentralAntichain().pop()  # pick one event
 
 

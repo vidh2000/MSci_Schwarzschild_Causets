@@ -56,7 +56,6 @@ Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 C = Causet().FromCausalMatrix(Cm)
 print("\nChain Link Matrix\n", C.LMatrix())
 Clist = C.nlist(method="label")
-#print("Clist:\n",Clist)
 
 A = C.Interval(Clist[3], Clist[8], disjoin = True)
 print(f"Cardinality is {len(A)}")
@@ -114,11 +113,14 @@ print("0.10 -> ",fsolve(MM_to_solve, 2, 0.1))
 print("0.08 -> ",fsolve(MM_to_solve, 2, 0.08))
 print("0.05 -> ",fsolve(MM_to_solve, 2, 0.05))
 
+#%% Functions
+
+
 #%% CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
 from causets.spacetimes import *
 st   = [    FlatSpacetime   , deSitterSpacetime, 
        AntideSitterSpacetime, BlackHoleSpacetime]
-dims = [  [1,2,3,4],                [2,3,4],            
+dims = [  [1,2,3],                [2,3,4],            
            [2,3,4],                    [2]      ]
 r = 2
 dur = 1
@@ -127,15 +129,18 @@ ball_ps  = {'name': 'ball',     'radius': r, 'hollow':0}
 cylh_ps  = {'name': 'cylinder', 'radius': r, 'hollow':0.99, 'duration':dur} 
 cyl_ps   = {'name': 'cylinder', 'radius': r, 'hollow':0,    'duration':dur}
 cub_ps   = {'name': 'cube'    , 'edge'  : r} 
-shapes = [['ball_hollow'    , ballh_ps],
-          ['ball'           , ball_ps ],
-          ['cylinder_hollow',cylh_ps  ],
-          ['cylinder'       , cyl_ps  ],
-          ['cube'           , cub_ps  ] ]
+shapes = [#['ball_hollow'    , ballh_ps],
+          #['ball'           , ball_ps ],
+          #['cylinder_hollow',cylh_ps  ],
+          #['cylinder'       , cyl_ps  ],
+          ['cube'           , cub_ps  ]]
 
-Ns = [2048, 1024, 512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
+Ns = [512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
 repetitions = 10                                       #repetitions to average
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])      #for coarse graining
+
+print(f"\nEstimating MMd, N0={Ns[0]}:")
+print(f"-{repetitions} repeats of {len(cuts)} coarse-grained causets")
 for sps in shapes:
     dim_est = []
     dim_std = []
@@ -144,7 +149,7 @@ for sps in shapes:
         d = dims[0][i+x] 
         dim_est.append([])
         dim_std.append([])
-        for rep in range(repetitions):
+        for rep in tqdm(range(repetitions),f"{sps[0]} D={d}"):
             dim_est[i].append([])
             dim_std[i].append([])
             
@@ -158,7 +163,7 @@ for sps in shapes:
                 C: SprinkledCauset = SprinkledCauset(card=Ns[0],
                                                 spacetime=FlatSpacetime(d))
             
-            for cut in tqdm(cuts, f"{sps[0]} (dim {d})"):
+            for cut in cuts:
                 if cut != 0:
                     C.coarsegrain(card = cut) #cgrain Ns[i]->Ns[i+1]
                 MMd = C.MMdim_est(Nsamples = 50, 
@@ -189,8 +194,8 @@ for sps in shapes:
         plt.xlabel("Cardinality")
         plt.ylabel("Dimension")
         for i in range(len(dims[0])-x):
-            ests = dim_est[i]#np.flip(dim_est[i])
-            stds = dim_std[i]#np.flip(dim_std[i])
+            ests = dim_est[i]
+            stds = dim_std[i]
             lbl  = f"Dimension {dims[0][i+x]}"
             plt.errorbar(Ns,ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
         plt.legend()
