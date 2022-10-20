@@ -195,4 +195,3 @@ print("0.05 -> ",fsolve(MM_to_solve, 2, 0.05))
 
 # %%
 print(np.nanstd(beforeerror, dtype = np.float64, axis = 0))
-# %%

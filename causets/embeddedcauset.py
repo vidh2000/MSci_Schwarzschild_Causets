@@ -250,6 +250,8 @@ class EmbeddedCauset(Causet):
     
     def timegeodesics(self, a: CausetEvent, b: CausetEvent, 
                     mode = "flat"):
+        if mode =="flat":
+            pass
         return "This is current a placeholder"
 
     def MMdim_est(self, method = "many", d0 = 2, 
@@ -278,14 +280,15 @@ class EmbeddedCauset(Causet):
             Number of times to iterate procedure to average on.\
             Default is 20.
 
+        - size_min: int\n
+            Minimum size of Alexandrov Sets on which you apply estimators.\n
+            Default is 20 elements.
+
         - ptime_constr: callable(ptime) -> Bool
             A callable setting a constraint on the proper time between
             the two elements and returning a Boolean.\n
             Default: None.
 
-        - size_min: int\n
-            Minimum size of Alexandrov Sets on which apply estimators.\n
-            Default is 20 elements.
         
         Optimizer-Related Parameters
         -------------------------
@@ -341,8 +344,8 @@ class EmbeddedCauset(Causet):
             
             if counts[1]>=1e4 and counts[0]==0:
                 print("The algorithm never found a suitable Alexandrov\n\
-Interval, whereas it found 1000 unsuitable: probably\n\
-you picked a too small causet. Returning [NaN, NaN]")
+                    Interval, whereas it found 1000 unsuitable: probably\n\
+                    you picked a too small causet. Returning [NaN, NaN]")
                 return np.nan, np.nan
             
             # pick two random elements
@@ -360,8 +363,8 @@ you picked a too small causet. Returning [NaN, NaN]")
                 counts[1] += 1
                 continue
   
-            # if linked, ptime respects the constraint, 
-            # and the size of the interval is big enough
+            # if linked, ptime respects the constraint, and the
+            # size of the interval is big enough, then ->
             n = self.IntervalCard(a,b)
             if ptime_constr is None:
                 if n >= size_min:
@@ -370,8 +373,7 @@ you picked a too small causet. Returning [NaN, NaN]")
                         destimates.append(1)
                         isample += 1
                     else:
-                        sol_i = optimizer(MM_to_solve, d0, fr_i,
-                                            **optkwargs)
+                        sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
                         if not (opt_flag_index is None):
                             if sol_i[opt_flag_index] == 1: 
                                 d_i= sol_i[opt_sol_index]
@@ -386,8 +388,8 @@ you picked a too small causet. Returning [NaN, NaN]")
             
             elif n >= size_min:
                 if ptime_constr(self.ptime(a, b)):
-            #Note: switched order between intervalcard and ptime
-            # as in generic spacetime ptime might take more.
+                #Note: switched order between intervalcard and ptime
+                #as in generic spacetime ptime might take more.
                     counts[0] += 1
                     fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
