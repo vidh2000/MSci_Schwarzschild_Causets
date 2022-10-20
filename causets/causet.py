@@ -606,7 +606,7 @@ class Causet(object):
         - A: list of [CausetEvent]\n
             Alexandrov Interval of which computing the ordering fraction
 
-        - mode: string ('choose' or 'n2')
+        - den: string ('choose' or 'n2')
             Use as denominator:
             - 'choose' -> |A|(|A|-1)/2, i.e. |A| choose 2 (Default).
             - 'n2'     -> (|A|^2)/2.
@@ -630,7 +630,7 @@ class Causet(object):
                 nrelations += ei.PastCard
         else:
             for ei in A:
-                nrelations += ei.PastCard & A
+                nrelations += len(ei.Past & A)
         fr = 2 * nrelations / ( N * (N - (den=='choose')) )
         return fr
 
@@ -663,12 +663,8 @@ class Causet(object):
         A = afutr & bpast
         N = len(A)
         nrelations = 0
-        if afutr > bpast:
-            for ei in A:
-                nrelations += len(ei.Future & bpast)
-        else:
-            for ei in A:
-                nrelations += len(afutr & ei.Past)
+        for ei in A:
+            nrelations += len(ei.Future & A)
         fr = 2 * nrelations / ( N * (N - (den=='choose')) )
         return fr
 
