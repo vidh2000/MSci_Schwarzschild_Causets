@@ -342,7 +342,7 @@ class EmbeddedCauset(Causet):
         counts = [0,0] #times it worked vs times it did not
         while isample < Nsamples:
             
-            if counts[1]>=1e4 and counts[0]==0:
+            if counts[1]>=1e3 and counts[0]==0:
                 print("   OPS: The algorithm never found a suitable Alexandrov")
                 print("Interval, whereas it found 1000 unsuitable: probably")
                 print("you picked a too small causet. Returning [NaN, NaN]\n")

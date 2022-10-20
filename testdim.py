@@ -129,11 +129,17 @@ ball_ps  = {'name': 'ball',     'radius': r, 'hollow':0}
 cylh_ps  = {'name': 'cylinder', 'radius': r, 'hollow':0.99, 'duration':dur} 
 cyl_ps   = {'name': 'cylinder', 'radius': r, 'hollow':0,    'duration':dur}
 cub_ps   = {'name': 'cube'    , 'edge'  : r} 
-shapes = [#['ball_hollow'    , ballh_ps],
-          #['ball'           , ball_ps ],
-          #['cylinder_hollow',cylh_ps  ],
-          #['cylinder'       , cyl_ps  ],
-          ['cube'           , cub_ps  ]]
+diamh_ps = {'name': 'diamond',  'radius': r, 'hollow':0.99} 
+diam_ps  = {'name': 'diamond',  'radius': r, 'hollow':0}
+shapes = [
+        # ['ball_hollow'    , ballh_ps ],
+          ['ball'           , ball_ps  ],
+        # ['cylinder_hollow',cylh_ps   ],
+          ['cylinder'       , cyl_ps   ],
+          ['cube'           , cub_ps   ],
+        # ['diamond_hollow' , diamh_ps ],
+          ['diamond'        , diam_ps  ]
+         ]
 
 Ns = [512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
 repetitions = 10                                       #repetitions to average
@@ -166,9 +172,9 @@ for sps in shapes:
             for cut in cuts:
                 if cut != 0:
                     C.coarsegrain(card = cut) #cgrain Ns[i]->Ns[i+1]
-                MMd = C.MMdim_est(Nsamples = 50, 
-                                    ptime_constr=lambda t:t<2.5*r,
-                                    size_min = min(50, int(len(C)/4)),
+                MMd = C.MMdim_est(Nsamples = 20, 
+                                    #ptime_constr=lambda t:t<2.5*r,
+                                    size_min = min(10, int(len(C)/4)),
                                     full_output = True)
                 dim_est[i][rep].append(MMd[0]) # add to rth repetition 
         
