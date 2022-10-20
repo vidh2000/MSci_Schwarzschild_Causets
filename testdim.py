@@ -12,7 +12,6 @@ from causets.causetevent import CausetEvent
 from causets.causet import Causet
 from causets.sprinkledcauset import SprinkledCauset
 from causets.shapes import CoordinateShape
-from causets.spacetimes import *
 import causets.causetplotting as cplt
 
 import numpy as np
@@ -20,14 +19,9 @@ import random
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-st   = [FlatSpacetime, deSitterSpacetime, 
-       AntideSitterSpacetime, BlackHoleSpacetime]
-dims = [  [1,2,3,4],       [2,3,4],            
-           [2,3,4],          [2]       ]
 
 #%% CHECK THAT INTERVAL AND ORDRING FRACTION WORK CORRECTLY
 
-#%%%CHAIN-LIKE CAUSET SHOULD HAVE 1
 N = 8
 Cm = np.zeros([N,N])
 for i in range(N-1):
@@ -43,10 +37,7 @@ print("Has ordering Frac = ", C.ord_fr_A(C.Interval(Clist[3], Clist[6],
 print("Has ordering Frac = ", C.ord_fr_ab(Clist[3], Clist[6]))
 print("Should have 1\n")
 del N, i, j
-#%%%TRY A KNOWN CAUSET
-# Between 3 and 8 should have 0.9
-# Betwewn 2 and 8 should have 0.93
-# Between 3 and 9 should have 1
+
 
 Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -95,6 +86,15 @@ except ZeroDivisionError:
 del Cm, C, Clist
 
 #%% CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
+from causets.spacetimes import *
+st   = [    FlatSpacetime   , deSitterSpacetime, 
+       AntideSitterSpacetime, BlackHoleSpacetime]
+dims = [  [1,2,3,4],                [2,3,4],            
+           [2,3,4],                    [2]      ]
+shapes = ['ball_hollow', 'ball', 'cylinder_hollow', 'cylinder',
+         'cuboid_hollow', 'cuboid']
+
+
 Ns = [512, 384, 256, 192,  128, 64, 32,  24, 16, 8]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
