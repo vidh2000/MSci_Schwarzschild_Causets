@@ -11,9 +11,3 @@ print(type(c))
 
 c = len(a)>len(b)
 print(c)
-c = b<a
-print(c)
-
-a = np.zeros(2)
-print(a)
-
