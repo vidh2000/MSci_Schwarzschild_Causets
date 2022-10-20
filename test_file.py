@@ -1,8 +1,17 @@
+#%%
 import numpy as np 
 
+a = set((1,2,3,4))
 
-a = 3
-print(a)
+b = set((4,5,6))
 
+c=  a & b
+print(c)
+print(type(c))
+#%%
+c = len(a)>len(b)
+print(c)
+c = b<a
+print(c)
 
 
