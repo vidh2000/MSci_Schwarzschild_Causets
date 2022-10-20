@@ -161,7 +161,7 @@ for sps in shapes:
             for cut in tqdm(cuts, f"{sps[0]} (dim {d})"):
                 if cut != 0: C.coarsegrain(card = cut)
                 MMd = C.MMdim_est(Nsamples = 50, 
-                                    ptime_constr=lambda t:t<1.5*r,
+                                    ptime_constr=lambda t:t<2.5*r,
                                     size_min = min(50, int(len(C)/4)),
                                     full_output = True)
                 dim_est[i][rep].append(MMd[0]) # add to rth repetition 

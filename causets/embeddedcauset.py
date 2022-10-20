@@ -343,9 +343,9 @@ class EmbeddedCauset(Causet):
         while isample < Nsamples:
             
             if counts[1]>=1e4 and counts[0]==0:
-                print("The algorithm never found a suitable Alexandrov")
+                print("   OPS: The algorithm never found a suitable Alexandrov")
                 print("Interval, whereas it found 1000 unsuitable: probably")
-                print("you picked a too small causet. Returning [NaN, NaN]")
+                print("you picked a too small causet. Returning [NaN, NaN]\n")
                 return np.nan, np.nan
             
             # pick two random elements
@@ -373,6 +373,7 @@ class EmbeddedCauset(Causet):
                         destimates.append(1)
                         isample += 1
                     else:
+                        fr_i *= (n-1)/n #correction for MMestimator
                         sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
                         if not (opt_flag_index is None):
                             if sol_i[opt_flag_index] == 1: 
@@ -397,8 +398,7 @@ class EmbeddedCauset(Causet):
                         isample += 1
                     else:
                         fr_i *= (n-1)/n #correction for MMestimator
-                        sol_i = optimizer(MM_to_solve, d0, fr_i,
-                                            **optkwargs)
+                        sol_i = optimizer(MM_to_solve, d0, fr_i, **optkwargs)
                         if not (opt_flag_index is None):
                             if sol_i[opt_flag_index] == 1: 
                                 d_i= sol_i[opt_sol_index]
