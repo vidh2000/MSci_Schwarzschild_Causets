@@ -126,14 +126,14 @@ ballh_ps = {'name': 'ball',     'radius': r, 'hollow':0.99}
 ball_ps  = {'name': 'ball',     'radius': r, 'hollow':0}
 cylh_ps  = {'name': 'cylinder', 'radius': r, 'hollow':0.99, 'duration':dur} 
 cyl_ps   = {'name': 'cylinder', 'radius': r, 'hollow':0,    'duration':dur}
-cub_ps   = {'name': 'cuboid'  , 'edges': r} 
+cub_ps   = {'name': 'cube'    , 'edge'  : r} 
 shapes = [['ball_hollow'    , ballh_ps],
           ['ball'           , ball_ps ],
           ['cylinder_hollow',cylh_ps  ],
           ['cylinder'       , cyl_ps  ],
-          ['cuboid'         , cub_ps  ] ]
+          ['cube'           , cub_ps  ] ]
 
-Ns = [512, 384, 256, 192,  128, 64, 32,  24, 16, 8]# cardinalities to test
+Ns = [512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
 repetitions = 3                                    #repetitions to average
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])  #for coarse grain
 for sps in shapes:
@@ -158,7 +158,7 @@ for sps in shapes:
                 C: SprinkledCauset = SprinkledCauset(card=Ns[0],
                                                 spacetime=FlatSpacetime(d))
             
-            for cut in tqdm(cuts, f"Dimension {d}"):
+            for cut in tqdm(cuts, f"{sps[0]} (dim {d})"):
                 if cut != 0: C.coarsegrain(card = cut)
                 MMd = C.MMdim_est(Nsamples = 50, 
                                     ptime_constr=lambda t:t<1.5*r,
@@ -177,7 +177,7 @@ for sps in shapes:
             dim_est[i] = np.nanmean(np.array(dim_est[i], dtype=np.float64),
                                     axis = 0)
     try:
-        plt.figure(f"MMFlatDim {sps[0]}")
+        fig = plt.figure(f"MMFlatDim {sps[0]}")
         #Ns.reverse()
         for i in range(len(dims[0])-x):
             ests = dim_est[i]#np.flip(dim_est[i])
@@ -189,14 +189,14 @@ for sps in shapes:
         plt.ylabel("Dimension")
         plt.legend()
         plt.xscale('log')
-        plt.show()
+        fig.show()
     except TypeError:
         continue
 
 del d, sps, i, rep, cut
 del S, Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
-del ests, stds, lbl
+del ests, stds, lbl, fig
 
 
 # %%
