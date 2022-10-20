@@ -366,31 +366,30 @@ class EmbeddedCauset(Causet):
             # if linked, ptime respects the constraint, and the
             # size of the interval is big enough, then ->
             n = self.IntervalCard(a,b)
-            if ptime_constr is None:
-                if n >= size_min:
-                    fr_i = self.ord_fr_ab(a,b)
-                    if fr_i == 1:
-                        destimates.append(1)
-                        isample += 1
-                    else:
-                        fr_i *= (n-1)/n #correction for MMestimator
-                        sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
-                        if not (opt_flag_index is None):
-                            if sol_i[opt_flag_index] == 1: 
-                                d_i= sol_i[opt_sol_index]
+            if n >= size_min:
+                
+                if ptime_constr is None:
+                    if n >= size_min:
+                        fr_i = self.ord_fr_ab(a,b)
+                        if fr_i == 1:
+                            destimates.append(1)
+                            isample += 1
+                        else:
+                            fr_i *= (n-1)/n #correction for MMestimator
+                            sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
+                            if not (opt_flag_index is None):
+                                if sol_i[opt_flag_index] == 1: 
+                                    d_i= sol_i[opt_sol_index]
+                                    destimates.append(d_i)
+                                    isample += 1
+                                else:
+                                    continue
+                            else:
+                                d_i = sol_i[opt_sol_index]
                                 destimates.append(d_i)
                                 isample += 1
-                            else:
-                                continue
-                        else:
-                            d_i = sol_i[opt_sol_index]
-                            destimates.append(d_i)
-                            isample += 1
             
-            elif n >= size_min:
-                if ptime_constr(self.ptime(a, b)):
-                #Note: switched order between intervalcard and ptime
-                #as in generic spacetime ptime might take more.
+                elif ptime_constr(self.ptime(a, b)):
                     counts[0] += 1
                     fr_i = self.ord_fr_ab(a,b)
                     if fr_i == 1:
