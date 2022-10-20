@@ -396,7 +396,7 @@ class EmbeddedCauset(Causet):
                         destimates.append(1)
                         isample += 1
                     else:
-                        fr_i *= (n-1)/n
+                        fr_i *= (n-1)/n #correction for MMestimator
                         sol_i = optimizer(MM_to_solve, d0, fr_i,
                                             **optkwargs)
                         if not (opt_flag_index is None):
