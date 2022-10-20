@@ -97,8 +97,8 @@ except ZeroDivisionError:
 """
 del Cm, C, Clist
 
-#%% CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
-Ns = [512, 384, 256, 192,  128, 64, 32,  24, 16, 8]
+#%% CHECK DIMENSION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
+Ns = [512, 384, 256, 192,  128, 64, 32, 24, 16, 8]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 radius = 1
@@ -188,4 +188,3 @@ print("0.05 -> ",fsolve(MM_to_solve, 2, 0.05))
 
 # %%
 print(np.nanstd(beforeerror, dtype = np.float64, axis = 0))
-# %%
