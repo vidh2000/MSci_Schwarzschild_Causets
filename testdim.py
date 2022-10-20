@@ -176,6 +176,7 @@ for sps in shapes:
                 dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64))
                 dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64))
             except (TypeError, ZeroDivisionError):
+                print("SECOND EXCEPT USED")
                 beforeerror = dim_est[i]
                 dim_std[i] = np.nanstd (np.array(dim_est[i], dtype=np.float64),
                                         axis = 0)
