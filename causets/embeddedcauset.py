@@ -252,9 +252,9 @@ class EmbeddedCauset(Causet):
                     mode = "flat"):
         return "This is current a placeholder"
 
-    def MMdim_est(self, d0 = 2, Nsamples = 20,
+    def MMdim_est(self, method = "many", d0 = 2, 
+                Nsamples = 20, size_min = 20,
                 ptime_constr = None, 
-                size_min = 20,
                 optimizer = fsolve,
                 opt_sol_index = 0,
                 opt_flag_index = 2,
@@ -265,15 +265,19 @@ class EmbeddedCauset(Causet):
 
         Parameters:
         --------------------------
-        - d0: float\n
+        - method: str \n
+            - 'many':
+            - '1big': 
+
+        - d0: float \n
             Initial guess for dimension.\n
             Default is 2.
 
-        - Nsamples: int\n
+        - Nsamples: int \n
             Number of times to iterate procedure to average on.\
             Default is 20.
 
-        - ptime_constr: callable(ptime) -> Bool\n
+        - ptime_constr: callable(ptime) -> Bool
             A callable setting a constraint on the proper time between
             the two elements and returning a Boolean.\n
             Default: None.
@@ -336,8 +340,8 @@ class EmbeddedCauset(Causet):
             
             if counts[1]>=1000 and counts[0]==0:
                 print("The algorithm never found a suitable Alexandrov\n\
-                Interval, whereas it found 1000 unsuitable: probably\n\
-                you picked a too small causet. Returning [NaN, NaN]")
+Interval, whereas it found 1000 unsuitable: probably\n\
+you picked a too small causet. Returning [NaN, NaN]")
                 return np.nan, np.nan
             
             # pick two random elements
