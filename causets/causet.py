@@ -664,8 +664,6 @@ class Causet(object):
         N = len(A)
         nrelations = 0
         for ei in A:
-            print(type(ei))
-            print(type(A))
             nrelations += len(ei.Future & A)
         fr = 2 * nrelations / ( N * (N - (den=='choose')) )
         return fr

@@ -65,7 +65,7 @@ Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 C = Causet().FromCausalMatrix(Cm)
 print("\nChain Link Matrix\n", C.LMatrix())
 Clist = C.nlist(method="label")
-#print(Clist)
+#print("Clist:\n",Clist)
 
 A = C.Interval(Clist[3], Clist[8], disjoin = True)
 print(f"Cardinality is {len(A)}")
