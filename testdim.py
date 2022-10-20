@@ -139,17 +139,17 @@ diam_ps  = {'name': 'diamond',  'radius': r, 'hollow':0}
 ##%%% Code running
 shapes = [
         # ['ball_hollow'    , ballh_ps ],
-        #  ['ball'           , ball_ps  ]#,
+         # ['ball'           , ball_ps  ],
         # ['cylinder_hollow',cylh_ps   ],
-          #['cylinder'       , cyl_ps   ],
-          #['cube'           , cub_ps   ],
+          ['cylinder'       , cyl_ps   ],
+          ['cube'           , cub_ps   ],
         # ['diamond_hollow' , diamh_ps ],
           ['diamond'        , diam_ps  ]
          ]
 
 # Define
 # cardinalities to test, repetitions to average, cuts for coarse graining
-Ns = [1024, 512, 384, 256, 192,  128, 64, 32, 16]
+Ns = [2048,1024,512, 384, 256, 128]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 
@@ -160,13 +160,10 @@ def C_initialise():
     C = SprinkledCauset(card=Ns[0],spacetime=FlatSpacetime(d), shape=S)
     return C
 
-print(f"\nEstimating MMd, N0={Ns[0]}:")
+print(f"\nEstimating MMd for {np.array(shapes)[:,0]}, N0={Ns[0]}:")
 print(f"-{repetitions} repeats of {len(cuts)} coarse-grained causets")
 
 if __name__ == '__main__':
-
-
-    
     for sps in shapes:
         dim_est = []
         dim_std = []
@@ -205,9 +202,9 @@ if __name__ == '__main__':
             dim_std[i] = np.nanstd (dim_est[i], axis = 0,dtype=np.float64)
             dim_est[i] = np.nanmean(dim_est[i], axis = 0,dtype=np.float64)
             
-
-        fig = plt.figure(f"MMFlatDim {sps[0]}")
-        plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
+        figtitle = f"MMFlatDim {sps[0]}"
+        fig = plt.figure(figtitle)
+        plt.title(f"Myrheim-Mayers in {sps[0]}; Minkowski spacetime")
         plt.xlabel("Cardinality")
         plt.ylabel("Dimension")
         for i in range(len(dims[0])-x):
@@ -217,7 +214,9 @@ if __name__ == '__main__':
             plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
         plt.legend()
         plt.xscale('log')
-        plt.show()
+        plttitle = "figures/"+figtitle+".pdf"
+        fig.savefig(plttitle)
+        fig.show()
 
 del d, sps, i, rep, cut
 del S, Ns, cuts, repetitions

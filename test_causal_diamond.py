@@ -17,15 +17,15 @@ import causets.causetplotting as cplt
 import matplotlib.pyplot as plt
 
 
-Ndim=3
+Ndim=2
 #S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=2.0,
 #                                    radius=1.0,hollow=0.9)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
 #S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=3.0,hollow=0.0)
-S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=3.0)
+S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=5.0)
 print(S.Parameter("radius"))
 C: SprinkledCauset = SprinkledCauset(
-    intensity=100.0,spacetime=FlatSpacetime(Ndim),shape=S)
+    intensity=50.0,spacetime=FlatSpacetime(Ndim),shape=S)
 e: CausetEvent = C.CentralAntichain().pop()  # pick one event
 
 Clist = C.nlist()
