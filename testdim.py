@@ -88,6 +88,32 @@ except ZeroDivisionError:
 """
 del Cm, C, Clist
 
+#%% TEST MM DIM RELATION & OPTIMIZER
+from scipy.optimize import fsolve
+from scipy.special import gamma as spgamma
+
+def MM_drelation(d):
+            a = spgamma(d+1)
+            b = spgamma(d/2)
+            c = 4 * spgamma(3*d/2)
+            return a*b/c
+        
+def MM_to_solve(d, ord_fr):
+    return MM_drelation(d) - ord_fr/2
+
+print("Ordering Fraction -> d")
+print("1.00 -> ",fsolve(MM_to_solve, 2, 1))
+print("0.50 -> ",fsolve(MM_to_solve, 2, 0.5))
+print("0.40 -> ",fsolve(MM_to_solve, 2, 0.40))
+print("0.35 -> ",fsolve(MM_to_solve, 2, 0.35))
+print("0.30 -> ",fsolve(MM_to_solve, 2, 0.3))
+print("0.23 -> ",fsolve(MM_to_solve, 2, 8/35, full_output=1)[0])
+print("0.15 -> ",fsolve(MM_to_solve, 2, 0.15))
+print("0.12 -> ",fsolve(MM_to_solve, 2, 0.12))
+print("0.10 -> ",fsolve(MM_to_solve, 2, 0.1))
+print("0.08 -> ",fsolve(MM_to_solve, 2, 0.08))
+print("0.05 -> ",fsolve(MM_to_solve, 2, 0.05))
+
 #%% CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
 from causets.spacetimes import *
 st   = [    FlatSpacetime   , deSitterSpacetime, 
@@ -153,8 +179,8 @@ for sps in shapes:
 
     plt.figure(f"MMFlatDim {sps[0]}")
     Ns.reverse()
-    for i in range(len(dims[0])):
-        plt.errorbar(Ns, np.flip(dim_est[i]), yerr = np.flip(dim_std[i]),
+    for i in range(len(dims[0])-x):
+        plt.errorbar(Ns, np.flip(dim_est[i+x]), yerr = np.flip(dim_std[i]),
                         fmt = ".", capsize = 4, 
                         label = f"Dimension {dims[0][i]}")
     plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
@@ -167,31 +193,7 @@ for sps in shapes:
 del d, sps, i, rep, cut
 del S, Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
-# %%
-from scipy.optimize import fsolve
-from scipy.special import gamma as spgamma
 
-def MM_drelation(d):
-            a = spgamma(d+1)
-            b = spgamma(d/2)
-            c = 4 * spgamma(3*d/2)
-            return a*b/c
-        
-def MM_to_solve(d, ord_fr):
-    return MM_drelation(d) - ord_fr/2
-
-print("Ordering Fraction -> d")
-print("1.00 -> ",fsolve(MM_to_solve, 2, 1))
-print("0.50 -> ",fsolve(MM_to_solve, 2, 0.5))
-print("0.40 -> ",fsolve(MM_to_solve, 2, 0.40))
-print("0.35 -> ",fsolve(MM_to_solve, 2, 0.35))
-print("0.30 -> ",fsolve(MM_to_solve, 2, 0.3))
-print("0.23 -> ",fsolve(MM_to_solve, 2, 8/35, full_output=1)[0])
-print("0.15 -> ",fsolve(MM_to_solve, 2, 0.15))
-print("0.12 -> ",fsolve(MM_to_solve, 2, 0.12))
-print("0.10 -> ",fsolve(MM_to_solve, 2, 0.1))
-print("0.08 -> ",fsolve(MM_to_solve, 2, 0.08))
-print("0.05 -> ",fsolve(MM_to_solve, 2, 0.05))
 
 # %%
 print(np.nanstd(beforeerror, dtype = np.float64, axis = 0))
