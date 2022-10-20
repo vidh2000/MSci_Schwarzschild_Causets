@@ -370,7 +370,7 @@ class EmbeddedCauset(Causet):
                 
                 if ptime_constr is None:
                     if n >= size_min:
-                        fr_i = self.ord_fr_ab(a,b)
+                        fr_i = self.ord_fr_ab(a,b, den = 'choose')
                         if fr_i == 1:
                             destimates.append(1)
                             isample += 1
@@ -391,7 +391,7 @@ class EmbeddedCauset(Causet):
             
                 elif ptime_constr(self.ptime(a, b)):
                     counts[0] += 1
-                    fr_i = self.ord_fr_ab(a,b)
+                    fr_i = self.ord_fr_ab(a,b, den = 'choose')
                     if fr_i == 1:
                         destimates.append(1)
                         isample += 1

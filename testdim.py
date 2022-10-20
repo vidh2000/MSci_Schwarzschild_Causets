@@ -133,9 +133,9 @@ shapes = [['ball_hollow'    , ballh_ps],
           ['cylinder'       , cyl_ps  ],
           ['cube'           , cub_ps  ] ]
 
-Ns = [512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
-repetitions = 3                                    #repetitions to average
-cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])  #for coarse grain
+Ns = [2048, 1024, 512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
+repetitions = 10                                       #repetitions to average
+cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])      #for coarse grain
 for sps in shapes:
     dim_est = []
     dim_std = []
@@ -179,14 +179,14 @@ for sps in shapes:
     try:
         fig = plt.figure(f"MMFlatDim {sps[0]}")
         #Ns.reverse()
+        plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
+        plt.xlabel("Cardinality")
+        plt.ylabel("Dimension")
         for i in range(len(dims[0])-x):
             ests = dim_est[i]#np.flip(dim_est[i])
             stds = dim_std[i]#np.flip(dim_std[i])
             lbl  = f"Dimension {dims[0][i+x]}"
             plt.errorbar(Ns,ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
-        plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
-        plt.xlabel("Cardinality")
-        plt.ylabel("Dimension")
         plt.legend()
         plt.xscale('log')
         fig.show()
