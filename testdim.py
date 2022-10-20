@@ -107,9 +107,9 @@ shapes = [['ball_hollow'    , ballh_ps],
           ['cylinder'       , cyl_ps  ],
           ['cuboid'         , cub_ps  ] ]
 
-Ns = [512, 384, 256, 192,  128, 64, 32,  24, 16, 8]# cardinalities to test
-repetitions = 10                                   #repetitions to average
-cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:]) #for coarse grain
+Ns = [512, 384, 256, 192,  128, 64, 32,  24, 16, 8] # cardinalities to test
+repetitions = 10 # repetitions to average
+cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:]) # for coarse grain
 for sps in shapes:
     dim_est = []
     dim_std = []
