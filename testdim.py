@@ -166,7 +166,6 @@ for sps in shapes:
                                     size_min = min(50, int(len(C)/4)),
                                     full_output = True)
                 dim_est[i][rep].append(MMd[0]) # add to rth repetition 
-                #dim_std[i][r].append(MMd[1]) # in ith dimension
         
         #Average over repetitions:
         try:
@@ -174,8 +173,8 @@ for sps in shapes:
             dim_est[i] = np.nanmean(dim_est[i], axis = 0)
         except (TypeError, ZeroDivisionError):
             try:
-                dim_std[i] = np.nanstd (np.array(dim_est[i]).astype(np.float64))
-                dim_est[i] = np.nanmean(np.array(dim_est[i]).astype(np.float64))
+                dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64))
+                dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64))
             except (TypeError, ZeroDivisionError):
                 beforeerror = dim_est[i]
                 dim_std[i] = np.nanstd (np.array(dim_est[i], dtype=np.float64),
