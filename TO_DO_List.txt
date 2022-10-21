@@ -5,3 +5,5 @@
 2. Optimise/paralelise "isCausal_____" functions in spacetimes.py.
     Should be able to do more event pairs at the same time.
 3. Any ideas?
+
+lala
