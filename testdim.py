@@ -88,7 +88,7 @@ except ZeroDivisionError:
 """
 del Cm, C, Clist
 
-#%% TEST MM DIM RELATION & OPTIMIZER
+# TEST MM DIM RELATION & OPTIMIZER
 from scipy.optimize import fsolve
 from scipy.special import gamma as spgamma
 
@@ -150,7 +150,7 @@ for sps in shapes:
         d = dims[0][i+x] 
         dim_est.append([])
         dim_std.append([])
-        for rep in range(repetitions):
+        for rep in tqdm(range(repetitions), f"{sps[0]} (dim {d})"):
             dim_est[i].append([])
             dim_std[i].append([])
             
@@ -164,12 +164,13 @@ for sps in shapes:
                 C: SprinkledCauset = SprinkledCauset(card=Ns[0],
                                                 spacetime=FlatSpacetime(d))
             
-            for cut in tqdm(cuts, f"{sps[0]} (dim {d})"):
+            for cut in cuts:
                 if cut != 0:
                     C.coarsegrain(card = cut) #cgrain Ns[i]->Ns[i+1]
                 MMd = C.MMdim_est(Nsamples = 20, 
                                     #ptime_constr=lambda t:t<2.5*r,
                                     size_min = min(10, int(len(C)/4)),
+                                    size_max = 50,
                                     full_output = True)
                 dim_est[i][rep].append(MMd[0]) # add to rth repetition 
         
@@ -179,8 +180,10 @@ for sps in shapes:
             dim_est[i] = np.nanmean(dim_est[i], axis = 0)
         except (TypeError, ZeroDivisionError):
             try:
-                dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64))
-                dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64))
+                dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64),
+                                        axis = 0)
+                dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64),
+                                        axis = 0)
             except (TypeError, ZeroDivisionError):
                 print("SECOND EXCEPT USED")
                 beforeerror = dim_est[i]

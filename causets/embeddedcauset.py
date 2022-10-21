@@ -255,7 +255,7 @@ class EmbeddedCauset(Causet):
         return "This is current a placeholder"
 
     def MMdim_est(self, method = "many", d0 = 2, 
-                Nsamples = 20, size_min = 20,
+                Nsamples = 20, size_min = 10, size_max = np.inf,
                 ptime_constr = None, 
                 optimizer = fsolve,
                 opt_sol_index = 0,
@@ -366,7 +366,7 @@ class EmbeddedCauset(Causet):
             # if linked, ptime respects the constraint, and the
             # size of the interval is big enough, then ->
             n = self.IntervalCard(a,b)
-            if n >= size_min:
+            if n >= size_min and n <= size_max:
                 
                 if ptime_constr is None:
                     if n >= size_min:
