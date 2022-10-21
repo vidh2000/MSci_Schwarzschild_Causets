@@ -8,12 +8,13 @@ Created on 22 Jul 2020
 from __future__ import annotations
 from typing import Set, List, Iterable, Union, Optional
 import numpy as np
+import random as rand
 from numpy.random import default_rng
 from causets.causetevent import CausetEvent  # @UnresolvedImport
 from causets.embeddedcauset import EmbeddedCauset  # @UnresolvedImport
 from causets.shapes import CoordinateShape  # @UnresolvedImport
 from causets.spacetimes import Spacetime  # @UnresolvedImport
-
+from copy import deepcopy
 
 class SprinkledCauset(EmbeddedCauset):
     '''
@@ -46,7 +47,7 @@ class SprinkledCauset(EmbeddedCauset):
             self.sprinkle(card)
         else:
             self.intensify(intensity)
-
+         
     @property
     def Intensity(self) -> float:
         '''
@@ -69,7 +70,7 @@ class SprinkledCauset(EmbeddedCauset):
         if count < 0:
             raise ValueError(
                 'The sprinkle cardinality has to be a non-negative integer.')
-        coords: np.ndarray = np.empty((count, self.Dim), dtype=np.float32)
+        coords: np.ndarray = np.empty((count, self.Dim), dtype=np.float64)
         if shape.Name in ('cube', 'cuboid'):
             # Create rectangle based sprinkle:
             low: np.ndarray
@@ -82,16 +83,18 @@ class SprinkledCauset(EmbeddedCauset):
                 high = shape.Center + shape.Parameter('edge') / 2
             for i in range(count):
                 coords[i, :] = rng.uniform(low, high)
-        elif shape.Name in ('ball', 'cylinder', 'diamond'):
+        elif shape.Name in ('ball', 'cylinder', 'diamond', "bicone"):
             # Create circle based sprinkle:
             isCylindrical: bool = 'cylinder' in shape.Name
-            isDiamond: bool = 'diamond' in shape.Name
+            isDiamond: bool = 'diamond' in shape.Name or "bicone" in shape.Name
+
             d: int = self.Dim
             b_r: float = shape.Parameter('radius')
             if (d == 2) and isDiamond:
+                
                 # pick `count` random coordinate tuples uniformly:
-                uv: np.ndarray = rng.uniform(low=-1.0, high=1.0,
-                                             size=(count, 2))
+                uv: np.ndarray = np.random.uniform(low=-1.0, high=1.0,
+                                                    size=(count, 2))
                 coords[:, 0] = uv[:, 0] + uv[:, 1]
                 coords[:, 1] = uv[:, 0] - uv[:, 1]
                 coords *= b_r / 2
@@ -155,7 +158,7 @@ class SprinkledCauset(EmbeddedCauset):
         count: int = int(rng.poisson(lam=intensity))
         if shape is None:
             shape = self.Shape
-        coords: np.ndarray = self._sprinkle_coords(count, shape, rng)
+        coords = self._sprinkle_coords(count, shape, rng)
         return super().create(coords)
 
     def create(self, coords: Union[Iterable[List[float]],

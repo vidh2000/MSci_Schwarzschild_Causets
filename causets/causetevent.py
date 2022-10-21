@@ -274,6 +274,7 @@ class CausetEvent(object):
     @classmethod
     def isLink(cls, a: 'CausetEvent', b: 'CausetEvent') -> bool:
         '''
+        OPTIMISE
         Tests if event a is linked to event b by intersecting a.Future() with 
         b.Past().
 

@@ -1,0 +1,9 @@
+1. Optimise "isLink" function in causetevent.py
+    Is very slow as set operations are shit.
+    Initial soln: maybe just do a.isFutureLink(b) after sorting a,b by
+    time coordinate? Should be faster as no intersections of sets.
+2. Optimise/paralelise "isCausal_____" functions in spacetimes.py.
+    Should be able to do more event pairs at the same time.
+3. Any ideas?
+
+lala

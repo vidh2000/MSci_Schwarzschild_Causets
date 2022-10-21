@@ -6,6 +6,7 @@ Created on 13 Oct 2022
 """
 #%%
 from __future__ import annotations
+from asyncio.windows_events import CONNECT_PIPE_INIT_DELAY
 from typing import List, Tuple 
 
 from causets.causetevent import CausetEvent
@@ -13,11 +14,17 @@ from causets.causet import Causet
 from causets.sprinkledcauset import SprinkledCauset
 from causets.shapes import CoordinateShape
 import causets.causetplotting as cplt
+from functions import *
 
 import numpy as np
 import random
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+
+
+import warnings
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
+
 
 
 #%% CHECK THAT INTERVAL AND ORDRING FRACTION WORK CORRECTLY
@@ -56,7 +63,6 @@ Cm = np.array([[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 C = Causet().FromCausalMatrix(Cm)
 print("\nChain Link Matrix\n", C.LMatrix())
 Clist = C.nlist(method="label")
-#print("Clist:\n",Clist)
 
 A = C.Interval(Clist[3], Clist[8], disjoin = True)
 print(f"Cardinality is {len(A)}")
@@ -122,6 +128,7 @@ dims = [  [1,2,3,4],                [2,3,4],
            [2,3,4],                    [2]      ]
 r = 2
 dur = 1
+##%%% Shapes to be used
 ballh_ps = {'name': 'ball',     'radius': r, 'hollow':0.99} 
 ball_ps  = {'name': 'ball',     'radius': r, 'hollow':0}
 cylh_ps  = {'name': 'cylinder', 'radius': r, 'hollow':0.99, 'duration':dur} 
@@ -129,9 +136,10 @@ cyl_ps   = {'name': 'cylinder', 'radius': r, 'hollow':0,    'duration':dur}
 cub_ps   = {'name': 'cube'    , 'edge'  : r} 
 diamh_ps = {'name': 'diamond',  'radius': r, 'hollow':0.99} 
 diam_ps  = {'name': 'diamond',  'radius': r, 'hollow':0}
+##%%% Code running
 shapes = [
         # ['ball_hollow'    , ballh_ps ],
-          ['ball'           , ball_ps  ],
+         # ['ball'           , ball_ps  ],
         # ['cylinder_hollow',cylh_ps   ],
           ['cylinder'       , cyl_ps   ],
           ['cube'           , cub_ps   ],
@@ -150,7 +158,7 @@ for sps in shapes:
         d = dims[0][i+x] 
         dim_est.append([])
         dim_std.append([])
-        for rep in tqdm(range(repetitions), f"{sps[0]} (dim {d})"):
+        for rep in range(repetitions):
             dim_est[i].append([])
             dim_std[i].append([])
             
@@ -164,13 +172,12 @@ for sps in shapes:
                 C: SprinkledCauset = SprinkledCauset(card=Ns[0],
                                                 spacetime=FlatSpacetime(d))
             
-            for cut in cuts:
+            for cut in tqdm(cuts, f"{sps[0]} (dim {d})"):
                 if cut != 0:
                     C.coarsegrain(card = cut) #cgrain Ns[i]->Ns[i+1]
                 MMd = C.MMdim_est(Nsamples = 20, 
                                     #ptime_constr=lambda t:t<2.5*r,
                                     size_min = min(10, int(len(C)/4)),
-                                    size_max = 50,
                                     full_output = True)
                 dim_est[i][rep].append(MMd[0]) # add to rth repetition 
         
@@ -180,10 +187,8 @@ for sps in shapes:
             dim_est[i] = np.nanmean(dim_est[i], axis = 0)
         except (TypeError, ZeroDivisionError):
             try:
-                dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64),
-                                        axis = 0)
-                dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64),
-                                        axis = 0)
+                dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64))
+                dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64))
             except (TypeError, ZeroDivisionError):
                 print("SECOND EXCEPT USED")
                 beforeerror = dim_est[i]
@@ -198,15 +203,15 @@ for sps in shapes:
         plt.xlabel("Cardinality")
         plt.ylabel("Dimension")
         for i in range(len(dims[0])-x):
-            ests = dim_est[i]#np.flip(dim_est[i])
-            stds = dim_std[i]#np.flip(dim_std[i])
+            ests = dim_est[i]
+            stds = dim_std[i]
             lbl  = f"Dimension {dims[0][i+x]}"
-            plt.errorbar(Ns,ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+            plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
         plt.legend()
         plt.xscale('log')
+        plttitle = "figures/"+figtitle+".pdf"
+        fig.savefig(plttitle)
         fig.show()
-    except TypeError:
-        continue
 
 del d, sps, i, rep, cut
 del S, Ns, cuts, repetitions
@@ -214,5 +219,5 @@ del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
 del ests, stds, lbl, fig
 
 
-# %%
-print(np.nanstd(beforeerror, dtype = np.float64, axis = 0))
+
+
