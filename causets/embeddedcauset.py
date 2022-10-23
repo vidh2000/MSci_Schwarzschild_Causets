@@ -254,8 +254,8 @@ class EmbeddedCauset(Causet):
             pass
         return "This is current a placeholder"
 
-    def MMdim_est(self, method = "many", d0 = 2, 
-                Nsamples = 20, size_min = 20,
+    def MMdim_est(self, method = "random", d0 = 2, 
+                Nsamples = 20, size_min = 10, size_max = np.Inf,
                 ptime_constr = None, 
                 optimizer = fsolve,
                 opt_sol_index = 0,
@@ -268,8 +268,8 @@ class EmbeddedCauset(Causet):
         Parameters:
         --------------------------
         - method: str \n
-            - 'many': randomly sample.
-            - '1big': take all events with no past, all with no future
+            - 'random': randomly sample.
+            - 'big': take all events with no past, all with no future
             and apply estimator ro their combinations.
 
         - d0: float \n
@@ -277,12 +277,16 @@ class EmbeddedCauset(Causet):
             Default is 2.
 
         - Nsamples: int \n
-            Number of times to iterate procedure to average on.\
+            Times to iterate procedure to then average on if method "random".\
             Default is 20.
 
         - size_min: int\n
             Minimum size of Alexandrov Sets on which you apply estimators.\n
             Default is 20 elements.
+        
+        - size_max: int\n
+            Maximum size of Alexandrov Sets on which you apply estimators.\n
+            Default and highly recommended is np.Inf.
 
         - ptime_constr: callable(ptime) -> Bool
             A callable setting a constraint on the proper time between
@@ -325,7 +329,7 @@ class EmbeddedCauset(Causet):
 
         if not isinstance(self._spacetime, spacetimes.FlatSpacetime):
             print("NOTE for MM Estimator: this is currently working\
-                as if the spacetime was flat.")
+as if the spacetime was flat.")
            
         def MM_drelation(d):
             a = sp.special.gamma(d+1)
@@ -338,38 +342,40 @@ class EmbeddedCauset(Causet):
 
         N = len(self)
         destimates = []
-        isample = 0
-        counts = [0,0] #times it worked vs times it did not
-        while isample < Nsamples:
-            
-            if counts[1]>=1e3 and counts[0]==0:
-                print("""The algorithm never found a suitable
-                Alexandrov Interval, whereas it found 1000 unsuitable.
-                You picked a too small causet. Returning [NaN, NaN]\n""")
-                return np.nan, np.nan
-            
-            # pick two random elements
-            e1, e2 = random.sample(self._events, k = 2)
-            if e1 == e2:
-                counts[1] += 1
-                continue
-            elif e1 < e2:
-                a = e1
-                b = e2
-            elif e1 > e2:
-                a = e2
-                b = e1
-            else:
-                counts[1] += 1
-                continue
-  
-            # if linked, ptime respects the constraint, and the
-            # size of the interval is big enough, then ->
-            n = self.IntervalCard(a,b)
-            if n >= size_min:
+
+        if method == "random":
+            isample = 0
+            fails = 0
+            successes = 0
+
+            while isample < Nsamples:
                 
-                if ptime_constr is None:
-                    if n >= size_min:
+                if fails>=1e3 and successes==0:
+                    print("The algorithm never found a suitable\
+Alexandrov Interval, whereas it found 1000 unsuitable.\
+You picked a too small causet. Returning [NaN, NaN]\n")
+                    return np.nan, np.nan
+                
+                # pick two random elements
+                e1, e2 = random.sample(self._events, k = 2)
+                if e1 == e2:
+                    fails += 1
+                    continue
+                elif e1 < e2:
+                    a = e1
+                    b = e2
+                elif e1 > e2:
+                    a = e2
+                    b = e1
+                else:
+                    fails += 1
+                    continue
+    
+                n = self.IntervalCard(a,b)
+                if n >= size_min and n <= size_max:
+                    
+                    if ptime_constr is None:
+                        successes += 1
                         fr_i = self.ord_fr_ab(a,b, den = 'choose')
                         if fr_i == 1:
                             destimates.append(1)
@@ -379,39 +385,92 @@ class EmbeddedCauset(Causet):
                             sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
                             if not (opt_flag_index is None):
                                 if sol_i[opt_flag_index] == 1: 
-                                    d_i= sol_i[opt_sol_index]
+                                    d_i= sol_i[opt_sol_index][0]
                                     destimates.append(d_i)
                                     isample += 1
                                 else:
                                     continue
                             else:
-                                d_i = sol_i[opt_sol_index]
+                                d_i = sol_i[opt_sol_index][0]
                                 destimates.append(d_i)
                                 isample += 1
-            
-                elif ptime_constr(self.ptime(a, b)):
-                    counts[0] += 1
-                    fr_i = self.ord_fr_ab(a,b, den = 'choose')
-                    if fr_i == 1:
-                        destimates.append(1)
-                        isample += 1
-                    else:
-                        fr_i *= (n-1)/n #correction for MMestimator
-                        sol_i = optimizer(MM_to_solve, d0, fr_i, **optkwargs)
-                        if not (opt_flag_index is None):
-                            if sol_i[opt_flag_index] == 1: 
-                                d_i= sol_i[opt_sol_index]
-                                destimates.append(d_i)
-                                isample += 1
-                            else:
-                                continue
-                        else:
-                            d_i= sol_i[opt_sol_index]
-                            destimates.append(d_i)
+                
+                    elif ptime_constr(self.ptime(a, b)):
+                        sucesses += 1
+                        fr_i = self.ord_fr_ab(a,b, den = 'choose')
+                        if fr_i == 1:
+                            destimates.append(1)
                             isample += 1
-            else:
-                counts[1] += 1
-                continue
+                        else:
+                            fr_i *= (n-1)/n #correction for MMestimator
+                            sol_i = optimizer(MM_to_solve, d0, fr_i, **optkwargs)
+                            if not (opt_flag_index is None):
+                                if sol_i[opt_flag_index] == 1: 
+                                    d_i= sol_i[opt_sol_index][0]
+                                    destimates.append(d_i)
+                                    isample += 1
+                                else:
+                                    continue
+                            else:
+                                d_i= sol_i[opt_sol_index][0]
+                                destimates.append(d_i)
+                                isample += 1
+                else:
+                    fails += 1
+                    continue
+        
+        elif method == "big":
+            As = []
+            Bs = []
+            for e in self._events:
+                if e.PastCard == 0:
+                    As.append(e)
+                elif e.FutureCard == 0:
+                    Bs.append(e)
+            
+            for i, a in enumerate(As):
+                for j, b in enumerate (Bs):
+                    
+                    n = self.IntervalCard(a,b)
+                    if n >= size_min and n <= size_max:
+                        
+                        if ptime_constr is None:
+                            fr_i = self.ord_fr_ab(a,b, den = 'choose')
+                            if fr_i == 1:
+                                destimates.append(1)
+                            else:
+                                fr_i *= (n-1)/n #correction for MMestimator
+                                sol_i = optimizer(MM_to_solve, d0, fr_i,
+                                                  **optkwargs)
+                                if not (opt_flag_index is None):
+                                    if sol_i[opt_flag_index] == 1: 
+                                        d_i= sol_i[opt_sol_index][0]
+                                        destimates.append(d_i)
+                                    else:
+                                        continue
+                                else:
+                                    d_i = sol_i[opt_sol_index][0]
+                                    destimates.append(d_i)
+                    
+                        elif ptime_constr(self.ptime(a, b)):
+                            fr_i = self.ord_fr_ab(a,b, den = 'choose')
+                            if fr_i == 1:
+                                destimates.append(1)
+                            else:
+                                fr_i *= (n-1)/n #correction for MMestimator
+                                sol_i = optimizer(MM_to_solve, d0, fr_i,
+                                                 **optkwargs)
+                                if not (opt_flag_index is None):
+                                    if sol_i[opt_flag_index] == 1: 
+                                        d_i= sol_i[opt_sol_index][0]
+                                        destimates.append(d_i)
+                                    else:
+                                        continue
+                                else:
+                                    d_i= sol_i[opt_sol_index][0]
+                                    destimates.append(d_i)
+                    else:
+                        continue
 
         return np.mean(destimates), np.std(destimates)
 

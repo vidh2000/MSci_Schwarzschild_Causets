@@ -94,7 +94,7 @@ except ZeroDivisionError:
 """
 del Cm, C, Clist
 
-#%% TEST MM DIM RELATION & OPTIMIZER
+# TEST MM DIM RELATION & OPTIMIZER
 from scipy.optimize import fsolve
 from scipy.special import gamma as spgamma
 
@@ -147,64 +147,59 @@ shapes = [
           ['diamond'        , diam_ps  ]
          ]
 
-# Define
-# cardinalities to test, repetitions to average, cuts for coarse graining
-Ns = [2048,1024,512, 384, 256, 128]
-repetitions = 10
-cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
-
-
-# For profiling the code
-PROFILE = False
-def C_initialise():
-    C = SprinkledCauset(card=Ns[0],spacetime=FlatSpacetime(d), shape=S)
-    return C
-
-print(f"\nEstimating MMd for {np.array(shapes)[:,0]}, N0={Ns[0]}:")
-print(f"-{repetitions} repeats of {len(cuts)} coarse-grained causets")
-
-if __name__ == '__main__':
-    for sps in shapes:
-        dim_est = []
-        dim_std = []
-        x = 1 #skip d = 1, ..., x
-        for i in range(len(dims[0])-x):
-            d = dims[0][i+x] 
-            dim_est.append([])
-            dim_std.append([])
-            for rep in tqdm(range(repetitions),f"{sps[0]} D={d}"):
-                dim_est[i].append([])
-                dim_std[i].append([])
-                
-                S: CoordinateShape = CoordinateShape(d, **sps[1])
-                try:
-                    if PROFILE:
-                        C = profiler(C_initialise)
-                    else:
-                        C = C_initialise()
-
-                except ZeroDivisionError:
-                    print(f"At dimension {d} did NOT use {sps[0]}")
-                    C: SprinkledCauset = SprinkledCauset(card=Ns[0],
-                                                    spacetime=FlatSpacetime(d))
-                
-                for cut in cuts:
-                    if cut != 0:
-                        C.coarsegrain(card = cut) #cgrain Ns[i]->Ns[i+1]
-                    MMd = C.MMdim_est(Nsamples = 20, 
-                                        #ptime_constr=lambda t:t<2.5*r,
-                                        size_min = min(10, int(len(C)/4)),
-                                        full_output = True)
-                    dim_est[i][rep].append(MMd[0]) # add to rth repetition 
+Ns = [2048, 1024, 512, 384, 256, 192,  128, 64, 32, 16]# cardinalities to test
+repetitions = 10                                       #repetitions to average
+cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])      #for coarse graining
+for sps in shapes:
+    dim_est = []
+    dim_std = []
+    x = 1 #skip d = 1, ..., x
+    for i in range(len(dims[0])-x):
+        d = dims[0][i+x] 
+        dim_est.append([])
+        dim_std.append([])
+        for rep in range(repetitions):
+            dim_est[i].append([])
+            dim_std[i].append([])
             
-            #Average over repetitions
-            #print(f"dim_est:\n{dim_est}")
-            dim_std[i] = np.nanstd (dim_est[i], axis = 0,dtype=np.float64)
-            dim_est[i] = np.nanmean(dim_est[i], axis = 0,dtype=np.float64)
+            S: CoordinateShape = CoordinateShape(d, **sps[1])
+            try:
+                C: SprinkledCauset = SprinkledCauset(card=Ns[0],
+                                                spacetime=FlatSpacetime(d), 
+                                                shape=S)
+            except ZeroDivisionError:
+                print(f"At dimension {d} did NOT use {sps[0]}")
+                C: SprinkledCauset = SprinkledCauset(card=Ns[0],
+                                                spacetime=FlatSpacetime(d))
             
-        figtitle = f"MMFlatDim {sps[0]}"
-        fig = plt.figure(figtitle)
-        plt.title(f"Myrheim-Mayers in {sps[0]}; Minkowski spacetime")
+            for cut in tqdm(cuts, f"{sps[0]} (dim {d})"):
+                if cut != 0:
+                    C.coarsegrain(card = cut) #cgrain Ns[i]->Ns[i+1]
+                MMd = C.MMdim_est(Nsamples = 20, 
+                                    #ptime_constr=lambda t:t<2.5*r,
+                                    size_min = min(10, int(len(C)/4)),
+                                    full_output = True)
+                dim_est[i][rep].append(MMd[0]) # add to rth repetition 
+        
+        #Average over repetitions:
+        try:
+            dim_std[i] = np.nanstd (dim_est[i], axis = 0)
+            dim_est[i] = np.nanmean(dim_est[i], axis = 0)
+        except (TypeError, ZeroDivisionError):
+            try:
+                dim_std[i]= np.nanstd (np.array(dim_est[i]).astype(np.float64))
+                dim_est[i]= np.nanmean(np.array(dim_est[i]).astype(np.float64))
+            except (TypeError, ZeroDivisionError):
+                print("SECOND EXCEPT USED")
+                beforeerror = dim_est[i]
+                dim_std[i] = np.nanstd (np.array(dim_est[i], dtype=np.float64),
+                                        axis = 0)
+                dim_est[i] = np.nanmean(np.array(dim_est[i], dtype=np.float64),
+                                        axis = 0)
+    try:
+        fig = plt.figure(f"MMFlatDim {sps[0]}")
+        #Ns.reverse()
+        plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
         plt.xlabel("Cardinality")
         plt.ylabel("Dimension")
         for i in range(len(dims[0])-x):
