@@ -230,8 +230,10 @@ if __name__ == '__main__':
         for i in range(len(dims[0])-nskip):
             ests = rdim_est[i]
             stds = rdim_std[i]
+            finmask = np.isfinite(ests)
             lbl  = f"Dimension {dims[0][i+nskip]}"
-            plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+            plt.errorbar(np.array(Ns)[finmask], ests[finmask], 
+                        yerr=stds[finmask], fmt=".", capsize = 4, label = lbl)
         plt.legend()
         plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
         plt.xscale('log')
@@ -244,17 +246,19 @@ if __name__ == '__main__':
         plt.xlabel("Cardinality")
         plt.ylabel("Dimension")
         for i in range(len(dims[0])-nskip):
-            ests = rdim_est[i]
-            stds = rdim_std[i]
+            ests = bdim_est[i]
+            stds = bdim_std[i]
+            finmask = np.isfinite(ests)
             lbl  = f"Dimension {dims[0][i+nskip]}"
-            plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+            plt.errorbar(np.array(Ns)[finmask], ests[finmask], 
+                        yerr=stds[finmask], fmt=".", capsize = 4, label = lbl)
         plt.legend()
         plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
         plt.xscale('log')
         #plt.ylim((0.99, 4.5))
         plt.show()
 
-del d, sps, i, rep, cut
+del d, sps, i, rep, cut, nskip
 del Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
 del ests, stds, lbl, fig
@@ -266,8 +270,10 @@ plt.ylabel("Dimension")
 for i in range(len(dims[0])-nskip):
     ests = rdim_est[i]
     stds = rdim_std[i]
+    finmask = np.isfinite(ests)
     lbl  = f"Dimension {dims[0][i+nskip]}"
-    plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+    plt.errorbar(np.array(Ns)[finmask], ests[finmask], yerr=stds[finmask], 
+                 fmt=".", capsize = 4, label = lbl)
 plt.legend()
 plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
 plt.xscale('log')
@@ -279,14 +285,16 @@ fig = plt.figure(f"MMFlatDim ('big') {sps[0]}")
 plt.title(f"Myrheim-Mayers ('big') in {sps[0]} Minkowski")
 plt.xlabel("Cardinality")
 plt.ylabel("Dimension")
-for i in range(len(dims[0])-nskip):
-    ests = rdim_est[i]
-    stds = rdim_std[i]
-    lbl  = f"Dimension {dims[0][i+nskip]}"
-    plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
-plt.legend()
 plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
 plt.xscale('log')
+for i in range(len(dims[0])-nskip):
+    ests = bdim_est[i]
+    stds = bdim_std[i]
+    finmask = np.isfinite(ests)
+    lbl  = f"Dimension {dims[0][i+nskip]}"
+    plt.errorbar(np.array(Ns)[finmask], ests[finmask], yerr=stds[finmask], 
+                 fmt=".", capsize = 4, label = lbl)
+plt.legend()
 #plt.ylim((0.99, 4.5))
 plt.show()
 # %%
