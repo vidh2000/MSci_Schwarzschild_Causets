@@ -129,11 +129,7 @@ print("\n=========================================================")
 print("CHECK MMdim_est IN FLAT SPACETIME")
 print("=========================================================\n")
 # For profiling the code
-PROFILE = False
-def C_initialise(**kwargs):
-    C = SprinkledCauset(**kwargs)
-    #C = SprinkledCauset(card=Ns[0],spacetime=FlatSpacetime(d), shape=S)
-    return C
+PROFILE = True
 
 from causets.spacetimes import *
 st   = [    FlatSpacetime   , deSitterSpacetime, 
@@ -189,7 +185,7 @@ if __name__ == '__main__':
                           "shape"     : CoordinateShape(d, **sps[1])}
                 try:
                     if PROFILE:
-                        C = profiler(C_initialise, **kwargs)
+                        C = profiler(SprinkledCauset, **kwargs)
                     else:
                         C = SprinkledCauset(**kwargs)
 
@@ -230,3 +226,4 @@ del d, sps, i, rep, cut
 del Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
 del ests, stds, lbl, fig
+# %%
