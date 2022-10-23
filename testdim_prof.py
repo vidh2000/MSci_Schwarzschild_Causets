@@ -126,17 +126,17 @@ print("     0.05 -> ",fsolve(MM_to_solve, 2, 0.05)[0])
 
 #%% 3. CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
 print("\n=========================================================")
-print("CHECK MMdim_est IN FLAT SPACETIME")
+print("CHECK MMrdim_est IN FLAT SPACETIME")
 print("=========================================================\n")
 # For profiling the code
-PROFILE = True
+PROFILE = False
 
 from causets.spacetimes import *
 st   = [    FlatSpacetime   , deSitterSpacetime, 
        AntideSitterSpacetime, BlackHoleSpacetime]
 dims = [  [1,2,3,4],                [2,3,4],            
            [2,3,4],                    [2]      ]
-r = 2
+r = 10
 dur = 1
 ##%%% Shapes to be used
 ballh_ps = {'name': 'ball',     'radius': r, 'hollow':0.99} 
@@ -159,7 +159,7 @@ shapes = [
 
 # Define
 # cardinalities to test, repetitions to average, cuts for coarse graining
-Ns = [2048, 1024, 512, 256, 128, 64, 32, 16]
+Ns = [4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 
@@ -169,16 +169,17 @@ print(f"-{repetitions} repeats of {len(cuts)} times coarse-grained causets")
 if __name__ == '__main__':
  
     for sps in shapes:
-        dim_est = []
-        dim_std = []
-        x = 1 #skip d = 1, ..., x
-        for i in range(len(dims[0])-x):
-            d = dims[0][i+x] 
-            dim_est.append([])
-            dim_std.append([])
+        # To collect estimates and stds from methods "random" and "big"
+        rdim_est = []; bdim_est = [] 
+        rdim_std = []; bdim_std = []
+        nskip = 1 #skip d = 1, ..., nskip
+        for i in range(len(dims[0])-nskip):
+            d = dims[0][i+nskip] 
+            rdim_est.append([]); bdim_est.append([])
+            rdim_std.append([]); bdim_std.append([])
             for rep in tqdm(range(repetitions),f"{sps[0]} D={d}"):
-                dim_est[i].append([])
-                dim_std[i].append([])
+                rdim_est[i].append([]); bdim_est[i].append([])
+                rdim_std[i].append([]); bdim_std[i].append([])
                 
                 kwargs = {"card"      : Ns[0],
                           "spacetime" : FlatSpacetime(d),
@@ -198,32 +199,94 @@ if __name__ == '__main__':
                     if cut != 0:
                         C.coarsegrain(card = cut) #cgrain Ns[i] -> Ns[i+1]
                     MMd = C.MMdim_est(Nsamples = 20, 
+                                        method = "random",
                                         #ptime_constr=lambda t:t<2.5*r,
-                                        size_min = min(10, int(len(C)/4)),
+                                        size_min = min(1000, int(len(C)/2)),
+                                        #size_max = 50,
                                         full_output = True)
-                    dim_est[i][rep].append(MMd[0]) # add to rth repetition 
+                    rdim_est[i][rep].append(MMd[0]) # add to rth repetition
+                    MMd = C.MMdim_est(Nsamples = 20, 
+                                        method = "big",
+                                        #ptime_constr=lambda t:t<2.5*r,
+                                        size_min = min(1000, int(len(C)/2)),
+                                        #size_max = 50,
+                                        full_output = True)
+                    bdim_est[i][rep].append(MMd[0]) # add to rth repetition 
             
             #Average over repetitions
-            #print(f"dim_est:\n{dim_est}")
-            dim_std[i] = np.nanstd (dim_est[i], axis = 0,dtype=np.float64)
-            dim_est[i] = np.nanmean(dim_est[i], axis = 0,dtype=np.float64)
-            
+            #print(f"rdim_est:\n{rdim_est}")
+            rdim_std[i] = np.nanstd (rdim_est[i], axis = 0,dtype=np.float64)
+            rdim_est[i] = np.nanmean(rdim_est[i], axis = 0,dtype=np.float64)
+            bdim_std[i] = np.nanstd (bdim_est[i], axis = 0,dtype=np.float64)
+            bdim_est[i] = np.nanmean(bdim_est[i], axis = 0,dtype=np.float64)
 
-        fig = plt.figure(f"MMFlatDim {sps[0]}")
-        plt.title(f"Myrheim-Mayers in {sps[0]} Minkowski")
+        #PLOT
+          
+        # Plot the random case
+        fig = plt.figure(f"MMFlatDim ('random') {sps[0]}")
+        plt.title(f"Myrheim-Mayers ('random') in {sps[0]} Minkowski")
         plt.xlabel("Cardinality")
         plt.ylabel("Dimension")
-        for i in range(len(dims[0])-x):
-            ests = dim_est[i]
-            stds = dim_std[i]
-            lbl  = f"Dimension {dims[0][i+x]}"
+        for i in range(len(dims[0])-nskip):
+            ests = rdim_est[i]
+            stds = rdim_std[i]
+            lbl  = f"Dimension {dims[0][i+nskip]}"
             plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
         plt.legend()
+        plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
         plt.xscale('log')
+        #plt.ylim((0.99, 4.5))
+        plt.show()
+
+        # Plot the big case
+        fig = plt.figure(f"MMFlatDim ('big') {sps[0]}")
+        plt.title(f"Myrheim-Mayers ('big') in {sps[0]} Minkowski")
+        plt.xlabel("Cardinality")
+        plt.ylabel("Dimension")
+        for i in range(len(dims[0])-nskip):
+            ests = rdim_est[i]
+            stds = rdim_std[i]
+            lbl  = f"Dimension {dims[0][i+nskip]}"
+            plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+        plt.legend()
+        plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
+        plt.xscale('log')
+        #plt.ylim((0.99, 4.5))
         plt.show()
 
 del d, sps, i, rep, cut
 del Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
 del ests, stds, lbl, fig
+# %%
+fig = plt.figure(f"MMFlatDim ('random') {sps[0]}")
+plt.title(f"Myrheim-Mayers ('random') in {sps[0]} Minkowski")
+plt.xlabel("Cardinality")
+plt.ylabel("Dimension")
+for i in range(len(dims[0])-nskip):
+    ests = rdim_est[i]
+    stds = rdim_std[i]
+    lbl  = f"Dimension {dims[0][i+nskip]}"
+    plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+plt.legend()
+plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
+plt.xscale('log')
+#plt.ylim((0.99, 4.5))
+plt.show()
+
+# Plot the big case
+fig = plt.figure(f"MMFlatDim ('big') {sps[0]}")
+plt.title(f"Myrheim-Mayers ('big') in {sps[0]} Minkowski")
+plt.xlabel("Cardinality")
+plt.ylabel("Dimension")
+for i in range(len(dims[0])-nskip):
+    ests = rdim_est[i]
+    stds = rdim_std[i]
+    lbl  = f"Dimension {dims[0][i+nskip]}"
+    plt.errorbar(Ns, ests, yerr=stds, fmt=".", capsize = 4, label = lbl)
+plt.legend()
+plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
+plt.xscale('log')
+#plt.ylim((0.99, 4.5))
+plt.show()
 # %%
