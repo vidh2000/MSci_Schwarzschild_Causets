@@ -21,7 +21,11 @@ TO DO
     Should only have relations upwards into the circle.
     Then onto the 3+1D e.g. identically as to what they do
     in the He,Rideout 2009 paper.
-
+2.  a) Define algo/code to be able to count links over the horizon
+        (test in 1+1 Schwarzschild and simpler spacetimes) 
+    b) Update to include higher-order links for 3+1D spacetimes
+3.  C++ code to speed things up.
+    Parallel procesing.
 
 
 USEFUL CODING INFORMATION
