@@ -255,7 +255,7 @@ class EmbeddedCauset(Causet):
         return "This is current a placeholder"
 
     def MMdim_est(self, method = "many", d0 = 2, 
-                Nsamples = 20, size_min = 10, size_max = np.inf,
+                Nsamples = 20, size_min = 10, size_max = np.Inf,
                 ptime_constr = None, 
                 optimizer = fsolve,
                 opt_sol_index = 0,
@@ -283,6 +283,10 @@ class EmbeddedCauset(Causet):
         - size_min: int\n
             Minimum size of Alexandrov Sets on which you apply estimators.\n
             Default is 20 elements.
+        
+        - size_max: int\n
+            Maximum size of Alexandrov Sets on which you apply estimators.\n
+            Default is np.Inf elements.
 
         - ptime_constr: callable(ptime) -> Bool
             A callable setting a constraint on the proper time between
@@ -339,19 +343,20 @@ class EmbeddedCauset(Causet):
         N = len(self)
         destimates = []
         isample = 0
-        counts = [0,0] #times it worked vs times it did not
+        fails = 0
+        successes = 0
         while isample < Nsamples:
             
-            if counts[1]>=1e3 and counts[0]==0:
-                print("""The algorithm never found a suitable
-                Alexandrov Interval, whereas it found 1000 unsuitable.
-                You picked a too small causet. Returning [NaN, NaN]\n""")
+            if fails>=1e3 and successes==0:
+                print("The algorithm never found a suitable\
+Alexandrov Interval, whereas it found 1000 unsuitable.\
+You picked a too small causet. Returning [NaN, NaN]\n")
                 return np.nan, np.nan
             
             # pick two random elements
             e1, e2 = random.sample(self._events, k = 2)
             if e1 == e2:
-                counts[1] += 1
+                fails += 1
                 continue
             elif e1 < e2:
                 a = e1
@@ -360,7 +365,7 @@ class EmbeddedCauset(Causet):
                 a = e2
                 b = e1
             else:
-                counts[1] += 1
+                fails += 1
                 continue
   
             # if linked, ptime respects the constraint, and the
@@ -369,28 +374,28 @@ class EmbeddedCauset(Causet):
             if n >= size_min and n <= size_max:
                 
                 if ptime_constr is None:
-                    if n >= size_min:
-                        fr_i = self.ord_fr_ab(a,b, den = 'choose')
-                        if fr_i == 1:
-                            destimates.append(1)
-                            isample += 1
-                        else:
-                            fr_i *= (n-1)/n #correction for MMestimator
-                            sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
-                            if not (opt_flag_index is None):
-                                if sol_i[opt_flag_index] == 1: 
-                                    d_i= sol_i[opt_sol_index]
-                                    destimates.append(d_i)
-                                    isample += 1
-                                else:
-                                    continue
-                            else:
-                                d_i = sol_i[opt_sol_index]
+                    successes += 1
+                    fr_i = self.ord_fr_ab(a,b, den = 'choose')
+                    if fr_i == 1:
+                        destimates.append(1)
+                        isample += 1
+                    else:
+                        fr_i *= (n-1)/n #correction for MMestimator
+                        sol_i = optimizer(MM_to_solve, d0, fr_i,**optkwargs)
+                        if not (opt_flag_index is None):
+                            if sol_i[opt_flag_index] == 1: 
+                                d_i= sol_i[opt_sol_index][0]
                                 destimates.append(d_i)
                                 isample += 1
+                            else:
+                                continue
+                        else:
+                            d_i = sol_i[opt_sol_index][0]
+                            destimates.append(d_i)
+                            isample += 1
             
                 elif ptime_constr(self.ptime(a, b)):
-                    counts[0] += 1
+                    sucesses += 1
                     fr_i = self.ord_fr_ab(a,b, den = 'choose')
                     if fr_i == 1:
                         destimates.append(1)
@@ -400,17 +405,17 @@ class EmbeddedCauset(Causet):
                         sol_i = optimizer(MM_to_solve, d0, fr_i, **optkwargs)
                         if not (opt_flag_index is None):
                             if sol_i[opt_flag_index] == 1: 
-                                d_i= sol_i[opt_sol_index]
+                                d_i= sol_i[opt_sol_index][0]
                                 destimates.append(d_i)
                                 isample += 1
                             else:
                                 continue
                         else:
-                            d_i= sol_i[opt_sol_index]
+                            d_i= sol_i[opt_sol_index][0]
                             destimates.append(d_i)
                             isample += 1
             else:
-                counts[1] += 1
+                fails += 1
                 continue
 
         return np.mean(destimates), np.std(destimates)
