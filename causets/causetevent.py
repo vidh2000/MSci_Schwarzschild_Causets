@@ -41,11 +41,11 @@ class CausetEvent(object):
         label: str
             Label for the event (does not need to be unique in a causet)
         past: Iterable[CausetEvent]
-            Set of past events (that may or may not be linked). This instance 
-            will automatically be added to their future.
+            Set of past events (that may or may not be linked).
+            This instance will automatically be added to their future.
         future: Iterable[CausetEvent]
-            Set of future events (that may or may not be linked). This instance 
-            will automatically be added to their past.
+            Set of future events (that may or may not be linked).
+            This instance will automatically be added to their past.
         coordinates: Iterable[float]
             Coordinates if the event shall be considered as embedded in a 
             spacetime region.

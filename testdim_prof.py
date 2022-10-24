@@ -285,7 +285,7 @@ fig = plt.figure(f"MMFlatDim ('big') {sps[0]}")
 plt.title(f"Myrheim-Mayers ('big') in {sps[0]} Minkowski")
 plt.xlabel("Cardinality")
 plt.ylabel("Dimension")
-plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
+plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r") 
 plt.xscale('log')
 for i in range(len(dims[0])-nskip):
     ests = bdim_est[i]

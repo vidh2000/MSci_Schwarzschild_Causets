@@ -27,6 +27,15 @@ TO DO
 3.  C++ code to speed things up.
     Parallel procesing.
 
+CPP TO DO:
+1. How do  
+    @staticmethod, @property, @classmethod
+    link to cpp static methods etc etc?
+    Or should I just do a public method/function etc?
+    25.10 FINISHED at line 330 on causetevent.py, defining
+    functions/methods and attributes needed to be translated to cpp.
+    
+
 
 USEFUL CODING INFORMATION
 Rideout and He 2009;
