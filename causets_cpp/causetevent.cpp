@@ -32,31 +32,60 @@ class CausetEvent
         std::string Label;
 
         // Public methods
+
+        //ACTIVE FUNCTIONALITIES
         void disjoin;
         void link;
         void unlink;
         // CausetEvent copy;
         // double Rank;
-        bool hasBeenLinked;
-        
-            //Class methods =  static??
-            bool isLink;
 
+        // RELATIONAL BOOLEANS 
+        bool hasBeenLinked;
+        static bool isLink; //@classmethod
         bool isPastLink;
         bool isFutureLink;
         bool isCausalTo;
         bool isLinkedTo;
         bool isSpacelikeTo;
-        
 
+        // PAST, FUTURE and SPACELIKE
+        static int LinkCountOf; //@staticmethod
+        static std::set<CausetEvent> Past; //@property
+        static std::set<CausetEvent> Future; //@property
+        static std::set<CausetEvent> Cone; //@property
+        static std::set<CausetEvent> PresentOrPast; //@property
+        static std::set<CausetEvent> PresentOrFuture; //@property
+        std::set<CausetEvent> Spacelike;
+        static int PastCard; //@property
+        static int FutureCard; //@property
+        static int ConeCard; //@property
+        int SpacelikeCard;
+        static std::set<CausetEvent> LinkPast; //@property
+        static std::set<CausetEvent> LinkFuture; //@property
+        static std::set<CausetEvent> LinkCone; //@property
+        static int LinkPastCard; //@property
+        static int LinkFutureCard; //@property
+        static int LinkConeCard; //@property
 
+        // EMBEDDING FUNCTIONALITIES
+        void embed;
+        void disembed;
+        static std::vector<double> Position; //@property
+        void Position //@Poisition.setter
+        static bool isEmbedded; //@property
+        static std::vector<double> Coordinates; //@property
+        static int CoordinatesDim; //@property
 
-    // Private Attributes
+    // Private Attributes   
     std::set<CausetEvent> _prec;
     std::set<CausetEvent> _succ;
     std::vector<double> _coordinates;
     std::vector<double> _position;
+
     // Private methods
+    
+    //ACTIVE FUNCTIONALITIES
     bool _addToPast;
     bool _addToFuture;
     bool _discard;

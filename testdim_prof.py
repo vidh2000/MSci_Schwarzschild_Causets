@@ -159,7 +159,7 @@ shapes = [
 
 # Define
 # cardinalities to test, repetitions to average, cuts for coarse graining
-Ns = [4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
+Ns = [1024, 512, 256, 128, 64, 32, 16]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 
