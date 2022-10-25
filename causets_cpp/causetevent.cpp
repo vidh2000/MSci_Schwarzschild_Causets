@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <vector>
 #include <set>
+//#include <functions>
 
 class CausetEvent
 {
@@ -27,16 +28,14 @@ class CausetEvent
     
     */
 
-    // Private Attributes   
+    public:
+    // Public Attributes
+    std::string Label;
     std::set<CausetEvent> _prec;
     std::set<CausetEvent> _succ;
     std::vector<double> _coordinates;
     std::vector<double> _position;
 
-    public:
-    // Public Attributes
-    std::string Label;
-       
     /** 
     * @Constructor:
     * Initialise a CausetEvent.
@@ -65,26 +64,53 @@ class CausetEvent
             )
     {
     this -> Label = label;
-    // _prec = empty set declared above 
-    //future
+    _prec = {}
+    for (CausetEvent e = past.begin(); e != past.end(); e++){
+        std::set<CausetEvent> presOrPast = e.PresentOrPast();
+        _prec = set_add(_prec, presOrPast);} 
+    _succ = {}  
+    for (CausetEvent e = future.begin(); e != future.end();e++){
+        std::set<CausetEvent> presOrFut = e.PresentOrFuture();
+        _succ = set_add(_succ, presOrFut);}
     this -> _coordinates = coordinates;
     this -> _position = position;
     // Add this instance to its causal relatives:
-    /*for e in self._prec:
-            e._addToFuture(self)
-        for e in self._succ:
-            e._addToPast(self)
-    */
-    }
+    for (CausetEvent e = _prec.begin(); _prec.end(); e++)
+    {   e._addToFuture(*this);}
+    for (CausetEvent e = _succ.begin(); _succ.end(); e++)
+    {   e._addToPast(*this);}
+
+    
     //ACTIVE FUNCTIONALITIES
-    private:
-    bool _addToPast;
-    bool _addToFuture;
-    bool _discard;
+    //private:
+    bool _addToPast(CausetEvent other){
+        /*
+        Adds an event to the past of this event.
+        It returns False if the event is already in the past,
+        otherwise it adds the event and return True.
+        */
+        const bool is_in = set_contains(other, _prec);
+        if is_in
+        {
+            return false;
+        }
+        else
+        {
+            if (hasBeenLinked() && isLink(other, *this))
+            {
+                _lprec = set_diff(_lprec, other._lprec);
+                _lprec.insert(other);
+            }
+            _prec.insert(other);
+            return true;
+        }
+    }
+    bool _addToFuture();
+    bool _discard();
 
     // Other methods are public
-    public:
-    
+    //public:
+
     //ACTIVE FUNCTIONALITIES
     void disjoin();
     void link();
@@ -93,41 +119,41 @@ class CausetEvent
     // double Rank();
 
     // RELATIONAL BOOLEANS 
-    bool hasBeenLinked;
-    static bool isLink; //@classmethod
-    bool isPastLink;
-    bool isFutureLink;
-    bool isCausalTo;
-    bool isLinkedTo;
-    bool isSpacelikeTo;
+    bool hasBeenLinked();
+    static bool isLink(); //@classmethod
+    bool isPastLink();
+    bool isFutureLink();
+    bool isCausalTo();
+    bool isLinkedTo();
+    bool isSpacelikeTo();
 
     // PAST, FUTURE and SPACELIKE
-    static int LinkCountOf; //@staticmethod
-    static std::set<CausetEvent> Past; //@property
-    static std::set<CausetEvent> Future; //@property
-    static std::set<CausetEvent> Cone; //@property
-    static std::set<CausetEvent> PresentOrPast; //@property
-    static std::set<CausetEvent> PresentOrFuture; //@property
-    std::set<CausetEvent> Spacelike;
-    static int PastCard; //@property
-    static int FutureCard; //@property
-    static int ConeCard; //@property
-    int SpacelikeCard;
-    static std::set<CausetEvent> LinkPast; //@property
-    static std::set<CausetEvent> LinkFuture; //@property
-    static std::set<CausetEvent> LinkCone; //@property
-    static int LinkPastCard; //@property
-    static int LinkFutureCard; //@property
-    static int LinkConeCard; //@property
+    static int LinkCountOf(); //@staticmethod
+    static std::set<CausetEvent> Past(); //@property
+    static std::set<CausetEvent> Future(); //@property
+    static std::set<CausetEvent> Cone(); //@property
+    static std::set<CausetEvent> PresentOrPast(); //@property
+    static std::set<CausetEvent> PresentOrFuture(); //@property
+    std::set<CausetEvent> Spacelike();
+    static int PastCard(); //@property
+    static int FutureCard(); //@property
+    static int ConeCard(); //@property
+    int SpacelikeCard();
+    static std::set<CausetEvent> LinkPast(); //@property
+    static std::set<CausetEvent> LinkFuture(); //@property
+    static std::set<CausetEvent> LinkCone(); //@property
+    static int LinkPastCard(); //@property
+    static int LinkFutureCard(); //@property
+    static int LinkConeCard(); //@property
 
     // EMBEDDING FUNCTIONALITIES
-    void embed;
-    void disembed;
-    static std::vector<double> Position; //@property
-    void SetPosition; //@Poisition.setter
-    static bool isEmbedded; //@property
-    static std::vector<double> Coordinates; //@property
-    static int CoordinatesDim; //@property 
+    void embed();
+    void disembed();
+    static std::vector<double> Position(); //@property
+    void SetPosition(); //@Poisition.setter
+    static bool isEmbedded(); //@property
+    static std::vector<double> Coordinates(); //@property
+    static int CoordinatesDim(); //@property 
 
     
 };

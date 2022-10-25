@@ -134,8 +134,8 @@ class CausetEvent(object):
     def _addToPast(self, other: 'CausetEvent') -> bool:
         '''
         Adds an event to the past of this event.
-        It returns False if the event is already in the past, otherwise it adds 
-        the event and returns True.
+        It returns False if the event is already in the past,
+        otherwise it adds the event and returns True.
         '''
         if other in self._prec:
             return False
