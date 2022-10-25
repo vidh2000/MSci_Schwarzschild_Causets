@@ -28,6 +28,7 @@ class CausetEvent
     
     */
 
+    // Make everything public (for now)
     public:
     // Public Attributes
     std::string Label;
@@ -82,15 +83,14 @@ class CausetEvent
 
     
     //ACTIVE FUNCTIONALITIES
-    //private:
     bool _addToPast(CausetEvent other){
         /*
         Adds an event to the past of this event.
         It returns False if the event is already in the past,
         otherwise it adds the event and return True.
         */
-        const bool is_in = set_contains(other, _prec);
-        if is_in
+        bool isin_prec = set_contains(other, _prec);
+        if isin_prec
         {
             return false;
         }
@@ -98,15 +98,55 @@ class CausetEvent
         {
             if (hasBeenLinked() && isLink(other, *this))
             {
-                _lprec = set_diff(_lprec, other._lprec);
+                _lprec = set_diff(_lprec, other._prec);
                 _lprec.insert(other);
             }
             _prec.insert(other);
             return true;
         }
     }
-    bool _addToFuture();
-    bool _discard();
+    bool _addToFuture(CausetEvent other){
+        /*
+        Adds an event to the future of this event.
+        It returns False if the event is already in the future, otherwise it 
+        adds the event and returns True.
+        */
+       bool isin_succ = set_contains(other,_succ);
+       if isin_succ
+       {
+        return false;
+       }
+       else
+       {
+        if (hasBeenLinked() && isLink(other, *this))
+        {
+            _lsucc = set_diff(_lsucc, other._succ);
+            _lsucc.insert(other);
+        }
+        _succ.insert(other)
+        return true;
+       }
+    }
+    bool _discard(CausetEvent other){
+        /*
+        Removes an event from the past and future of this event.
+        It returns True if the event was in the past or future,
+        otherwise False.
+        */
+        if set_contains(other,_prec)
+        {   
+            if (hasBeenLinked() && set_contains(other, _lprec))
+            {
+                
+            }
+        }
+        else if (/* condition */)
+        {
+            /* code */
+        }
+        
+        }
+
 
     // Other methods are public
     //public:
