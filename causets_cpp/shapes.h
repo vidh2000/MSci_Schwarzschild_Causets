@@ -23,26 +23,26 @@ class CoordinateShape
     public:
         int dim;
         char name;
-        std::vector<float> center;
-        std::map<char, float> params;
+        std::vector<double> center;
+        std::map<char, double> params;
         struct dict;
-        float volume;
+        double volume;
 
         CoordinateShape(int dim, char name, 
-                        std::vector<float> center = {0},
-                        float radius   = 1,
-                        float hollow   = 0,
-                        float duration = 2,
-                        float edge     = 1,
-                        std::vector<float> edges = {1});
+                        std::vector<double> center = {0},
+                        double radius   = 1,
+                        double hollow   = 0,
+                        double duration = 2,
+                        double edge     = 1,
+                        std::vector<double> edges = {1});
         
         void param_rangecheck(char name, 
-                     float maxValue = std::numeric_limits<double>::infinity(),
+                     double maxValue = std::numeric_limits<double>::infinity(),
                      bool canBeZero = false);
         
-        float              Parameter (char key);
-        float              Volume();
-        std::vector<float> Limits(int dimension);
+        double              Parameter (char key);
+        double              Volume();
+        std::vector<double> Limits(int dimension);
 
 };
 

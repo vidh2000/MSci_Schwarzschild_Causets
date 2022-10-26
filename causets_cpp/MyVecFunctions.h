@@ -93,10 +93,10 @@ T myvecsum(vector <T> v)
 template <typename T, typename F>
 inline
 double myvecsum(vector <T> v, F func)
-    {
-        double sum = 0;
-        for (int i = 0; i < v.size(); i++) sum += func(v[i]);
-        return sum;
+{
+    double sum = 0;
+    for (int i = 0; i < v.size(); i++) sum += func(v[i]);
+    return sum;
 }
 
 
