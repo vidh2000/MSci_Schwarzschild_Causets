@@ -24,7 +24,15 @@ bool set_contains(int element, std::set<int> s)
     return is_in;
 }
 
-
+std::set<int> set_union(std::set<int> s1, std::set<int> s2)
+    /*
+    Returns addition of two sets
+    RETURN = s1+s2
+    */
+{
+    s1.insert(s2.begin(), s2.end());
+    return s1;
+}
 //for set containing int only here
 std::set<int> set_difference(std::set<int> s1, std::set<int> s2)
 {
@@ -35,14 +43,15 @@ std::set<int> set_difference(std::set<int> s1, std::set<int> s2)
 }
 
 int main(){
-std::set<int> a = {1,3,4};
-std::set<int>& b = a;
+std::set<int> a = {1,2,3};
+int b = a.size();
+print_set(a);
+std::cout <<b <<std::endl;
+
+
+a = {1,21,4,214,2};
 
 print_set(a);
-print_set(b);
+std::cout <<b;
 
-a = {2};
-
-print_set(a);
-print_set(b);
 }

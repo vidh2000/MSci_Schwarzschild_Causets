@@ -69,11 +69,11 @@ class CausetEvent
         _prec = {};
         for (CausetEvent e = past.begin(); e != past.end(); e++){
             std::set<CausetEvent> presOrPast = e.PresentOrPast();
-            _prec = set_add(_prec, presOrPast);} 
-        _succ = {};
+            _prec = set_union(_prec, presOrPast);} 
+        _succ = {}  
         for (CausetEvent e = future.begin(); e != future.end();e++){
             std::set<CausetEvent> presOrFut = e.PresentOrFuture();
-            _succ = set_add(_succ, presOrFut);}
+            _succ = set_union(_succ, presOrFut);}
         this -> _coordinates = coordinates;
         this -> _position = position;
         // Add this instance to its causal relatives:
@@ -155,7 +155,10 @@ class CausetEvent
             return false;
         }}
 
+    ////////////////////////////////////////////////////////////
     //ACTIVE FUNCTIONALITIES
+    ////////////////////////////////////////////////////////////
+
     void disjoin(){
         /*
         Disjoins this event from the causal set (the set of events to the past 
@@ -163,12 +166,12 @@ class CausetEvent
         (implemented without link referenceses)
         */
         //unlink()
-        for(CausetEvent e; Cone.begin(); Cone.end(); e++)
+        for(CausetEvent e; Cone().begin(); Cone().end(); e++)
         {
             e._discard(*this)
         }
         _prec = {}
-        for(CausetEvent e; Cone.begin(); Cone.end(); e++)
+        for(CausetEvent e; Cone().begin(); Cone().end(); e++)
         {
             e._discard(*this)
         }
@@ -208,47 +211,148 @@ class CausetEvent
     //CausetEvent copy(){}
     //double Rank(){}
 
+    ////////////////////////////////////////////////////////////
     // RELATIONAL BOOLEANS 
+    ////////////////////////////////////////////////////////////
+
     //bool hasBeenLinked(){}
     //static bool isLink(){}
     //bool isPastLink(){}
     //bool isFutureLink(){}
-    bool isCausalTo(){}
+
+    bool isCausalTo(CausetEvent other){
+        /*
+        Tests if another event is causally related to this event.
+        */
+        return (*this<=other)|| (*this>other);
+    }
+
     //bool isLinkedTo(){}
+
     bool isSpacelikeTo(CausetEvent other){
         /*
         Tests if another event is spacelike separated to this event.
         */
-       return ((other.Label != Label) && set_contains(other,_prec)) && \
-       set_contains(other,_succ);}
+       return ((other.Label != Label) && set_contains(other,_prec)) && set_contains(other,_succ);
+    }
 
+    ////////////////////////////////////////////////////////////
     // PAST, FUTURE and SPACELIKE
-    //static int LinkCountOf(){}
-    static std::set<CausetEvent> Past(); //@property
-    static std::set<CausetEvent> Future(); //@property
-    static std::set<CausetEvent> Cone(); //@property
-    static std::set<CausetEvent> PresentOrPast(); //@property
-    static std::set<CausetEvent> PresentOrFuture(); //@property
-    std::set<CausetEvent> Spacelike();
-    static int PastCard(); //@property
-    static int FutureCard(); //@property
-    static int ConeCard(); //@property
-    int SpacelikeCard();
-    static std::set<CausetEvent> LinkPast(); //@property
-    static std::set<CausetEvent> LinkFuture(); //@property
-    static std::set<CausetEvent> LinkCone(); //@property
-    static int LinkPastCard(); //@property
-    static int LinkFutureCard(); //@property
-    static int LinkConeCard(); //@property
+    ////////////////////////////////////////////////////////////
 
+    //static int LinkCountOf(){}
+
+    /* Returns a set of events (instances of CausetEvent)
+    that are in the past of this event.*/
+    std::set<CausetEvent>& Past = _prec;
+    
+
+    /*Returns a set of events (instances of CausetEvent)
+    that are in the future of this event.*/
+    std::set<CausetEvent>& Future = _succ;
+
+
+    std::set<CausetEvent> Cone(){
+        /*
+        Returns a set of events (instances of CausetEvent)
+        that are in the past, present or future of this event.
+        */
+        std::set<CausetEvent> Cone = set_union(_prec,_succ);
+        Cone.insert(*this);
+        return Cone;}
+    
+
+    std::set<CausetEvent> PresentOrPast(){
+        /*
+        Returns a set of events (instances of CausetEvent) 
+        that are in the past of this event, including this event.
+        */
+        std::set<CausetEvent> presOrPas = _prec;
+        presOrPas.insert(*this);
+        return presOrPas;}
+
+
+    std::set<CausetEvent> PresentOrFuture(){
+        /*
+        Returns a set of events (instances of CausetEvent) 
+        that are in the future of this event, including this event.
+        */
+        std::set<CausetEvent> presOrFut = _succ;
+        presOrFut.insert(*this);
+        return presOrFut;}
+
+
+    std::set<CausetEvent> Spacelike(std::set<CausetEvent> eventset){
+        /*
+        Returns the subset of events (instances of CausetEvent) of `eventSet` 
+        that are spacelike separated to this event.
+        */
+        return set_diff(eventset, Cone());}
+
+
+    int PastCard(){
+        /*
+        Returns the number of past events (set cardinality).
+        */
+        return _prec.size();}
+
+
+    int FutureCard(){
+        /*
+        Returns the number of future events (set cardinality).
+        */
+        return _succ.size();}
+
+
+    int ConeCard(){
+        /*
+        Returns the number of past and future events (set cardinality), 
+        including this event (present).
+        */
+        return _prec.size()+_succ.size()+1;}
+
+
+    int SpacelikeCard(std::set<CausetEvent> eventset){
+        /*
+        Returns the number of events (instances of CausetEvent) of `eventSet` 
+        that are spacelike separated to this event.
+        */
+        if set_contains(*this, eventset)
+        {
+            std::set<CausetEvent> s;
+            s = set_diff(set_diff(eventset, _prec),_succ);
+            return s.size()-1;
+        }
+        else
+        {   
+            std::set<CausetEvent> s;
+            s = set_diff(set_diff(eventset, _prec),_succ);
+            return s.size();
+        }}
+
+
+    //std::set<CausetEvent> LinkPast(){}
+    //std::set<CausetEvent> LinkFuture(){}
+    //std::set<CausetEvent> LinkCone(){}
+    //int LinkPastCard()
+    //int LinkFutureCard()
+    //int LinkConeCard()
+
+    ////////////////////////////////////////////////////////////
     // EMBEDDING FUNCTIONALITIES
+    ////////////////////////////////////////////////////////////
     void embed();
     void disembed();
-    static std::vector<double> Position(); //@property
-    void SetPosition(); //@Poisition.setter
-    static bool isEmbedded(); //@property
-    static std::vector<double> Coordinates(); //@property
-    static int CoordinatesDim(); //@property 
+    std::vector<double> Position();
+    void SetPosition();
+    bool isEmbedded();
+    std::vector<double> Coordinates();
+    int CoordinatesDim(){
+        /*
+        Returns the dimension of its coordinates if any, otherwise 0.
+        */
+
+    }
 
     
 };
