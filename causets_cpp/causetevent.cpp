@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <vector>
 #include <set>
+#include <stdexcept>
 
 #include "functions.h"
 
@@ -70,7 +71,7 @@ class CausetEvent
         for (CausetEvent e = past.begin(); e != past.end(); e++){
             std::set<CausetEvent> presOrPast = e.PresentOrPast();
             _prec = set_union(_prec, presOrPast);} 
-        _succ = {}  
+        _succ = {};
         for (CausetEvent e = future.begin(); e != future.end();e++){
             std::set<CausetEvent> presOrFut = e.PresentOrFuture();
             _succ = set_union(_succ, presOrFut);}
@@ -170,12 +171,12 @@ class CausetEvent
         {
             e._discard(*this)
         }
-        _prec = {}
+        _prec = {};
         for(CausetEvent e; Cone().begin(); Cone().end(); e++)
         {
             e._discard(*this)
         }
-        _succ = {}
+        _succ = {};
         }
 
     /*void link(){
@@ -224,8 +225,7 @@ class CausetEvent
         /*
         Tests if another event is causally related to this event.
         */
-        return (*this<=other)|| (*this>other);
-    }
+        return (*this<=other)|| (*this>other);}
 
     //bool isLinkedTo(){}
 
@@ -233,7 +233,8 @@ class CausetEvent
         /*
         Tests if another event is spacelike separated to this event.
         */
-       return ((other.Label != Label) && set_contains(other,_prec)) && set_contains(other,_succ);
+       return ((other.Label != Label) && set_contains(other,_prec))
+                    && set_contains(other,_succ);
     }
 
     ////////////////////////////////////////////////////////////
@@ -284,8 +285,8 @@ class CausetEvent
 
     std::set<CausetEvent> Spacelike(std::set<CausetEvent> eventset){
         /*
-        Returns the subset of events (instances of CausetEvent) of `eventSet` 
-        that are spacelike separated to this event.
+        Returns the subset of events (instances of CausetEvent) of
+        `eventSet` that are spacelike separated to this event.
         */
         return set_diff(eventset, Cone());}
 
@@ -314,10 +315,10 @@ class CausetEvent
 
     int SpacelikeCard(std::set<CausetEvent> eventset){
         /*
-        Returns the number of events (instances of CausetEvent) of `eventSet` 
-        that are spacelike separated to this event.
+        Returns the number of events (instances of CausetEvent) of
+        `eventSet` that are spacelike separated to this event.
         */
-        if set_contains(*this, eventset)
+        if (set_contains(*this, eventset))
         {
             std::set<CausetEvent> s;
             s = set_diff(set_diff(eventset, _prec),_succ);
@@ -341,20 +342,99 @@ class CausetEvent
     ////////////////////////////////////////////////////////////
     // EMBEDDING FUNCTIONALITIES
     ////////////////////////////////////////////////////////////
-    void embed();
-    void disembed();
-    std::vector<double> Position();
-    void SetPosition();
-    bool isEmbedded();
-    std::vector<double> Coordinates();
+    void embed(std::vector<double> coordinates, bool reembed = false){
+        /*
+        Assigns coordinates to the event. If the event already has coordinates, 
+        an `AttributeError` is raised. To avoid this error and overwrite the 
+        value, use reembed.
+        */
+        if (not reembed and isEmbedded())
+        {
+            throw std::invalid_argument(
+                "The event #? is already embedded.
+                Use the 'disembed' method first or use the reembed flag.");
+        }
+        _coordinates = coordinates;}
+    void disembed(){
+        /*
+        Removes the embedding of the event,
+        e.g. sets _coordinates = {}
+        */
+        _coordinates = {};}
+
+    std::vector<double> Position(){
+        /*
+        Returns the coordinates for the position in a Hasse diagram.
+        */
+        try
+        {
+            return _position;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            return {0.0,0.0}
+        }}
+
+
+    void SetPosition(std::vector<double> value){
+        /*
+        Sets the coordinates for the position in a Hasse diagram.
+        */
+        if (value.size() !=2)
+        {
+            throw std::invalid_argument(
+                "The position has to be an iterable of exactly two values.");
+        }
+        _position = value
+    }
+    bool isEmbedded(){
+        /*
+        Returns True if the event has a coordinate tuple assigned to it,
+        e.g. if the coordinates tuple has non-default value.
+        */
+        if (_coordinates.size() != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }}
+
+    std::vector<double> Coordinates(){
+        /*
+        Returns the embedding coordinates.
+
+        Raises an ?AttributeError? if the event is not embedded.
+        ^ to be determined
+        */
+        try
+        {
+            return _coordinates;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            return 0;
+        }}
+        
+
     int CoordinatesDim(){
         /*
         Returns the dimension of its coordinates if any, otherwise 0.
         */
+        try
+        {
+            return _coordinates.size();
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            return 0;
+        }}
 
-    }
 
-    
 };
 
 

@@ -39,7 +39,7 @@ bool set_contains(obj element, std::set<obj> s)
 //for set containing int only here
 template <typename obj> 
 inline
-std::set<int> set_diff(std::set<obj> s1, std::set<obj> s2)
+std::set<obj> set_diff(std::set<obj> s1, std::set<obj> s2)
     /*
     Return set difference i.e events which are only in s1;
     RETURN = s1-s2 (where s2 can have other elements as well)

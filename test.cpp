@@ -43,15 +43,15 @@ std::set<int> set_difference(std::set<int> s1, std::set<int> s2)
 }
 
 int main(){
-std::set<int> a = {1,2,3};
-int b = a.size();
-print_set(a);
-std::cout <<b <<std::endl;
 
-
-a = {1,21,4,214,2};
-
-print_set(a);
-std::cout <<b;
-
+bool a = false;
+bool b = true;
+if (not a and b)
+{
+    std::cout << "works" << std::endl;
+}
+else
+{
+    std::cout << "in else" << std::endl;   
+}
 }
