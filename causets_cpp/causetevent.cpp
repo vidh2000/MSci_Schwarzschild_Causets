@@ -11,7 +11,8 @@
 #include <set>
 #include <stdexcept>
 
-#include "functions.h"
+#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
+
 
 class CausetEvent
 {
@@ -68,37 +69,39 @@ class CausetEvent
     {
         this -> Label = label;
         _prec = {};
-        for (CausetEvent e = past.begin(); e != past.end(); e++){ //? all e++..
+        for (CausetEvent e : past){
             std::set<CausetEvent> presOrPast = e.PresentOrPast();
             _prec = set_union(_prec, presOrPast);} 
         _succ = {};
-        for (CausetEvent e = future.begin(); e != future.end();e++){
+        for (CausetEvent e : future){
             std::set<CausetEvent> presOrFut = e.PresentOrFuture();
             _succ = set_union(_succ, presOrFut);}
         this -> _coordinates = coordinates;
         this -> _position = position;
         // Add this instance to its causal relatives:
-        for (CausetEvent e = _prec.begin(); _prec.end(); e++)
+        for (CausetEvent e : _prec)
         {   e._addToFuture(*this);}
-        for (CausetEvent e = _succ.begin(); _succ.end(); e++)
+        for (CausetEvent e : _succ)
         {   e._addToPast(*this);}
     }
 
     // Overloading ==, <, <=, >, >= to relate CausetEvent instances
+    
     bool operator == (CausetEvent other){
         return other.Label == Label;}
         
     bool operator < (CausetEvent other){
-        return set_contains(*this, other._prec);}
-    
+        return set_contains(other, _succ);}
+
     bool operator <= (CausetEvent other){
-        return (*this==other or set_contains(*this, other._prec));}
+        return (*this==other or set_contains(other, _succ));} //"required from here" error?
     
     bool operator > (CausetEvent other){
         return set_contains(other, _prec);}
 
     bool operator >= (CausetEvent other){
-        return (*this==other or set_contains(other, _prec);}
+        return (*this==other or set_contains(other, _prec));}
+        
     
     ////////////////////////////////////////////////////////////
     //ACTIVE FUNCTIONALITIES
@@ -178,14 +181,14 @@ class CausetEvent
         (implemented without link referenceses)
         */
         //unlink()
-        for(CausetEvent e; Cone().begin(); Cone().end(); e++) //?
+        for(CausetEvent e : Cone())
         {
-            e._discard(*this)
+            e._discard(*this);
         }
         _prec = {};
-        for(CausetEvent e; Cone().begin(); Cone().end(); e++) //?
+        for(CausetEvent e : Cone())
         {
-            e._discard(*this)
+            e._discard(*this);
         }
         _succ = {};
         }
@@ -236,7 +239,7 @@ class CausetEvent
         /*
         Tests if another event is causally related to this event.
         */
-        return (*this<=other)|| (*this>other);} //?
+        return (*this<=other)|| (*this>other);}
 
     //bool isLinkedTo(){}
 
@@ -299,7 +302,7 @@ class CausetEvent
         Returns the subset of events (instances of CausetEvent) of
         `eventSet` that are spacelike separated to this event.
         */
-        return set_diff(eventset, Cone());} //?
+        return set_diff(eventset, Cone());} // "required from here" error?
 
 
     int PastCard(){
@@ -360,7 +363,7 @@ class CausetEvent
         value, use reembed.
         */
         if (not reembed and this->isEmbedded()) //?
-        {
+        {   
             throw std::invalid_argument(
                 "The event is already embedded. Use the disembed method first or use the reembed flag.");
         }
@@ -445,10 +448,17 @@ class CausetEvent
             return 0;
         }}
 
+    // Destructor
+	~CausetEvent();
 
 };
 
+int main(){
 
+int a = 3;
+std::cout << a;
+
+};
 
 
 

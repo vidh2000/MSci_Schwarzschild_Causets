@@ -19,7 +19,7 @@ inline
 void print_set(std::set<obj> set)
 {
     std::cout << "{ ";
-    for (int const& e : set)
+    for (obj e : set)
     {
         std::cout << e << ' , ';
     }
