@@ -341,11 +341,16 @@ class CausetEvent
     ////////////////////////////////////////////////////////////
     void embed();
     void disembed();
-    std::vector<double> Position(); //@property
-    void SetPosition(); //@Poisition.setter
-    bool isEmbedded(); //@property
-    std::vector<double> Coordinates(); //@property
-    int CoordinatesDim()
+    std::vector<double> Position();
+    void SetPosition();
+    bool isEmbedded();
+    std::vector<double> Coordinates();
+    int CoordinatesDim(){
+        /*
+        Returns the dimension of its coordinates if any, otherwise 0.
+        */
+
+    }
 
     
 };
