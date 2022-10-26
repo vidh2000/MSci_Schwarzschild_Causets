@@ -21,6 +21,6 @@ int main()
     // a = set_add(a,b);
     // print_set(a);
 
-    vector v = linspace(0, 100, 100);
+    vector<double> v = linspace(0., 100., 100);
     print_vector(v);    
 }

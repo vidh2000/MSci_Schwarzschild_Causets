@@ -36,6 +36,10 @@ CoordinateShape Spacetime::DefaultShape()
 std::vector<float> Spacetime::_T_slice_sampling(float t, 
                                                 std::vector<float>origin,
                                                 int samplingsize = 128)
+/**
+ * @brief Internal function for the time sampling array for a cone from 
+ * "origin" to time "t"
+ */
 {
     ;
 }     
