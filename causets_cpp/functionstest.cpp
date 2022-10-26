@@ -11,11 +11,16 @@
 #include <set>
 
 #include "functions.h"
+#include "MyVecFunctions.h"
+using namespace std;
 
 int main()
 {
-std::set<int> a = {1,2,3,4};
-std::set<int> b = {3,4,5};
-a = set_add(a,b);
-print_set(a);
+    // std::set<int> a = {1,2,3,4};
+    // std::set<int> b = {3,4,5};
+    // a = set_add(a,b);
+    // print_set(a);
+
+    vector v = linspace(0, 100, 100);
+    print_vector(v);    
 }

@@ -12,6 +12,7 @@
 
 void print_set(std::set<int> set)
 {
+    std::cout << "{ ";
     for (int const& e : set)
     {
         std::cout << e << ' ';

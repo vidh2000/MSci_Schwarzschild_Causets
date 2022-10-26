@@ -20,17 +20,22 @@
 float Spacetime::Parameter (char key)
 /**
  * @brief Return parameter "key" for the shape of the spacetime
- * 
  */
 {
+    return _params[key];
+}
 
-};
-virtual CoordinateShape DefaultShape();
+CoordinateShape Spacetime::DefaultShape()
+/**
+ * @brief Returns default coordinate shape of embedding region in spcetime.  
+ */
+{
+    return CoordinateShape(Dim, 'cylinder');
+}
 
-typedef bool (*func)(std::vector<float> xvec, std::vector<float> yvec);
-virtual func  Causality();   
-
-virtual std::vector<float>T_slice_sampling(float t, 
-                                            std::vector<float>origin,
-                                            int samplingsize = -1);     
-};
+std::vector<float> Spacetime::_T_slice_sampling(float t, 
+                                                std::vector<float>origin,
+                                                int samplingsize = 128)
+{
+    ;
+}     

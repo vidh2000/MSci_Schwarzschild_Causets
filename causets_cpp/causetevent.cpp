@@ -119,7 +119,7 @@ class CausetEvent
         otherwise it adds the event and returns True.
         (implemented without link referenceses)
         */
-        if set_contains(other,_succ)
+        if (set_contains(other,_succ))
         {
             return false;
         }
@@ -130,7 +130,7 @@ class CausetEvent
             //    _lsucc = set_diff(_lsucc, other._succ);
             //    _lsucc.insert(other);
             //}
-            _succ.insert(other)
+            _succ.insert(other);
             return true;
         }}
 
@@ -141,12 +141,12 @@ class CausetEvent
         otherwise False.
         (implemented without link referenceses)
         */
-        if set_contains(other, _prec)
+        if (set_contains(other, _prec))
         {   
             _prec.erase(other);
             return true;
         }
-        else if set_contains(other, _succ)
+        else if (set_contains(other, _succ))
         {
             _succ.erase(other);
         }
@@ -267,9 +267,9 @@ class CausetEvent
         Returns a set of events (instances of CausetEvent) 
         that are in the past of this event, including this event.
         */
-        std::set<CausetEvent> presOrPas = _prec;
-        presOrPas.insert(*this);
-        return presOrPas;}
+        std::set<CausetEvent> presOrPast = _prec;
+        presOrPast.insert(*this);
+        return presOrPast;}
 
 
     std::set<CausetEvent> PresentOrFuture(){

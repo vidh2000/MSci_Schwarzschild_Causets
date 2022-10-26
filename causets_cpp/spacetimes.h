@@ -23,19 +23,21 @@ class Spacetime
  */
 {
     public:
-        int dim;
-        char name;
-        char metricname;
-        std::map<char, float> params;
-        
-        
-        virtual float           Parameter (char key);
-        virtual CoordinateShape DefaultShape();
-        
-        typedef bool (*func)(std::vector<float> xvec, std::vector<float> yvec);
-        virtual func  Causality();   
+        int  _dim;
+        char _name;
+        char _metricname;
+        std::map<char, float> _params;
 
-        virtual std::vector<float>T_slice_sampling(float t, 
+        
+        int&  Dim        = _dim;
+        char& Name       = _name;
+        char& MetricName = _metricname; 
+        virtual float Parameter (char key);
+
+
+        virtual CoordinateShape DefaultShape();  
+
+        virtual std::vector<float>_T_slice_sampling(float t, 
                                                     std::vector<float>origin,
                                                     int samplingsize = -1);     
 };
@@ -64,8 +66,9 @@ class FlatSpacetime: public Spacetime
         float           Parameter (char key);
         CoordinateShape DefaultShape();
         
-        typedef bool (*func)(std::vector<float> xvec, std::vector<float> yvec);
-        func  Causality();       
+        typedef std::vector<bool> (*func)
+        (std::vector<float> xvec, std::vector<float> yvec);
+        func Causality();       
 };
 
 
@@ -86,7 +89,8 @@ class BlackHoleSpacetime: public Spacetime
         float           Parameter (char key);
         CoordinateShape DefaultShape();
         
-        typedef bool (*func)(std::vector<float> xvec, std::vector<float> yvec);
-        func  Causality();     
+        typedef std::vector<bool> (*func)
+        (std::vector<float> xvec, std::vector<float> yvec);
+        func Causality();     
 };
 #endif /* SPACETIMES_H */
