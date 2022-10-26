@@ -31,10 +31,10 @@ class CoordinateShape
         CoordinateShape(int dim, char name, 
                         std::vector<double> center = {0},
                         double radius   = 1,
-                        double hollow   = 0,
-                        double duration = 2,
                         double edge     = 1,
-                        std::vector<double> edges = {1});
+                        std::vector<double> edges = {1},
+                        double hollow   = 0,
+                        double duration = 2);
         
         void param_rangecheck(char name, 
                      double maxValue = std::numeric_limits<double>::infinity(),
