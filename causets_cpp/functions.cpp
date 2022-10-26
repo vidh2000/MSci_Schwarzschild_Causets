@@ -16,6 +16,7 @@ void print_set(std::set<int> set)
     {
         std::cout << e << ' ';
     }
+    std::cout << std::endl;
 }
 bool set_contains(int element, std::set<int> s)
 {

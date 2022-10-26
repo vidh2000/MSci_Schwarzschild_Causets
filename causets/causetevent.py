@@ -193,7 +193,7 @@ class CausetEvent(object):
             e._discard(self)
         self._prec = set()
         for e in self.Cone:
-            e._discard(self)
+            e._discard(self) #is this just doubled?
         self._succ = set()
 
     def link(self) -> None:
@@ -211,9 +211,9 @@ class CausetEvent(object):
             e for e in self._succ if CausetEvent.isLink(self, e)}
 
     def unlink(self) -> None:
-        '''
+        """
         Force the CausetEvent instance to reset its link memory.
-        '''
+        """
         delattr(self, '_lprec')
         delattr(self, '_lsucc')
 

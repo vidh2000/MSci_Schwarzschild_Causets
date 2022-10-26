@@ -16,6 +16,7 @@ void print_set(std::set<int> set)
     {
         std::cout << e << ' ';
     }
+    std::cout << std::endl;
 }
 bool set_contains(int element, std::set<int> s)
 {
@@ -34,10 +35,14 @@ std::set<int> set_difference(std::set<int> s1, std::set<int> s2)
 }
 
 int main(){
-std::set<int> a = {1,2,3,4};
-std::set<int> b = {3,4,5};
-a = set_difference(a,b);
+std::set<int> a = {1,3,4};
+std::set<int>& b = a;
+
 print_set(a);
+print_set(b);
 
+a = {2};
+
+print_set(a);
+print_set(b);
 }
-
