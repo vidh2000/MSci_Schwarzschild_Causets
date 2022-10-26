@@ -211,14 +211,22 @@ class CausetEvent
     //static bool isLink(){}
     //bool isPastLink(){}
     //bool isFutureLink(){}
-    bool isCausalTo(){}
+    bool isCausalTo(CausetEvent other){
+        /*
+        Tests if another event is causally related to this event.
+        */
+        return (*this<=other)|| (*this>other);
+    }
+
     //bool isLinkedTo(){}
+    
     bool isSpacelikeTo(CausetEvent other){
         /*
         Tests if another event is spacelike separated to this event.
         */
        return ((other.Label != Label) && set_contains(other,_prec)) && \
-       set_contains(other,_succ);}
+       set_contains(other,_succ);
+    }
 
     // PAST, FUTURE and SPACELIKE
     //static int LinkCountOf(){}
