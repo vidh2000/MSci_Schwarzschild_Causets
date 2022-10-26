@@ -38,16 +38,17 @@ std::set<int> set_diff(std::set<int> s1, std::set<int> s2)
     return result;
 }
 
-std::set<int> set_add(std::set<int> s1, std::set<int> s2)
+std::set<int> set_union(std::set<int> s1, std::set<int> s2)
     /*
-    Returns addition of two sets
-    RETURN = s1+s2
+    Returns union of two sets
+    RETURN = s1 U s2
     */
-{
+    {
     s1.insert(s2.begin(), s2.end());
     return s1;
-}
+    }
 
+/*
 int main(){
 std::set<int> a = {1,2,3,4};
 std::set<int> b = {3,4,5};
@@ -55,3 +56,4 @@ a = set_add(a,b);
 print_set(a);
 
 }
+*/
