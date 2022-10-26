@@ -14,6 +14,53 @@
 #include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
 
 
+///////////////////////////////////////////////////////////////////////////////
+// Useful functions for set manipulations
+//
+//template <typename obj>  
+//void print_set(std::set<obj> set){
+//    /*
+//    Prints elements of a set one by one.
+//    */
+//    std::cout << "{ ";
+//    for (obj e : set)
+//    {
+//        std::cout << e << ' , ';
+//    }
+//    std::cout << " }";
+//    std::cout << std::endl;}
+//
+//bool set_contains(CausetEvent element, std::set<CausetEvent> s)
+//    {
+//    bool is_in = s.find(element) != s.end();
+//    return is_in;}
+//
+//std::set<CausetEvent> set_diff(std::set<CausetEvent> s1,
+//                               std::set<CausetEvent> s2)
+//    /*
+//    Return set difference i.e events which are only in s1;
+//    RETURN = s1-s2 (where s2 can have other elements as well)
+//    */
+//    {
+//    std::set<CausetEvent> result;
+//    std::set_difference(s1.begin(), s1.end(), s2.begin(), s2.end(),
+//        std::inserter(result, result.end()));
+//    return result;}
+//
+//std::set<CausetEvent> set_union(std::set<CausetEvent> s1,
+//                                std::set<CausetEvent> s2)
+//    /**
+//    * @brief Returns union of two sets s1 and s2.
+//    */
+//    {
+//    s1.insert(s2.begin(), s2.end());
+//    return s1;}
+//
+///////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// CausetEvent class for used for all the causal set elements
+//////////////////////////////////////////////////////////////////////////////
 class CausetEvent
 {
     /*
