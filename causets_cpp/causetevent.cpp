@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <vector>
 #include <set>
-//#include <functions>
+
+#include "functions.h"
 
 class CausetEvent
 {
@@ -65,11 +66,11 @@ class CausetEvent
             )
     {
         this -> Label = label;
-        _prec = {}
+        _prec = {};
         for (CausetEvent e = past.begin(); e != past.end(); e++){
             std::set<CausetEvent> presOrPast = e.PresentOrPast();
             _prec = set_add(_prec, presOrPast);} 
-        _succ = {}  
+        _succ = {};
         for (CausetEvent e = future.begin(); e != future.end();e++){
             std::set<CausetEvent> presOrFut = e.PresentOrFuture();
             _succ = set_add(_succ, presOrFut);}
@@ -88,14 +89,15 @@ class CausetEvent
     // MISSING...
     //
     //ACTIVE FUNCTIONALITIES
-    bool _addToPast(CausetEvent other){
+    bool _addToPast(CausetEvent other)
+    {
         /*
         Adds an event to the past of this event.
         It returns False if the event is already in the past,
         otherwise it adds the event and return True.
         (implemented without link referenceses)
         */
-        if set_contains(other, _prec)
+        if (set_contains(other, _prec))
         {
             return false;
         }
