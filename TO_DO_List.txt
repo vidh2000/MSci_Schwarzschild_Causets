@@ -1,9 +1,34 @@
+VID IDEAS FOR FAST CODE
+
 1. Optimise "isLink" function in causetevent.py
     Is very slow as set operations are shit.
     Initial soln: maybe just do a.isFutureLink(b) after sorting a,b by
     time coordinate? Should be faster as no intersections of sets.
 2. Optimise/paralelise "isCausal_____" functions in spacetimes.py.
     Should be able to do more event pairs at the same time.
-3. Any ideas?
+3. Use lists to store information for events. Much faster in python as while 
+    dictionaries/sets are nice... take space and slower.
 
-lala
+TO DO
+
+1. Fix 1+1D Schwarzschild spacetime algo/check the algorithm as it seems wrong.
+    Should give causal relations only into the blackhole.
+    y-axis: time
+    x-axis: r.
+    Then do 2+1D with horizon at some radius
+    x,y-axis: x,y
+    z-axis: time.
+    Should only have relations upwards into the circle.
+    Then onto the 3+1D e.g. identically as to what they do
+    in the He,Rideout 2009 paper.
+
+
+
+USEFUL CODING INFORMATION
+Rideout and He 2009;
+Schwarzschild spacetime embedding/causality algorithm which makes it faster
+by not always needing to calculate the integral of ds.
+Otherwise reeduced 3+1D into 2+1D...
+https://iopscience.iop.org/article/10.1088/0264-9381/26/12/125015/pdf
+
+

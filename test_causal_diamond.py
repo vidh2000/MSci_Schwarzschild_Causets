@@ -1,9 +1,9 @@
 #%%
 #!/usr/bin/env python
 '''
-Created on 9 Oct 2020
+Created on 18 Oct 2022
 
-@author: Christoph Minz
+@author: Vid Homsak
 @license: BSD 3-Clause
 '''
 #%%

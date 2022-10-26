@@ -124,7 +124,7 @@ print("     0.08 -> ",fsolve(MM_to_solve, 2, 0.08)[0])
 print("     0.05 -> ",fsolve(MM_to_solve, 2, 0.05)[0])
 
 
-#%% 3. CHECK DIMESNION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
+#%% 3. CHECK DIMENSION ESTIMATOR IN FLAT SPACETIME FOR ALL COORDINATES
 print("\n=========================================================")
 print("CHECK MMrdim_est IN FLAT SPACETIME")
 print("=========================================================\n")
@@ -297,4 +297,3 @@ for i in range(len(dims[0])-nskip):
 plt.legend()
 #plt.ylim((0.99, 4.5))
 plt.show()
-# %%
