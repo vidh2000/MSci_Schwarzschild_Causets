@@ -21,7 +21,22 @@ TO DO
     Should only have relations upwards into the circle.
     Then onto the 3+1D e.g. identically as to what they do
     in the He,Rideout 2009 paper.
+2.  a) Define algo/code to be able to count links over the horizon
+        (test in 1+1 Schwarzschild and simpler spacetimes) 
+    b) Update to include higher-order links for 3+1D spacetimes
+3.  C++ code to speed things up.
+    Parallel procesing.
 
+C++ list of implementations/TODO/have done:
+1. How do @staticmethod, @property, @classmethod
+    link to cpp static methods etc etc?
+    Or should I just do a public method/function etc?
+    25.10 FINISHED at line 330 on causetevent.py, defining
+    functions/methods and attributes needed to be translated to cpp.
+2. Don't fuck with links - unneccesary work which we never use for now.
+    - will use links once studying entropy over horizon...
+    Later update your classes to include ANY code with links!
+    (compare with python files to see what's missing...)
 
 
 USEFUL CODING INFORMATION

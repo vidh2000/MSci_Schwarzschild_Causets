@@ -268,8 +268,7 @@ class CoordinateShape(object):
         '''
         is3d: bool = len(dims) == 3
         if plotAxes is None:
-            plotAxes = gca(projection='3d') if is3d else \
-                gca(projection=None)
+            plotAxes = gca(projection='3d') if is3d else gca(projection=None)
         if is3d:
             plotoptions = {'edgecolor': None,
                            'color': 'black',

@@ -17,8 +17,8 @@ import causets.causetplotting as cplt
 import matplotlib.pyplot as plt
 
 from functions import *
-Ndim=2
-N_events = 1000
+Ndim=3
+N_events = 100
 #S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=2.0,
 #                                    radius=1.0,hollow=0.9)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
@@ -35,7 +35,7 @@ e: CausetEvent = C.CentralAntichain().pop()  # pick one event
 Clist = C.nlist()
 print(len(Clist))
 #print(Clist)
-"""
+
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 if C.Dim==3:
     dims: List[int] = [2,1,0]  # choose the (order of) plot dimensions
@@ -63,5 +63,5 @@ if len(dims) > 2:
     ax.set_zlabel('space' if dims[2] > 0 else 'time')
     ax.grid(False)
 cplt.show()
-"""
+
 

@@ -3,9 +3,8 @@ from math import nan
 import numpy as np
 import random as rand
 
-a = rand.random()
-print(a)
+a = set([1,2,3])
 
-a = np.random.uniform(-1,1,size=(5,2))
-
+b = set([4,5,6])
+a.update(b)
 print(a)

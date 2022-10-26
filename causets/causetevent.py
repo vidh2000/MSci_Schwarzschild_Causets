@@ -41,11 +41,11 @@ class CausetEvent(object):
         label: str
             Label for the event (does not need to be unique in a causet)
         past: Iterable[CausetEvent]
-            Set of past events (that may or may not be linked). This instance 
-            will automatically be added to their future.
+            Set of past events (that may or may not be linked).
+            This instance will automatically be added to their future.
         future: Iterable[CausetEvent]
-            Set of future events (that may or may not be linked). This instance 
-            will automatically be added to their past.
+            Set of future events (that may or may not be linked).
+            This instance will automatically be added to their past.
         coordinates: Iterable[float]
             Coordinates if the event shall be considered as embedded in a 
             spacetime region.
@@ -134,8 +134,8 @@ class CausetEvent(object):
     def _addToPast(self, other: 'CausetEvent') -> bool:
         '''
         Adds an event to the past of this event.
-        It returns False if the event is already in the past, otherwise it adds 
-        the event and returns True.
+        It returns False if the event is already in the past,
+        otherwise it adds the event and returns True.
         '''
         if other in self._prec:
             return False
@@ -193,7 +193,7 @@ class CausetEvent(object):
             e._discard(self)
         self._prec = set()
         for e in self.Cone:
-            e._discard(self)
+            e._discard(self) #is this just doubled?
         self._succ = set()
 
     def link(self) -> None:
@@ -211,9 +211,9 @@ class CausetEvent(object):
             e for e in self._succ if CausetEvent.isLink(self, e)}
 
     def unlink(self) -> None:
-        '''
+        """
         Force the CausetEvent instance to reset its link memory.
-        '''
+        """
         delattr(self, '_lprec')
         delattr(self, '_lsucc')
 

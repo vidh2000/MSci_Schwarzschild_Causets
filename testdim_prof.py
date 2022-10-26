@@ -17,6 +17,7 @@ import causets.causetplotting as cplt
 from functions import * #profiler
 import warnings
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 import numpy as np
 from tqdm import tqdm
@@ -159,7 +160,7 @@ shapes = [
 
 # Define
 # cardinalities to test, repetitions to average, cuts for coarse graining
-Ns = [4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
+Ns = [1024, 512, 256, 128, 64, 32, 16]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 
@@ -262,38 +263,3 @@ del d, sps, i, rep, cut, nskip
 del Ns, cuts, repetitions
 del st, dims, shapes, r, dur, ballh_ps, ball_ps, cylh_ps, cyl_ps, cub_ps
 del ests, stds, lbl, fig
-# %%
-fig = plt.figure(f"MMFlatDim ('random') {sps[0]}")
-plt.title(f"Myrheim-Mayers ('random') in {sps[0]} Minkowski")
-plt.xlabel("Cardinality")
-plt.ylabel("Dimension")
-for i in range(len(dims[0])-nskip):
-    ests = rdim_est[i]
-    stds = rdim_std[i]
-    finmask = np.isfinite(ests)
-    lbl  = f"Dimension {dims[0][i+nskip]}"
-    plt.errorbar(np.array(Ns)[finmask], ests[finmask], yerr=stds[finmask], 
-                 fmt=".", capsize = 4, label = lbl)
-plt.legend()
-plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
-plt.xscale('log')
-#plt.ylim((0.99, 4.5))
-plt.show()
-
-# Plot the big case
-fig = plt.figure(f"MMFlatDim ('big') {sps[0]}")
-plt.title(f"Myrheim-Mayers ('big') in {sps[0]} Minkowski")
-plt.xlabel("Cardinality")
-plt.ylabel("Dimension")
-plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
-plt.xscale('log')
-for i in range(len(dims[0])-nskip):
-    ests = bdim_est[i]
-    stds = bdim_std[i]
-    finmask = np.isfinite(ests)
-    lbl  = f"Dimension {dims[0][i+nskip]}"
-    plt.errorbar(np.array(Ns)[finmask], ests[finmask], yerr=stds[finmask], 
-                 fmt=".", capsize = 4, label = lbl)
-plt.legend()
-#plt.ylim((0.99, 4.5))
-plt.show()
