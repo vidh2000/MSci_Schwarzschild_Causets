@@ -9,7 +9,7 @@ VID IDEAS FOR FAST CODE
 3. Use lists to store information for events. Much faster in python as while 
     dictionaries/sets are nice... take space and slower.
 
-TO DO
+TO DO (Python)
 
 1. Fix 1+1D Schwarzschild spacetime algo/check the algorithm as it seems wrong.
     Should give causal relations only into the blackhole.
