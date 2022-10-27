@@ -11,6 +11,9 @@ VID IDEAS FOR FAST CODE
 
 TO DO (Python)
 
+0. Write your own algos/understand the sprinkling i.e probability distributions
+    and how they differ and are implemented in spherical, polar coordinates and 
+    in the cone. Check the code
 1. Fix 1+1D Schwarzschild spacetime algo/check the algorithm as it seems wrong.
     Should give causal relations only into the blackhole.
     y-axis: time
