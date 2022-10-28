@@ -11,8 +11,56 @@
 #include <set>
 #include <stdexcept>
 
-#include "functions.h"
+#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Useful functions for set manipulations
+//
+//template <typename obj>  
+//void print_set(std::set<obj> set){
+//    /*
+//    Prints elements of a set one by one.
+//    */
+//    std::cout << "{ ";
+//    for (obj e : set)
+//    {
+//        std::cout << e << ' , ';
+//    }
+//    std::cout << " }";
+//    std::cout << std::endl;}
+//
+//bool set_contains(CausetEvent element, std::set<CausetEvent> s)
+//    {
+//    bool is_in = s.find(element) != s.end();
+//    return is_in;}
+//
+//std::set<CausetEvent> set_diff(std::set<CausetEvent> s1,
+//                               std::set<CausetEvent> s2)
+//    /*
+//    Return set difference i.e events which are only in s1;
+//    RETURN = s1-s2 (where s2 can have other elements as well)
+//    */
+//    {
+//    std::set<CausetEvent> result;
+//    std::set_difference(s1.begin(), s1.end(), s2.begin(), s2.end(),
+//        std::inserter(result, result.end()));
+//    return result;}
+//
+//std::set<CausetEvent> set_union(std::set<CausetEvent> s1,
+//                                std::set<CausetEvent> s2)
+//    /**
+//    * @brief Returns union of two sets s1 and s2.
+//    */
+//    {
+//    s1.insert(s2.begin(), s2.end());
+//    return s1;}
+//
+///////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// CausetEvent class for used for all the causal set elements
+//////////////////////////////////////////////////////////////////////////////
 class CausetEvent
 {
     /*
@@ -68,28 +116,43 @@ class CausetEvent
     {
         this -> Label = label;
         _prec = {};
-        for (CausetEvent e = past.begin(); e != past.end(); e++){
+        for (CausetEvent e : past){
             std::set<CausetEvent> presOrPast = e.PresentOrPast();
             _prec = set_union(_prec, presOrPast);} 
         _succ = {};
-        for (CausetEvent e = future.begin(); e != future.end();e++){
+        for (CausetEvent e : future){
             std::set<CausetEvent> presOrFut = e.PresentOrFuture();
             _succ = set_union(_succ, presOrFut);}
         this -> _coordinates = coordinates;
         this -> _position = position;
         // Add this instance to its causal relatives:
-        for (CausetEvent e = _prec.begin(); _prec.end(); e++)
+        for (CausetEvent e : _prec)
         {   e._addToFuture(*this);}
-        for (CausetEvent e = _succ.begin(); _succ.end(); e++)
+        for (CausetEvent e : _succ)
         {   e._addToPast(*this);}
     }
 
-    // Overloading <, <=, >, >= to relate CausetEvent instances
-    //
-    // MISSING
-    // MISSING...
-    //
+    // Overloading ==, <, <=, >, >= to relate CausetEvent instances
+    
+    bool operator == (CausetEvent other){
+        return other.Label == Label;}
+        
+    bool operator < (CausetEvent other){
+        return set_contains(other, _succ);}
+
+    bool operator <= (CausetEvent other){
+        return (*this==other or set_contains(other, _succ));} //"required from here" error?
+    
+    bool operator > (CausetEvent other){
+        return set_contains(other, _prec);}
+
+    bool operator >= (CausetEvent other){
+        return (*this==other or set_contains(other, _prec));}
+        
+    
+    ////////////////////////////////////////////////////////////
     //ACTIVE FUNCTIONALITIES
+    ////////////////////////////////////////////////////////////
     bool _addToPast(CausetEvent other)
     {
         /*
@@ -98,7 +161,8 @@ class CausetEvent
         otherwise it adds the event and return True.
         (implemented without link referenceses)
         */
-        if (set_contains(other, _prec))
+
+        if (set_contains(other, _prec)) //? gives warning/error: "required from here" ?
         {
             return false;
         }
@@ -157,9 +221,6 @@ class CausetEvent
             return false;
         }}
 
-    ////////////////////////////////////////////////////////////
-    //ACTIVE FUNCTIONALITIES
-    ////////////////////////////////////////////////////////////
 
     void disjoin(){
         /*
@@ -168,14 +229,14 @@ class CausetEvent
         (implemented without link referenceses)
         */
         //unlink()
-        for(CausetEvent e; Cone().begin(); Cone().end(); e++)
+        for(CausetEvent e : Cone())
         {
-            e._discard(*this)
+            e._discard(*this);
         }
         _prec = {};
-        for(CausetEvent e; Cone().begin(); Cone().end(); e++)
+        for(CausetEvent e : Cone())
         {
-            e._discard(*this)
+            e._discard(*this);
         }
         _succ = {};
         }
@@ -280,7 +341,7 @@ class CausetEvent
         that are in the future of this event, including this event.
         */
         std::set<CausetEvent> presOrFut = _succ;
-        presOrFut.insert(*this);
+        presOrFut.insert(*this); //?
         return presOrFut;}
 
 
@@ -289,7 +350,7 @@ class CausetEvent
         Returns the subset of events (instances of CausetEvent) of
         `eventSet` that are spacelike separated to this event.
         */
-        return set_diff(eventset, Cone());}
+        return set_diff(eventset, Cone());} // "required from here" error?
 
 
     int PastCard(){
@@ -349,11 +410,10 @@ class CausetEvent
         an `AttributeError` is raised. To avoid this error and overwrite the 
         value, use reembed.
         */
-        if (not reembed and isEmbedded())
-        {
+        if (not reembed and this->isEmbedded()) //?
+        {   
             throw std::invalid_argument(
-                "The event #? is already embedded.
-                Use the 'disembed' method first or use the reembed flag.");
+                "The event is already embedded. Use the disembed method first or use the reembed flag.");
         }
         _coordinates = coordinates;}
     void disembed(){
@@ -374,7 +434,7 @@ class CausetEvent
         catch(const std::exception& e)
         {
             std::cerr << e.what() << '\n';
-            return {0.0,0.0}
+            return {0.0,0.0};
         }}
 
 
@@ -387,7 +447,7 @@ class CausetEvent
             throw std::invalid_argument(
                 "The position has to be an iterable of exactly two values.");
         }
-        _position = value
+        _position = value;
     }
     bool isEmbedded(){
         /*
@@ -417,7 +477,8 @@ class CausetEvent
         catch(const std::exception& e)
         {
             std::cerr << e.what() << '\n';
-            return 0;
+            std::vector<double> default_vec = {0};
+            return default_vec; //the python here returns int 0...
         }}
         
 
@@ -435,10 +496,17 @@ class CausetEvent
             return 0;
         }}
 
+    // Destructor
+	~CausetEvent();
 
 };
 
+int main(){
 
+int a = 3;
+std::cout << a;
+
+};
 
 
 

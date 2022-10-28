@@ -19,7 +19,7 @@ inline
 void print_set(std::set<obj> set)
 {
     std::cout << "{ ";
-    for (int const& e : set)
+    for (obj e : set)
     {
         std::cout << e << ' , ';
     }
@@ -53,7 +53,7 @@ std::set<obj> set_diff(std::set<obj> s1, std::set<obj> s2)
 
 template <typename obj> 
 inline
-std::set<obj> set_add(std::set<obj> s1, std::set<obj> s2)
+std::set<obj> set_union(std::set<obj> s1, std::set<obj> s2)
     /**
     * @brief Returns union of two sets s1 and s2.
     */

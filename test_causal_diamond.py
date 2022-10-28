@@ -24,6 +24,8 @@ N_events = 100
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
 #S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=3.0,hollow=0.0)
 
+
+
 S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=5.0)
 def C_init():
     C: SprinkledCauset = SprinkledCauset(
@@ -35,6 +37,7 @@ e: CausetEvent = C.CentralAntichain().pop()  # pick one event
 Clist = C.nlist()
 print(len(Clist))
 #print(Clist)
+
 
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 if C.Dim==3:
