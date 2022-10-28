@@ -15,16 +15,18 @@ from causets.shapes import CoordinateShape
 from causets.causetevent import CausetEvent 
 import causets.causetplotting as cplt  
 import matplotlib.pyplot as plt
+from time import time
 
 from functions import *
-Ndim=3
-N_events = 100
+
+Ndim=4
+N_events = 10000
 #S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=2.0,
 #                                    radius=1.0,hollow=0.9)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
 #S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=3.0,hollow=0.0)
 
-
+start =  time()
 
 S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=5.0)
 def C_init():
@@ -35,10 +37,12 @@ C = profiler(function=C_init,Nshow=5)
 e: CausetEvent = C.CentralAntichain().pop()  # pick one event
 
 Clist = C.nlist()
-print(len(Clist))
 #print(Clist)
 
+print(f"Time taken for N={len(Clist)}, {round(time()-start, 2)} sec")
 
+
+"""
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 if C.Dim==3:
     dims: List[int] = [2,1,0]  # choose the (order of) plot dimensions
@@ -67,4 +71,4 @@ if len(dims) > 2:
     ax.grid(False)
 cplt.show()
 
-
+"""
