@@ -2,13 +2,15 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <limits>
 #include <map>
+#include <math.h>
 #include <numeric>
-#include <fstream>
 #include <stack>
 #include <string>
 #include <stdio.h>
+#include <bits/stdc++.h>
 #include <stdexcept>
 #include <vector>
 
@@ -17,11 +19,13 @@
 
 #include "shapes.h"
 
+# define M_PI           3.14159265358979323846  /* pi */
+
 CoordinateShape::CoordinateShape(int dim, char name, 
-                        std::vector<double> center = {0},
+                        std::vector<double> center = {},
                         double radius   = 1,
                         double edge     = 1,
-                        std::vector<double> edges = {1},
+                        std::vector<double> edges = {},
                         double hollow   = 0,
                         double duration = 2)
 /**
@@ -67,27 +71,187 @@ CoordinateShape::CoordinateShape(int dim, char name,
  * 
  */
 {
+    // Set Dimension
     if (dim < 1)
        {throw std::invalid_argument("Dim smaller than 1!");}
+    _dim = dim;
+
+    // Set Name
+    name = (name == 'diamond') ? 'bicone' : name;
+    if (name!='ball' || name!='bicone' || name!='cylinder'
+     || name!='cube' || name!='cuboid')
+     { 
+        std::string dim_error = "The given shape is " + name; 
+        throw std::invalid_argument(dim_error + " and not supported!");
+     }
+    _name = name;
+
+    // Set Center
+    std::vector<double> zero_center (_dim, 0.0);
+    if (center.size() == dim)
+        {_center = center;}
+    else if (center.size() == 0)
+        {_center = zero_center;}
+    else 
+        {throw std::invalid_argument("Center's size neither 0 nor _dim");}
+    
+    
+    // Set Shape Parameters
+    if (name == 'ball' or name == 'bicone')
+    {
+        _params.insert({"radius", radius}); 
+        this->param_rangecheck("radius");
+
+        _params.insert({"hollow", hollow}); 
+        this->param_rangecheck("hollow", 1.0, true);
+    }
+    else if (name == 'cylinder')
+    {
+        _params.insert({"radius", radius}); 
+        this->param_rangecheck("radius");
+
+        _params.insert({"hollow", hollow}); 
+        this->param_rangecheck("hollow", 1.0, true); 
+
+        _params.insert({"duration", duration}); 
+        this->param_rangecheck("duration");   
+    }
+    else if (name == 'cube')
+    {
+        _params.insert({"edge", edge}); 
+        this->param_rangecheck("edge"); 
+    }
+    else if (name == 'cuboid')
+    {
+        std::vector my_edges (_dim, 1.0);
+        if (edges.size() != 0 && edges.size() != _dim)
+            {throw std::invalid_argument("Cuboid's |edges| neither 0 nor _dim");}
+        else if (edges.size() == 0)
+            {edges = my_edges;}
+        for (int i = 0; i<_dim; i++)
+        {
+            double edge_i = edges[i];
+            std::string key_s = "edge_"+to_string(i);
+            const char* key_i = key_s.c_str();
+            //char key_i[key_s.length() + 1]; 
+	        //std::strcpy(key_i, key_s.c_str());
+            _params.insert({key_i, edge_i}); 
+            this->param_rangecheck(key_i);
+        } 
+    }
 }
+       
         
-void CoordinateShape::param_rangecheck(char name, 
-                     double maxValue = std::numeric_limits<double>::infinity(),
+void CoordinateShape::param_rangecheck(const char* name, 
+                     double maxValue = std::nan(""),
                      bool canBeZero = false)
 {
+    double p = _params.find(name)->second;
+    bool isTooLow = ((canBeZero && p < 0.0) or (!canBeZero && p<=0));
+    const char* errorchar = (canBeZero) ? "greater than or equal to 0" 
+                                        : "greater than 0";
+    if (std::isnan(maxValue) and isTooLow)
+    {
+        std:string error = "Parameter ";
+        error += name;
+        error += " is out of range. It must be a double ";
+        error += errorchar;
+        throw std::invalid_argument(error);
+    }
+    else if (isTooLow or p>=maxValue)
+    {
+        std:string error = "Parameter ";
+        error += name;
+        error += " is out of range. It must be a double ";
+        error += errorchar;
+        error += " and smaller than ";
+        error += to_string(maxValue);
+        throw std::invalid_argument(error);
+    }
 
 }
-        
-double CoordinateShape::Parameter (char key)
-{
 
-}
+
+double CoordinateShape::Parameter (const char* key)
+/**
+ * @brief Return value of parameter corresponding to "key". 
+ *        Note: for cuboid, need to call "edge_i" where i in [0, _dim-1].
+ */
+    {return _params.find(key)->second;}
+
 
 double CoordinateShape::Volume()
+/**
+ * @brief Return Volume. On first call volume is computed. 
+ */
 {
-
+    if (_volume != 0)
+        {return _volume;}
+    else if (_name == 'ball')
+    {
+        double r = this->Parameter("radius");
+        _volume  = std::pow(r, _dim); //for now
+        double h_fr = this->Parameter("hollow");
+        _volume -= (h_fr>0)? std::pow(h_fr*r, _dim) : 0.0;
+        _volume *= std::pow(M_PI, _dim/2) / std::tgamma(_dim/2 +1);
+    }
+    else if (_name == 'cylinder')
+    {
+        double r = this->Parameter("radius");
+        _volume  = std::pow(r, _dim-1); //for now
+        double h_fr = this->Parameter("hollow");
+        _volume -= (h_fr>0)? std::pow(h_fr*r, _dim-1) : 0.0;
+        _volume *= std::pow(M_PI, _dim/2 -0.5) / std::tgamma(_dim/2 +0.5);
+        _volume *= this->Parameter("duration");
+    }
+    else if (_name == 'bicone')
+    {
+        double r = this->Parameter("radius");
+        _volume  = std::pow(r, _dim); //for now
+        double h_fr = this->Parameter("hollow");
+        _volume -= (h_fr>0)? std::pow(h_fr*r, _dim) : 0.0;
+        _volume *= std::pow(M_PI, _dim/2 -0.5) / std::tgamma(_dim/2 +0.5);
+        _volume *= 2/_dim;
+    }
+    else if (_name == 'cube')
+    {
+        _volume = std::pow(this->Parameter("edge"), _dim);
+    }
+    else if (_name == 'cuboid')
+    {
+        _volume = 1;
+        for (int i = 0; i<_dim; i++)
+        {
+            std::string key_s = "edge_"+to_string(i);
+            const char* key_i = key_s.c_str();
+            _volume *= this->Parameter(key_i);
+        }
+    }
+    return _volume;
 }
-std::vector<double> CoordinateShape::Limits(int dimension)
-{
 
+
+std::vector<double> CoordinateShape::Limits(int dim)
+/**
+ * @brief Returns a vector<double> for the minimum (left) and maximum (right) 
+ *        of a shape along coordinate dimension 'dim' (0-indexed).
+ */
+{
+    if ((dim < 0) || (dim >= _dim))
+    {
+        throw invalid_argument("Dimension " + to_string(dim) +  "out of range "
+                               + "[0, " + to_string(_dim)+" ]!");
+    }
+    double l = 0;
+    if ((dim == 0) && (_name == 'cylinder'))
+        {l = this->Parameter("duration") /2;}
+    else if (_name == 'cube')
+        {l = this->Parameter("edge") /2;}
+    else if (_name == 'cuboid')
+        {l = this->Parameter(("edge_"+to_string(dim)).c_str()) /2;}
+    else
+        {l = this->Parameter("radius");}
+    double shift = _center[dim];
+    std::vector<double> limits = {-l + shift, l + shift};
+    return limits; 
 }
