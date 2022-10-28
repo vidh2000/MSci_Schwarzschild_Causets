@@ -111,7 +111,8 @@ class CausetEvent
             //}
             _prec.insert(other);
             return true;
-        }}
+        }
+    }
 
     bool _addToFuture(CausetEvent other){
         /*
