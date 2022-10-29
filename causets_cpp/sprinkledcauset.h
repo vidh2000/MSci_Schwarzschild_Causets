@@ -1,11 +1,22 @@
+/// \authors Vid Homsak, Stefano Veroni
+/// \date 28/09/2022
+
 #ifndef SPRINKLEDCAUSET_H
 #define SPRINKLEDCAUSET_H
 
 #include <set>
 #include <vector>
 
-class SprinkledCauset
-// Note no link fuctions have been included.
+#include "causetevent.h"
+#include "causet.h"
+#include "spacetimes.h"
+#include "shapes.h"
+
+/**
+ * @brief An causet obtained from sprinkling in a spacetime subset 
+ *        of a specified shape.
+ */
+class SprinkledCauset: public Causet
 {
     public:
 
@@ -17,7 +28,7 @@ class SprinkledCauset
         std::vector<double> _position;
 
         // Constructor
-        CausetEvent(int label = -1,
+        SprinkledCauset(int label = -1,
                     std::set<CausetEvent> past = {},
                     std::set<CausetEvent> future = {}, 
                     std::vector<double> position = {},
