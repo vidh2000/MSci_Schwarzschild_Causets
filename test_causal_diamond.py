@@ -20,7 +20,7 @@ from time import time
 from functions import *
 
 Ndim=4
-N_events = 10000
+N_events = 1000
 #S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=2.0,
 #                                    radius=1.0,hollow=0.9)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])

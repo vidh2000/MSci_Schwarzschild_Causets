@@ -1,20 +1,18 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <iomanip>
-#include <numeric>
-#include <fstream>
-#include <stack>
-#include <string>
-#include <stdio.h>
-#include <vector>
-#include <set>
+#include<iostream>
 
-#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
 
-int main(){
+// Test C++ version...
+int main() {
+    if (__cplusplus == 201703L) std::cout << "C++17\n";
+    else if (__cplusplus == 201402L) std::cout << "C++14\n";
+    else if (__cplusplus == 201103L) std::cout << "C++11\n";
+    else if (__cplusplus == 199711L) std::cout << "C++98\n";
+    else std::cout << "pre-standard C++\n";
 
-int a=3;
-std::cout<< a;
+int a = 3;
+int b = 4;
 
-}
+bool c = (a<b);
+std::cout << c;
+
+}   

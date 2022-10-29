@@ -23,8 +23,8 @@ class CausetEvent
         int Label;
         std::set<CausetEvent> _prec;
         std::set<CausetEvent> _succ;
-        std::vector<double> _coordinates = {};
-        std::vector<double> _position    = {};
+        std::vector<double> _coordinates;
+        std::vector<double> _position;
 
         // Constructor
         CausetEvent(int label = -1,
@@ -46,11 +46,11 @@ class CausetEvent
         int SpacelikeCard(std::set<CausetEvent> eventset);
     
         //Overloading Operators
-        bool operator == (CausetEvent other);
-        bool operator <  (CausetEvent other);
-        bool operator <= (CausetEvent other);
-        bool operator >  (CausetEvent other);
-        bool operator >= (CausetEvent other);
+        bool operator ==(const CausetEvent &other) const;
+        bool operator <(const CausetEvent &other) const;
+        bool operator <=(const CausetEvent &other) const;
+        bool operator >(const CausetEvent &other) const;
+        bool operator >=(const CausetEvent &other) const;
 
         //Active Functionalities
         bool _addToPast(CausetEvent other);
@@ -73,8 +73,6 @@ class CausetEvent
         std::vector<double> Position();
         void SetPosition(std::vector<double> value);
 
-        //Destructor
-        ~CausetEvent();
 
 
 

@@ -11,8 +11,12 @@
 #include <set>
 #include <stdexcept>
 
-#include <functions.h>
-#include <causetevent.h>
+// For Vid (can't locate headers for some reason)
+// Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\"header".h...
+
+#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
+#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\causetevent.h>
+//#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h>
 
 //////////////////////////////////////////////////////////////////////////////
 // CausetEvent class for used for all the causal set elements
@@ -77,11 +81,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-CausetEvent::CausetEvent(int label = -1,
-                        std::set<CausetEvent> past = {},
-                        std::set<CausetEvent> future = {}, 
-                        std::vector<double> position = {},
-                        std::vector<double> coordinates = {})
+CausetEvent::CausetEvent(int label,
+                        std::set<CausetEvent> past,
+                        std::set<CausetEvent> future, 
+                        std::vector<double> position,
+                        std::vector<double> coordinates)
 /** 
 * @Constructor:
 * @brief Initialise a CausetEvent.
@@ -123,20 +127,22 @@ CausetEvent::CausetEvent(int label = -1,
 
 
 // Overloading ==, <, <=, >, >= to relate CausetEvent instances
-bool CausetEvent::operator == (CausetEvent other){
+bool CausetEvent::operator ==(const CausetEvent &other) const {
     return other.Label == Label;}
     
-bool CausetEvent::operator < (CausetEvent other){
+bool CausetEvent::operator <(const CausetEvent &other) const {
     return set_contains(other, _succ);}
 
-bool CausetEvent::operator <= (CausetEvent other){
-    return (*this==other or set_contains(other, _succ));} //"required from here" error?
+bool CausetEvent::operator <=(const CausetEvent &other) const {
+    bool boolean = (*this==other) || set_contains(other, _succ);
+    return boolean;}
 
-bool CausetEvent::operator > (CausetEvent other){
+bool CausetEvent::operator >(const CausetEvent &other) const {
     return set_contains(other, _prec);}
 
-bool CausetEvent::operator >= (CausetEvent other){
-    return (*this==other or set_contains(other, _prec));}
+bool CausetEvent::operator >=(const CausetEvent &other) const {
+    bool boolean = *this==other || set_contains(other, _prec);
+    return boolean;}
     
 
 ////////////////////////////////////////////////////////////
@@ -207,6 +213,7 @@ bool CausetEvent::_discard(CausetEvent other)
     else if (set_contains(other, _succ))
     {
         _succ.erase(other);
+        return true;
     }
     else
     {
@@ -417,14 +424,14 @@ int CausetEvent::SpacelikeCard(std::set<CausetEvent> eventset)
 ////////////////////////////////////////////////////////////
 // EMBEDDING FUNCTIONALITIES
 ////////////////////////////////////////////////////////////
-void CausetEvent::embed(std::vector<double> coordinates, bool reembed = false)
+void CausetEvent::embed(std::vector<double> coordinates, bool reembed)
 {
     /*
     Assigns coordinates to the event. If the event already has coordinates, 
     an `AttributeError` is raised. To avoid this error and overwrite the 
     value, use reembed.
     */
-    if (not reembed and this->isEmbedded()) //?
+    if (!reembed && this->isEmbedded())
     {   
         throw std::invalid_argument(
             "The event is already embedded. Use the disembed method first \
@@ -505,8 +512,25 @@ void CausetEvent::SetPosition(std::vector<double> value)
 
 int main(){
 
-int a = 3;
-std::cout << a;
+
+
+int l1 = 1;
+int l2 = 2;
+std::set<CausetEvent> p1 = {};
+std::set<CausetEvent> p2 = {};
+std::vector<double> coords1 = {0.01,0.03,5.0};
+std::vector<double> coords2 = {1,3,5.0};
+
+std::vector<double> pos1 = {0,0,0};
+std::vector<double> pos2 = {0,0,1};
+CausetEvent e1(l1, p1, p1, pos1, coords1);
+CausetEvent e2(l2, p2, p2, pos2, coords2);
+
+//print_set(e1.Future);
+//std::vector<double> ec1= e1.Coordinates()
+//print_vector(ec1);
+std::cout << e1.isEmbedded()<< std::endl;
+std::cout << e2.CoordinatesDim()<< std::endl;
 
 };
 

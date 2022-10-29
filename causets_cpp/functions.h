@@ -18,12 +18,16 @@ template <typename obj>
 inline
 void print_set(std::set<obj> set)
 {
-    std::cout << "{ ";
+    
+    std::string beginstr = "{ ";
+    std::cout << beginstr;
     for (obj e : set)
     {
-        std::cout << e << ' , ';
+        std::string separator = " , ";
+        std::cout << e << separator;
     }
-    std::cout << " }";
+    std::string endstr = " }";
+    std::cout << endstr;
     std::cout << std::endl;
 }
 

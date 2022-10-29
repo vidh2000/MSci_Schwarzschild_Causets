@@ -245,7 +245,7 @@ vector<vector<T1>> getAwhereB(vector<vector<T1>> V, vector<T2> u, T2 x)
     while (it != end) 
     {
         auto it2 = find(it+1, end, x);
-        if (it2 != end)) 
+        if (it2 != end) 
         {
         int index = it2 - begin;
         for (int i = 0; i < V.size(); i++)
