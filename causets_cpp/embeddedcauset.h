@@ -7,7 +7,6 @@
 #include <set>
 #include <vector>
 
-#include "causetevent.h"
 #include "causet.h"
 #include "spacetimes.h"
 #include "shapes.h"
@@ -45,15 +44,9 @@ class EmbeddedCauset: public Causet
         double LengthScale();
         CoordinateShape &Shape = _shape;
         Spacetime &Spacetime = _spacetime;
-
-        // FASTER LABELLING
-        vector<CausetEvent> nlabel(const char* method = "time", 
-                                        bool reverse = false);
-        vector<CausetEvent> nlist(const char* method = "time", 
-                                        bool reverse = false);
         
         // MODIFY
-        set<CausetEvent> create (vector<vector<double>> coordinates);
+        Causet create (vector<vector<double>> coordinates);
         void relate ();
         void relabel(int guiding_dim = 0, bool reverse = false);      
 };

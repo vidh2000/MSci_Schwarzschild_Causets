@@ -90,46 +90,6 @@ class Causet(object):
         """
         return Causet.FromPastMatrix(C)
 
-    @staticmethod #replaced by FromCausalMatrix
-    def FromPastMatrix(C: np.ndarray) -> 'Causet':
-        '''
-        Converts a logical matrix into a `Causet` object. The entry `C[i, j]` 
-        has to be True or 1 if the event with index j is in the (link) past of 
-        event with index i. If the matrix has less rows than columns, empty 
-        rows are added after the last row. However, if the matrix has more rows 
-        than columns, a ValueError is raised. A ValueError is also raised if 
-        the matrix contains causal loops.
-        '''
-        rowcount: int = C.shape[0]
-        colcount: int = C.shape[1]
-        if colcount < rowcount:
-            raise ValueError('The specified matrix cannot be extended ' +
-                             'to a square matrix.')
-        events: np.ndarray = np.array([CausetEvent(label=i)
-                                       for i in range(1, colcount + 1)])
-        e: CausetEvent
-        for i in range(rowcount):
-            e = events[i]
-            past: Set[CausetEvent] = set(events[np.where(C[i, :])[0]])
-            future: Set[CausetEvent] = set(events[np.where(C[:, i])[0]])
-            if (past & future) or (e in past) or (e in future):
-                raise ValueError('The causet is not anti-symmetric.')
-            e._prec = past
-            e._succ = future
-        # complete pasts and futures (if the input contains links only)
-        for i in range(colcount):
-            e = events[i]
-            e._prec = Causet.PastOf(e._prec, includePresent=True)
-            e._succ = Causet.FutureOf(e._succ, includePresent=True)
-        return Causet(set(events))
-
-    @staticmethod #replaced AND IMPROVED by FromTCausalMatrix
-    def FromFutureMatrix(C: np.ndarray) -> 'Causet':
-        '''
-        Returns `FromPastMatrix` of the transposed input. 
-        '''
-        return Causet.FromPastMatrix(C.T)
-
 
 
     ####################################################################
