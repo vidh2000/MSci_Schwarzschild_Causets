@@ -16,7 +16,7 @@
 
 #include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
 #include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\causetevent.h>
-//#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h>
+#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h>
 
 //////////////////////////////////////////////////////////////////////////////
 // CausetEvent class for used for all the causal set elements
@@ -513,7 +513,6 @@ void CausetEvent::SetPosition(std::vector<double> value)
 int main(){
 
 
-
 int l1 = 1;
 int l2 = 2;
 std::set<CausetEvent> p1 = {};
@@ -528,7 +527,7 @@ CausetEvent e2(l2, p2, p2, pos2, coords2);
 
 //print_set(e1.Future);
 //std::vector<double> ec1= e1.Coordinates()
-//print_vector(ec1);
+print_vector(e1.Coordinates());
 std::cout << e1.isEmbedded()<< std::endl;
 std::cout << e2.CoordinatesDim()<< std::endl;
 

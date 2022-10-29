@@ -463,6 +463,7 @@ double mymean(vector <T1> x, F func, vector <T2> w = {1})
 }
 
 
+/*
 template <typename T>
 inline
 T cumulative (vector <T> v)
@@ -489,7 +490,7 @@ double cumulative (vector <T> v, bool norm = true)
                             {return (double)a + b;};
     partial_sum(v.begin(), v.end(), cum.begin(), lambda);
     return cum;
-}
+}*/
 
 
 template <typename T>
@@ -502,6 +503,8 @@ int get_sign (T x)
 struct Point
         {double x, y;};
 
+
+/*
 template <typename T>
 //https://www.geeksforgeeks.org/convex-hull-set-2-graham-scan/ 
 vector <vector<T>> ConvexHull(vector<T> xvec, vector<T> yvec)
@@ -538,6 +541,7 @@ vector <vector<T>> ConvexHull(vector <vector<T>> positions)
         return ConvexHull(points, 0);
     }
 }
+*/
 
 
 template <typename T>
