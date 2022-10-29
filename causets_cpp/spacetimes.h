@@ -1,3 +1,6 @@
+/// \authors Vid Homsak, Stefano Veroni
+/// \date 25/09/2022
+
 #ifndef SPACETIMES_H
 #define SPACETIMES_H
 

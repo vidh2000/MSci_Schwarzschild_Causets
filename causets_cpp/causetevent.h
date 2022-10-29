@@ -1,3 +1,6 @@
+/// \authors Vid Homsak, Stefano Veroni
+/// \date 25/09/2022
+
 #ifndef CAUSETEVENT_H
 #define CAUSETEVENT_H
 
