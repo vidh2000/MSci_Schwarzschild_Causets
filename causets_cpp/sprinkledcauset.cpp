@@ -99,7 +99,26 @@ std::vector<std::vector<double>> SprinkledCauset::_sprinkle_coords(
         bool isDiamond = (shape.Name()=="diamond") || (shape.Name()=="bicone")
 
         int d = *this.Dim()
-        double b_r = shape.Radius();
+        double b_r = shape.Parameter().radius;
+        if (d==2 && isDiamond)
+        {
+            //pick "count" random coordinate tuples uniformly:
+            std::vector<std::vector<double>> uv;
+            // Random generator stuff
+            std::random_device rd;  
+            std::mt19937 gen(rd()); 
+            std::uniform_real_distribution<> dis(-1.0,1.0);
+            for (i=0;i<count;i++)
+            {
+                std::vector<double> = 
+                for (j=0;j<2;j++)
+                {
+                    
+                    uv[i]
+                }
+                
+            } 
+        }
     }
     
 }
