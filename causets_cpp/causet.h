@@ -103,18 +103,18 @@ class Causet
         CausetEvent findAll (vector<int> labels);
 
         // PAST, PRESENT, FUTURE & NOTHING AT ALL
-        set<CausetEvent> PastOf (set<CausetEvent> Set, 
-                                bool includePresent = false,
-                                bool intersect = false);
-        set<CausetEvent> FutureOf (set<CausetEvent> Set, 
-                                bool includePresent = false,
-                                bool intersect = false);
-        set<CausetEvent> ConeOf (set<CausetEvent> Set, 
-                                bool includePresent = false,
-                                bool intersect = false);
-        set<CausetEvent> SpacelikeTo (set<CausetEvent> Set, 
-                                bool includePresent = false,
-                                bool intersect = false);
+        static set<CausetEvent> PastOf (set<CausetEvent> Set, 
+                                        bool includePresent = false,
+                                        bool intersect = false);
+        static set<CausetEvent> FutureOf (set<CausetEvent> Set, 
+                                        bool includePresent = false,
+                                        bool intersect = false);
+        static set<CausetEvent> ConeOf (set<CausetEvent> Set, 
+                                        bool includePresent = false,
+                                        bool intersect = false);
+        static set<CausetEvent> SpacelikeTo (set<CausetEvent> Set, 
+                                        bool includePresent = false,
+                                        bool intersect = false);
         
         // INTERVAL
         set<CausetEvent> Interval(CausetEvent a, CausetEvent b,
