@@ -26,13 +26,7 @@ class CoordinateShape
         std::vector<double> _center;
         std::map<const char*, double> _params;
         double _volume = 0;
-        // Vid: Please define shape.Edges() method which returns
-        //what is in python called by shape.Parameter("edges")
-        // i.e see line 80, sprinkledcauset.py...
-        // whatever the edges are idk..
-        // Vid: also define shape.Radius() method which returns
-        // what is in python called by shape.Parameter('radius') e.g. 
-        // see line 92 in sprinkledcauset.py
+
         CoordinateShape(int dim, char name, 
                         std::vector<double> center = {0},
                         double radius   = 1,
@@ -45,8 +39,9 @@ class CoordinateShape
                      double maxValue = std::numeric_limits<double>::infinity(),
                      bool canBeZero = false);
         
-        double              Parameter (const char* key);
-        double              Volume();
+        double Parameter (const char* key);
+        std::vector<double> Edges ();
+        double Volume();
 
         std::vector<double> Limits(int dimension);
 

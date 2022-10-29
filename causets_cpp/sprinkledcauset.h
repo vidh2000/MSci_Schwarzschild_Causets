@@ -9,6 +9,7 @@
 
 #include "causetevent.h"
 #include "causet.h"
+#include "embeddedcauset.h"
 #include "spacetimes.h"
 #include "shapes.h"
 
@@ -16,7 +17,7 @@
  * @brief An causet obtained from sprinkling in a spacetime subset 
  *        of a specified shape.
  */
-class SprinkledCauset: public Causet
+class SprinkledCauset: public EmbeddedCauset
 {
     public:
         // Public Attributes

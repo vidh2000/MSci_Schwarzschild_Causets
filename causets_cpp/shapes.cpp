@@ -180,6 +180,23 @@ double CoordinateShape::Parameter (const char* key)
     {return _params.find(key)->second;}
 
 
+std::vector<double> CoordinateShape::Edges ()
+/**
+ * @brief Return value of [0, _dim-1] edges.
+ * @exception Raise error if undefined.
+ */
+{
+    std::vector<double> edges (_dim);
+    for (int i = 0; i<_dim; i++)
+    {
+        std::string key_s = "edge_"+to_string(i);
+        const char* key_i = key_s.c_str();
+        edges[i] = _params.find(key_i)->second;
+    }
+    return edges;
+}
+
+
 double CoordinateShape::Volume()
 /**
  * @brief Return Volume. On first call volume is computed. 
