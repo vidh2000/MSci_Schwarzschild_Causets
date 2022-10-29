@@ -46,8 +46,7 @@ class CoordinateShape
 
         // The following functions are only used in plotting, 
         // (apart for EllipseEdge in DeSitter XY slicing)
-        // As these are not implemeneted, functions are left
-        // undefined:
+        // As these are not implemeneted, functions are left undefined:
         // double              MaxEdgeHalf();
         // std::vector<double> RectangleEdge();
         // std::vector<std::vector<double>> CircleEdge();

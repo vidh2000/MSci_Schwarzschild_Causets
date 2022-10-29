@@ -28,11 +28,10 @@ class Spacetime
         char _metricname;
         std::map<char, double> _params;
 
-        
+        //Getters
         int&  Dim        = _dim;
         char& Name       = _name;
         char& MetricName = _metricname; 
-        
         virtual double Parameter (char key);
         virtual CoordinateShape DefaultShape();  
         

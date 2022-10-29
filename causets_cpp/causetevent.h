@@ -1,24 +1,14 @@
 #ifndef CAUSETEVENT_H
 #define CAUSETEVENT_H
 
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <iomanip>
-#include <limits>
-#include <map>
-#include <numeric>
-#include <fstream>
 #include <set>
-#include <stack>
-#include <string>
-#include <stdio.h>
 #include <vector>
 
 class CausetEvent
 // Note no link fuctions have been included.
 {
     public:
+
         // Public Attributes
         int Label;
         std::set<CausetEvent> _prec;
@@ -78,4 +68,5 @@ class CausetEvent
 
 
 };
+
 #endif /* CAUSETEVENT_H */
