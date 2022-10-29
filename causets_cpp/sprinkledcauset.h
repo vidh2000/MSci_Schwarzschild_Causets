@@ -19,14 +19,9 @@
 class SprinkledCauset: public Causet
 {
     public:
-
         // Public Attributes
-        int Label;
-        std::set<CausetEvent> _prec;
-        std::set<CausetEvent> _succ;
-        std::vector<double> _coordinates;
-        std::vector<double> _position;
-
+        double _intensity;
+       
         // Constructor
         SprinkledCauset(int label = -1,
                     std::set<CausetEvent> past = {},
@@ -34,50 +29,19 @@ class SprinkledCauset: public Causet
                     std::vector<double> position = {},
                     std::vector<double> coordinates = {});
         
-        // "Getters"
-        std::set<CausetEvent>& Past = _prec;
-        std::set<CausetEvent>& Future = _succ;
-        std::set<CausetEvent> Cone();
-        std::set<CausetEvent> PresentOrPast();
-        std::set<CausetEvent> PresentOrFuture();
-        std::set<CausetEvent> Spacelike(std::set<CausetEvent> eventset);
-        int PastCard();
-        int FutureCard();
-        int ConeCard();
-        int SpacelikeCard(std::set<CausetEvent> eventset);
-    
-        //Overloading Operators
-        bool operator ==(const CausetEvent &other) const;
-        bool operator <(const CausetEvent &other) const;
-        bool operator <=(const CausetEvent &other) const;
-        bool operator >(const CausetEvent &other) const;
-        bool operator >=(const CausetEvent &other) const;
+        // Properties
+        double Intensity();
+        double Density(); //overwrites superclass?
+        double LengthScale(); //overwrites superclass?
 
-        //Active Functionalities
-        bool _addToPast(CausetEvent other);
-        bool _addToFuture(CausetEvent other);
-        bool _discard(CausetEvent other);
-        void disjoin();
-
-        //Relational Booleans
-        bool isCausalTo(CausetEvent other);
-        bool isSpacelikeTo(CausetEvent other);
-
-        //Embedding Functionalities
-        void embed(std::vector<double> coordinates, bool reembed = false);
-        void disembed();
-        bool isEmbedded();
-        std::vector<double> Coordinates();
-        int CoordinatesDim();
-
-        // Hasse diagram functionalities
-        std::vector<double> Position();
-        void SetPosition(std::vector<double> value);
-
-
-
-
-
+        // Methods
+        std::vector<std::vector<double>> _sprinkle_coords();
+        std::set<CausetEvent> sprinkle();
+        std::set<CausetEvent> intensify();
+        std::set<CausetEvent> create();
+        void add();
+        void discard();
+        
 };
 
 #endif /* SPRINKLEDCAUSET_H */
