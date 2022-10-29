@@ -1,3 +1,6 @@
+/// \authors Vid Homsak, Stefano Veroni
+/// \date 20/09/2022
+
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -14,9 +17,12 @@
 // For Vid (can't locate headers for some reason)
 // Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\"header".h...
 
-#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
-#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\causetevent.h>
-#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h>
+#include "functions.h"
+#include "MyVecFunctions.h"
+#include "causetevent.h"
+// #include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h>
+// #include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\causetevent.h>
+// #include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h>
 
 //////////////////////////////////////////////////////////////////////////////
 // CausetEvent class for used for all the causal set elements
