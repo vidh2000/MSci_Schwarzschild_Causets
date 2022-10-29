@@ -329,7 +329,7 @@ class EmbeddedCauset(Causet):
 
         if not isinstance(self._spacetime, spacetimes.FlatSpacetime):
             print("NOTE for MM Estimator: this is currently working\
-as if the spacetime was flat.")
+                    as if the spacetime was flat.")
            
         def MM_drelation(d):
             a = sp.special.gamma(d+1)
@@ -352,8 +352,8 @@ as if the spacetime was flat.")
                 
                 if fails>=1e3 and successes==0:
                     print("The algorithm never found a suitable\
-Alexandrov Interval, whereas it found 1000 unsuitable.\
-You picked a too small causet. Returning [NaN, NaN]\n")
+                    Alexandrov Interval, whereas it found 1000 unsuitable.\
+                    You picked a too small causet. Returning [NaN, NaN]\n")
                     return np.nan, np.nan
                 
                 # pick two random elements
