@@ -7,11 +7,13 @@
 #include <set>
 #include <vector>
 
-#include "causetevent.h"
 #include "causet.h"
 #include "embeddedcauset.h"
 #include "spacetimes.h"
 #include "shapes.h"
+
+using std::vector;
+using std::set;
 
 /**
  * @brief An causet obtained from sprinkling in a spacetime subset 
@@ -25,10 +27,10 @@ class SprinkledCauset: public EmbeddedCauset
        
         // Constructor
         SprinkledCauset(int label = -1,
-                    std::set<CausetEvent> past = {},
-                    std::set<CausetEvent> future = {}, 
-                    std::vector<double> position = {},
-                    std::vector<double> coordinates = {});
+                    set<CausetEvent> past = {},
+                    set<CausetEvent> future = {}, 
+                    vector<double> position = {},
+                    vector<double> coordinates = {});
         
         // Properties
         double Intensity();
@@ -36,13 +38,12 @@ class SprinkledCauset: public EmbeddedCauset
         double LengthScale(); //overwrites superclass?
 
         // Methods
-        std::vector<std::vector<double>> _sprinkle_coords();
-        std::set<CausetEvent> sprinkle();
-        std::set<CausetEvent> intensify();
-        std::set<CausetEvent> create();
+        vector<vector<double>> _sprinkle_coords();
+        SprinkledCauset sprinkle();
+        SprinkledCauset intensify();
+        SprinkledCauset create();
         void add();
-        void discard();
-        
+        void discard();      
 };
 
 #endif /* SPRINKLEDCAUSET_H */

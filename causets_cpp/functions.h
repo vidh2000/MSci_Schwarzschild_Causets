@@ -67,4 +67,35 @@ std::set<obj> set_union(std::set<obj> s1, std::set<obj> s2)
 }
 
 
+// Function to find the maximum element
+template <typename num> 
+inline
+num setmax(std::set<num> my_set)
+{
+ 
+    // Get the maximum element
+    int max_element;
+    if (!my_set.empty())
+        max_element = *(my_set.rbegin());
+ 
+    // return the maximum element
+    return max_element;
+}
+ 
+// Function to find the minimum element
+template <typename num> 
+inline
+num setmin(std::set<num> my_set)
+{
+ 
+    // Get the minimum element
+    int min_element;
+    if (!my_set.empty())
+        min_element = *my_set.begin();
+ 
+    // return the minimum element
+    return min_element;
+}
+
+
 #endif /* FUNCTIONS_H */

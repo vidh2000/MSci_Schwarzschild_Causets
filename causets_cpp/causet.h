@@ -11,19 +11,37 @@
 using std::vector;
 using std::set;
 
+/**
+ * @brief Causet class.
+ * 
+ * @param _pasts: a vector of sets of integer. The ith entry is the set of 
+ * events at the past of event i.
+ * 
+ * @param _futures: a vector of sets of integer. The ith entry is the set of 
+ * events at the future of event i. Redundant, hence left as {{}} until 
+ * update_future is called.
+ * 
+ * @param _past_links: a vector of sets of integer. The ith entry is the set of 
+ * events j in the past of event i such that ji is a link.
+ * 
+ */
 class Causet
 {
     public:
-        vector<set<int>> _future;
-        vector<set<int>> _past;
+        vector<set<int>> _pasts;
+        vector<set<int>> _futures = {}; //initially kept undefined
+        vector<set<int>> _past_links = {};//initially kept undefined;
 
         // CONSTRUCTORS
-        Causet(vector<set<int>> future = {}, 
-                vector<set<int>> past = {});
+        Causet(vector<set<int>> pasts = {});
+        Causet(vector<set<int>> pasts, vector<set<int>> other,
+                bool isfuture = true);
+        Causet(vector<set<int>> pasts, vector<set<int>> futures,
+                vector<set<int>> past_links);
         Causet(vector<vector<int>> M, bool Lmatrix = true, 
-                bool reverse_causality = false);
+                bool reverse = false);
         Causet(vector<vector<bool>> M, bool Lmatrix = true, 
-                bool reverse_causality = false);
+                bool reverse = false);
         // The following are included but not implemented
         Causet(vector<int> permutation); //FromPermutation     
         Causet(int n, 
@@ -34,14 +52,23 @@ class Causet
         Causet(int length, int height, bool closed = true); //NewFence
         //NewKROrder not implemented
         
+
+        //SETTERS
+        void update_futures();
+        void update_links(bool update_futures = false);
+
+
         // CAUSET MODIFICATIONS
-        Causet merge(set<int> pastSet, 
-                     set<int> futSet,
-                     bool disjoint = false);
-        Causet add(set<int> eventSet, bool unlink = false);
+        static Causet merge(Causet pastCauset, Causet futCauset,
+                           bool disjoint = false, bool update_futures = false,
+                           bool update_links = false);
+        Causet add(set<int> past_of_new = {}, <set<int> fut_of_new = {});
+        Causet add(int n_events, vector<set<int>> past_of_news = {},
+                   vector<set<int>> fut_of_news = {});
         Causet discard(set<int> eventSet, bool unlink = false);
         Causet coarsegrain(int card = nan(""), double perc = 0.2);
         Causet cgrain(int card = nan(""), double perc = 0.2);
+
 
         // CAUSET REPRESENTATION & SAVING
         vector<vector<double>> CMatrix (const char* method="causality",

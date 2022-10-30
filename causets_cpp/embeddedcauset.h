@@ -11,7 +11,8 @@
 #include "spacetimes.h"
 #include "shapes.h"
 
-using namespace std;
+using std::vector;
+using std::set;
 
 /**
  * @brief An embedded causet in a spacetime subset of a specified shape.
@@ -38,7 +39,7 @@ class EmbeddedCauset: public Causet
                        CoordinateShape shape, 
                        vector<vector<double>> coordinates);
         
-        // EMBEDDING PROPERTIES
+        // GETTERS
         int Dim();
         double Density();
         double LengthScale();

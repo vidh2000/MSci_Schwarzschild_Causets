@@ -89,7 +89,7 @@ class SprinkledCauset(EmbeddedCauset):
             isDiamond: bool = 'diamond' in shape.Name or "bicone" in shape.Name
 
             d: int = self.Dim
-            b_r: float = shape.Parameter('radius')
+            radius: float = shape.Parameter('radius')
             if (d == 2) and isDiamond:
                 
                 # pick `count` random coordinate tuples uniformly:
@@ -97,10 +97,11 @@ class SprinkledCauset(EmbeddedCauset):
                                                     size=(count, 2))
                 coords[:, 0] = uv[:, 0] + uv[:, 1]
                 coords[:, 1] = uv[:, 0] - uv[:, 1]
-                coords *= b_r / 2
+                coords *= radius / 2
             else:
-                b_dstart: int = 0 if shape.Name == 'ball' else 1
-                b_d: int = d - b_dstart
+                # n_rad is, at least de facto, number of "radial" coordinates
+                rad_start: int = 0 if shape.Name == 'ball' else 1
+                n_rad: int = d - rad_start
                 if isCylindrical:
                     # set time coordinate:
                     time_low: float = shape.Center[0] - \
@@ -110,24 +111,41 @@ class SprinkledCauset(EmbeddedCauset):
                     coords[:, 0] = rng.uniform(time_low, time_high,
                                                size=(count,))
                 # pick `count` random coordinate tuples uniformly:
-                r_low: float = shape.Parameter('hollow')**b_d
+                r_low: float = shape.Parameter('hollow')**n_rad
                 for i in range(count):
-                    # get coordinates on sphere using normal distribution:
-                    coord: np.ndarray = rng.standard_normal(size=(b_d,))
+                    # EXPLAINED at
+                    # https://math.stackexchange.com/a/87238
+                    # DERIVED from
+                    # Muller, M. E. "A Note on a Method for Generating Points 
+                    # Uniformly on N-Dimensional Spheres." Comm. Assoc. Comput. 
+                    # Mach. 2, 19-20, Apr. 1959.
+                    # and
+                    # Marsaglia, G. "Choosing a Point from the Surface of 
+                    # a Sphere." Ann. Math. Stat. 43, 645-646, 1972.
+                    # note: all for ball, spatials for cylinder/bicone
+                    # 1) Get coordinates using normal distribution
+                    coord: np.ndarray = rng.standard_normal(size=(n_rad,))
+                    # 2) get the radius associated to these
                     r: float = np.sqrt(sum(np.square(coord)))
-                    r_scaling: float
-                    r_scaling = rng.uniform(low=r_low)**(1.0 / b_d)
+                    # 3) normalise: to uniformly distribute on a sphere of r=1
+                    coord /= r
+                    # 4) Get scaling deviate (note lower boundary if hollow)
+                    r_scaling: float = rng.uniform(low=r_low)**(1.0 / n_rad)
+                    # 5) Scale Coordinates
+                    coord *= radius * r_scaling
                     if isDiamond:
-                        # set time coordinate:
-                        h_squeeze: float = rng.uniform()**(1.0 / d)
-                        h_sign: float = np.sign(
-                            rng.uniform(low=-1.0, high=1.0))
-                        coords[i, 0] = h_sign * (1 - h_squeeze) * b_r
-                        # adjust scaling:
-                        r_scaling *= h_squeeze
-                    coords[i, b_dstart:] = shape.Center[b_dstart:] + \
-                        (r_scaling * b_r / r) * coord
+                        # need to set time coordinate properly
+                        # 1) take d-root of uniform deviate
+                        droot_x: float = rng.uniform()**(1.0 / d)
+                        # 2) pick if it goes in upper or lower cone
+                        t_sign: float=np.sign(rng.uniform(low=-1.0, high=1.0))
+                        # 3) apply trasnformation method: uniform -> time PDF
+                        coords[i, 0] = t_sign * (1 - droot_x) * radius
+                        # 4) adjust scaling:
+                        #coord *= droot_x
+                    coords[i, rad_start:] = shape.Center[rad_start:] + coord
         return coords
+
 
     def sprinkle(self, count: int, rng=default_rng(),
                  shape: Optional[CoordinateShape] = None) -> Set[CausetEvent]:
