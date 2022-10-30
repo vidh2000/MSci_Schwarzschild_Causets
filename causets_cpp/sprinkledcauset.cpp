@@ -114,7 +114,8 @@ std::vector<std::vector<double>> SprinkledCauset::_sprinkle_coords(
                 for (j=0;j<2;j++)
                 {
                     
-                    uv[i]
+                    /* placeholder. Find out how to generate a 
+                    random matrix (count,2) size in c++*/ 
                 }
                 
             } 
