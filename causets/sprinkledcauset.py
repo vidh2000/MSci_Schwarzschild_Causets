@@ -141,7 +141,7 @@ class SprinkledCauset(EmbeddedCauset):
                         t_sign: float=np.sign(rng.uniform(low=-1.0, high=1.0))
                         # 3) apply trasnformation method: uniform -> time PDF
                         coords[i, 0] = t_sign * (1 - droot_x) * radius
-                        # 4) adjust scaling:
+                        # 4) Adjust scaling of radius based on t
                         coord *= droot_x
                     coords[i, rad_start:] = shape.Center[rad_start:] + coord
         return coords

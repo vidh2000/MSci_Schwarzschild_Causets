@@ -56,9 +56,10 @@ if len(dims) > 2:
     ax.grid(False)
 cplt.show()
 #%% PLOTTING SOME 2D+1 STUFF
-Ss = [CoordinateShape(3, "cylinder", duration=2.0, hollow = 0.9),
-      CoordinateShape(3, "ball", radius = 1, hollow = 0.9),
-      CoordinateShape(3, "diamond", radius = 1, hollow = 0.9)]
+hollow = 0.
+Ss = [CoordinateShape(3, "cylinder", duration=2.0, hollow = hollow),
+      CoordinateShape(3, "ball", radius = 1, hollow = hollow),
+      CoordinateShape(3, "diamond", radius = 1, hollow = hollow)]
 
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 dims: List[int] = [1, 2, 0]  # choose the (order of) plot dimensions
