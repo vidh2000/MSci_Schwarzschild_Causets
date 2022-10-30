@@ -155,15 +155,16 @@ class Causet
         int InternalCard(int a, int b, bool includeBoundary = true);
         
 
+        /*
         // CHAINS, ANTICHAINS & PATHS
         bool isChain(set<int> Events);
         bool isAntiChain(set<int> Events);
         set<set<int>> Paths(int a, int b, 
                             const char* length = "any");
         bool isPath(set<int> Events);
+        */
 
-
-        // PAST/FUTURE INFINITE
+        /*// PAST/FUTURE INFINITE
         set<int> PastInf ();
         set<int> FutureInf ();
         int PastInfCard ();
@@ -173,7 +174,7 @@ class Causet
         int PastInfCardOf (set<int> Events = {});
         int FutureInfCardOf (set<int> Events = {});
         set<int> CentralAntichain (set<int> Events = {});
-
+        */
         // OTHERS
 
 };
