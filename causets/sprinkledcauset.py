@@ -142,7 +142,7 @@ class SprinkledCauset(EmbeddedCauset):
                         # 3) apply trasnformation method: uniform -> time PDF
                         coords[i, 0] = t_sign * (1 - droot_x) * radius
                         # 4) adjust scaling:
-                        #coord *= droot_x
+                        coord *= droot_x
                     coords[i, rad_start:] = shape.Center[rad_start:] + coord
         return coords
 
