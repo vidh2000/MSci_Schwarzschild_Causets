@@ -19,16 +19,16 @@ from time import time
 
 from functions import *
 
-Ndim=4
-N_events = 1000
-#S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=2.0,
-#                                    radius=1.0,hollow=0.9)
+Ndim=3
+N_events = 300
+#S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=1.0,
+#                                    radius=1.0,hollow=0.0)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
-#S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=3.0,hollow=0.0)
+S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=1.0,hollow=0.0)
 
 start =  time()
 
-S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=5.0)
+#S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=1.0)
 def C_init():
     C: SprinkledCauset = SprinkledCauset(
         card=N_events,spacetime=FlatSpacetime(Ndim),shape=S)
@@ -42,7 +42,7 @@ Clist = C.nlist()
 print(f"Time taken for N={len(Clist)}, {round(time()-start, 2)} sec")
 
 
-"""
+
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 if C.Dim==3:
     dims: List[int] = [2,1,0]  # choose the (order of) plot dimensions
@@ -71,4 +71,3 @@ if len(dims) > 2:
     ax.grid(False)
 cplt.show()
 
-"""
