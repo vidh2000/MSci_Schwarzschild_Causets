@@ -12,6 +12,30 @@
 #include <stdio.h>
 #include <vector>
 #include <set>
+#include<stdlib.h>
+#include<time.h>
+
+
+
+std::vector<std::vector<double>> generate_2Dvector(
+        int rows, int cols, double min, double max)
+    /*
+    Generates a matrix of size (rows, cols) with
+    random entries lying in range [min,max]
+    */
+{
+    srand(time(0)); // to generate pseudo random numbers each time
+    std::vector<std::vector<double>> matrix;
+
+    matrix.resize(rows)
+    for(int i=0; i<rows; i++)
+    {
+        matrix[i].resize(cols);
+        for (int j=0; j<cols; j++)
+            arr[i][j] = min + (rand()) % max;
+    }
+    return matrix;
+}
 
 
 template <typename obj>  

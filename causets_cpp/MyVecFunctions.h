@@ -31,7 +31,7 @@ inline
 void print_vector(const std::vector<T> & vec, 
                   std::string sep=" , ",
                   bool brackets = true)
-    /** @brief rints given vector, with given separator.
+    /** @brief Prints given vector, with given separator.
     *
     *  @param vec The vector to print. Type: std::vector<whatever>.
     *  @param sep Separator to use between entries. Type: Char. Default " , ".

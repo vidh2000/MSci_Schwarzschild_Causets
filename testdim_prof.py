@@ -135,7 +135,7 @@ PROFILE = False
 from causets.spacetimes import *
 st   = [    FlatSpacetime   , deSitterSpacetime, 
        AntideSitterSpacetime, BlackHoleSpacetime]
-dims = [  [1,2,3,4],                [2,3,4],            
+dims = [  [1,4],                [2,3,4],            
            [2,3,4],                    [2]      ]
 r = 10
 dur = 1
@@ -160,7 +160,7 @@ shapes = [
 
 # Define
 # cardinalities to test, repetitions to average, cuts for coarse graining
-Ns = [10000]
+Ns = [1000]
 repetitions = 10
 cuts = np.array([0]+Ns[:-1])-np.array([0]+Ns[1:])
 
@@ -197,15 +197,15 @@ if __name__ == '__main__':
                                         spacetime=FlatSpacetime(d))
                 
                 for cut in cuts:
-                    if cut != 0:
-                        C.coarsegrain(card = cut) #cgrain Ns[i] -> Ns[i+1]
-                    MMd = C.MMdim_est(Nsamples = 20, 
-                                        method = "random",
-                                        #ptime_constr=lambda t:t<2.5*r,
-                                        size_min = min(1000, int(len(C)/2)),
-                                        #size_max = 50,
-                                        full_output = True)
-                    rdim_est[i][rep].append(MMd[0]) # add to rth repetition
+                    #if cut != 0:
+                    #    C.coarsegrain(card = cut) #cgrain Ns[i] -> Ns[i+1]
+                    #MMd = C.MMdim_est(Nsamples = 20, 
+                    #                    method = "random",
+                    #                    #ptime_constr=lambda t:t<2.5*r,
+                    #                    size_min = min(1000, int(len(C)/2)),
+                    #                    #size_max = 50,
+                    #                    full_output = True)
+                    #rdim_est[i][rep].append(MMd[0]) # add to rth repetition
                     MMd = C.MMdim_est(Nsamples = 20, 
                                         method = "big",
                                         #ptime_constr=lambda t:t<2.5*r,
@@ -216,30 +216,30 @@ if __name__ == '__main__':
             
             #Average over repetitions
             #print(f"rdim_est:\n{rdim_est}")
-            rdim_std[i] = np.nanstd (rdim_est[i], axis = 0,dtype=np.float64)
-            rdim_est[i] = np.nanmean(rdim_est[i], axis = 0,dtype=np.float64)
+            #rdim_std[i] = np.nanstd (rdim_est[i], axis = 0,dtype=np.float64)
+            #rdim_est[i] = np.nanmean(rdim_est[i], axis = 0,dtype=np.float64)
             bdim_std[i] = np.nanstd (bdim_est[i], axis = 0,dtype=np.float64)
             bdim_est[i] = np.nanmean(bdim_est[i], axis = 0,dtype=np.float64)
 
         #PLOT
           
         # Plot the random case
-        fig = plt.figure(f"MMFlatDim ('random') {sps[0]}")
-        plt.title(f"Myrheim-Mayers ('random') in {sps[0]} Minkowski")
-        plt.xlabel("Cardinality")
-        plt.ylabel("Dimension")
-        for i in range(len(dims[0])-nskip):
-            ests = rdim_est[i]
-            stds = rdim_std[i]
-            finmask = np.isfinite(ests)
-            lbl  = f"Dimension {dims[0][i+nskip]}"
-            plt.errorbar(np.array(Ns)[finmask], ests[finmask], 
-                        yerr=stds[finmask], fmt=".", capsize = 4, label = lbl)
-        plt.legend()
-        plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
-        plt.xscale('log')
+        #fig = plt.figure(f"MMFlatDim ('random') {sps[0]}")
+        #plt.title(f"Myrheim-Mayers ('random') in {sps[0]} Minkowski")
+        #plt.xlabel("Cardinality")
+        #plt.ylabel("Dimension")
+        #for i in range(len(dims[0])-nskip):
+        #    ests = rdim_est[i]
+        #    stds = rdim_std[i]
+        #    finmask = np.isfinite(ests)
+        #    lbl  = f"Dimension {dims[0][i+nskip]}"
+        #    plt.errorbar(np.array(Ns)[finmask], ests[finmask], 
+        #                yerr=stds[finmask], fmt=".", capsize = 4, label = lbl)
+        #plt.legend()
+        #plt.hlines([2, 3, 4], 0, Ns[0]*1.1, ls = "dashed", color = "r")
+        #plt.xscale('log')
         #plt.ylim((0.99, 4.5))
-        plt.show()
+        #plt.show()
 
         # Plot the big case
         fig = plt.figure(f"MMFlatDim ('big') {sps[0]}")

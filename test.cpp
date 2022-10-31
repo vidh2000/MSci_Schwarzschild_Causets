@@ -1,18 +1,35 @@
-#include<iostream>
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <numeric>
+#include <set>
+#include <stack>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 
 // Test C++ version...
 int main() {
-    if (__cplusplus == 201703L) std::cout << "C++17\n";
-    else if (__cplusplus == 201402L) std::cout << "C++14\n";
-    else if (__cplusplus == 201103L) std::cout << "C++11\n";
-    else if (__cplusplus == 199711L) std::cout << "C++98\n";
-    else std::cout << "pre-standard C++\n";
+//int N = 100;
+int rows = 100000, cols = 4;
 
-int a = 3;
-int b = 4;
+std::vector<std::vector<double>> result;
 
-bool c = (a<b);
-std::cout << c;
+result.resize(rows);
 
-}   
+for(int i=0; i<rows; i++) {
+        result[i].resize(cols);
+}    
+
+
+//for(int i=0; i<rows; i++) {
+//    for(int j=0; j<cols; j++){
+//        result[i][j] = 0;
+//    }
+//}
+
+
+};  
