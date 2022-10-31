@@ -1,6 +1,3 @@
-/// \author Stefano Veroni
-/// \date 01/07/2022
-
 #ifndef MYCFUNCTIONS_H
 #define MYCFUNCTIONS_H
 
@@ -14,10 +11,36 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
-
+#include <random>
 
 using namespace std;
 
+
+vector<vector<double>> generate_2Dvector(
+        int rows, int cols, double min, double max)
+    /*
+    Generates a matrix of size (rows, cols) with
+    random entries lying in range [min,max]
+    */
+{
+    srand(time(0)); // to generate pseudo random numbers each time
+    vector<std::vector<double>> matrix;
+    matrix.resize(rows);
+    
+    // Random generator stuff
+    random_device rd;  
+    mt19937 gen(rd()); 
+    uniform_real_distribution<> dis(0,1.0);
+
+    for(int i=0; i<rows; i++)
+    {
+        matrix[i].resize(cols);
+        for (int j=0; j<cols; j++){
+            matrix[i][j] = dis(gen);
+        }
+    }
+    return matrix;
+}
 
 //_____________________________________________________________________
 //
@@ -29,7 +52,7 @@ using namespace std;
 template <typename T>
 inline
 void print_vector(const std::vector<T> & vec, 
-                  std::string sep=" , ",
+                  std::string sep=", ",
                   bool brackets = true)
     /** @brief Prints given vector, with given separator.
     *

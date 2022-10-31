@@ -13,14 +13,41 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <unordered_set>
 
-#include "D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\functions.h"
-#include "D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h"
+using namespace std::chrono;
+
+
+#include "functions.h"
+//#include "D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h"
+#include "MyVecFunctions.h"
 #include "causet_new.h"
 
-
 using std::vector;
-using std::set;
+
+
+bool areTimelike(vector<double> xvec, vector<double> yvec)
+/**
+ * @brief Causal relation according to the
+ *  spacetime Interval Squared for Minkowski spacetime of arbitrary dimension.
+ *  Returns true if two events are timelike, else false.
+ */
+{
+    int dim = xvec.size();
+    double time_delta2  = (yvec[0] - xvec[0])*(yvec[0] - xvec[0]);
+    double space_delta2 = 0;
+    for (int i = 1; i<dim; i++){
+        space_delta2 += (yvec[i]-xvec[i])*(yvec[i]-xvec[i]);
+    }
+    if (time_delta2 - space_delta2 >0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 
 /**
  * @brief Causet class.
@@ -45,6 +72,11 @@ Causet::Causet(vector<vector<double>> coordinates,
     size = coords.size();
     dim = coords[0].size();
 
+    // Sort coordinates by time - natural label
+    std::sort(coords.begin(), coords.end(),
+            [](auto const& lhs, auto const& rhs)
+        {return lhs[0] < rhs[0];});
+
     /*
     Choose whether you'll build the causet as a matrix or
     specify it as a vector of sets, each set representing the element's past
@@ -55,23 +87,69 @@ Causet::Causet(vector<vector<double>> coordinates,
     else if (method == "cmatrix"){
         make_cmatrix();
     }
+    else{
+        std::cout << "method options are: 'pasts' or 'cmatrix'" << std::endl;
+    }
 };
 
 // Methods of constructing the causal set
 
 void Causet::make_pasts()
 {
-    // Sort coordinates by time - natural label
-    std::sort(coords.begin(), coords.end(),
-            [](auto const& lhs, auto const& rhs)
-        {return lhs[0] < rhs[0];
-        });
-
+    
+    
+    // Create the vector containing pasts
+    
+    vector<std::set<int>> pasts;
+    pasts.resize(size);
+    past_links.resize(size);
+    //std::cout << "Finished resizing sets.." << std::endl;
+    // Loop through coordinates t_min -> t_max
+    for (int i=1; i<size; i++)
+    {
+        //std::cout << "Event #"<< i+1 << std::endl;
+        for(int j=i-1; j>-1; j--)
+        {
+            // Check if j^th element is in pasts[i]
+            //if (set_contains(j, pasts[i])){
+            //    //std::cout << "For i=" << i << "j=" << j << "is contained"
+            //    //                    << std::endl;
+            //    continue;
+            //}
+            //else{
+            // Check if j<i (are causally connected)
+            if (areTimelike(coords[i],coords[j])){
+                // If yes, add e_j and its past to the past of e_i
+                pasts[i].insert(j);
+                pasts[i].insert(pasts[j].begin(), pasts[j].end());
+            }
+            //}
+        }
+    }
+    std::cout <<"Finished sprinkling..." << std::endl;
 }
 
 
 void Causet::make_cmatrix(){
-    std::cout << "Placeholder" << std::endl;
+
+    std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
+
+    // Creating a 
+    vector<vector<int>> cmatrix;
+    cmatrix.resize(size);
+    for(int i=0; i<size; i++) {
+        cmatrix[i].resize(size);
+    }
+    for (int i=1; i<size; i++)
+    {
+        //std::cout << "Event #"<< i+1 << std::endl;
+        for(int j=0; j<i; j++){
+            if (areTimelike(coords[i],coords[j]))
+            {
+                cmatrix[i][j] = 1;
+            }
+        }
+    }
 }
 
 
@@ -82,11 +160,25 @@ int main(){
                                   {2,4,2},
                                   {1.5,6.3,4}};
 */
-vector<vector<double>> coords = generate_2Dvector(10,3,0,1);
+int DIM = 4;
+vector<vector<double>> coords = generate_2Dvector(1000,DIM,0,2);
+//std::cout << "This file works" << std::endl;
 
-Causet c(coords);
-print_vector(c.coords);
-std::cout << c.size;
+auto start = high_resolution_clock::now();
+
+Causet c(coords,"cmatrix");
+
+auto stop = high_resolution_clock::now();
+double duration = duration_cast<microseconds>(stop - start).count();
+std::cout << "Time taken by function in D=" << DIM << ": "
+         << duration/pow(10,6) << " seconds" << std::endl;
+ 
+
+
+
+//for (int i=0; i<c.size; i++){
+//print_set(c.pasts[1000]);
+
 
 return 0;
 }

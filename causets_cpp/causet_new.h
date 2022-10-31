@@ -7,6 +7,7 @@
 #include <cmath>
 #include <set>
 #include <vector>
+#include <unordered_set>
 
 using std::vector;
 using std::set;
@@ -21,6 +22,10 @@ using std::set;
  *  -1 if e_j<e_i and they are a link. //not implemented
  */
 
+
+bool areTimelike(std::vector<double> xvec, std::vector<double> yvec);
+
+
 class Causet
 {
     public:
@@ -32,10 +37,10 @@ class Causet
         int dim;
         
         // Creating useful "representations" of causet
-        vector<set<int>> pasts;
-        vector<set<int>> futures;
-        vector<set<int>> past_links;
-        vector<set<int>> future_links;
+        //vector<std::unordered_set<int>> pasts;
+        vector<std::unordered_set<int>> futures;
+        vector<std::unordered_set<int>> past_links;
+        vector<std::unordered_set<int>> future_links;
 
         // CONSTRUCTOR
         Causet(vector<vector<double>> coordinates,
