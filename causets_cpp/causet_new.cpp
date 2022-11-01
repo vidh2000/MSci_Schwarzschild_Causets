@@ -100,7 +100,7 @@ void Causet::make_pasts()
     
     // Create the vector containing pasts
     
-    vector<std::set<int>> pasts;
+    vector<std::unordered_set<int>> pasts;
     pasts.resize(size);
     past_links.resize(size);
     //std::cout << "Finished resizing sets.." << std::endl;
@@ -161,7 +161,8 @@ int main(){
                                   {1.5,6.3,4}};
 */
 int DIM = 4;
-vector<vector<double>> coords = generate_2Dvector(1000,DIM,0,2);
+int N = 2000;
+vector<vector<double>> coords = generate_2Dvector(N,DIM,0,2);
 //std::cout << "This file works" << std::endl;
 
 auto start = high_resolution_clock::now();
@@ -177,7 +178,7 @@ std::cout << "Time taken by function in D=" << DIM << ": "
 
 
 //for (int i=0; i<c.size; i++){
-//print_set(c.pasts[1000]);
+//print_set(c.pasts[500]);
 
 
 return 0;

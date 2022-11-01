@@ -74,7 +74,7 @@ class Causet():
                                 parameter.")
     
 
-    def make_past_sets(self,multiprocessing=True):
+    def make_past_sets(self,multiprocessing=False):
         if multiprocessing:
             with mp.Pool() as pool:
                 self.pasts = pool.starmap(mp_add_pasts,
@@ -115,7 +115,7 @@ class Causet():
 
 if __name__=="__main__":
     dim=4
-    N=int(10**3)
+    N=int(10**4)
 
     coords = make_coords(N,dim)
 
