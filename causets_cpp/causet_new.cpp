@@ -161,7 +161,7 @@ int main(){
                                   {1.5,6.3,4}};
 */
 int DIM = 4;
-int N = 20000;
+int N = 10000;
 vector<vector<double>> coords = generate_2Dvector(N,DIM,0,2);
 //std::cout << "This file works" << std::endl;
 

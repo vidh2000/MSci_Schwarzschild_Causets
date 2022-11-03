@@ -1,48 +1,33 @@
-VID IDEAS FOR FAST CODE
+## INSTRUCTIONS and USEFUL TIPS
 
-1. Optimise "isLink" function in causetevent.py
-    Is very slow as set operations are shit.
-    Initial soln: maybe just do a.isFutureLink(b) after sorting a,b by
-    time coordinate? Should be faster as no intersections of sets.
-2. Optimise/paralelise "isCausal_____" functions in spacetimes.py.
-    Should be able to do more event pairs at the same time.
-3. Use lists to store information for events. Much faster in python as while 
-    dictionaries/sets are nice... take space and slower.
+HOW TO RUN C++ code using compiler optimisation:
+g++ -g -O3 filename.cpp -std=c++17
+-> Creates a.exe file 
+To execute, type: ./a into the command line
+---- We can probably add this into json for automatic compiling... ----
 
-TO DO (Python)
-
-0. Write your own algos/understand the sprinkling i.e probability distributions
-    and how they differ and are implemented in spherical, polar coordinates and 
-    in the cone. Check the code
-1. Fix 1+1D Schwarzschild spacetime algo/check the algorithm as it seems wrong.
-    Should give causal relations only into the blackhole.
-    y-axis: time
-    x-axis: r.
-    Then do 2+1D with horizon at some radius
-    x,y-axis: x,y
-    z-axis: time.
-    Should only have relations upwards into the circle.
-    Then onto the 3+1D e.g. identically as to what they do
-    in the He,Rideout 2009 paper.
-2.  a) Define algo/code to be able to count links over the horizon
-        (test in 1+1 Schwarzschild and simpler spacetimes) 
-    b) Update to include higher-order links for 3+1D spacetimes
-3.  C++ code to speed things up.
-    Parallel procesing.
-
-C++ list of implementations/TODO/have done:
-1. How do @staticmethod, @property, @classmethod
-    link to cpp static methods etc etc?
-    Or should I just do a public method/function etc?
-    25.10 FINISHED at line 330 on causetevent.py, defining
-    functions/methods and attributes needed to be translated to cpp.
-2. Don't fuck with links - unneccesary work which we never use for now.
-    - will use links once studying entropy over horizon...
-    Later update your classes to include ANY code with links!
-    (compare with python files to see what's missing...)
+### Ideas for fast code
+Stefano: watch -> https://www.youtube.com/watch?v=SfV8aRX0YY0&t=3s
+- Multiplying is slower than bitshifting -> use that instead of 
+setting the value in matrix = 1?
+- Take care to not redefine the value of the variable but just to increment it
+- Remove repeated calculations
+- unravel loops
 
 
-USEFUL CODING INFORMATION
+### Tasks: 
+1. Finish sprinkled causet which calls the methods of "intensify" or
+"cardinality".
+2. Create embeddedCauset class which calls the spacetime/shape you want
+to embed it in, and also allows for constructing the causet based on
+inputting a causal matrix
+(Stefano... I feel this is so reduntant, we only need two causet classes max...) 
+3. Causet class contains functions for creating the Causal Matrix
+in a fast and efficient way, and other useful functions for
+storing the matrix, getting properties of the causet, links etc.
+
+
+### Schwarzschild spacetime algorithm ###
 Rideout and He 2009;
 Schwarzschild spacetime embedding/causality algorithm which makes it faster
 by not always needing to calculate the integral of ds.
