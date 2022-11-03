@@ -9,7 +9,10 @@ To execute, type: ./a into the command line
 ### Ideas for fast code
 Stefano: watch -> https://www.youtube.com/watch?v=SfV8aRX0YY0&t=3s
 - Multiplying is slower than bitshifting -> use that instead of 
-setting the value in matrix = 1?
+    setting the value in matrix = 1?
+    --> https://www.youtube.com/watch?v=lvjW-aUcbF0
+- can use bitwise operations between rows:
+    --> https://www.youtube.com/watch?v=cLcQyOy73c0
 - Take care to not redefine the value of the variable but just to increment it
 - Remove repeated calculations
 - unravel loops
