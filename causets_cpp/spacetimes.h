@@ -43,12 +43,11 @@ class Spacetime
                                                     int samplingsize = -1); 
 
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, double causality_eps);
+        (std::vector<double> xvec, std::vector<double> yvec);
         func Causality();  
         
         static std::vector<bool> causal1d(std::vector<double> xvec, 
-                                          std::vector<double> yvec,
-                                          double causality_eps = 1e-12);
+                                          std::vector<double> yvec);
 };
 
 
@@ -77,12 +76,11 @@ class FlatSpacetime: public Spacetime
         double ds     (std::vector<double> xvec, std::vector<double> yvec);
         
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, double causality_eps);
+        (std::vector<double> xvec, std::vector<double> yvec);
         func Causality();   
 
         static std::vector<bool> causal (std::vector<double> xvec, 
-                                         std::vector<double> yvec,
-                                         double causality_eps = 1e-12);
+                                         std::vector<double> yvec);
 };
 
 

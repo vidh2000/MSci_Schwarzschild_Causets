@@ -17,6 +17,8 @@
 #include "functions.h"
 #include "MyVecFunctions.h"
 
+using std::vector;
+
 /*============================================================================
 * ============================================================================
 * GENERAL SPACETIME METHODS
@@ -35,8 +37,8 @@ CoordinateShape Spacetime::DefaultShape()
     {return CoordinateShape(Dim, 'cylinder');}
 
 
-std::vector<double> Spacetime::_T_slice_sampling(double t, 
-                                                std::vector<double>origin,
+vector<double> Spacetime::_T_slice_sampling(double t, 
+                                                vector<double>origin,
                                                 int samplingsize = 128)
 /**
  * @brief Internal function for the time sampling array for a cone from 
@@ -45,19 +47,18 @@ std::vector<double> Spacetime::_T_slice_sampling(double t,
     {return linspace(origin[0], t, samplingsize);}     
 
 
-std::vector<bool> Spacetime::causal1d(std::vector<double> xvec, 
-                                      std::vector<double> yvec,
-                                      double causality_eps)
+vector<bool> Spacetime::causal1d(vector<double> xvec, 
+                                    vector<double> yvec)
 /**
  * @brief The most simple causal function: t_2>t_1
  */
 {
     double t_delta = yvec[0] - xvec[0];
-    return {t_delta >= 0.0, t_delta < 0.0};
+    return {1, t_delta >= 0.0, t_delta < 0.0};
 }
 
-typedef std::vector<bool> (*func)
-(std::vector<double> xvec, std::vector<double> yvec);
+typedef vector<bool> (*func)
+(vector<double> xvec, vector<double> yvec);
 func Spacetime::Causality()
 /**
  * @brief Return most simple causal function: t_2>t_1, useful
@@ -90,7 +91,7 @@ CoordinateShape FlatSpacetime::DefaultShape()
     {return CoordinateShape(_dim, 'diamond');}
 
 
-double FlatSpacetime::ds2(std::vector<double> xvec, std::vector<double> yvec)
+double FlatSpacetime::ds2(vector<double> xvec, vector<double> yvec)
 /**
  * @brief Spacetime Interval Squared
  */
@@ -103,7 +104,7 @@ double FlatSpacetime::ds2(std::vector<double> xvec, std::vector<double> yvec)
     return time_delta2 - space_delta2;
 }
 
-double FlatSpacetime::ds(std::vector<double> xvec, std::vector<double> yvec)
+double FlatSpacetime::ds(vector<double> xvec, vector<double> yvec)
 /**
  * @brief Spacetime Interval
  */
@@ -117,11 +118,11 @@ double FlatSpacetime::ds(std::vector<double> xvec, std::vector<double> yvec)
 }
 
      
-typedef std::vector<bool> (*func)
-(std::vector<double> xvec, std::vector<double> yvec, double causality_eps);
+typedef vector<bool> (*func)
+(vector<double> xvec, vector<double> yvec);
 func FlatSpacetime::Causality()
 /**
- * @brief Return {bool1, bool2} &callable (vector<double> xvec, yvec)
+ * @brief Return "{bool1, bool2, bool3} &callable (vector<double> xvec, yvec)"
  *        which takes coordinates of 2 points and returns vector with booleans
  *        {x<=y, x>y}
  */
@@ -132,12 +133,10 @@ func FlatSpacetime::Causality()
         {return &FlatSpacetime::causal;}
 }
 
-std::vector<bool> FlatSpacetime::causal (std::vector<double> xvec, 
-                                         std::vector<double> yvec,
-                                         double causality_eps = 1e-12)
+vector<bool> FlatSpacetime::causal (vector<double> xvec, 
+                                         vector<double> yvec)
 /**
- * @brief Function of two events in any D returning {x<=y, x>y} with error in 
- *        calculations causality_eps (1e-12 by default)
+ * @brief Function of two events in any D returning {x-y timelike?, x<=y, x>y}.
  */
 {
     double t_delta = (yvec[0] - xvec[0]);
@@ -145,8 +144,11 @@ std::vector<bool> FlatSpacetime::causal (std::vector<double> xvec,
     double space_delta2 = 0;
     for (int i = 1; i<yvec.size(); i++)
         {space_delta2 += (yvec[i]-xvec[i])*(yvec[i]-xvec[i]);}
-    bool isCausal = t_delta2 >= space_delta2 - causality_eps;
-    return {(t_delta >= 0.0) && isCausal, (t_delta < 0.0) && isCausal};
+    bool isCausal = t_delta2 >= space_delta2;
+    return {isCausal,
+            (t_delta >= 0.0) && isCausal,
+            (t_delta < 0.0) && isCausal
+           };
 }
 
 
