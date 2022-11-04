@@ -32,7 +32,6 @@ using std::unordered_set;
 class Causet
 {
     public:
-        
         // Attributes
         vector<vector<int8_t>> _CMatrix;
         int _size = 0;

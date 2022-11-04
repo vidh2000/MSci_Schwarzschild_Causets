@@ -135,8 +135,8 @@ static vector<vector<double>> SprinkledCauset::sprinkle_coords(
 
         for (int i = 0; i<shape._dim; i++)
         {
-            low [i] = shape.Center[i] - shape.Edges()[i]/2;
-            high[i] = shape.Center[i] + shape.Edges()[i]/2;
+            low [i] = shape._center[i] - shape.Edges()[i]/2;
+            high[i] = shape._center[i] + shape.Edges()[i]/2;
         }
 
         // Generate coords randomly
@@ -146,23 +146,23 @@ static vector<vector<double>> SprinkledCauset::sprinkle_coords(
                 std::random_device rd;
                 seed = rd();
             }  
-        // Standard mersenne_twister_engine seeded with rd()
+        // Standard mersenne_twister_engine
         std::mt19937 gen(seed); 
-        std::uniform_real_distribution<> dis(low,high);
+        std::uniform_real_distribution<double> dis(low,high);
         for (int i=0; i<count;i++)
         {
             coords[i,:] = dis(gen);
         }
     }
-    else if ((shape._name == "ball") || (shape._name == "cylinder") ||
-             (shape._name == "diamond") || (shape._name == "bicone"))
+    else if ((shape._name == 'ball') || (shape._name == 'cylinder') ||
+             (shape._name == 'diamond') || (shape._name == 'bicone'))
     {
         // Create circle based sprinkle:
-        bool isCylindrical = shape.Name()=="cylinder";
-        bool isDiamond = (shape.Name()=="diamond") || (shape.Name()=="bicone")
+        bool isCylindrical = shape._name == 'cylinder';
+        bool isDiamond =(shape._name=='diamond')||(shape._name=='bicone');
 
-        int d = *this.Dim()
-        double b_r = shape.Parameter().radius;
+        int d = shape._dim;
+        double b_r = shape.Parameter("radius");
         if (d==2 && isDiamond)
         {
             //pick "count" random coordinate tuples uniformly:
