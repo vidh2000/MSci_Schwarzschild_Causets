@@ -38,6 +38,7 @@ class EmbeddedCauset: public Causet
         Spacetime _spacetime;
 
         // CONSTRUCTORS
+        EmbeddedCauset();
         EmbeddedCauset(Spacetime spacetime, 
                        CoordinateShape shape, 
                        vector<vector<double>> coordinates,
@@ -47,8 +48,6 @@ class EmbeddedCauset: public Causet
                        bool make_sets = false,
                        bool make_links = false,
                        const char* sets_type = "past");
-        EmbeddedCauset(Causet C, 
-                        vector<vector<double>> coordinates = {{0}});
         
 
         // Methods of constructing the causal set attributes
@@ -80,11 +79,10 @@ class EmbeddedCauset: public Causet
 
 
         // MODIFIERS
-        Causet create (vector<vector<double>> coordinates);
-        void relate ();
         void relabel(const char* method = "0", bool reverse = false);   
-        void add();
-        void discard();    
+        void add(vector<double> xvec);
+        void discard(int label);  
+        void discard(vector<int> labels);
 };
 
 #endif /*EMBEDDEDCAUSET_H*/

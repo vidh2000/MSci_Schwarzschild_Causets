@@ -36,8 +36,9 @@ using std::unordered_set;
 //CONSTRUCTORS  //=============================================================
 //=============================================================================
 //=============================================================================
+
 /**
- * @brief Creates embedded causet.
+ * @brief Embed given coordinates in a causet.
  * 
  * @param spacetime: Spacetime.
  * @param shape: CoordinateShape.
@@ -52,7 +53,7 @@ using std::unordered_set;
  * @param use_transitivity: bool, if true use also transitivity to establish
  * causality relations. 
  */
-EmbeddedCauset::EmbeddedCauset(Spacetime spacetime, 
+EmbeddedCauset::EmbeddedCauset(Spacetime myspacetime, 
                                 CoordinateShape shape, 
                                 vector<vector<double>> coordinates,
                                 bool make_matrix = true,
@@ -64,7 +65,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
 {
     _size = coordinates.size();
     _coords = coordinates;
-    _spacetime = spacetime;
+    _spacetime = myspacetime;
     _shape = shape;
 
     if (make_matrix)
@@ -98,15 +99,16 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
             else if (sets_type == "future")
                 {this->make_fut_links("coordinates");}   
         }
-        
+
     else
         {
             throw std::invalid_argument("At least one among make_matrix, \
                                     make_sets and make_links must be true");
         }
-
-
 }
+
+
+
 
 //=============================================================================
 //=============================================================================
@@ -496,17 +498,30 @@ bool EmbeddedCauset::AprecB(vector<double> xvec, vector<double> yvec)
 //MODIFIERS   //===============================================================
 //=============================================================================
 //=============================================================================
-void SprinkledCauset::add(std::set<CausetEvent> eventSet, bool unlink=false)
+void EmbeddedCauset::add(vector<double> xvec)
 {
-    double card_old = 1.0 * *this.Card();
-    super().add(eventSet, unlink);  //??
-    _intensity += (*this.Card() * 1.0 - card_old);
+    // Update CMatrix (if defined)
+    // Remove from sets and scale all following one down (if defined)
+    // (maybe redefining sets is faster)
+    // Increase size by one
+    // Turn _dim to 0 as new causet
 }
 
 
-void SprinkledCauset::discard(std::set<CausetEvent> eventSet, bool unlink=false)
+void EmbeddedCauset::discard(int label)
 {
-    double card_old = 1.0 * *this.Card();
-    super().discard(eventSet, unlink);  //??
-    _intensity *= (*this.Card() * 1.0 / card_old);
+    // Slice CMatrix (if defined)
+    // Remove from sets and scale all following one down (if defined)
+    // (maybe redefining sets is faster)
+    // Reduce size by one
+    // Turn _dim to 0 as new causet
+}
+
+void EmbeddedCauset::discard(vector<int> labels)
+{
+    // Slice CMatrix (if defined)
+    // Remove from sets and scale all following one down (if defined)
+    // (maybe redefining sets is faster)
+    // Reduce size by one
+    // Turn _dim to 0 as new causet
 }

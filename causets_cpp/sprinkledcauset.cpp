@@ -36,13 +36,6 @@ using std::unordered_set;
             Project\causets_code\causets_cpp\"header".h...
 
 
-
-
-//////////////////////////////////////////////////////////////////////////////
-// ::SprinkledCauset::
-// Handles a causal set that is embedded in a subset of a manifold.
-//////////////////////////////////////////////////////////////////////////////
-
 /**
  * @brief Construct a new Sprinkled Causet object. 
  * 
@@ -115,7 +108,7 @@ SprinkledCauset::SprinkledCauset(int card,
             else if (sets_type == "future")
                 {this->make_fut_links("coordinates");}   
         }
-        
+
     else
         {
             throw std::invalid_argument("At least one among make_matrix, \
@@ -133,17 +126,20 @@ static vector<vector<double>> SprinkledCauset::sprinkle_coords(
     {   throw std::invalid_argument(
             "The sprinkle cardinality has to be a non-negative integer.");
     }
+
     vector<vector<double>> coords;
-    if ((shape._name == "cube") || (shape._name == "cuboid"))
+    if ((shape._name == 'cube') || (shape._name == 'cuboid'))
     {
         vector<double> low;
         vector<double> high;
-    
-        low = shape.Center()-shape.Edges()/2;
-        high = shape.Center()-shape.Edges()/2;
+
+        for (int i = 0; i<shape._dim; i++)
+        {
+            low [i] = shape.Center[i] - shape.Edges()[i]/2;
+            high[i] = shape.Center[i] + shape.Edges()[i]/2;
+        }
 
         // Generate coords randomly
-
         // Will be used to obtain a seed for the random number engine
         if (std::isnan(seed))
             {
@@ -190,6 +186,7 @@ static vector<vector<double>> SprinkledCauset::sprinkle_coords(
     }
     
 }
+
 
 static vector<vector<double>> SprinkledCauset::sprinkle( int count, 
                                                     CoordinateShape shape,
