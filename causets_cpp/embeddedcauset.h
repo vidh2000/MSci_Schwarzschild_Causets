@@ -23,64 +23,54 @@ using std::unordered_set;
 class EmbeddedCauset: public Causet
 {
     public:
+        //Inherited
+        // vector<vector<int8_t>> _CMatrix;
+        // int _size = 0;
+        // int _dim = 0;
+        // bool _special_matrix;
+        
+        // vector<std::unordered_set<int>> _pasts   = {};
+        // vector<std::unordered_set<int>> _futures = {};
+        // vector<std::unordered_set<int>> _past_links   = {};
+        // vector<std::unordered_set<int>> _future_links = {};
         vector<vector<double>> _coords;
         CoordinateShape _shape;
         Spacetime _spacetime;
 
         // CONSTRUCTORS
-        EmbeddedCauset(const char* spacetime= "flat",
-                       const char* shape    = "diamond",
-                       int dim = 4,
-                       vector<vector<double>> coordinates = {{0}}, 
-                       bool make_matrix = true,
-                       bool make_past = false,
-                       bool make_fut = false,
-                       bool make_past_links = false,
-                       bool make_fut_links = false);
-        EmbeddedCauset(const char* spacetime,
-                       const char* shape,
-                       int dim,
-                       int size,
-                       bool make_matrix = true,
-                       bool make_past = false,
-                       bool make_fut = false,
-                       bool make_past_links = false,
-                       bool make_fut_links = false);
+        EmbeddedCauset();
         EmbeddedCauset(Spacetime spacetime, 
                        CoordinateShape shape, 
                        vector<vector<double>> coordinates,
                        bool make_matrix = true,
-                       bool make_past = false,
-                       bool make_fut = false,
-                       bool make_past_links = false,
-                       bool make_fut_links = false);
-        EmbeddedCauset(Spacetime spacetime, 
-                       CoordinateShape shape, 
-                       int size,
-                       bool make_matrix = true,
-                       bool make_past = false,
-                       bool make_fut = false,
-                       bool make_past_links = false,
-                       bool make_fut_links = false);
+                       bool special = false,
+                       bool use_transitivity = true,
+                       bool make_sets = false,
+                       bool make_links = false,
+                       const char* sets_type = "past");
         
+
+        // Methods of constructing the causal set attributes
+        void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
+                                    bool special = false,
+                                    bool use_transitivity = true,
+                                    bool make_sets = false,
+                                    bool make_links = false,
+                                    const char* sets_type = "past");
+        void make_all_pasts  (const char* method = "coordinates");
+        void make_all_futures(const char* method = "coordinates");
+        void make_pasts      (const char* method = "coordinates");
+        void make_futures    (const char* method = "coordinates");
+        void make_past_links (const char* method = "coordinates");
+        void make_fut_links  (const char* method = "coordinates");
+
 
         // GETTERS
         int spacetime_dim();
         double density();
         double length_scale();
-        CoordinateShape &Shape = _shape;
-        Spacetime &Spacetime = _spacetime;
-        
-
-        // Methods of constructing the causal set
-        void make_cmatrix(const char* method = "coordinates");
-        void make_all_pasts(const char* method = "coordinates");
-        void make_all_futures(const char* method = "coordinates");
-        void make_pasts(const char* method = "coordinates");
-        void make_futures(const char* method = "coordinates");
-        void make_past_links(const char* method = "coordinates");
-        void make_fut_links(const char* method = "coordinates");
-
+        CoordinateShape &get_shape = _shape;
+        Spacetime &get_spacetime = _spacetime;
 
 
         // RELATIONS
@@ -88,10 +78,11 @@ class EmbeddedCauset: public Causet
         bool AprecB(vector<double> xvec, vector<double> yvec);
 
 
-        // MODIFY
-        Causet create (vector<vector<double>> coordinates);
-        void relate ();
-        void relabel(const char* method = "0", bool reverse = false);      
+        // MODIFIERS
+        void relabel(const char* method = "0", bool reverse = false);   
+        void add(vector<double> xvec);
+        void discard(int label);  
+        void discard(vector<int> labels);
 };
 
 #endif /*EMBEDDEDCAUSET_H*/
