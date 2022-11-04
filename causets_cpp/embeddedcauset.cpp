@@ -41,7 +41,8 @@ using std::unordered_set;
 //MAKE ATTRS  //===============================================================
 //=============================================================================
 /**
- * @brief Creates _pasts: the set of past events for each event
+ * @brief Creates _pasts and _past_links, i.e.
+ * the sets of past and past links for each event
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
@@ -50,12 +51,11 @@ using std::unordered_set;
  */
 void EmbeddedCauset::make_all_pasts(const char* method = "coordinates")
 {   
-    vector<std::unordered_set<int>> pasts;
-    pasts.resize(_size);
-    past_links.resize(size);
+    _pasts.resize(_size);
+    _past_links.resize(_size);
     //std::cout << "Finished resizing sets.." << std::endl;
     // Loop through coordinates t_min -> t_max
-    for (int i=1; i<size; i++)
+    for (int i=1; i<_size; i++)
     {
         //std::cout << "Event #"<< i+1 << std::endl;
         for(int j=i-1; j>-1; j--)
@@ -68,10 +68,11 @@ void EmbeddedCauset::make_all_pasts(const char* method = "coordinates")
             //}
             //else{
             // Check if j<i (are causally connected)
-            if (areTimelike(coords[i],coords[j])){
+            if (areTimelike(_coords[i], _coords[j]))
+            {
                 // If yes, add e_j and its past to the past of e_i
-                pasts[i].insert(j);
-                pasts[i].insert(pasts[j].begin(), pasts[j].end());
+                _pasts[i].insert(j);
+                _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
             }
             //}
         }
@@ -82,7 +83,6 @@ void EmbeddedCauset::make_all_pasts(const char* method = "coordinates")
 
 void EmbeddedCauset::make_cmatrix()
 {
-
     std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
 
     // Creating a 
@@ -126,18 +126,6 @@ bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 {
     auto atimelikeb = _spacetime.Causality();
     return atimelikeb(xvec, yvec)[0];
-    // int dim = xvec.size();
-    // double time_delta2  = (yvec[0] - xvec[0])*(yvec[0] - xvec[0]);
-    // double space_delta2 = 0;
-    // for (int i = 1; i<dim; i++){
-    //     space_delta2 += (yvec[i]-xvec[i])*(yvec[i]-xvec[i]);
-    // }
-    // if (time_delta2 - space_delta2 >0){
-    //     return true;
-    // }
-    // else{
-    //     return false;
-    // }
 };
 
 
