@@ -50,8 +50,6 @@ class SprinkledCauset: public EmbeddedCauset
                         const char* sets_type = "past",
                         int seed = std::nanf(""));
         
-        // Properties
-        double &Intensity = _intensity;
 
         // Methods
         static vector<vector<double>> sprinkle_coords(int count,

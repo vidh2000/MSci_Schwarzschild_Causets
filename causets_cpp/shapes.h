@@ -39,7 +39,6 @@ class CoordinateShape
                      double maxValue = std::numeric_limits<double>::infinity(),
                      bool canBeZero = false);
         
-        std::vector<double> &Center = _center;
         double Parameter (const char* key);
         std::vector<double> Edges ();
         double Volume();
