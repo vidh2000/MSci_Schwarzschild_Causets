@@ -24,11 +24,11 @@ N_events = 300
 #S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=1.0,
 #                                    radius=1.0,hollow=0.0)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
-S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=1.0,hollow=0.0)
+#S: CoordinateShape = CoordinateShape(Ndim, "ball", radius=1.0,hollow=0.0)
 
 start =  time()
 
-#S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=1.0)
+S: CoordinateShape = CoordinateShape(Ndim, 'bicone', radius=1.0)
 def C_init():
     C: SprinkledCauset = SprinkledCauset(
         card=N_events,spacetime=FlatSpacetime(Ndim),shape=S)

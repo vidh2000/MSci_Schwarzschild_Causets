@@ -135,7 +135,7 @@ PROFILE = False
 from causets.spacetimes import *
 st   = [    FlatSpacetime   , deSitterSpacetime, 
        AntideSitterSpacetime, BlackHoleSpacetime]
-dims = [  [1,4],                [2,3,4],            
+dims = [  [1,3],                [2,3,4],            
            [2,3,4],                    [2]      ]
 r = 10
 dur = 1

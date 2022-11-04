@@ -9,7 +9,7 @@
             Project\causets_code\causets_cpp\"header".h...
 
 
-#include <D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\spacetimes.h>
+#include <spacetimes.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
