@@ -39,8 +39,6 @@ class Causet
         int _dim = 0;
         bool _special_matrix;
         
-        // Creating useful "representations" of causet
-        //vector<std::unordered_set<int>> pasts;
         vector<std::unordered_set<int>> _pasts   = {};
         vector<std::unordered_set<int>> _futures = {};
         vector<std::unordered_set<int>> _past_links   = {};
