@@ -173,6 +173,26 @@ int argmin(std::vector<T1, T2> const& v, int begin = 0, int end = 0)
 }
 
 
+//From https://codereview.stackexchange.com/questions/206686/removing-by-indices-several-elements-from-a-vector
+template <typename INT, typename T> // INT could be int, unsigned int, char, size_t, etc...
+void remove_indices(std::vector<T>& v, const std::vector<INT>& rm )
+{
+  // For speed, I am assuming that 'rm' is sorted
+  size_t rm_index = 0;
+  v.erase(
+    std::remove_if(std::begin(v), std::end(v), [&](T& elem)
+            {
+                if (rm.size() != rm_index && &elem - &v[0] == rm[rm_index])
+                {
+                rm_index++;
+                return true;
+                }
+                return false;
+            }
+            ), std::end(v));
+}
+
+
 template <typename T>
 inline
 vector <int> getIndexes(vector<T> v, T x)

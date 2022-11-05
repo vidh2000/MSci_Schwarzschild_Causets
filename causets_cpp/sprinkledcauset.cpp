@@ -79,6 +79,7 @@ SprinkledCauset::SprinkledCauset(int card,
     _spacetime = spacetime;
     _shape = shape; 
     
+    this->sort_coords(0, false);
     if (make_matrix)
         {this->make_cmatrix("coordinates", special, use_transitivity,
                                 make_sets, make_links, sets_type);}
@@ -117,43 +118,51 @@ SprinkledCauset::SprinkledCauset(int card,
 }
 
 
-// Methods
-static vector<vector<double>> SprinkledCauset::sprinkle_coords(
-                                            int count, CoordinateShape shape,
-                                            int seed = std::nanf(""))
+
+/**
+ * @brief Sprinkle Coordinates
+ * 
+ * @param count : fixed number number of points to sprinkle.
+ * @param shape : CoordinateShape where to sprinkle
+ * @param seed : int, default is no seed.
+ * @return vector<vector<double>> coordinates, with ith entry being coordinates
+ * of ith point.
+ */
+vector<vector<double>> SprinkledCauset::sprinkle_coords( int count, 
+                                                    CoordinateShape shape,
+                                                    int seed = std::nanf(""))
 {
     if (count < 0)
     {   throw std::invalid_argument(
             "The sprinkle cardinality has to be a non-negative integer.");
     }
+    vector<vector<double>> coords (count);
 
-    vector<vector<double>> coords;
+    // Define mersenne_twister_engine Random Generator (with seed)
+    if (std::isnan(seed))
+        {std::random_device rd;
+        seed = rd();}  
+    std::mt19937 gen(seed);
+
+    
     if ((shape._name == 'cube') || (shape._name == 'cuboid'))
     {
-        vector<double> low;
-        vector<double> high;
+        // vector<double> low;
+        // vector<double> high;
 
+        //Generate Coordinates
         for (int i = 0; i<shape._dim; i++)
         {
-            low [i] = shape._center[i] - shape.Edges()[i]/2;
-            high[i] = shape._center[i] + shape.Edges()[i]/2;
-        }
-
-        // Generate coords randomly
-        // Will be used to obtain a seed for the random number engine
-        if (std::isnan(seed))
+            double low  = shape._center[i] - shape.Edges()[i]/2;
+            double high = shape._center[i] + shape.Edges()[i]/2;
+            std::uniform_real_distribution<> dis(low,high);
+            for (int j=0; j<count; j++)
             {
-                std::random_device rd;
-                seed = rd();
-            }  
-        // Standard mersenne_twister_engine
-        std::mt19937 gen(seed); 
-        std::uniform_real_distribution<double> dis(low,high);
-        for (int i=0; i<count;i++)
-        {
-            coords[i,:] = dis(gen);
+                coords[i][j] = dis(gen);
+            }
         }
     }
+
     else if ((shape._name == 'ball') || (shape._name == 'cylinder') ||
              (shape._name == 'diamond') || (shape._name == 'bicone'))
     {
@@ -162,33 +171,95 @@ static vector<vector<double>> SprinkledCauset::sprinkle_coords(
         bool isDiamond =(shape._name=='diamond')||(shape._name=='bicone');
 
         int d = shape._dim;
-        double b_r = shape.Parameter("radius");
+        double R = shape.Parameter("radius");
+       
         if (d==2 && isDiamond)
         {
             //pick "count" random coordinate tuples uniformly:
             vector<vector<double>> uv;
-            // Random generator stuff
-            std::random_device rd;  
-            std::mt19937 gen(rd()); 
             std::uniform_real_distribution<> dis(-1.0,1.0);
-            for (i=0;i<count;i++)
+            for (int i = 0; i<count; i++)
             {
-                vector<double> = 
-                for (j=0;j<2;j++)
-                {
-                    
-                    /* placeholder. Find out how to generate a 
-                    random matrix (count,2) size in c++*/ 
-                }
-                
+                double u = dis(gen);
+                double v = dis(gen);
+                coords[i][0] = (u + v)*R/2;
+                coords[i][1] = (u - v)*R/2;
             } 
         }
+
+        else
+        {
+            int n_different = (shape._name == 'ball')? 0 : 1;
+            int n_rad = d - n_different;
+            
+            if (isCylindrical)
+            {   
+                //Get time done separately
+                double t_low = shape._center[0]-shape.Parameter("duration")/2;
+                double t_high= shape._center[0]+shape.Parameter("duration")/2;
+                std::uniform_real_distribution<> cyltime(t_low, t_high);
+                for (int i = 0; i<count; i++)
+                    {coords[i][0] = cyltime(gen);} 
+            }
+
+            // prepare coordinates and scaling factor, where to accumulate all
+            // scaling factors to apply at the end
+            double r_scaling = 0;
+            std::uniform_real_distribution<> uni(0, 1);
+            for (int i = 0; i<count; i++)
+            {
+                //1)First generate random numbers on sphere of radius 1
+                std::normal_distribution<> gauss(0,1);
+                double r2 = 0;
+                for (int a = n_different; a<n_rad; a++)
+                {
+                    double x_a = gauss(gen);
+                    coords[i][a] = x_a;
+                    r2 += x_a*x_a;
+                }
+                // 1/r2 brings the points on a sphere of radius 1
+                r_scaling = 1/r2;
+                // 2)Scale points radially inside n_rad-ball
+                r_scaling *= std::pow(R, 1/n_rad);
+                if (isDiamond)
+                {
+                    //Set time properly
+                    double k = uni(gen);
+                    int t_sign = 1;
+                    double droot_k;
+                    if (k<0.5)
+                    {
+                        t_sign = -1;
+                        droot_k = std::pow(k*2, 1/d); 
+                    }
+                    else if (k>=0.5)
+                    {
+                        droot_k = std::pow((k-0.5)*2, 1/d); 
+                    }
+                    r_scaling *= droot_k;
+                    coords[i][0] = t_sign * (1-droot_k) * R;
+                }
+                for (int a = n_different; a<n_rad; a++)
+                    {coords[i][a] *= r_scaling;}
+            }
+        }
     }
-    
+    return coords;
 }
 
 
-static vector<vector<double>> SprinkledCauset::sprinkle( int count, 
+/**
+ * @brief Sprinkle Coordinates
+ * 
+ * @param count : number (or average) number of points to sprinkle.
+ * @param shape : CoordinateShape where to sprinkle
+ * @param poisson : bool, if true count is average of Poisson distribution
+ * from which get the effective count
+ * @param seed : int, default is no seed.
+ * @return vector<vector<double>> coordinates, with ith entry being coordinates
+ * of ith point.
+ */
+vector<vector<double>> SprinkledCauset::sprinkle( int count, 
                                                     CoordinateShape shape,
                                                     bool poisson = false,
                                                     int seed = std::nanf(""))

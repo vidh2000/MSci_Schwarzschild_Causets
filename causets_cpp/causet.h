@@ -33,10 +33,10 @@ class Causet
 {
     public:
         // Attributes
-        vector<vector<int8_t>> _CMatrix;
+        vector<vector<int8_t>> _CMatrix = {};
+        bool _special_matrix = false;
         int _size = 0;
         int _dim = 0;
-        bool _special_matrix;
         
         vector<std::unordered_set<int>> _pasts   = {};
         vector<std::unordered_set<int>> _futures = {};
@@ -44,14 +44,15 @@ class Causet
         vector<std::unordered_set<int>> _future_links = {};
 
         // CONSTRUCTOR
+        Causet ();
         Causet(vector<vector<double>> Cmatrix, 
                 bool past_links = false, bool fut_links = false);
         Causet(vector<vector<double>> coordinates,
                const char* method = "pasts");
         
         //SETTERS/GETTERS
-        void make_Cmatrix();
-        void make_Lmatrix();
+        void make_cmatrix();
+        void make_lmatrix();
         void make_pasts();
         void make_futures();
         void make_past_links();
@@ -59,7 +60,6 @@ class Causet
 
         vector<vector<int>> CMatrix(set<int> labels = {});
         int size();
-        int dim();
         bool is_CMatrix_special();
         bool is_Cij_special();
 

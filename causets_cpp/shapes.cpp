@@ -21,20 +21,20 @@
 
 # define M_PI           3.14159265358979323846  /* pi */
 
-CoordinateShape::CoordinateShape(int dim, char name, 
-                        std::vector<double> center = {},
-                        double radius   = 1,
-                        double edge     = 1,
-                        std::vector<double> edges = {},
-                        double hollow   = 0,
-                        double duration = 2)
+CoordinateShape::CoordinateShape(int dim=4, char name='diamond', 
+                                std::vector<double> center = {},
+                                double radius   = 1,
+                                double edge     = 1,
+                                std::vector<double> edges = {},
+                                double hollow   = 0,
+                                double duration = 2)
 /**
  * @brief Sets the embedding shape, but does not adjust event coordinates.
         The dimension parameter dim must be an integer greater than zero.
 
  * @param dim: int > 0.
     
- * @param name: (char). 
+ * @param name: (const char*). 
         Accepted shape names (and parameters)
         -------------------------------------
         'ball' ('radius': float, default: 1.0, must be > 0.0,

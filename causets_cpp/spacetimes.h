@@ -31,7 +31,10 @@ class Spacetime
         char _metricname;
         std::map<char, double> _params;
 
-        //Getters
+        // CONSTRUCTOR
+        Spacetime();
+
+        // VIRTUAL GETTERS
         virtual double Parameter (char key);
         virtual CoordinateShape DefaultShape();  
         
@@ -39,6 +42,7 @@ class Spacetime
                                                     std::vector<double>origin,
                                                     int samplingsize = -1); 
 
+        // CAUSALITY
         typedef std::vector<bool> (*func)
         (std::vector<double> xvec, std::vector<double> yvec);
         func Causality();  
@@ -65,7 +69,7 @@ class FlatSpacetime: public Spacetime
     public:
         bool _isPeriodic;
         
-        FlatSpacetime(int dim = 2);
+        FlatSpacetime(int dim = 4);
         
         CoordinateShape DefaultShape();
 

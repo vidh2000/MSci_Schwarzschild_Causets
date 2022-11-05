@@ -27,7 +27,7 @@ class CoordinateShape
         std::map<const char*, double> _params;
         double _volume = 0;
 
-        CoordinateShape(int dim, char name, 
+        CoordinateShape(int dim = 4, char name = 'diamond', 
                         std::vector<double> center = {0},
                         double radius   = 1,
                         double edge     = 1,

@@ -24,10 +24,10 @@ class EmbeddedCauset: public Causet
 {
     public:
         //Inherited
-        // vector<vector<int8_t>> _CMatrix;
+        // vector<vector<int8_t>> _CMatrix = {};
+        // bool _special_matrix = false;
         // int _size = 0;
         // int _dim = 0;
-        // bool _special_matrix;
         
         // vector<std::unordered_set<int>> _pasts   = {};
         // vector<std::unordered_set<int>> _futures = {};
@@ -79,10 +79,20 @@ class EmbeddedCauset: public Causet
 
 
         // MODIFIERS
+        void sort_coords(int dim = 0, bool reverse = false);
         void relabel(const char* method = "0", bool reverse = false);   
         void add(vector<double> xvec);
-        void discard(int label);  
-        void discard(vector<int> labels);
+        void discard(int label, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);  
+        void discard(vector<int> labels, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);
+        
+        template<typename n>
+        static void discard_from_set(unordered_set<n> &myset,
+                                     n label);
+        template<typename n>
+        static void discard_from_set(unordered_set<n> &myset, 
+                                     vector<int> labels);
 };
 
 #endif /*EMBEDDEDCAUSET_H*/

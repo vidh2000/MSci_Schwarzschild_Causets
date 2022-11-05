@@ -34,7 +34,7 @@ CoordinateShape Spacetime::DefaultShape()
 /**
  * @brief Returns default coordinate shape of embedding region in spcetime.  
  */
-    {return CoordinateShape(Dim, 'cylinder');}
+    {return CoordinateShape(_dim, 'diamond');}
 
 
 vector<double> Spacetime::_T_slice_sampling(double t, 
@@ -75,9 +75,9 @@ func Spacetime::Causality()
 * Notes: does not support period
 * ============================================================================
 ============================================================================*/
-FlatSpacetime::FlatSpacetime(int dim = 2)
+FlatSpacetime::FlatSpacetime(int dim = 4)
 {
-    if (Dim < 1)
+    if (dim < 1)
     {
         throw std::invalid_argument("Dimension has to be at least 1.");
     }
@@ -171,7 +171,7 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim = 2, double r_S = 0.5,
  *                (default), or 'Schwarzschild' or 'S'.
  */
 {
-    if (Dim < 2 || Dim > 4)
+    if (dim < 2 || dim > 4)
     {
         throw std::invalid_argument("Dimension has to be 2, 3 or 4.");
     }

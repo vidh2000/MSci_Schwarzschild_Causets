@@ -53,7 +53,7 @@ using std::unordered_set;
  * @param use_transitivity: bool, if true use also transitivity to establish
  * causality relations. 
  */
-EmbeddedCauset::EmbeddedCauset(Spacetime myspacetime, 
+EmbeddedCauset::EmbeddedCauset(Spacetime spacetime, 
                                 CoordinateShape shape, 
                                 vector<vector<double>> coordinates,
                                 bool make_matrix = true,
@@ -65,7 +65,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime myspacetime,
 {
     _size = coordinates.size();
     _coords = coordinates;
-    _spacetime = myspacetime;
+    _spacetime = spacetime;
     _shape = shape;
 
     if (make_matrix)
@@ -126,7 +126,8 @@ EmbeddedCauset::EmbeddedCauset(Spacetime myspacetime,
  * - "pasts": create from already existing _pasts
  * - "futures": create from already existing _futures
  * @param special: bool, if true have C[i][j]=-1 if link
- * @param use_trasnitivity: bool, if true exploit transitivity
+ * @param use_transitivity: bool, if true exploit transitivity. If make_links
+ * is true, it is compulsorily true.
  * @param make_sets: bool, if true make set (see sets_type)
  * @param make_links: bool, if true make links (see sets_type)
  * @param sets_type: const char* specifying the type of set:
@@ -143,13 +144,13 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
     //std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
     int8_t special_factor = (special)? -1 : 1;
     _special_matrix = special;
-    _CMatrix.resize(_size);
+    _CMatrix.resize(_size, vector<int8_t>(_size));
     
-    if (make_links == "none")
+    if (make_links == false && make_sets == false)
     {
         for(int i=0; i<_size; i++)
         {
-            _CMatrix[i].resize(_size);
+            //_CMatrix[i].resize(_size);
             for(int j=i-1; j>-1; j--)
             {
                 if (_CMatrix[j][i] != 0)
@@ -170,22 +171,23 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
         }
     }
 
-    else if (make_links == "past")
+    else if (make_links == true && make_sets == false)
     {
-        _past_links.resize(_size);
-        for(int i=0; i<_size; i++)
+        if (sets_type == "past")
         {
-            _CMatrix[i].resize(_size);
-            for(int j=i-1; j>-1; j--)
+            _past_links.resize(_size);
+            for(int i=0; i<_size; i++)
             {
-                if (_CMatrix[j][i] != 0)
-                    {continue;}
-                if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
+                _CMatrix[i].resize(_size);
+                for(int j=i-1; j>-1; j--)
                 {
-                    _CMatrix[j][i] = special_factor;
-                    _past_links[i].insert(j); 
-                    if (use_transitivity)
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
                     {
+                        _CMatrix[j][i] = special_factor;
+                        _past_links[i].insert(j); 
+                        //transitivity is mandatory if links are being done
                         for (int k = j-1; k>-1; k--)
                         {
                             if(_CMatrix[k][j] != 0)
@@ -195,24 +197,142 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
                 }
             }
         }
+        else if (sets_type == "future")
+        {
+            _future_links.resize(_size);
+            for(int i=_size-1; i>-1; i--)
+            {
+                _CMatrix[i].resize(_size);
+                for(int j=i+1; j<_size; j++)
+                {
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
+                    {
+                        _CMatrix[j][i] = special_factor;
+                        _future_links[i].insert(j); 
+                        //transitivity is mandatory if links are being done
+                        for (int k = j+1; k<_size; k++)
+                        {
+                            if(_CMatrix[k][j] != 0)
+                                {_CMatrix[k][i] = 1;}
+                        }
+                    }
+                }
+            }
+        }
+    
+    }
+    
+    else if (make_links == false && make_sets == true)
+    {
+        if (sets_type == "past")
+        {
+            _pasts.resize(_size);
+            for(int i=0; i<_size; i++)
+            {
+                _CMatrix[i].resize(_size);
+                for(int j=i-1; j>-1; j--)
+                {
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    if (method == "coordinates" && 
+                        areTimelike(_coords[i], _coords[j]))
+                    {
+                        _CMatrix[j][i] = special_factor;
+                        _pasts[i].insert(j);
+                        _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
+                        if (use_transitivity)
+                        {
+                            for (int k = j-1; k>-1; k--)
+                            {
+                                if(_CMatrix[k][j] != 0)
+                                    {_CMatrix[k][i] = 1;}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (sets_type == "future")
+        {
+            _futures.resize(_size);
+            for(int i=_size-1; i>-1; i--)
+            {
+                _CMatrix[i].resize(_size);
+                for(int j=i+1; j<_size; j++)
+                {
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    if (method == "coordinates" && 
+                        areTimelike(_coords[i], _coords[j]))
+                    {
+                        _CMatrix[j][i] = special_factor;
+                        _futures[i].insert(j);
+                        _futures[i].insert(_futures[j].begin(), 
+                                           _futures[j].end());
+                        if (use_transitivity)
+                        {
+                            for (int k = j+1; k<_size; k++)
+                            {
+                                if(_CMatrix[k][j] != 0)
+                                    {_CMatrix[k][i] = 1;}
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    else if (make_links == "future")
+    else /*both make_sets and links*/
     {
-        _future_links.resize(_size);
-        for(int i=_size-1; i>-1; i--)
+        if (sets_type == "past")
         {
-            _CMatrix[i].resize(_size);
-            for(int j=i+1; j<_size; j++)
+            _pasts.resize(_size);
+            for(int i=0; i<_size; i++)
             {
-                if (_CMatrix[j][i] != 0)
-                    {continue;}
-                if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
+                _CMatrix[i].resize(_size);
+                for(int j=i-1; j>-1; j--)
                 {
-                    _CMatrix[j][i] = special_factor;
-                    _future_links[i].insert(j); 
-                    if (use_transitivity)
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    if (method == "coordinates" && 
+                        areTimelike(_coords[i], _coords[j]))
                     {
+                        _CMatrix[j][i] = special_factor;
+                        _past_links[i].insert(j);
+                        _pasts[i].insert(j);
+                        _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
+                        // transitivity is mandatory if links are being made
+                        for (int k = j-1; k>-1; k--)
+                        {
+                            if(_CMatrix[k][j] != 0)
+                                {_CMatrix[k][i] = 1;}
+                        }
+                    }
+                }
+            }
+        }
+        else if (sets_type == "future")
+        {
+            _futures.resize(_size);
+            for(int i=_size-1; i>-1; i--)
+            {
+                _CMatrix[i].resize(_size);
+                for(int j=i+1; j<_size; j++)
+                {
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    if (method == "coordinates" && 
+                        areTimelike(_coords[i], _coords[j]))
+                    {
+                        _CMatrix[j][i] = special_factor;
+                        _future_links[i].insert(j);
+                        _futures[i].insert(j);
+                        _futures[i].insert(_futures[j].begin(), 
+                                           _futures[j].end());
+                        // transitivity is mandatory if links are being made
                         for (int k = j+1; k<_size; k++)
                         {
                             if(_CMatrix[k][j] != 0)
@@ -414,7 +534,7 @@ void EmbeddedCauset::make_past_links(const char* method = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "pasts": create from already existing pasts
  */
-void EmbeddedCauset::make_futures(const char* method = "coordinates")
+void EmbeddedCauset::make_fut_links(const char* method = "coordinates")
 {   
     _future_links.resize(_size);
     // Loop through coordinates t_min -> t_max
@@ -498,6 +618,23 @@ bool EmbeddedCauset::AprecB(vector<double> xvec, vector<double> yvec)
 //MODIFIERS   //===============================================================
 //=============================================================================
 //=============================================================================
+
+/**
+ * @brief Sort coordinates of Causet.
+ * 
+ * @param dim : int. Dimension to use for the sorting.
+ * @param reverse : bool. If true (non-default) revrse order.
+ * @return vector<vector<double>> 
+ */
+void EmbeddedCauset::sort_coords(int dim = 0, bool reverse = false)
+{
+    int rev_factor = (reverse)? -1 : 1;
+    auto sort_lambda = [dim, rev_factor] (vector<double> v1, vector<double> v2) 
+                      {return rev_factor * v1[dim]<v2[dim];};
+    std::sort(_coords.begin(), _coords.end(), sort_lambda);
+}
+
+
 void EmbeddedCauset::add(vector<double> xvec)
 {
     // Update CMatrix (if defined)
@@ -508,20 +645,139 @@ void EmbeddedCauset::add(vector<double> xvec)
 }
 
 
-void EmbeddedCauset::discard(int label)
+void EmbeddedCauset::discard(int label, bool make_matrix = true, 
+                             bool make_sets = false, bool make_links = true)
 {
-    // Slice CMatrix (if defined)
-    // Remove from sets and scale all following one down (if defined)
-    // (maybe redefining sets is faster)
-    // Reduce size by one
-    // Turn _dim to 0 as new causet
+    _coords.erase(_coords.begin() + label);
+
+    if (make_matrix)
+    {
+        if (_CMatrix.size())
+        {
+            _CMatrix.erase(_CMatrix.begin() + label);
+            for (vector<int8_t> row : _CMatrix)
+                {row.erase(row.begin() + label);}
+        } 
+    }
+    if (make_sets)
+    {
+        if (_pasts.size())
+        {
+            _pasts.erase(_pasts.begin()+label);
+            for (unordered_set<int> past_i : _pasts)
+                {EmbeddedCauset::discard_from_set(past_i, label);}
+        } 
+        if (_futures.size())
+        {
+            _futures.erase(_futures.begin()+label);
+            for (unordered_set<int> fut_i : _futures)
+                {EmbeddedCauset::discard_from_set(fut_i, label);}
+        }   
+    }
+    if (make_links)
+    {
+        if (_past_links.size())
+        {
+            _past_links.erase(_past_links.begin()+label);
+            for (unordered_set<int> plinks_i : _past_links)
+                {EmbeddedCauset::discard_from_set(plinks_i, label);}
+        } 
+        if (_future_links.size())
+        {
+            _future_links.erase(_future_links.begin()+label);
+            for (unordered_set<int> flinks_i : _future_links)
+                {EmbeddedCauset::discard_from_set(flinks_i, label);}
+        }   
+    }
+    _size--;
+    _dim = 0;
 }
 
-void EmbeddedCauset::discard(vector<int> labels)
+
+void EmbeddedCauset::discard(vector<int> labels, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true)
 {
-    // Slice CMatrix (if defined)
-    // Remove from sets and scale all following one down (if defined)
-    // (maybe redefining sets is faster)
-    // Reduce size by one
-    // Turn _dim to 0 as new causet
+    remove_indices(_coords, labels);
+
+    if (make_matrix)
+    {
+        if (_CMatrix.size())
+        {
+            remove_indices(_CMatrix, labels);
+            for (vector<int8_t> row : _CMatrix)
+                {remove_indices(row, labels);}
+        } 
+    }
+    if (make_sets)
+    {
+        if (_pasts.size())
+        {
+            remove_indices(_pasts, labels);
+            for (unordered_set<int> past_i : _pasts)
+                {EmbeddedCauset::discard_from_set(past_i, labels);}
+        } 
+        if (_futures.size())
+        {
+            remove_indices(_futures, labels);
+            for (unordered_set<int> fut_i : _futures)
+                {EmbeddedCauset::discard_from_set(fut_i, labels);}
+        }   
+    }
+    if (make_links)
+    {
+        if (_past_links.size())
+        {
+            remove_indices(_past_links, labels);
+            for (unordered_set<int> plinks_i : _past_links)
+                {EmbeddedCauset::discard_from_set(plinks_i, labels);}
+        } 
+        if (_future_links.size())
+        {
+            remove_indices(_future_links, labels);
+            for (unordered_set<int> flinks_i : _future_links)
+                {EmbeddedCauset::discard_from_set(flinks_i, labels);}
+        }   
+    }
+    _size--;
+    _dim = 0;
+}
+
+template<typename n>
+static void discard_from_set(unordered_set<n> &myset, n label)
+{
+    int N = myset.size();
+    unordered_set<n> buffer;
+    for (n j : myset)
+    {
+        if (j<label)
+            {buffer.insert(j);}
+        if (j>label)
+            {buffer.insert(j-1);}
+    }
+    myset = buffer;
+}
+
+template<typename n>
+static void discard_from_set(unordered_set<n> &myset, n labels)
+{
+    labels.sort();
+    int N = myset.size();
+    unordered_set<n> buffer;
+    int startpoint = 0;
+    for (n j : myset) //not ordered
+    {
+        if (j>labels[-1])
+            {buffer.insert[j-labels.size()];}
+        else
+        {
+            for (int s = 0; s<label.size(); s++)
+                {
+                    if (labels[s] == j)
+                        {break;}
+                    else if (labels[s] > j)
+                        {buffer.insert[j-s]; break;}
+                }
+        }
+    }
+    myset = buffer;
 }
