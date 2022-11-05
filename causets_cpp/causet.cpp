@@ -16,9 +16,6 @@
 #include <chrono>
 #include <unordered_set>
 
-using namespace std::chrono;
-
-
 #include "functions.h"
 #include "MyVecFunctions.h"
 #include "causet.h"

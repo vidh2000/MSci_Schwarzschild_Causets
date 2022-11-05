@@ -280,6 +280,8 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
 }   
 
 
-
+int main(){
+    std::cout << "sprinkledcauset.cpp WORKS! :)";
+}
 
 

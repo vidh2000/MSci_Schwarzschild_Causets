@@ -21,10 +21,10 @@
 
 #include "functions.h"
 #include "MyVecFunctions.h"
-#include "causet.h"
+//#include "causet.h"
 #include "embeddedcauset.h"
-#include "shapes.h"
-#include "spacetimes.h"
+//#include "shapes.h"
+//#include "spacetimes.h"
 
 using std::vector;
 using std::set;
