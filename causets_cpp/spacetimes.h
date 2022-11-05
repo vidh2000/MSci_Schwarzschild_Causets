@@ -27,15 +27,15 @@ class Spacetime
 {
     public:
         int  _dim;
-        char _name;
-        char _metricname;
-        std::map<char, double> _params;
+        const char* _name;
+        const char* _metricname;
+        std::map<const char*, double> _params;
 
         // CONSTRUCTOR
         Spacetime();
 
         // VIRTUAL GETTERS
-        virtual double Parameter (char key);
+        virtual double Parameter (const char* key);
         virtual CoordinateShape DefaultShape();  
         
         virtual std::vector<double>_T_slice_sampling(double t, 
@@ -59,7 +59,7 @@ class FlatSpacetime: public Spacetime
 /**
  * @brief Initializes Minkowski spacetime for dim >= 1.
     As additional parameter, the spatial periodicity can be specified (using 
-    the key 'period') as float (to be applied for all spatial directions 
+    the key "period") as float (to be applied for all spatial directions 
     equally) or as tuple (with a float for each spatial dimension). A positive 
     float switches on the periodicity along the respective spatial direction, 
     using this value as period. The default is 0.0, no periodicity in any 
@@ -94,14 +94,15 @@ class BlackHoleSpacetime: public Spacetime
 {
     public:
         
-        BlackHoleSpacetime(int dim = 2, double r_S = 0.5,
-                           char metric = 'Eddington-Finkelstein');
-        
-        
-        double ds2    (std::vector<double> xvec, std::vector<double> yvec);
+        // Constructor
+        BlackHoleSpacetime(int dim = 2,
+                           double r_S = 0.5,
+                           const char* metric = "Eddington-Finkelstein");
+                
+        // Methods
+        double ds2(std::vector<double> xvec, std::vector<double> yvec);
 
-        
-        double ds     (std::vector<double> xvec, std::vector<double> yvec);
+        double ds(std::vector<double> xvec, std::vector<double> yvec);
 
         CoordinateShape DefaultShape();
         

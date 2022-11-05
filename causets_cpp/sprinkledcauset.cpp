@@ -31,7 +31,7 @@ using std::vector;
 using std::set;
 using std::unordered_set;
 
-// For Vid (can't locate headers for some reason)
+// For Vid (can"t locate headers for some reason)
 // Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project\
             Project\causets_code\causets_cpp\"header".h...
 
@@ -62,14 +62,14 @@ using std::unordered_set;
 SprinkledCauset::SprinkledCauset(int card,
                                  Spacetime spacetime, 
                                  CoordinateShape shape, 
-                                 bool poisson = false,
-                                 bool make_matrix = true,
-                                 bool special = false,
-                                 bool use_transitivity = true,
-                                 bool make_sets = false,
-                                 bool make_links = false,
-                                 const char* sets_type = "past",
-                                 int seed = std::nanf(""))
+                                 bool poisson,// = false,
+                                 bool make_matrix,// = true,
+                                 bool special,// = false,
+                                 bool use_transitivity,// = true,
+                                 bool make_sets,// = false,
+                                 bool make_links,// = false,
+                                 const char* sets_type,// = "past",
+                                 int seed)// = std::nanf(""))
 {
     if (poisson)
         {_intensity = card*1;}
@@ -128,9 +128,9 @@ SprinkledCauset::SprinkledCauset(int card,
  * @return vector<vector<double>> coordinates, with ith entry being coordinates
  * of ith point.
  */
-vector<vector<double>> SprinkledCauset::sprinkle_coords( int count, 
+vector<vector<double>> SprinkledCauset::sprinkle_coords(int count, 
                                                     CoordinateShape shape,
-                                                    int seed = std::nanf(""))
+                                                    int seed)// = std::nanf(""))
 {
     if (count < 0)
     {   throw std::invalid_argument(
@@ -145,9 +145,9 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
     std::mt19937 gen(seed);
 
     
-    if ((shape._name == 'cube') || (shape._name == 'cuboid'))
+    if ((shape._name == "cube") || (shape._name == "cuboid"))
     {
-        // vector<double> low;
+        // vector<double> low; "
         // vector<double> high;
 
         //Generate Coordinates
@@ -163,12 +163,12 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
         }
     }
 
-    else if ((shape._name == 'ball') || (shape._name == 'cylinder') ||
-             (shape._name == 'diamond') || (shape._name == 'bicone'))
+    else if ((shape._name == "ball") || (shape._name == "cylinder") ||
+             (shape._name == "diamond") || (shape._name == "bicone"))
     {
         // Create circle based sprinkle:
-        bool isCylindrical = shape._name == 'cylinder';
-        bool isDiamond =(shape._name=='diamond')||(shape._name=='bicone');
+        bool isCylindrical = shape._name == "cylinder";
+        bool isDiamond =(shape._name=="diamond")||(shape._name=="bicone");
 
         int d = shape._dim;
         double R = shape.Parameter("radius");
@@ -189,7 +189,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
 
         else
         {
-            int n_different = (shape._name == 'ball')? 0 : 1;
+            int n_different = (shape._name == "ball")? 0 : 1;
             int n_rad = d - n_different;
             
             if (isCylindrical)
@@ -261,8 +261,8 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
  */
 vector<vector<double>> SprinkledCauset::sprinkle( int count, 
                                                     CoordinateShape shape,
-                                                    bool poisson = false,
-                                                    int seed = std::nanf(""))
+                                                    bool poisson,// = false,
+                                                    int seed)// = std::nanf(""))
 {
     if (count<0)
         {   throw std::invalid_argument(
