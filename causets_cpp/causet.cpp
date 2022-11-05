@@ -20,7 +20,6 @@ using namespace std::chrono;
 
 
 #include "functions.h"
-//#include "D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\MyVecFunctions.h"
 #include "MyVecFunctions.h"
 #include "causet.h"
 
