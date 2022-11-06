@@ -115,7 +115,14 @@ double Causet::ord_fr(vector<SET> A_futures,
                 const char* denominator,// = "choose",
                 bool isdisjoined)// = true);
 {
+    if (_CMatrix.size())
+    {
 
+    }
+    else if (_pasts.size())
+    {
+        
+    }
 }
 
 /**
@@ -211,7 +218,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             std::mt19937 gen(seed);
             std::uniform_real_distribution<> dis(0,*N);
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
-            int* a = nullptr, int* b = nullptr;
+            int* a = nullptr;
+            int* b = nullptr;
 
             if (e1 == e2){
                 fails += 1;
@@ -231,9 +239,10 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             }
             
             int n = IntervalCard(*a, *b);
-            if () //to be continued
+            if (n >= size_min && n<= size_max) 
             {
-
+                successes += 1;
+                double fr_i = Causet::ord_fr_ab(a,b,"choose") 
             }
         }
     }

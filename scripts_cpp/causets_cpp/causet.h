@@ -81,7 +81,7 @@ class Causet
                       vector<SET> A_pasts,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
-        static double ord_fr(int a, int b,
+        double ord_fr(int a, int b,
                       const char* denominator = "choose");
 
         static double MM_drelation(double d); 
