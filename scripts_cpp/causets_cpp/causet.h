@@ -130,9 +130,9 @@ class Causet
         static void discard_from_set(unordered_set<m> &myset, 
                                         vector<int> labels);
         
-        static vector<int> distinct_int_random (int card, int N, seed = 0);
-        static vector<int> distinct_int_random1(int card, int N, seed = 0);
-        static vector<int> distinct_int_random2(int card, int N, seed = 0);
+        static vector<int> distinct_int_random (int card, int N, int seed = 0);
+        static vector<int> distinct_int_random1(int card, int N, int seed = 0);
+        static vector<int> distinct_int_random2(int card, int N, int seed = 0);
         
 
 
