@@ -22,12 +22,13 @@ class CoordinateShape
 {
     public:
         int _dim = 0;
-        char _name;
+        const char* _name;
         std::vector<double> _center;
         std::map<const char*, double> _params;
         double _volume = 0;
 
-        CoordinateShape(int dim = 4, char name = 'diamond', 
+        CoordinateShape(int dim = 4,
+                        const char* name = "diamond", 
                         std::vector<double> center = {0},
                         double radius   = 1,
                         double edge     = 1,

@@ -21,10 +21,10 @@
 
 #include "functions.h"
 #include "MyVecFunctions.h"
-#include "causet.h"
+//#include "causet.h"
 #include "embeddedcauset.h"
-#include "shapes.h"
-#include "spacetimes.h"
+//#include "shapes.h"
+//#include "spacetimes.h"
 
 using std::vector;
 using std::set;
@@ -56,12 +56,12 @@ using std::unordered_set;
 EmbeddedCauset::EmbeddedCauset(Spacetime spacetime, 
                                 CoordinateShape shape, 
                                 vector<vector<double>> coordinates,
-                                bool make_matrix = true,
-                                bool special = false,
-                                bool use_transitivity = true,
-                                bool make_sets = false,
-                                bool make_links = false,
-                                const char* sets_type = "past")
+                                bool make_matrix,// = true,
+                                bool special,// = false,
+                                bool use_transitivity,// = true,
+                                bool make_sets,// = false,
+                                bool make_links,// = false,
+                                const char* sets_type)// = "past")
 {
     _size = coordinates.size();
     _coords = coordinates;
@@ -134,12 +134,12 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
  * - "past": make _past_links
  * - "future": make _future_links
  */
-void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
-                                    bool special = false,
-                                    bool use_transitivity = true,
-                                    bool make_sets = false,
-                                    bool make_links = false,
-                                    const char* sets_type = "past")
+void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
+                                    bool special,// = false,
+                                    bool use_transitivity,// = true,
+                                    bool make_sets,// = false,
+                                    bool make_links,// = false,
+                                    const char* sets_type)// = "past")
 {
     //std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
     int8_t special_factor = (special)? -1 : 1;
@@ -178,7 +178,6 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
             _past_links.resize(_size);
             for(int i=0; i<_size; i++)
             {
-                _CMatrix[i].resize(_size);
                 for(int j=i-1; j>-1; j--)
                 {
                     if (_CMatrix[j][i] != 0)
@@ -202,7 +201,6 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
             _future_links.resize(_size);
             for(int i=_size-1; i>-1; i--)
             {
-                _CMatrix[i].resize(_size);
                 for(int j=i+1; j<_size; j++)
                 {
                     if (_CMatrix[j][i] != 0)
@@ -210,7 +208,7 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
                     if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
-                        _future_links[i].insert(j); 
+                        _future_links[i].insert(j);
                         //transitivity is mandatory if links are being done
                         for (int k = j+1; k<_size; k++)
                         {
@@ -355,7 +353,7 @@ void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
  * - "Cmatrix": create from already existing _CMatrix
  * - "futures": create from already existing futures
  */
-void EmbeddedCauset::make_all_pasts(const char* method = "coordinates")
+void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
 {   
     _pasts.resize(_size);
     _past_links.resize(_size);
@@ -393,7 +391,7 @@ void EmbeddedCauset::make_all_pasts(const char* method = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "pasts": create from already existing futures
  */
-void EmbeddedCauset::make_all_futures(const char* method = "coordinates")
+void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
 {   
     _futures.resize(_size);
     _future_links.resize(_size);
@@ -430,7 +428,7 @@ void EmbeddedCauset::make_all_futures(const char* method = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "futures": create from already existing futures
  */
-void EmbeddedCauset::make_pasts(const char* method = "coordinates")
+void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
 {   
     _pasts.resize(_size);
     // Loop through coordinates t_min -> t_max
@@ -466,7 +464,7 @@ void EmbeddedCauset::make_pasts(const char* method = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "pasts": create from already existing pasts
  */
-void EmbeddedCauset::make_futures(const char* method = "coordinates")
+void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
 {   
     _futures.resize(_size);
     // Loop through coordinates t_min -> t_max
@@ -501,7 +499,7 @@ void EmbeddedCauset::make_futures(const char* method = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "futures": create from already existing futures
  */
-void EmbeddedCauset::make_past_links(const char* method = "coordinates")
+void EmbeddedCauset::make_past_links(const char* method)// = "coordinates")
 {   
     _past_links.resize(_size);
     // Loop through coordinates t_min -> t_max
@@ -534,7 +532,7 @@ void EmbeddedCauset::make_past_links(const char* method = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "pasts": create from already existing pasts
  */
-void EmbeddedCauset::make_fut_links(const char* method = "coordinates")
+void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
 {   
     _future_links.resize(_size);
     // Loop through coordinates t_min -> t_max
@@ -623,10 +621,11 @@ bool EmbeddedCauset::AprecB(vector<double> xvec, vector<double> yvec)
  * @brief Sort coordinates of Causet.
  * 
  * @param dim : int. Dimension to use for the sorting.
- * @param reverse : bool. If true (non-default) revrse order.
+ * @param reverse : bool. If true (non-default) reverse order.
  * @return vector<vector<double>> 
  */
-void EmbeddedCauset::sort_coords(int dim = 0, bool reverse = false)
+void EmbeddedCauset::sort_coords(int dim,// = 0,
+                                 bool reverse)// = false)
 {
     int rev_factor = (reverse)? -1 : 1;
     auto sort_lambda = [dim, rev_factor] (vector<double> v1, vector<double> v2) 
@@ -645,8 +644,9 @@ void EmbeddedCauset::add(vector<double> xvec)
 }
 
 
-void EmbeddedCauset::discard(int label, bool make_matrix = true, 
-                             bool make_sets = false, bool make_links = true)
+void EmbeddedCauset::discard(int label, bool make_matrix, // = true, 
+                             bool make_sets, // = false,
+                             bool make_links) // = true)
 {
     _coords.erase(_coords.begin() + label);
 
@@ -694,8 +694,10 @@ void EmbeddedCauset::discard(int label, bool make_matrix = true,
 }
 
 
-void EmbeddedCauset::discard(vector<int> labels, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true)
+void EmbeddedCauset::discard(vector<int> labels,
+                                    bool make_matrix, // = true, 
+                                    bool make_sets, // = false,
+                                    bool make_links) // = true)
 {
     remove_indices(_coords, labels);
 
@@ -742,12 +744,12 @@ void EmbeddedCauset::discard(vector<int> labels, bool make_matrix = true,
     _dim = 0;
 }
 
-template<typename n>
-static void discard_from_set(unordered_set<n> &myset, n label)
+
+static void discard_from_set(unordered_set<int> &myset, int label)
 {
     int N = myset.size();
-    unordered_set<n> buffer;
-    for (n j : myset)
+    unordered_set<int> buffer;
+    for (int j : myset)
     {
         if (j<label)
             {buffer.insert(j);}
@@ -757,20 +759,20 @@ static void discard_from_set(unordered_set<n> &myset, n label)
     myset = buffer;
 }
 
-template<typename n>
-static void discard_from_set(unordered_set<n> &myset, n labels)
+template<typename m>
+static void discard_from_set(unordered_set<m> &myset, m labels)
 {
     labels.sort();
     int N = myset.size();
-    unordered_set<n> buffer;
+    unordered_set<m> buffer;
     int startpoint = 0;
-    for (n j : myset) //not ordered
+    for (m j : myset) //not ordered
     {
         if (j>labels[-1])
             {buffer.insert[j-labels.size()];}
         else
         {
-            for (int s = 0; s<label.size(); s++)
+            for (int s = 0; s<labels.size(); s++)
                 {
                     if (labels[s] == j)
                         {break;}
@@ -780,4 +782,10 @@ static void discard_from_set(unordered_set<n> &myset, n labels)
         }
     }
     myset = buffer;
+}
+
+
+int main(){
+std::cout << "embeddedcauset.cpp WORKS! :)";
+
 }

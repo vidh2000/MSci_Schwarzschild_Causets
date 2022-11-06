@@ -13,25 +13,23 @@
 
 // Test C++ version...
 int main() {
-//int N = 100;
-int rows = 10, cols = 4;
-
-std::vector<std::vector<double>> result;
-
-result.resize(rows);
-
-for(int i=0; i<rows; i++) {
-        result[i].resize(cols);
-}    
 
 std::cout << "Hello World" << std::endl;
-std::unordered_set<int> = {2,4};
 
-//for(int i=0; i<rows; i++) {
-//    for(int j=0; j<cols; j++){
-//        result[i][j] = 0;
-//    }
-//}
+/*
+int DIM = 4;
+int N = 10000;
+vector<vector<double>> coords = generate_2Dvector(N,DIM,0,2);
+//std::cout << "This file works" << std::endl;
 
+auto start = high_resolution_clock::now();
+
+Causet c(coords,"cmatrix");
+
+auto stop = high_resolution_clock::now();
+double duration = duration_cast<microseconds>(stop - start).count();
+std::cout << "Time taken by function in D=" << DIM << ": "
+         << duration/pow(10,6) << " seconds" << std::endl;
+*/
 
 };  

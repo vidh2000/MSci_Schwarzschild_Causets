@@ -48,17 +48,16 @@ class SprinkledCauset: public EmbeddedCauset
                         bool make_sets = false,
                         bool make_links = false,
                         const char* sets_type = "past",
-                        int seed = std::nanf(""));
+                        int seed = 0);
         
 
         // Methods
-        static vector<vector<double>> sprinkle_coords(int count,
-                                                 CoordinateShape shape,
-                                                 int seed = std::nanf(""));
         static vector<vector<double>> sprinkle(int count, CoordinateShape shape, 
                                                 bool poisson = false,
-                                                int seed = std::nanf(""));
-     
+                                                int seed = 0);
+        static vector<vector<double>> sprinkle_coords(int count,
+                                                 CoordinateShape shape,
+                                                 int seed = 0);
 };
 
 #endif /* SPRINKLEDCAUSET_H */

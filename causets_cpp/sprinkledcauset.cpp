@@ -31,7 +31,7 @@ using std::vector;
 using std::set;
 using std::unordered_set;
 
-// For Vid (can't locate headers for some reason)
+// For Vid (can"t locate headers for some reason)
 // Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project\
             Project\causets_code\causets_cpp\"header".h...
 
@@ -62,14 +62,14 @@ using std::unordered_set;
 SprinkledCauset::SprinkledCauset(int card,
                                  Spacetime spacetime, 
                                  CoordinateShape shape, 
-                                 bool poisson = false,
-                                 bool make_matrix = true,
-                                 bool special = false,
-                                 bool use_transitivity = true,
-                                 bool make_sets = false,
-                                 bool make_links = false,
-                                 const char* sets_type = "past",
-                                 int seed = std::nanf(""))
+                                 bool poisson,// = false,
+                                 bool make_matrix,// = true,
+                                 bool special,// = false,
+                                 bool use_transitivity,// = true,
+                                 bool make_sets,// = false,
+                                 bool make_links,// = false,
+                                 const char* sets_type,// = "past",
+                                 int seed)// = 0)
 {
     if (poisson)
         {_intensity = card*1;}
@@ -120,7 +120,41 @@ SprinkledCauset::SprinkledCauset(int card,
 
 
 /**
- * @brief Sprinkle Coordinates
+ * @brief Determines number of points to sprinkle via Poisson distribution or
+ *        set as a constant integer and calls the sprinkle_coords method with
+ *        the given parameters.
+ * 
+ * @param count : number (or average) number of points to sprinkle.
+ * @param shape : CoordinateShape where to sprinkle
+ * @param poisson : bool, if true count is average of Poisson distribution
+ * from which get the effective count
+ * @param seed : int, default is no seed.
+ * @return vector<vector<double>> coordinates, with ith entry being coordinates
+ * of ith point.
+ */
+vector<vector<double>> SprinkledCauset::sprinkle( int count, 
+                                                    CoordinateShape shape,
+                                                    bool poisson,// = false,
+                                                    int seed)// = 0)
+{
+    if (count<0)
+        {   throw std::invalid_argument(
+                "The sprinkle cardinality has to be a non-negative integer.");
+        }
+    if (poisson)
+        {
+            std::default_random_engine generator;
+            std::poisson_distribution<int> distribution(count);
+            count = distribution(generator);
+        }
+    vector<vector<double>> coords = SprinkledCauset::sprinkle_coords
+                                                      (count,shape,seed); 
+    return coords;
+}   
+
+
+/**
+ * @brief Generate or ~sprinkle~ "count" coordinates into some "shape"
  * 
  * @param count : fixed number number of points to sprinkle.
  * @param shape : CoordinateShape where to sprinkle
@@ -128,9 +162,9 @@ SprinkledCauset::SprinkledCauset(int card,
  * @return vector<vector<double>> coordinates, with ith entry being coordinates
  * of ith point.
  */
-vector<vector<double>> SprinkledCauset::sprinkle_coords( int count, 
+vector<vector<double>> SprinkledCauset::sprinkle_coords(int count, 
                                                     CoordinateShape shape,
-                                                    int seed = std::nanf(""))
+                                                    int seed)// = 0)
 {
     if (count < 0)
     {   throw std::invalid_argument(
@@ -139,15 +173,15 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
     vector<vector<double>> coords (count);
 
     // Define mersenne_twister_engine Random Generator (with seed)
-    if (std::isnan(seed))
+    if (seed==0)
         {std::random_device rd;
         seed = rd();}  
     std::mt19937 gen(seed);
 
     
-    if ((shape._name == "cube") || (shape._name == 'cuboid'))
+    if ((shape._name == "cube") || (shape._name == "cuboid"))
     {
-        // vector<double> low;
+        // vector<double> low; "
         // vector<double> high;
 
         //Generate Coordinates
@@ -163,12 +197,12 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
         }
     }
 
-    else if ((shape._name == 'ball') || (shape._name == 'cylinder') ||
-             (shape._name == 'diamond') || (shape._name == 'bicone'))
+    else if ((shape._name == "ball") || (shape._name == "cylinder") ||
+             (shape._name == "diamond") || (shape._name == "bicone"))
     {
         // Create circle based sprinkle:
-        bool isCylindrical = shape._name == 'cylinder';
-        bool isDiamond =(shape._name=='diamond')||(shape._name=='bicone');
+        bool isCylindrical = shape._name == "cylinder";
+        bool isDiamond =(shape._name=="diamond")||(shape._name=="bicone");
 
         int d = shape._dim;
         double R = shape.Parameter("radius");
@@ -189,7 +223,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
 
         else
         {
-            int n_different = (shape._name == 'ball')? 0 : 1;
+            int n_different = (shape._name == "ball")? 0 : 1;
             int n_rad = d - n_different;
             
             if (isCylindrical)
@@ -248,38 +282,10 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
 }
 
 
-/**
- * @brief Sprinkle Coordinates
- * 
- * @param count : number (or average) number of points to sprinkle.
- * @param shape : CoordinateShape where to sprinkle
- * @param poisson : bool, if true count is average of Poisson distribution
- * from which get the effective count
- * @param seed : int, default is no seed.
- * @return vector<vector<double>> coordinates, with ith entry being coordinates
- * of ith point.
- */
-vector<vector<double>> SprinkledCauset::sprinkle( int count, 
-                                                    CoordinateShape shape,
-                                                    bool poisson = false,
-                                                    int seed = std::nanf(""))
-{
-    if (count<0)
-        {   throw std::invalid_argument(
-                "The sprinkle cardinality has to be a non-negative integer.");
-        }
-    if (poisson)
-        {
-            std::default_random_engine generator;
-            std::poisson_distribution<int> distribution(count);
-            count = distribution(generator);
-        }
-    vector<vector<double>> coords = SprinkledCauset::sprinkle_coords
-                                                      (count,shape,seed); 
-    return coords;
-}   
 
 
-
+int main(){
+    std::cout << "sprinkledcauset.cpp WORKS! :)";
+}
 
 

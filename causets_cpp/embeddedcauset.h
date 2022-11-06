@@ -51,7 +51,7 @@ class EmbeddedCauset: public Causet
         
 
         // Methods of constructing the causal set attributes
-        void EmbeddedCauset::make_cmatrix (const char* method = "coordinates",
+        void make_cmatrix(const char* method = "coordinates",
                                     bool special = false,
                                     bool use_transitivity = true,
                                     bool make_sets = false,
@@ -87,11 +87,10 @@ class EmbeddedCauset: public Causet
         void discard(vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
         
-        template<typename n>
-        static void discard_from_set(unordered_set<n> &myset,
-                                     n label);
-        template<typename n>
-        static void discard_from_set(unordered_set<n> &myset, 
+        static void discard_from_set(unordered_set<int> &myset,
+                                     int label);
+        template<typename m>
+        static void discard_from_set(unordered_set<m> &myset, 
                                      vector<int> labels);
 };
 

@@ -24,7 +24,7 @@ using std::vector;
 * GENERAL SPACETIME METHODS
 * ============================================================================
 ============================================================================*/
-double Spacetime::Parameter (char key)
+double Spacetime::Parameter (const char* key)
 /**
  * @brief Return parameter "key" for the shape of the spacetime
  */
@@ -34,12 +34,12 @@ CoordinateShape Spacetime::DefaultShape()
 /**
  * @brief Returns default coordinate shape of embedding region in spcetime.  
  */
-    {return CoordinateShape(_dim, 'diamond');}
+    {return CoordinateShape(_dim, "diamond");}
 
 
 vector<double> Spacetime::_T_slice_sampling(double t, 
                                                 vector<double>origin,
-                                                int samplingsize = 128)
+                                                int samplingsize)// = 128)
 /**
  * @brief Internal function for the time sampling array for a cone from 
  * "origin" to time "t"
@@ -75,7 +75,7 @@ func Spacetime::Causality()
 * Notes: does not support period
 * ============================================================================
 ============================================================================*/
-FlatSpacetime::FlatSpacetime(int dim = 4)
+FlatSpacetime::FlatSpacetime(int dim)// = 4)
 {
     if (dim < 1)
     {
@@ -83,12 +83,12 @@ FlatSpacetime::FlatSpacetime(int dim = 4)
     }
 
     _dim = dim;
-    _name = 'flat';
-    _metricname = 'Minkowski';
+    _name = "flat";
+    _metricname = "Minkowski";
 }
 
 CoordinateShape FlatSpacetime::DefaultShape()
-    {return CoordinateShape(_dim, 'diamond');}
+    {return CoordinateShape(_dim, "diamond");}
 
 
 double FlatSpacetime::ds2(vector<double> xvec, vector<double> yvec)
@@ -133,7 +133,7 @@ func FlatSpacetime::Causality()
         {return &FlatSpacetime::causal;}
 }
 
-vector<bool> FlatSpacetime::causal (vector<double> xvec, 
+vector<bool> FlatSpacetime::causal(vector<double> xvec, 
                                          vector<double> yvec)
 /**
  * @brief Function of two events in any D returning {x-y timelike?, x<=y, x>y}.
@@ -142,8 +142,9 @@ vector<bool> FlatSpacetime::causal (vector<double> xvec,
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
     double space_delta2 = 0;
-    for (int i = 1; i<yvec.size(); i++)
-        {space_delta2 += (yvec[i]-xvec[i])*(yvec[i]-xvec[i]);}
+    for (int i = 1; i<yvec.size(); i++){
+        double space_delta_i = (yvec[i]-xvec[i]);
+        space_delta2 += space_delta_i*space_delta_i;}
     bool isCausal = t_delta2 >= space_delta2;
     return {isCausal,
             (t_delta >= 0.0) && isCausal,
@@ -160,15 +161,16 @@ vector<bool> FlatSpacetime::causal (vector<double> xvec,
 * Notes: does not support anything actually at the moment
 * ============================================================================
 ============================================================================*/
-BlackHoleSpacetime::BlackHoleSpacetime(int dim = 2, double r_S = 0.5,
-                                       char metric = 'Eddington-Finkelstein')
+BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
+                            double r_S,// = 0.5,
+                            const char* metric)// = "Eddington-Finkelstein")
 /**
  * @brief Initialises a Black Hole Spacetime.
  *
  * @param dim: dimension of spacetime. Default 2.
  * @param r_S: Schwarzschild radius. Default 0.5
- * @param metric: Specify metric: either 'Eddington-Finkelstein' or 'EF'
- *                (default), or 'Schwarzschild' or 'S'.
+ * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
+ *                (default), or "Schwarzschild" or "S".
  */
 {
     if (dim < 2 || dim > 4)
@@ -176,10 +178,10 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim = 2, double r_S = 0.5,
         throw std::invalid_argument("Dimension has to be 2, 3 or 4.");
     }
     _dim = dim;
-    _name = 'black hole';
+    _name = "black hole";
 
-    if (metric == 'Eddington-Finkelstein' || metric == 'EF')
-        {_metricname = 'Eddington-Finkelstein';}
-    else if (metric == 'Schwarzschild' || metric == 'S')
-        {_metricname = 'Schwarzschild';}
+    if (metric == "Eddington-Finkelstein" || metric == "EF")
+        {_metricname = "Eddington-Finkelstein";}
+    else if (metric == "Schwarzschild" || metric == "S")
+        {_metricname = "Schwarzschild";}
 }
