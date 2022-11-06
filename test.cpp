@@ -6,15 +6,26 @@
 #include <numeric>
 #include <set>
 #include <stack>
+#include <stdio.h>
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <chrono>
 #include <unordered_set>
+#include <random>
 
 // Test C++ version...
 int main() {
 
 std::cout << "Hello World" << std::endl;
+
+std::random_device rd;
+int seed = rd();
+std::mt19937 gen(seed);
+std::uniform_real_distribution<> dis(0,5);
+int e1 = (int) dis(gen), e2 =(int) dis(gen);
+
+std::cout << e1 << " " << e2 << std::endl;
 
 /*
 int DIM = 4;

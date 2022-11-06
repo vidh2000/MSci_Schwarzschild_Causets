@@ -70,26 +70,24 @@ class Causet
 
 
         // KINEMATICS
-        double ord_fr(Causet A,
+        static double ord_fr(Causet A,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
-        double ord_fr(vector<vector<int8_t>> A,
+        static double ord_fr(vector<vector<int8_t>> A,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
-        double ord_fr(vector<set<int>> A_future = {}, 
-                      vector<set<int>> A_past = {},
+        template<typename SET>
+        static double ord_fr(vector<SET> A_futures, 
+                      vector<SET> A_pasts,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
-        double ord_fr(int a, int b,
-                      const char* denominator = "choose",
-                      bool isdisjoined = true);
-        static double optimiser_placeholder();
-        // typedef double (*func)();//need to pick optimiser;
-        template <typename F>
-        double MMdim_est(const char* method = "random",
+        static double ord_fr(int a, int b,
+                      const char* denominator = "choose");
+
+        static double MM_drelation(double d); 
+        vector<double> MMdim_est(const char* method = "random",
                         int d0 = 2, int Nsamples = 20,
-                        int size_min = 10, double size_max = nan(""),
-                        F optimiser = Causet::optimiser_placeholder);   
+                        int size_min = 10, double size_max = nan(""));   
 
         // INTERVAL
         Causet Interval(int a, int b,
