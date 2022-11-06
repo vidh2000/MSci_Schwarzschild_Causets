@@ -63,8 +63,8 @@ Causet::Causet(vector<vector<double>> coordinates,
 // ORDERING FRACTION FUNCTIONS (OVERRIDING FOR TYPES)
 ///////////////////////////////////////////////////////////////////////////////
 /**
- * @brief   Find the ordering fraction of an interval between a and b: 
-            the ratio of actual relations over possible in such interval.
+ * @brief   Find the ordering fraction of an interval: 
+            The ratio of actual relations over possible ones in such interval.
  * 
  * @param mode: string
             Use as denominator:
@@ -75,36 +75,58 @@ Causet::Causet(vector<vector<double>> coordinates,
             This is nrelations / (N choose 2)
  */
 
+/**
+ * @brief   Ordering fraction determined for a "Causet" object.
+ *          Can either be determined via a matrix or via pasts/futures sets.
+ *          See above description above all ord_fr definitions.
+ */
 double Causet::ord_fr(Causet A,
             const char* denominator, // = "choose",
             bool isdisjoined) // = true);
 {
-    if (_CMatrix.size())
+    if (A._CMatrix.size())
     {
-        return Causet::ord_fr(*this._Cmatrix, denominator, isdisjoined);    
+        return Causet::ord_fr(A._CMatrix, denominator, isdisjoined);    
     }
-    else if (_pasts.size())
+    else if (A._pasts.size())
     {
-        return Causet::ord_fr(_futures,_pasts,denominator,isdisjoined);
+        return Causet::ord_fr(A._futures,A._pasts,denominator,isdisjoined);
     }
 }
 
+/**
+ * @brief   Ordering fraction determined from a matrix.
+ *          See above description above all ord_fr definitions
+ */
 double Causet::ord_fr(vector<vector<int8_t>> A,
                 const char* denominator,// = "choose",
                 bool isdisjoined)// = true);
 {
 
 }
-double Causet::ord_fr(vector<set<int>> A_futures, 
-                vector<set<int>> A_pasts,
+
+/**
+ * @brief   Ordering fraction determined from sets of futures and pasts.
+ *          See above description above all ord_fr definitions
+ */
+template<typename SET>
+double Causet::ord_fr(vector<SET> A_futures, 
+                vector<SET> A_pasts,
                 const char* denominator,// = "choose",
                 bool isdisjoined)// = true);
 {
 
 }
+
+/**
+ * @brief   Find the ordering fraction of an interval between a and b: 
+            the ratio of actual relations over possible in such interval.
+ * 
+ * @param a: integer "causetevent", a<b wanted
+ * @param b: integer "causetevent", a<b wanted
+ */
 double Causet::ord_fr(int a, int b,
-                const char* denominator,// = "choose",
-                bool isdisjoined)// = true)
+                const char* denominator)// = "choose"
 {
 
 }

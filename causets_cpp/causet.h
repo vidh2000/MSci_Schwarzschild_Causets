@@ -76,13 +76,13 @@ class Causet
         static double ord_fr(vector<vector<int8_t>> A,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
-        static double ord_fr(vector<set<int>> A_futures = {}, 
-                      vector<set<int>> A_pasts = {},
+        template<typename SET>
+        static double ord_fr(vector<SET> A_futures, 
+                      vector<SET> A_pasts,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
         static double ord_fr(int a, int b,
-                      const char* denominator = "choose",
-                      bool isdisjoined = true);
+                      const char* denominator = "choose");
 
         static double MM_drelation(double d); 
         vector<double> MMdim_est(const char* method = "random",
