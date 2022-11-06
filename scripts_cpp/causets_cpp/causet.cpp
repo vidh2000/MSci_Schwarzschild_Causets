@@ -144,6 +144,8 @@ double Causet::ord_fr(int a, int b,
 /**
  * @brief Use Myrheim-Meyers dimensional estimator to compute the 
           fractal dimension (not necesseraly int).
+          Only intended to work with a Causet with
+          _pasts, and _futures vector<set<int>> objects existing.
         
  * 
  * @param method: str 
@@ -179,11 +181,12 @@ double Causet::MM_drelation(double d)
     return a*b/c;
 }
 
+
 vector<double> Causet::MMdim_est(const char* method,// = "random",
-                int d0,// = 2,
-                int Nsamples,// = 20,
-                int size_min,// = 10,
-                double size_max)// = nan("")
+                                int d0,// = 2,
+                                int Nsamples,// = 20,
+                                int size_min,// = 10,
+                                double size_max)// = nan("")
 {
     std::cout << "NOTE: MMd works only in flat spacetime" << std::endl;
 
@@ -218,35 +221,115 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             std::mt19937 gen(seed);
             std::uniform_real_distribution<> dis(0,*N);
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
-            int* a = nullptr;
-            int* b = nullptr;
-
+            int a;
+            int b;
             if (e1 == e2){
                 fails += 1;
                 continue;
             }
             else if (e1 < e2){
-                a = &e1;
-                b = &e2;
+                a = e1;
+                b = e2;
             }
             else if (e1>e2){
-                a = &e2;
-                b = &e1;
+                a = e2;
+                b = e1;
             }
             else{
                 fails += 1;
                 continue;
             }
             
-            int n = IntervalCard(*a, *b);
+            int n = IntervalCard(a, b);
             if (n >= size_min && n<= size_max) 
             {
                 successes += 1;
                 double fr_i = this->ord_fr(a,b,"choose");
+                if (fr_i ==1)
+                {
+                    destimates.push_back(1);
+                    isample +=1;
+                }
+                else
+                {
+                    double fr_i = fr_i * (n-1)/n; //correction for MMestimator
+                    double min = 0;
+                    double max = 5;
+                    // Estimate dimension of Causet
+                    double d_i = bisect(min,max,......);
+                    destimates.push_back(d_i);
+                    isample +=1;
+                }
+            }
+            else
+            {
+                fails +=1;
+                continue;
             }
         }
     }
+    else if (method == "big")
+    {
+        vector<int> As = {};
+        vector<int> Bs = {};
+        for (int e = 0; e<*N; e++)
+        {
+            if (_pasts[e].size() == 0){
+                As.push_back(e);
+            }
+            else if (_futures[e].size() == 0){
+                Bs.push_back(e);
+            }
+        }
+        for (int i=0; i<As.size(); i++)
+        {
+            for (int j=0; j<Bs.size(); j++)
+            {   
+                int a = As[i];
+                int b = Bs[j];
+                int n = IntervalCard(a, b);
+                if (n >= size_min && n<= size_max) 
+                {
+                    double fr_i = this->ord_fr(a,b,"choose");
+                    if (fr_i ==1)
+                    {
+                        destimates.push_back(1);
+                    }
+                    else
+                    {
+                        double fr_i = fr_i * (n-1)/n; //correction for MMestimator
+                        double min = 0;
+                        double max = 5;
+                        // Estimate dimension of Causet
+                        double d_i = bisect(min,max,......);
+                        destimates.push_back(d_i);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        const char* errormsg = "Choose 'method' parameter 'random' or 'big'";
+        throw std::invalid_argument(errormsg);
+    }
 
+    // Return mean and std of dimension estimate result
+    double sum = std::accumulate(std::begin(destimates),
+                                 std::end(destimates), 0.0);
+    double mean = sum/destimates.size();
+
+    double accum = 0.0;
+    std::for_each(std::begin(destimates), std::end(destimates),
+                    [&](const double d)
+                    {
+                    accum += (d - mean) * (d - mean);
+                    });
+
+    double stdev = sqrt(accum / (destimates.size()));
+    vector<double> result = {mean,stdev};
+    return result;
+    
 }   
 
 
