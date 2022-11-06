@@ -50,7 +50,7 @@ elif d== 2:
     ax.set_ylabel('t')
 ax.set_title(f"Periodic in Dimension(s) {periodic_dimensions}")
 ax.grid(False)
-cplt.show()
+#cplt.show()
 
 #PLOT NON-PERIODIC EQUIVALENT
 M2 = FlatSpacetime(d)
