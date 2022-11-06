@@ -242,7 +242,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             if (n >= size_min && n<= size_max) 
             {
                 successes += 1;
-                double fr_i = Causet::ord_fr(a,b,"choose");
+                double fr_i = this->ord_fr(a,b,"choose");
                 if (fr_i ==1)
                 {
                     destimates.push_back(1);
@@ -253,7 +253,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                     double fr_i *= (n-1)/n; //correction for MMestimator
                     double min = 0;
                     double max = 5;
-                    d_i = bisect(min,max,......);
+                    // Estimate dimension of Causet
+                    double d_i = bisect(min,max,......);
                     destimates.push_back(d_i);
                     isample +=1;
                 }
