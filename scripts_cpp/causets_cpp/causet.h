@@ -85,6 +85,7 @@ class Causet
                       const char* denominator = "choose");
 
         static double MM_drelation(double d); 
+        
         vector<double> MMdim_est(const char* method = "random",
                         int d0 = 2, int Nsamples = 20,
                         int size_min = 10, double size_max = nan(""));   

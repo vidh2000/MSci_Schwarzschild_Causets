@@ -1,5 +1,4 @@
 #include <algorithm>
-//#include <boost/>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -14,11 +13,11 @@
 #include <chrono>
 #include <unordered_set>
 #include <random>
+#include <boost/math/tools/roots.hpp>
 
-#include "../scripts_cpp/causets_cpp/causet.h"
 
 // Use the "bisection" root finder method
-//using boost::math::tools::bisect;
+using boost::math::tools::bisect;
 
 
 struct TerminationCondition  
@@ -41,7 +40,7 @@ int main()
 double from = 0;  
 double to = 6;
 std::pair<double, double> result = bisect(FunctionToApproximate,
-                                          from, to, TerminationCondition());
+      from, to, TerminationCondition());
 double root = (result.first + result.second) / 2;  
 
 std::cout << "Result: x =" << root << ". Correct result: x = 2" << std::endl;
