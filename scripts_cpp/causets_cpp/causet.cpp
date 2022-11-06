@@ -534,7 +534,7 @@ void Causet::discard_from_set(unordered_set<m> &myset, vector<int> labels)
 /**
  * @brief Generate "size" random ints between 0 and N-1.
  */
-vector<int> Causet::distinct_int_random(int size, int N, seed)
+vector<int> Causet::distinct_int_random(int size, int N, int seed)
 {
     if (size < N/2) {return distinct_int_random1(size, N, seed);}
     else {return distinct_int_random2(size, N, seed);}
@@ -544,7 +544,7 @@ vector<int> Causet::distinct_int_random(int size, int N, seed)
 /**
  * @brief Generate "size" random ints between 0 and N-1.
  */
-vector<int> Causet::distinct_int_random1(int size, int N, seed)
+vector<int> Causet::distinct_int_random1(int size, int N, int seed)
 {
     vector<int> result(size);
     if (!seed)
@@ -566,7 +566,7 @@ vector<int> Causet::distinct_int_random1(int size, int N, seed)
 /**
  * @brief Generate "size" random ints between 0 and N-1.
  */
-vector<int> Causet::distinct_int_random2(int size, int N)
+vector<int> Causet::distinct_int_random2(int size, int N, int seed)
 {
     vector<int> result(N);
     if (!seed)
