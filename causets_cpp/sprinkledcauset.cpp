@@ -145,7 +145,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords( int count,
     std::mt19937 gen(seed);
 
     
-    if ((shape._name == 'cube') || (shape._name == 'cuboid'))
+    if ((shape._name == "cube") || (shape._name == 'cuboid'))
     {
         // vector<double> low;
         // vector<double> high;

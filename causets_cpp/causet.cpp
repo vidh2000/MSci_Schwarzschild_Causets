@@ -89,6 +89,7 @@ vector<vector<double>> coords = generate_2Dvector(N,DIM,0,2);
 
 auto start = high_resolution_clock::now();
 
+
 Causet c(coords,"cmatrix");
 
 auto stop = high_resolution_clock::now();

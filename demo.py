@@ -55,6 +55,7 @@ if len(dims) > 2:
     ax.set_zlabel('space' if dims[2] > 0 else 'time')
     ax.grid(False)
 cplt.show()
+
 #%% PLOTTING SOME 2D+1 STUFF
 hollow = 0.
 Ss = [CoordinateShape(3, "cylinder", duration=2.0, hollow = hollow),
