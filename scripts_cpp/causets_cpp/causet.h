@@ -43,6 +43,7 @@ class Causet
         vector<std::unordered_set<int>> _past_links   = {};
         vector<std::unordered_set<int>> _future_links = {};
 
+
         // CONSTRUCTOR
         Causet ();
         Causet(vector<vector<double>> Cmatrix, 
@@ -50,6 +51,7 @@ class Causet
         Causet(vector<vector<double>> coordinates,
                const char* method = "pasts");
         
+
         //SETTERS/GETTERS
         void make_cmatrix();
         void make_lmatrix();
@@ -88,6 +90,8 @@ class Causet
         vector<double> MMdim_est(const char* method = "random",
                         int d0 = 2, int Nsamples = 20,
                         int size_min = 10, double size_max = nan(""));   
+        
+
 
         // INTERVAL
         Causet Interval(int a, int b,
@@ -96,13 +100,40 @@ class Causet
                         const char* createmethod = "set");
         int IntervalCard(int a, int b, bool includeBoundary = true);
 
+
         // CAUSET REPRESENTATION & SAVING (to be added...)
-        void relabel();
         vector<vector<double>> LMatrix (set<int> labels = {});
         void saveCasCSV(const char* filename);
         void saveCasTXT(const char* filename);
         void saveLasCSV(const char* filename);
         void saveLasTXT(const char* filename);
+
+
+        // MODIFIERS
+        void coarsegrain(int card, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);
+        void cgrain(int card, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);
+        void coarsegrain(double fract, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);
+        void cgrain(double fract, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);
+
+        void discard(int label, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);  
+        void discard(vector<int> labels, bool make_matrix = true, 
+                     bool make_sets = false, bool make_links = true);
+        
+        static void discard_from_set(unordered_set<int> &myset, int label);
+        template<typename m>
+        static void discard_from_set(unordered_set<m> &myset, 
+                                        vector<int> labels);
+        
+        static vector<int> distinct_int_random (int card, int N, seed = 0);
+        static vector<int> distinct_int_random1(int card, int N, seed = 0);
+        static vector<int> distinct_int_random2(int card, int N, seed = 0);
+        
+
 
 };
 

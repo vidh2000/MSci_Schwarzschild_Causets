@@ -665,13 +665,13 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
         {
             _pasts.erase(_pasts.begin()+label);
             for (unordered_set<int> past_i : _pasts)
-                {EmbeddedCauset::discard_from_set(past_i, label);}
+                {Causet::discard_from_set(past_i, label);}
         } 
         if (_futures.size())
         {
             _futures.erase(_futures.begin()+label);
             for (unordered_set<int> fut_i : _futures)
-                {EmbeddedCauset::discard_from_set(fut_i, label);}
+                {Causet::discard_from_set(fut_i, label);}
         }   
     }
     if (make_links)
@@ -680,13 +680,13 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
         {
             _past_links.erase(_past_links.begin()+label);
             for (unordered_set<int> plinks_i : _past_links)
-                {EmbeddedCauset::discard_from_set(plinks_i, label);}
+                {Causet::discard_from_set(plinks_i, label);}
         } 
         if (_future_links.size())
         {
             _future_links.erase(_future_links.begin()+label);
             for (unordered_set<int> flinks_i : _future_links)
-                {EmbeddedCauset::discard_from_set(flinks_i, label);}
+                {Causet::discard_from_set(flinks_i, label);}
         }   
     }
     _size--;
@@ -716,13 +716,13 @@ void EmbeddedCauset::discard(vector<int> labels,
         {
             remove_indices(_pasts, labels);
             for (unordered_set<int> past_i : _pasts)
-                {EmbeddedCauset::discard_from_set(past_i, labels);}
+                {Causet::discard_from_set(past_i, labels);}
         } 
         if (_futures.size())
         {
             remove_indices(_futures, labels);
             for (unordered_set<int> fut_i : _futures)
-                {EmbeddedCauset::discard_from_set(fut_i, labels);}
+                {Causet::discard_from_set(fut_i, labels);}
         }   
     }
     if (make_links)
@@ -731,58 +731,19 @@ void EmbeddedCauset::discard(vector<int> labels,
         {
             remove_indices(_past_links, labels);
             for (unordered_set<int> plinks_i : _past_links)
-                {EmbeddedCauset::discard_from_set(plinks_i, labels);}
+                {Causet::discard_from_set(plinks_i, labels);}
         } 
         if (_future_links.size())
         {
             remove_indices(_future_links, labels);
             for (unordered_set<int> flinks_i : _future_links)
-                {EmbeddedCauset::discard_from_set(flinks_i, labels);}
+                {Causet::discard_from_set(flinks_i, labels);}
         }   
     }
     _size--;
     _dim = 0;
 }
 
-
-static void discard_from_set(unordered_set<int> &myset, int label)
-{
-    int N = myset.size();
-    unordered_set<int> buffer;
-    for (int j : myset)
-    {
-        if (j<label)
-            {buffer.insert(j);}
-        if (j>label)
-            {buffer.insert(j-1);}
-    }
-    myset = buffer;
-}
-
-template<typename m>
-static void discard_from_set(unordered_set<m> &myset, m labels)
-{
-    labels.sort();
-    int N = myset.size();
-    unordered_set<m> buffer;
-    int startpoint = 0;
-    for (m j : myset) //not ordered
-    {
-        if (j>labels[-1])
-            {buffer.insert[j-labels.size()];}
-        else
-        {
-            for (int s = 0; s<labels.size(); s++)
-                {
-                    if (labels[s] == j)
-                        {break;}
-                    else if (labels[s] > j)
-                        {buffer.insert[j-s]; break;}
-                }
-        }
-    }
-    myset = buffer;
-}
 
 
 int main(){

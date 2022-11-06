@@ -87,11 +87,7 @@ class EmbeddedCauset: public Causet
         void discard(vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
         
-        static void discard_from_set(unordered_set<int> &myset,
-                                     int label);
-        template<typename m>
-        static void discard_from_set(unordered_set<m> &myset, 
-                                     vector<int> labels);
+        
 };
 
 #endif /*EMBEDDEDCAUSET_H*/
