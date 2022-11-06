@@ -225,6 +225,13 @@ class EmbeddedCauset(Causet):
         Returns the Spacetime object of the embedding.
         '''
         return self._spacetime
+    
+    def get_coords(self):
+        """
+        Returns matrix of coordinates, with ith entry being 
+        dim-dimensional vector of coordinates of ith event
+        """
+        return [ei._coordinates for ei in self._events] 
 
 
     ####################################################################
