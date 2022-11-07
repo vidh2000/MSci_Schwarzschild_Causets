@@ -85,21 +85,17 @@ int main()
   //  cout << "Dim =" << x << " Func-cpp = " << result << endl;
   //}
 
-  
-  vector<double> frs = {0.5, 0.426169, 0.359442, 0.300726, 0.25, 0.206757, 0.170263, 0.139708, , 0.093243, 0.0759003, 0.0616587, 1/20, 0.0404813, 0.032728, 0.0264256, 64/3003};
-  
-  vector<double> sols = {1,    1.25,     1.5,      1.75,    2,    2.25,      2.5,     2.75,    3,     3.25,      3.5,      3.75,      4,     4.25,      4.5,       4.75,      5};
 
-  double fr_i;
-  double sol_i;
-  for (int i = 0; i<frs.size(); i++)
-  {
-    fr_i = frs[i];
-    auto dim_solve = [fr_i](double x){return MM_drelation(x) - fr_i;};
-    double result = bisection(dim_solve, from, to); 
-    cout << "Result " << result << "  Correct result: "<< sols[i];// << endl;
-    cout << " The difference is " << result - sols[i] << endl;
-    //cout << endl;
+
+vector<double> frs = {0.5, 0.426169, 0.359442, 0.300726,
+      0.25, 0.206757, 0.170263, 0.139708,
+      0.11428571428, 0.093243, 0.0759003, 0.0616587,
+      0.05, 0.0404813, 0.032728, 0.0264256,0.02131202131};
+
+
+vector<double> sols = {1, 1.25, 1.5, 1.75, 2,
+                       2.25, 2.5, 2.75, 3, 3.25,
+                       3.5, 3.75, 4, 4.25,4.5,4.75,5};
 
   }
 

@@ -15,18 +15,16 @@
 #include <random>
 //#include <boost/asio.hpp>
 
-// Test C++ version... comment Vid New
+//#include <functions.h>
+#include <vecfunctions.h>
+
+using std::vector;
+
+
+
 int main() {
-//hdjsfnbsoudbvcsubviyhvcisygvchygvsjgvc dgsvcsjgdcv
 std::cout << "Hello World" << std::endl;
 
-std::random_device rd;
-int seed = rd();
-std::mt19937 gen(seed);
-std::uniform_real_distribution<> dis(0,5);
-int e1 = (int) dis(gen), e2 =(int) dis(gen);
-
-std::cout << e1 << " " << e2 << std::endl;
 
 /*
 int DIM = 4;

@@ -51,22 +51,10 @@ vector<vector<double>> generate_2Dvector(int rows, int cols,
     return matrix;
 }
 
-/**
- * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
- */
-vector<int> distinct_randint(int size, int N, int seed)
-{
-    if (size < N/2){
-        return distinct_randint1(size, N, seed);}
-    else{
-        return distinct_randint2(size, N, seed);}
-}
-
 
 /**
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
-
 vector<int> distinct_randint1(int size, int N, int seed)
 {
     vector<int> result(size);
@@ -80,13 +68,14 @@ vector<int> distinct_randint1(int size, int N, int seed)
     
     for(int i = 0; i < size; ++i)
     {
-    int r;
-    while(std::find(result.begin(), result.end(), r) != result.end())
-    {
-        r = dis(gen) * N;
-        result[i] = r;   
-    }
+        int r;
+        while(std::find(result.begin(), result.end(), r) != result.end())
+        {
+            r = dis(gen) * N;
+            result[i] = r;   
+        }
     return result;
+    }
 }
 
 /**
@@ -96,10 +85,10 @@ vector<int> distinct_randint2(int size, int N, int seed)
 {
     vector<int> result(N);
     if (!seed)
-        {
+    {
          std::random_device rd;
          seed = rd();
-        }
+    }
     for(int i = 0; i < N; ++i)
         {result[i] = i;}
     auto rng = std::default_random_engine{seed};
@@ -108,6 +97,18 @@ vector<int> distinct_randint2(int size, int N, int seed)
     result = result.resize(size);
     return result;
 }
+
+// /**
+//  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
+//  */
+// vector<int> distinct_randint(int size, int N, int seed)
+// {
+//     if (size < N/2){
+//         return distinct_randint1(size, N, seed);}
+//     else{
+//         return distinct_randint2(size, N, seed);}
+// }
+
 
 
 //_____________________________________________________________________
