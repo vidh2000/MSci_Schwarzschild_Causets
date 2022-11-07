@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <boost/math/tools/roots.hpp>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -14,7 +13,8 @@
 #include <chrono>
 #include <unordered_set>
 #include <random>
-#include <boost\math\tools\roots.hpp> 
+//#include <boost\math\tools\roots.hpp> 
+#include <C:\Program Files\boost\boost_1_80_0\boost\math\tools\roots.hpp>
 
 
 // Use the "bisection" root finder method

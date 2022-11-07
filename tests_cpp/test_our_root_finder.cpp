@@ -65,41 +65,43 @@ double func(double x)
   return x*x*x-8;
 }
 
+
 int main()
 {
-double from = 0.9;  
-double to = 5;
+  double from = 0.9;  
+  double to = 7.1;
 
 
-double soln = 2;
-double result = bisection(func, from, to); 
-cout << "Result " << result << "  Correct result: "<< soln << endl;
-cout << "The difference is " << result - soln << endl;
-cout << endl;
+  // double soln = 2;
+  // double result = bisection(func, from, to); 
+  // cout << "Result " << result << "  Correct result: "<< soln << endl;
+  // cout << "The difference is " << result - soln << endl;
+  // cout << endl;
 
-//vector<double> dims = {0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5};
-//for (auto x: dims)
-//{
-//  double result =  MM_drelation(x);
-//  cout << "Dim =" << x << " Func-cpp = " << result << endl;
-//}
+  //vector<double> dims = {0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5};
+  //for (auto x: dims)
+  //{
+  //  double result =  MM_drelation(x);
+  //  cout << "Dim =" << x << " Func-cpp = " << result << endl;
+  //}
 
-vector<double> frs = {1/2, 0.426169, 0.359442, 0.300726, 1/4, 0.206757, 0.170263, 0.139708, 4/35, 0.093243, 0.0759003, 0.0616587, 1/20, 0.0404813, 0.032728, 0.0264256, 64/3003};
+  
+  vector<double> frs = {0.5, 0.426169, 0.359442, 0.300726, 0.25, 0.206757, 0.170263, 0.139708, , 0.093243, 0.0759003, 0.0616587, 1/20, 0.0404813, 0.032728, 0.0264256, 64/3003};
+  
+  vector<double> sols = {1,    1.25,     1.5,      1.75,    2,    2.25,      2.5,     2.75,    3,     3.25,      3.5,      3.75,      4,     4.25,      4.5,       4.75,      5};
 
-vector<double> sols = {1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25,4.5,4.75,5};
+  double fr_i;
+  double sol_i;
+  for (int i = 0; i<frs.size(); i++)
+  {
+    fr_i = frs[i];
+    auto dim_solve = [fr_i](double x){return MM_drelation(x) - fr_i;};
+    double result = bisection(dim_solve, from, to); 
+    cout << "Result " << result << "  Correct result: "<< sols[i];// << endl;
+    cout << " The difference is " << result - sols[i] << endl;
+    //cout << endl;
 
-double fr_i;
-double sol_i;
-for (int i = 0; i<frs.size(); i++)
-{
-  fr_i = frs[i];
-  auto dim_solve = [fr_i](double x){return MM_drelation(x) - fr_i;};
-  double result = bisection(dim_solve, from, to); 
-  cout << "Result " << result << "  Correct result: "<< sols[i];// << endl;
-  cout << " The difference is " << result - sols[i] << endl;
-  //cout << endl;
-
-}
+  }
 
 } /*end main*/
 
