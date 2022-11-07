@@ -11,6 +11,7 @@
 #include <set>
 #include <stack>
 #include <stdio.h>
+#include <stdlib.h>     /* abs */
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -55,6 +56,7 @@ vector<vector<double>> generate_2Dvector(int rows, int cols,
 /**
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
+inline
 vector<int> distinct_randint1(int size, int N, int seed)
 {
     vector<int> result(size);
@@ -81,9 +83,10 @@ vector<int> distinct_randint1(int size, int N, int seed)
 /**
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
+inline
 vector<int> distinct_randint2(int size, int N, int seed)
 {
-    vector<int> result(N);
+    vector<int> result(N); 
     if (!seed)
     {
          std::random_device rd;
@@ -91,23 +94,27 @@ vector<int> distinct_randint2(int size, int N, int seed)
     }
     for(int i = 0; i < N; ++i)
         {result[i] = i;}
-    auto rng = std::default_random_engine{seed};
+    
+    // Narrow seed int to fit into range [0,2147483647]
+    seed = abs(seed);
+    auto rng = std::default_random_engine(seed);
 
-    std::shuffle(std::begin(resul), std::end(result), rng);
-    result = result.resize(size);
+    std::shuffle(std::begin(result), std::end(result), rng);
+    result.resize(size);
     return result;
 }
 
-// /**
-//  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
-//  */
-// vector<int> distinct_randint(int size, int N, int seed)
-// {
-//     if (size < N/2){
-//         return distinct_randint1(size, N, seed);}
-//     else{
-//         return distinct_randint2(size, N, seed);}
-// }
+/**
+ * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
+ */
+inline
+vector<int> distinct_randint(int size, int N, int seed)
+{
+    if (size < N/2){
+        return distinct_randint1(size, N, seed);}
+    else{
+        return distinct_randint2(size, N, seed);}
+}
 
 
 
