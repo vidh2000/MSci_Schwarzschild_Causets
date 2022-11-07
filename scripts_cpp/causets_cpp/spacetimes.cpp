@@ -25,19 +25,7 @@ using std::vector;
 * ============================================================================
 ============================================================================*/
 
-/**
- * @brief Return parameter "key" for the shape of the spacetime
- */
-double Spacetime::Parameter (const char* key)
-    {return _params[key];}
-
-
-/**
- * @brief Returns default coordinate shape of embedding region in spcetime.  
- */
-CoordinateShape Spacetime::DefaultShape()
-    {return CoordinateShape(_dim, "diamond");}
-
+Spacetime::Spacetime(){}
 
 /**
  * @brief Internal function for the time sampling array for a cone from 
@@ -79,6 +67,9 @@ func Spacetime::Causality()
     {return &Spacetime::causal1d;}
 
 
+Spacetime::~Spacetime(){}
+
+
 
 
 /*============================================================================
@@ -95,7 +86,7 @@ func Spacetime::Causality()
  * No periodicity along ith direction requires 0. Usually, but not necessarily,
  * with cuboid might want period[i]=shape_object.Edges()[i].
  */
-FlatSpacetime::FlatSpacetime(int dim, vector<double> period)
+FlatSpacetime::FlatSpacetime(int dim, vector<double> period) : Spacetime()
 {
     if (dim < 1)
         {throw std::invalid_argument("Dimension has to be at least 1.");}
@@ -113,9 +104,6 @@ FlatSpacetime::FlatSpacetime(int dim, vector<double> period)
         }
     }
 }
-
-CoordinateShape FlatSpacetime::DefaultShape()
-    {return CoordinateShape(_dim, "diamond");}
 
 
 /**
@@ -222,6 +210,8 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
            };
 }
 
+FlatSpacetime::~FlatSpacetime(){}
+
 
 
 
@@ -234,6 +224,7 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
 BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
                             double r_S,// = 0.5,
                             const char* metric)// = "Eddington-Finkelstein")
+                            : Spacetime()
 /**
  * @brief Initialises a Black Hole Spacetime.
  *
@@ -255,3 +246,24 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
     else if (metric == "Schwarzschild" || metric == "S")
         {_metricname = "Schwarzschild";}
 }
+
+
+typedef std::vector<bool> (*func)
+        (std::vector<double> xvec, std::vector<double> yvec, 
+        std::vector<double> period);
+        func BlackHoleSpacetime::Causality()
+{
+
+} 
+
+BlackHoleSpacetime::~BlackHoleSpacetime(){}
+
+
+
+
+
+int main(){
+std::cout << "spacetime.cpp WORKS! :)";
+return 0;
+
+};

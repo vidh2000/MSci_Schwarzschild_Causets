@@ -126,7 +126,7 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
     }
     else if (name == "cuboid")
     {
-        vector my_edges (_dim, 1.0);
+        vector<double> my_edges (_dim, 1.0);
         if (edges.size() != 0 && edges.size() != _dim)
             {throw std::invalid_argument("Cuboid's |edges| neither 0 nor _dim");}
         else if (edges.size() == 0)
@@ -134,7 +134,7 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         for (int i = 0; i<_dim; i++)
         {
             double edge_i = edges[i];
-            std::string key_s = "edge_"+to_string(i);
+            std::string key_s = "edge_"+std::to_string(i);
             const char* key_i = key_s.c_str();
             //char key_i[key_s.length() + 1]; 
 	        //std::strcpy(key_i, key_s.c_str());
@@ -146,8 +146,8 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
        
         
 void CoordinateShape::param_rangecheck(const char* name, 
-                     double maxValue = std::nan(""),
-                     bool canBeZero = false)
+                                        double maxValue,
+                                        bool canBeZero)
 {
     double p = _params.find(name)->second;
     bool isTooLow = ((canBeZero && p < 0.0) or (!canBeZero && p<=0));
@@ -155,7 +155,7 @@ void CoordinateShape::param_rangecheck(const char* name,
                                         : "greater than 0";
     if (std::isnan(maxValue) and isTooLow)
     {
-        std:string error = "Parameter ";
+        std::string error = "Parameter ";
         error += name;
         error += " is out of range. It must be a double ";
         error += errorchar;
@@ -163,12 +163,12 @@ void CoordinateShape::param_rangecheck(const char* name,
     }
     else if (isTooLow or p>=maxValue)
     {
-        std:string error = "Parameter ";
+        std::string error = "Parameter ";
         error += name;
         error += " is out of range. It must be a double ";
         error += errorchar;
         error += " and smaller than ";
-        error += to_string(maxValue);
+        error += std::to_string(maxValue);
         throw std::invalid_argument(error);
     }
 
@@ -192,7 +192,7 @@ vector<double> CoordinateShape::Edges ()
     vector<double> edges (_dim);
     for (int i = 0; i<_dim; i++)
     {
-        std::string key_s = "edge_"+to_string(i);
+        std::string key_s = "edge_"+std::to_string(i);
         const char* key_i = key_s.c_str();
         edges[i] = _params.find(key_i)->second;
     }
@@ -242,7 +242,7 @@ double CoordinateShape::Volume()
         _volume = 1;
         for (int i = 0; i<_dim; i++)
         {
-            std::string key_s = "edge_"+to_string(i);
+            std::string key_s = "edge_"+std::to_string(i);
             const char* key_i = key_s.c_str();
             _volume *= this->Parameter(key_i);
         }
@@ -259,8 +259,9 @@ vector<double> CoordinateShape::Limits(int dim)
 {
     if ((dim < 0) || (dim >= _dim))
     {
-        throw invalid_argument("Dimension " + to_string(dim) +  "out of range "
-                               + "[0, " + to_string(_dim)+" ]!");
+        throw std::invalid_argument("Dimension " +std::to_string(dim) +
+                                    "out of range " + "[0, " 
+                                    + std::to_string(_dim)+" ]!");
     }
     double l = 0;
     if ((dim == 0) && (_name == "cylinder"))
@@ -268,10 +269,15 @@ vector<double> CoordinateShape::Limits(int dim)
     else if (_name == "cube")
         {l = this->Parameter("edge") /2;}
     else if (_name == "cuboid")
-        {l = this->Parameter(("edge_"+to_string(dim)).c_str()) /2;}
+        {l = this->Parameter(("edge_"+std::to_string(dim)).c_str()) /2;}
     else
         {l = this->Parameter("radius");}
     double shift = _center[dim];
     vector<double> limits = {-l + shift, l + shift};
     return limits; 
+}
+
+int main(){
+
+    std::cout << "shape.cpp WORKS!" << std::endl;
 }

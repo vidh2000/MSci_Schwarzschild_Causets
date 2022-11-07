@@ -37,8 +37,8 @@ class CoordinateShape
                         double duration = 2);
         
         void param_rangecheck(const char* name, 
-                     double maxValue = std::numeric_limits<double>::infinity(),
-                     bool canBeZero = false);
+                                double maxValue = std::nan(""),
+                                bool canBeZero = false);
         
         double Parameter (const char* key);
         std::vector<double> Edges ();
