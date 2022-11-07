@@ -56,9 +56,9 @@ std::vector<std::vector<double>> generate_2Dvector(int rows, int cols,
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
 inline
-vector<int> distinct_randint1(int size, int N, int seed)
+std::vector<int> distinct_randint1(int size, int N, int seed)
 {   
-    vector<int> result;
+    std::vector<int> result;
     result.resize(size);
 std::vector<int> distinct_randint1(int size, int N, int seed)
 {
