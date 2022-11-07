@@ -79,7 +79,7 @@ void print_set(std::set<obj> set)
     std::cout << beginstr;
     for (obj e : set)
     {
-        std::string separator = " , ";
+        std::string separator = ", ";
         std::cout << e << separator;
     }
     std::string endstr = " }";
@@ -143,11 +143,10 @@ template <typename obj>
 inline
 std::set<obj> set_intersection(std::set<obj> s1, std::set<obj> s2)
 {
-    std::set<obj> s_intersection;
-    std::set_intersection(s1.begin(), s1.end(),
-                          s2.begin(), s2.end(),
-                          std::back_inserter(s_intersection));
-    return s_intersection;
+    std::set<obj> result;
+    std::set_intersection(s1.begin(), s1.end(),s2.begin(), s2.end(),
+                          std::inserter(result,result.end()));
+    return result;
 }
 
 /**
@@ -164,11 +163,10 @@ inline
 std::unordered_set<obj> set_intersection(std::unordered_set<obj> s1,
                                          std::unordered_set<obj> s2)
 {
-    std::unordered_set<obj> s_intersection;
-    std::set_intersection(s1.begin(), s1.end(),
-                          s2.begin(), s2.end(),
-                          std::back_inserter(s_intersection));
-    return s_intersection;
+    std::unordered_set<obj> result;
+    std::set_intersection(s1.begin(), s1.end(),s2.begin(), s2.end(),
+                          std::inserter(result,result.end()));
+    return result;
 }
 
 // Function to find the maximum element

@@ -140,7 +140,7 @@ double Causet::ord_fr(int a, int b,
     if (denominator!= "choose" || denominator!= "n2"){
         throw std::invalid_argument("Param 'denominator' must be \
                                 'choose' or 'n2'");}
-     
+    return 0.0;
 }
 
 
