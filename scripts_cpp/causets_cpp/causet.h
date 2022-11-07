@@ -71,8 +71,6 @@ class Causet
                       const char* denominator = "choose");
         static double ord_fr(std::vector<std::vector<int8_t>> A,
                       const char* denominator = "choose");
-        static double ord_fr(std::vector<std::vector<int8_t>> A,
-                      const char* denominator = "choose");
         template<typename SET>
         static double ord_fr(std::vector<SET> A_pasts,
                       const char* denominator = "choose");

@@ -143,13 +143,13 @@ template <typename obj>
 inline
 std::set<obj> set_intersection(std::set<obj> s1,
                                 std::set<obj> s2)
-
+{
     std::set<obj> s_intersection;
     std::set_intersection(s1.begin(), s1.end(),
                           s2.begin(), s2.end(),
                           std::back_inserter(s_intersection));
     return s_intersection;
-
+}
 /**
  * @brief Finds intersection of two sets s1, s2.
  *        -- All the elements that belong to both
@@ -163,13 +163,13 @@ template <typename obj>
 inline
 std::unordered_set<obj> set_intersection(std::unordered_set<obj> s1,
                                          std::unordered_set<obj> s2)
-
+{
     std::unordered_set<obj> s_intersection;
     std::set_intersection(s1.begin(), s1.end(),
                           s2.begin(), s2.end(),
                           std::back_inserter(s_intersection));
     return s_intersection;
-    
+}    
 // Function to find the maximum element
 template <typename num> 
 inline

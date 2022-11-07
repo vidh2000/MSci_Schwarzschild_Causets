@@ -75,8 +75,8 @@ std::vector<int> distinct_randint1(int size, int N, int seed)
             r = dis(gen) * N;
             result[i] = r;   
         }
-    return result;
     }
+    return result;
 }
 
 /**
