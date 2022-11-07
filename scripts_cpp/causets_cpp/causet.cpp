@@ -40,7 +40,7 @@ using std::unordered_set;
  */
 
 // CONSTRUCTORS
-Causet::Causet(){}
+// Causet::Causet(){}
 Causet::Causet(vector<vector<double>> Cmatrix, 
                 bool past_links, // = false,
                 bool fut_links) // = false);
@@ -210,7 +210,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             {
                 std::cout << "Found 0/1000 OK Alexandrov intervals. \
                 Causet portion too smol. Returning Dim<0 values.";
-                return {-1,-1};
+                vector<double> returnerr = {-1,-1};
+                return returnerr;
             }
 
             // Pick two random elements

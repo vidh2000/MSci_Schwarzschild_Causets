@@ -45,7 +45,7 @@ class Causet
 
 
         // CONSTRUCTOR
-        Causet ();
+        //Causet ();
         Causet(vector<vector<double>> Cmatrix, 
                 bool past_links = false, bool fut_links = false);
         Causet(vector<vector<double>> coordinates,
