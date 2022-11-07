@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <vector>
 
+using std::vector;
 
 class CoordinateShape
 /**
@@ -23,16 +24,16 @@ class CoordinateShape
     public:
         int _dim = 0;
         const char* _name;
-        std::vector<double> _center;
+        vector<double> _center;
         std::map<const char*, double> _params;
         double _volume = 0;
 
         CoordinateShape(int dim = 4,
                         const char* name = "diamond", 
-                        std::vector<double> center = {0},
+                        vector<double> center = {0},
                         double radius   = 1,
                         double edge     = 1,
-                        std::vector<double> edges = {1},
+                        vector<double> edges = {1},
                         double hollow   = 0,
                         double duration = 2);
         
@@ -41,25 +42,25 @@ class CoordinateShape
                      bool canBeZero = false);
         
         double Parameter (const char* key);
-        std::vector<double> Edges ();
+        vector<double> Edges ();
         double Volume();
 
-        std::vector<double> Limits(int dimension);
+        vector<double> Limits(int dimension);
 
         // The following functions are only used in plotting, 
         // (apart for EllipseEdge in DeSitter XY slicing)
         // As these are not implemeneted, functions are left undefined:
         // double              MaxEdgeHalf();
-        // std::vector<double> RectangleEdge();
-        // std::vector<std::vector<double>> CircleEdge();
-        // std::vector<std::vector<double>> ElipseEdge();
-        // std::vector<std::vector<double>> BiconeEdge();
-        // std::vector<std::vector<double>> CylinderCutEdge();
-        // std::vector<std::vector<double>> BallSurface();
-        // std::vector<std::vector<double>> CuboidSurface();
-        // std::vector<std::vector<double>> CubeSurface();
-        // std::vector<std::vector<double>> CylinderlSurface();
-        // std::vector<std::vector<double>> OpenConeSurface();
+        // vector<double> RectangleEdge();
+        // vector<vector<double>> CircleEdge();
+        // vector<vector<double>> ElipseEdge();
+        // vector<vector<double>> BiconeEdge();
+        // vector<vector<double>> CylinderCutEdge();
+        // vector<vector<double>> BallSurface();
+        // vector<vector<double>> CuboidSurface();
+        // vector<vector<double>> CubeSurface();
+        // vector<vector<double>> CylinderlSurface();
+        // vector<vector<double>> OpenConeSurface();
 
 
 };

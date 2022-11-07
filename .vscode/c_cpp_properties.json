@@ -4,17 +4,17 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**"
-                //"C:\\boost\\boost_1_80_0\\"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "windowsSdkVersion": "10.0.19041.0",
-            "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.33.31629/bin/Hostx64/x64/cl.exe",
+            //"windowsSdkVersion": "10.0.19041.0",
+            "compilerPath": "C:/Program Files/MinGW-w64/bin/g++.exe",
             "cStandard": "c17",
-            "intelliSenseMode": "windows-msvc-x64"
+            "intelliSenseMode": "windows-gcc-x64",
+            "cppStandard": "c++17"
         }
     ],
     "version": 4
