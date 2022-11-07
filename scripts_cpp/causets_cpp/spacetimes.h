@@ -33,6 +33,9 @@ class Spacetime
         const char* _metricname;
         std::map<const char*, double> _params;
 
+        bool _isPeriodic = false;
+        vector<double> _period = {};
+
         // CONSTRUCTOR
         Spacetime();
 
@@ -49,8 +52,8 @@ class Spacetime
         (vector<double> xvec, vector<double> yvec, vector<double> period);
         func Causality();  
         
-        static vector<bool> causal1d(vector<double> xvec, vector<double> yvec, 
-                                vector<double>period={});
+        static vector<bool> causal1d(vector<double> xvec, vector<double> yvec,
+                                     vector<double> period={});
 };
 
 
@@ -69,8 +72,6 @@ class FlatSpacetime: public Spacetime
  */
 {
     public:
-        bool _isPeriodic;
-        vector<double> _period = {};
         
         FlatSpacetime(int dim = 4, vector<double> period = {});
         
@@ -88,7 +89,7 @@ class FlatSpacetime: public Spacetime
                                     vector<double> period={});
         static vector<bool> causal_periodic (vector<double> xvec, 
                                             vector<double> yvec,
-                                            vector<double>period);
+                                            vector<double>period={});
 };
 
 

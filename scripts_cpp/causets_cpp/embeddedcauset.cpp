@@ -588,7 +588,7 @@ double EmbeddedCauset:: length_scale()
 bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 {
     auto atimelikeb = _spacetime.Causality();
-    return atimelikeb(xvec, yvec)[0];
+    return atimelikeb(xvec, yvec, _spacetime._period)[0];
 };
 
 
@@ -605,7 +605,7 @@ bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 bool EmbeddedCauset::AprecB(vector<double> xvec, vector<double> yvec)
 {
     auto atimelikeb = _spacetime.Causality();
-    return atimelikeb(xvec, yvec)[1];
+    return atimelikeb(xvec, yvec, _spacetime._period)[1];
 };
 
 
@@ -665,13 +665,13 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
         {
             _pasts.erase(_pasts.begin()+label);
             for (unordered_set<int> past_i : _pasts)
-                {Causet::discard_from_set(past_i, label);}
+                {discard_from_set(past_i, label);}
         } 
         if (_futures.size())
         {
             _futures.erase(_futures.begin()+label);
             for (unordered_set<int> fut_i : _futures)
-                {Causet::discard_from_set(fut_i, label);}
+                {discard_from_set(fut_i, label);}
         }   
     }
     if (make_links)
@@ -680,13 +680,13 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
         {
             _past_links.erase(_past_links.begin()+label);
             for (unordered_set<int> plinks_i : _past_links)
-                {Causet::discard_from_set(plinks_i, label);}
+                {discard_from_set(plinks_i, label);}
         } 
         if (_future_links.size())
         {
             _future_links.erase(_future_links.begin()+label);
             for (unordered_set<int> flinks_i : _future_links)
-                {Causet::discard_from_set(flinks_i, label);}
+                {discard_from_set(flinks_i, label);}
         }   
     }
     _size--;
@@ -716,13 +716,13 @@ void EmbeddedCauset::discard(vector<int> labels,
         {
             remove_indices(_pasts, labels);
             for (unordered_set<int> past_i : _pasts)
-                {Causet::discard_from_set(past_i, labels);}
+                {discard_from_set(past_i, labels);}
         } 
         if (_futures.size())
         {
             remove_indices(_futures, labels);
             for (unordered_set<int> fut_i : _futures)
-                {Causet::discard_from_set(fut_i, labels);}
+                {discard_from_set(fut_i, labels);}
         }   
     }
     if (make_links)
@@ -731,13 +731,13 @@ void EmbeddedCauset::discard(vector<int> labels,
         {
             remove_indices(_past_links, labels);
             for (unordered_set<int> plinks_i : _past_links)
-                {Causet::discard_from_set(plinks_i, labels);}
+                {discard_from_set(plinks_i, labels);}
         } 
         if (_future_links.size())
         {
             remove_indices(_future_links, labels);
             for (unordered_set<int> flinks_i : _future_links)
-                {Causet::discard_from_set(flinks_i, labels);}
+                {discard_from_set(flinks_i, labels);}
         }   
     }
     _size--;
