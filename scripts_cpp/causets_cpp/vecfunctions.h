@@ -57,17 +57,13 @@ std::vector<std::vector<double>> generate_2Dvector(int rows, int cols,
  */
 inline
 std::vector<int> distinct_randint1(int size, int N, int seed)
-{   
-    std::vector<int> result;
-    result.resize(size);
-std::vector<int> distinct_randint1(int size, int N, int seed)
 {
     std::vector<int> result(size);
     if (!seed)
     {
         std::random_device rd;
         seed = rd();
-    } 
+    }  
     std::mt19937 gen(seed);
     std::uniform_real_distribution<> dis(0,1.0);
     
@@ -79,8 +75,8 @@ std::vector<int> distinct_randint1(int size, int N, int seed)
             r = dis(gen) * N;
             result[i] = r;   
         }
-    }
     return result;
+    }
 }
 
 /**
@@ -331,8 +327,8 @@ double mymean(std::vector <T1> x, std::vector <T2> w = {1})
     {
         throw std::invalid_argument
         ("vector and weight have different sizes: "
-        +to_string(x.size()) +" and " 
-        +to_string(w.size()) + "!");
+        +std::to_string(x.size()) +" and " 
+        +std::to_string(w.size()) + "!");
     }
     T2 sumw = myvecsum(w);
     double mean = 0;
@@ -351,8 +347,8 @@ double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
     {
         throw std::invalid_argument
         ("vector and weight have different sizes: "
-        +to_string(x.size()) +" and " 
-        +to_string(w.size()) + "!");
+        +std::to_string(x.size()) +" and " 
+        +std::to_string(w.size()) + "!");
     }
 
     T2 sumw = myvecsum(w);
