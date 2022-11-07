@@ -37,7 +37,6 @@ class Causet
         bool _special_matrix = false;
         int _size = 0;
         int _dim = 0;
-        
         vector<std::unordered_set<int>> _pasts   = {};
         vector<std::unordered_set<int>> _futures = {};
         vector<std::unordered_set<int>> _past_links   = {};

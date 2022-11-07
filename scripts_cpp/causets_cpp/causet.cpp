@@ -337,6 +337,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 //INTERVALS   //===============================================================
 //=============================================================================
 //=============================================================================
+
 /**
  * @brief Compute cardinality of causality interval between a and b.
  * 
@@ -371,7 +372,7 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
         if (a<b)
         {
             int Nintersections = 2 * includeBoundary;
-            if (_futures[a].size()<_pasts[b].size())
+            if (_futures[a].size()<_pasts[b].size()) //loop over shortest
             {
                 for (int e_ai : _futures[a])
                     {Nintersections += _pasts[b].find(e_ai) !=_pasts[b].end();}
@@ -379,17 +380,17 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
             else
             {
                 for (int e_bi : _pasts[b])
-                    {Nintersections += _futures[a].find(e_bi) !=_futures[a].end();}
+                    {Nintersections+= _futures[a].find(e_bi)!=_futures[a].end();}
             }
             return Nintersections;
         }
         else /*b<a*/
         {
             int Nintersections = 2 * includeBoundary;
-            if (_pasts[a].size()<_futures[b].size())
+            if (_pasts[a].size()<_futures[b].size()) //loop over shortest
             {
                 for (int e_ai : _pasts[a])
-                    {Nintersections += _futures[b].find(e_ai) !=_futures[b].end();}
+                    {Nintersections+= _futures[b].find(e_ai)!=_futures[b].end();}
             }
             else
             {
