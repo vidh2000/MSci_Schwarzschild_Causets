@@ -29,7 +29,6 @@ class Spacetime
         int  _dim;
         const char* _name;
         const char* _metricname;
-        std::map<const char*, double> _params;
 
         bool _isPeriodic = false;
         std::vector<double> _period = {};
@@ -37,21 +36,23 @@ class Spacetime
         // CONSTRUCTOR
         Spacetime();
 
-        // VIRTUAL GETTERS (BECOME SPECIFIC IN SUBCLASSES)
-        virtual double Parameter (const char* key);
-        virtual CoordinateShape DefaultShape();  
-        
-        virtual std::vector<double>_T_slice_sampling(double t, 
+        // VIRTUAL FUNCTIONS
+      
+        std::vector<double>_T_slice_sampling(double t, 
                                                     std::vector<double>origin,
                                                     int samplingsize = -1); 
 
         // CAUSALITY
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, std::vector<double> period);
-        func Causality();  
+        (std::vector<double> xvec, std::vector<double> yvec, 
+         std::vector<double> period);
+        virtual func Causality();  
         
-        static std::vector<bool> causal1d(std::vector<double> xvec, std::vector<double> yvec,
-                                     std::vector<double> period={});
+        static std::vector<bool> causal1d(std::vector<double> xvec, 
+                                          std::vector<double> yvec,
+                                          std::vector<double> period={});
+        
+        ~Spacetime();
 };
 
 
@@ -72,8 +73,6 @@ class FlatSpacetime: public Spacetime
     public:
         
         FlatSpacetime(int dim = 4, std::vector<double> period = {});
-        
-        CoordinateShape DefaultShape();
 
         double ds2    (std::vector<double> xvec, std::vector<double> yvec);
         double ds     (std::vector<double> xvec, std::vector<double> yvec);
@@ -88,6 +87,8 @@ class FlatSpacetime: public Spacetime
         static std::vector<bool> causal_periodic (std::vector<double> xvec, 
                                             std::vector<double> yvec,
                                             std::vector<double>period={});
+        
+        ~FlatSpacetime();
 };
 
 
@@ -109,11 +110,12 @@ class BlackHoleSpacetime: public Spacetime
         double ds2(std::vector<double> xvec, std::vector<double> yvec);
 
         double ds(std::vector<double> xvec, std::vector<double> yvec);
-
-        CoordinateShape DefaultShape();
         
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec);
-        func Causality();     
+        (std::vector<double> xvec, std::vector<double> yvec, 
+        std::vector<double> period);
+        func Causality();   
+
+        ~BlackHoleSpacetime();  
 };
 #endif /* SPACETIMES_H */

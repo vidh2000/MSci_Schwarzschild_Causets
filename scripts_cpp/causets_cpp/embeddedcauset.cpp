@@ -28,12 +28,15 @@ using std::vector;
 using std::set;
 using std::unordered_set;
 
+//using Spacetime::Spacetime;
+
 
 //=============================================================================
 //=============================================================================
 //CONSTRUCTORS  //=============================================================
 //=============================================================================
 //=============================================================================
+EmbeddedCauset::EmbeddedCauset() : Causet() {}
 
 /**
  * @brief Embed given coordinates in a causet.
@@ -60,6 +63,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
                                 bool make_sets,// = false,
                                 bool make_links,// = false,
                                 const char* sets_type)// = "past")
+                                : Causet()
 {
     _size = coordinates.size();
     _coords = coordinates;
@@ -745,7 +749,6 @@ void EmbeddedCauset::discard(vector<int> labels,
 
 
 int main(){
-std::cout << "embeddedcauset.cpp WORKS! :)";
+std::cout << "embeddedcauset WORKS! :)";
 return 0;
-
 };

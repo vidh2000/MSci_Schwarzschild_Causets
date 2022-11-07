@@ -28,7 +28,6 @@ using std::unordered_set;
 
 /**
  * @brief Causet class.
- *
  * 
  * @param causet: a vector of vectors of integers. //not implemented
  *  Essentially it is the causal matrix where (M)_{i,j}
@@ -38,15 +37,12 @@ using std::unordered_set;
  * 
  * @param pastLinks: a vector of sets containing past links to each element
  */
-
 // CONSTRUCTORS
 Causet::Causet(){}
 Causet::Causet(vector<vector<double>> Cmatrix, 
                 bool past_links, // = false,
                 bool fut_links) // = false);
-{
-
-}
+{}
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORDERING FRACTION FUNCTIONS (OVERRIDING FOR TYPES)
