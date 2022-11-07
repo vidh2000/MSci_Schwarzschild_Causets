@@ -60,12 +60,13 @@ vector<vector<double>> generate_2Dvector(int rows, int cols,
 inline
 vector<int> distinct_randint1(int size, int N, int seed)
 {   
-    vector<int> result(size);
+    vector<int> result;
+    result.resize(size);
     if (!seed)
     {
         std::random_device rd;
         seed = rd();
-    }  
+    } 
     std::mt19937 gen(seed);
     std::uniform_real_distribution<> dis(0,1.0);
     
@@ -77,8 +78,8 @@ vector<int> distinct_randint1(int size, int N, int seed)
             r = dis(gen) * N;
             result[i] = r;   
         }
-    return result;
     }
+    return result;
 }
 
 /**

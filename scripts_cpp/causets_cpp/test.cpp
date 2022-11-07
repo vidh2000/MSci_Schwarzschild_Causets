@@ -15,11 +15,10 @@
 #include <random>
 //#include <boost/asio.hpp>
 
-//#include <functions.h>
+#include <functions.h>
 #include <vecfunctions.h>
 
 using std::vector;
-
 
 
 int main() {

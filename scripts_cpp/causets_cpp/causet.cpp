@@ -70,29 +70,44 @@ Causet::Causet(vector<vector<double>> Cmatrix,
  *          See above description above all ord_fr definitions.
  */
 double Causet::ord_fr(Causet A,
-            const char* denominator, // = "choose",
-            bool isdisjoined) // = true);
+            const char* denominator) // = "choose"
 {
     if (A._CMatrix.size())
     {
-        return Causet::ord_fr(A._CMatrix, denominator, isdisjoined);    
+        return Causet::ord_fr(A._CMatrix, denominator);    
     }
     else if (A._pasts.size())
     {
-        return Causet::ord_fr(A._futures,A._pasts,denominator,isdisjoined);
+        return Causet::ord_fr(A._pasts,denominator);
+    }
+    else{
+        const char* errormsg = "Provided Causet is empty! Size matters...";
+        std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
+        return 0.0;
     }
 }
 
 /**
- * @brief   Ordering fraction determined from a matrix.
+ * @brief   Ordering fraction determined from a CMatrix.
  *          See above description above all ord_fr definitions
  */
-double Causet::ord_fr(vector<vector<int8_t>> A,
-                const char* denominator,// = "choose",
-                bool isdisjoined)// = true);
+double Causet::ord_fr(vector<vector<int8_t>> M,
+                const char* denominator)// = "choose",
 {
-    double ord_fr = 1.0;
-    return ord_fr; 
+    if (denominator!= "choose" || denominator!= "n2"){
+        throw std::invalid_argument("Param 'denominator' must be \
+                                'choose' or 'n2'");}
+    int N = M.size();
+    int nrelations = 0;
+    for (int j; j<N; j++){
+        for (int i; i<j;j++){
+            if (M[i][j] != 0){
+                nrelations +=1;
+            }
+        }
+    }
+    double fr = 2 * nrelations/ (N* (N - (denominator=="choose")));
+    return fr;
 }
 
 /**
@@ -100,13 +115,20 @@ double Causet::ord_fr(vector<vector<int8_t>> A,
  *          See above description above all ord_fr definitions
  */
 template<typename SET>
-double Causet::ord_fr(vector<SET> A_futures, 
-                vector<SET> A_pasts,
-                const char* denominator,// = "choose",
-                bool isdisjoined)// = true);
+double Causet::ord_fr(vector<SET> A_pasts,
+                const char* denominator)// = "choose",
 {
-    double ord_fr = 1.0;
-    return ord_fr; 
+    if (denominator!= "choose" || denominator!= "n2"){
+        throw std::invalid_argument("Param 'denominator' must be \
+                                'choose' or 'n2'");}
+    int N = A_pasts.size();
+    int nrelations = 0;
+    for (auto e_i : A_pasts)
+    {
+        nrelations += e_i.size();
+    }
+    double fr = 2 * nrelations/ (N* (N - (denominator=="choose")));
+    return fr;
 }
 
 /**
@@ -119,9 +141,12 @@ double Causet::ord_fr(vector<SET> A_futures,
 double Causet::ord_fr(int a, int b,
                 const char* denominator)// = "choose"
 {
-    double ord_fr = 1.0;
-    return ord_fr; 
+    if (denominator!= "choose" || denominator!= "n2"){
+        throw std::invalid_argument("Param 'denominator' must be \
+                                'choose' or 'n2'");}
+     
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dimension estimator
@@ -332,11 +357,11 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 }   
 
 
-//=============================================================================
-//=============================================================================
-//INTERVALS   //===============================================================
-//=============================================================================
-//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//\\ INTERVALS   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief Compute cardinality of causality interval between a and b.

@@ -70,16 +70,12 @@ class Causet
 
         // KINEMATICS
         static double ord_fr(Causet A,
-                      const char* denominator = "choose",
-                      bool isdisjoined = true);
+                      const char* denominator = "choose");
         static double ord_fr(vector<vector<int8_t>> A,
-                      const char* denominator = "choose",
-                      bool isdisjoined = true);
+                      const char* denominator = "choose");
         template<typename SET>
-        static double ord_fr(vector<SET> A_futures, 
-                      vector<SET> A_pasts,
-                      const char* denominator = "choose",
-                      bool isdisjoined = true);
+        static double ord_fr(vector<SET> A_pasts,
+                      const char* denominator = "choose");
         double ord_fr(int a, int b,
                       const char* denominator = "choose");
 

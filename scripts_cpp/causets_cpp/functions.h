@@ -109,23 +109,23 @@ bool set_contains(obj element, std::unordered_set<obj> s)
 
 
 //for set containing int only here
-template <typename obj> 
+template <typename SET> 
 inline
-std::set<obj> set_diff(std::set<obj> s1, std::set<obj> s2)
+SET set_diff(SET s1, SET s2)
     /*
     Return set difference i.e events which are only in s1;
     RETURN = s1-s2 (where s2 can have other elements as well)
     */
 {
-    std::set<obj> result;
+    SET result;
     std::set_difference(s1.begin(), s1.end(), s2.begin(), s2.end(),
         std::inserter(result, result.end()));
     return result;
 }
 
-template <typename obj> 
+template <typename SET> 
 inline
-std::set<obj> set_union(std::set<obj> s1, std::set<obj> s2)
+SET set_union(SET s1, SET s2)
     /**
     * @brief Returns union of two sets s1 and s2.
     */
@@ -134,7 +134,26 @@ std::set<obj> set_union(std::set<obj> s1, std::set<obj> s2)
     return s1;
 }
 
+template <typename SET>
+inline
+SET set_intersection(SET s1, SET s2)
+    /**
+     * @brief Finds intersection of two sets s1, s2.
+     *        -- All the elements that belong to both
+     *           sets simultaneously.
+     * 
+     * @param s1: set 1
+     * @param s2: set 2
+     * @return Intersection of s1, s2 of type SET
+     */
 
+    SET s_intersection;
+    std::set_intersection(s1.begin(), s1.end(),
+                          s2.begin(), s2.end(),
+                          std::back_inserter(s_intersection));
+    return s_intersection;
+
+    
 // Function to find the maximum element
 template <typename num> 
 inline
