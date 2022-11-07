@@ -23,7 +23,7 @@ using std::cout;
 using std::endl;
 
 template <typename F>
-double bisection (F f, double xleft, double xright, double epsilon = 0.00001, 
+double bisection (F f, double xleft, double xright, double epsilon = 1e-4, 
                   int Nstop = 1e4)
 {
   double fl = f(xleft);

@@ -40,7 +40,7 @@ using std::unordered_set;
  */
 
 // CONSTRUCTORS
-// Causet::Causet(){}
+Causet::Causet(){}
 Causet::Causet(vector<vector<double>> Cmatrix, 
                 bool past_links, // = false,
                 bool fut_links) // = false);
@@ -102,7 +102,7 @@ double Causet::ord_fr(vector<vector<int8_t>> A,
                 const char* denominator,// = "choose",
                 bool isdisjoined)// = true);
 {
-
+    
 }
 
 /**
@@ -196,7 +196,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     
     // Variables to be used
     int* N = &_size;
-    std::vector<double> destimates;
+    vector<double> destimates;
     
     if (method == "random")
     {
@@ -206,7 +206,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 
         while (isample < Nsamples)
         {
-            if ((fails>= 1000) && (successes == 0))
+            if (fails>= 1000 && successes == 0)
             {
                 std::cout << "Found 0/1000 OK Alexandrov intervals. \
                 Causet portion too smol. Returning Dim<0 values.";
@@ -335,8 +335,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 
 
 
-
-
 //=============================================================================
 //=============================================================================
 //MODIFIERS   //===============================================================
@@ -352,6 +350,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
  * @param make_links : if true, update _past and/or _future links, if they are 
  * defined
  */
+
 void Causet::coarsegrain(int card, bool make_matrix, 
                          bool make_sets, bool make_links)
 {
@@ -491,6 +490,7 @@ void Causet::discard(vector<int> labels, bool make_matrix = true,
     _size--;
     _dim = 0;
 } 
+
 
 
 
