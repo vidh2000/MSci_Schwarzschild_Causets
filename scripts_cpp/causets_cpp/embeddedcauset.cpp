@@ -745,6 +745,8 @@ void EmbeddedCauset::discard(vector<int> labels,
     _dim = 0;
 }
 
+EmbeddedCauset::~EmbeddedCauset() {}
+
 
 
 int main(){

@@ -115,7 +115,10 @@ class Causet
         virtual void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
         virtual void discard(std::vector<int> labels, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true);     
+                     bool make_sets = false, bool make_links = true);  
+
+        //Destructor
+        ~Causet();   
 };
 
 #endif /*CAUSET_H*/

@@ -611,6 +611,7 @@ void Causet::discard(vector<int> labels, bool make_matrix,
     _dim = 0;
 } 
 
+Causet::~Causet() {}
 
 int main(){
 

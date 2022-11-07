@@ -83,7 +83,8 @@ class EmbeddedCauset: public Causet
         void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
         
-        
+        //Destructor
+        ~EmbeddedCauset();       
 };
 
 #endif /*EMBEDDEDCAUSET_H*/

@@ -277,6 +277,8 @@ vector<double> CoordinateShape::Limits(int dim)
     return limits; 
 }
 
+CoordinateShape::~CoordinateShape() {}
+
 int main(){
 
     std::cout << "shape.cpp WORKS!" << std::endl;
