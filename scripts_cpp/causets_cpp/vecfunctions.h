@@ -58,7 +58,8 @@ std::vector<std::vector<double>> generate_2Dvector(int rows, int cols,
 inline
 std::vector<int> distinct_randint1(int size, int N, int seed)
 {
-    std::vector<int> result(size);
+    std::vector<int> result;
+    result.resize(size);
     if (!seed)
     {
         std::random_device rd;
