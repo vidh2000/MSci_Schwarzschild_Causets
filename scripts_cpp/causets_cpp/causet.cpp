@@ -188,11 +188,12 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     int* N = &_size;
     vector<double> destimates;
     
+    // Track looping
+    int fails = 0;
+    int successes = 0;
+
     if (method == "random")
     {
-        int fails = 0;
-        int successes = 0;
-
         while (Nsamples>0)
         {
             if (fails>= 1000 && successes == 0)
