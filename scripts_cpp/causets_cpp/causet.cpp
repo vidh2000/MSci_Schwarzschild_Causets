@@ -174,6 +174,7 @@ double Causet::MM_drelation(double d)
     double c = 4* std::tgamma(3*d/2);
     return a*b/c;
 }
+
 vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int d0,// = 2,
                                 int Nsamples,// = 20,
@@ -332,6 +333,77 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     return result;
     
 }   
+
+
+//=============================================================================
+//=============================================================================
+//INTERVALS   //===============================================================
+//=============================================================================
+//=============================================================================
+/**
+ * @brief Compute cardinality of causality interval between a and b.
+ * 
+ * @param a int : label of event a.
+ * @param b int : label of event b
+ * @param includeBoundary bool : innclude a and b in count?
+ * @return int : Cardinality of Interval
+ */
+int IntervalCard(int a, int b, bool includeBoundary)
+{
+    if (a==b)
+        {return 1;}
+    // IF DEFINED USE CMATRIX
+    if (_CMatrix.size())
+    {
+        int Nintersections = 2 * includeBoundary;
+        if (a<b)
+        {
+            for (int i = a+1; i<b; i++)
+                {Ninteresections += _CMatrix[a][i] && _Cmatrix[i][b];}
+        }
+        else
+        {
+            for (int i = b+1; i<a; i++)
+                {Ninteresections += _CMatrix[i][a] && _Cmatrix[b][i];}
+        }
+        return Nintersections;
+    }
+    // ELSE USE SETS
+    else //if ( _pasts.size() && _futures.size())
+    {
+        if (a<b)
+        {
+            int Nintersections = 2 * includeBoundary;
+            if (_futures[a].size()<_pasts[b].size())
+            {
+                for (int e_ai : _futures[a])
+                    {Nintersections += _pasts[b].find(e_ai) !=_pasts[b].end();}
+            }
+            else
+            {
+                for (int e_bi : _pasts[b])
+                    {Nintersections += _futures[a].find(e_bi) !=_futures[a].end();}
+            }
+            return Nintersections;
+        }
+        else /*b<a*/
+        {
+            int Nintersections = 2 * includeBoundary;
+            if (_pasts[a].size()<_futures[b].size())
+            {
+                for (int e_ai : _pasts[a])
+                    {Nintersections += _futures[b].find(e_ai) !=_futures[b].end();}
+            }
+            else
+            {
+                for (int e_bi : _futures[b])
+                    {Nintersections += _pasts[a].find(e_bi) !=_pasts[a].end();}
+            }
+            return Nintersections;
+        }
+    }  
+}
+
 
 
 
