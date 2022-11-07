@@ -20,7 +20,11 @@ using std::unordered_set;
 
 
 /**
- * @brief 
+ * @brief           Root finder in some interval [x_left,x_right]
+ *                  using the "bisection" iterative method.
+ *                  Requires only 1 root to be in the interval for
+ *                  the function to work correctly and the function
+ *                  NEEDS to be monotone in the provided interval.
  * 
  * @tparam F :      function/method returning a double
  * @param f:        the function name whose roots we're searching for
