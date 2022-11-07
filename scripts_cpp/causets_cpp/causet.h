@@ -114,9 +114,9 @@ class Causet
                      bool make_sets = false, bool make_links = true,
                      int seed = 0);
 
-        void discard(int label, bool make_matrix = true, 
+        virtual void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
-        void discard(std::vector<int> labels, bool make_matrix = true, 
+        virtual void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);     
 };
 

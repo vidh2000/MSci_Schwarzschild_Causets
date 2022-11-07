@@ -36,7 +36,7 @@ using std::unordered_set;
 //CONSTRUCTORS  //=============================================================
 //=============================================================================
 //=============================================================================
-EmbeddedCauset::EmbeddedCauset() : Causet() {}
+EmbeddedCauset::EmbeddedCauset() {}
 
 /**
  * @brief Embed given coordinates in a causet.
@@ -62,8 +62,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
                                 bool use_transitivity,// = true,
                                 bool make_sets,// = false,
                                 bool make_links,// = false,
-                                const char* sets_type)// = "past")
-                                : Causet()
+                                const char* sets_type)// = "past
 {
     _size = coordinates.size();
     _coords = coordinates;
