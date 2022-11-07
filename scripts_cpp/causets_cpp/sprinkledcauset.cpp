@@ -32,8 +32,8 @@ using std::set;
 using std::unordered_set;
 
 // For Vid (can"t locate headers for some reason)
-// Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project\
-            Project\causets_code\causets_cpp\"header".h...
+// Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project
+//            Project\causets_code\causets_cpp\"header".h...
 
 
 /**

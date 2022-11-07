@@ -6,7 +6,6 @@
 
 #include <set>
 #include <vector>
-
 #include "causet.h"
 #include "embeddedcauset.h"
 #include "spacetimes.h"

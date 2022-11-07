@@ -1,5 +1,4 @@
 #include <algorithm>
-//#include <boost/>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -85,10 +84,7 @@ cout << endl;
 //  cout << "Dim =" << x << " Func-cpp = " << result << endl;
 //}
 
-
-
 vector<double> frs = {1/2, 0.426169, 0.359442, 0.300726, 1/4, 0.206757, 0.170263, 0.139708, 4/35, 0.093243, 0.0759003, 0.0616587, 1/20, 0.0404813, 0.032728, 0.0264256, 64/3003};
-
 
 vector<double> sols = {1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25,4.5,4.75,5};
 
@@ -105,9 +101,7 @@ for (int i = 0; i<frs.size(); i++)
 
 }
 
-
-
-}
+} /*end main*/
 
     
 

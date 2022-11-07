@@ -3,6 +3,22 @@
         {
             "name": "Win32",
             "includePath": [
+                "${workspaceFolder}/**"//,
+                //"C:\\Program Files\\boost\\boost_1_80_0\\"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/Program Files/MinGW-w64/bin/g++.exe",
+            "cStandard": "c17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "Stef32",
+            "includePath": [
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -10,11 +26,10 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            //"windowsSdkVersion": "10.0.19041.0",
-            "compilerPath": "C:/Program Files/MinGW-w64/bin/g++.exe",
+            "compilerPath": "C:\\usr\\bin\\gcc",
             "cStandard": "c17",
-            "intelliSenseMode": "windows-gcc-x64",
-            "cppStandard": "c++17"
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

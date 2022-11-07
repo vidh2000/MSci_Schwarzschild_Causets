@@ -15,6 +15,7 @@
 #include <vector>
 
 using std::vector;
+using std::map;
 
 class CoordinateShape
 /**
@@ -25,7 +26,7 @@ class CoordinateShape
         int _dim = 0;
         const char* _name;
         vector<double> _center;
-        std::map<const char*, double> _params;
+        map<const char*, double> _params;
         double _volume = 0;
 
         CoordinateShape(int dim = 4,
