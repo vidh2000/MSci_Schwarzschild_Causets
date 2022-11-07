@@ -15,15 +15,20 @@
 #include <random>
 //#include <boost/asio.hpp>
 
-//#include <functions.h>
-#include <vecfunctions.h>
+#include <functions.h>
+#include "functions.h"
+#include "vecfunctions.h"
+#include "causet.h"
+#include "embeddedcauset.h"
+#include "shapes.h"
+#include "spacetimes.h"
 
 using std::vector;
 
 
 
 int main() {
-std::cout << "Hello World" << std::endl;
+std::cout << "Hello World 4" << std::endl;
 
 
 /*

@@ -5,7 +5,6 @@
 #define EMBEDDEDCAUSET_H
 
 #include <cmath>
-#include <set>
 #include <vector>
 #include <unordered_set>
 
@@ -13,9 +12,6 @@
 #include "spacetimes.h"
 #include "shapes.h"
 
-using std::vector;
-using std::set;
-using std::unordered_set;
 
 /**
  * @brief An embedded causet in a spacetime subset of a specified shape.
@@ -33,7 +29,7 @@ class EmbeddedCauset: public Causet
         // vector<std::unordered_set<int>> _futures = {};
         // vector<std::unordered_set<int>> _past_links   = {};
         // vector<std::unordered_set<int>> _future_links = {};
-        vector<vector<double>> _coords;
+        std::vector<std::vector<double>> _coords;
         CoordinateShape _shape;
         Spacetime _spacetime;
 
@@ -41,7 +37,7 @@ class EmbeddedCauset: public Causet
         EmbeddedCauset();
         EmbeddedCauset(Spacetime spacetime, 
                        CoordinateShape shape, 
-                       vector<vector<double>> coordinates,
+                       std::vector<std::vector<double>> coordinates,
                        bool make_matrix = true,
                        bool special = false,
                        bool use_transitivity = true,
@@ -74,17 +70,17 @@ class EmbeddedCauset: public Causet
 
 
         // RELATIONS
-        bool areTimelike(vector<double> xvec, vector<double> yvec);
-        bool AprecB(vector<double> xvec, vector<double> yvec);
+        bool areTimelike(std::vector<double> xvec, std::vector<double> yvec);
+        bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
 
         // MODIFIERS
         void sort_coords(int dim = 0, bool reverse = false);
         void relabel(const char* method = "0", bool reverse = false);   
-        void add(vector<double> xvec);
+        void add(std::vector<double> xvec);
         void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
-        void discard(vector<int> labels, bool make_matrix = true, 
+        void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
         
         

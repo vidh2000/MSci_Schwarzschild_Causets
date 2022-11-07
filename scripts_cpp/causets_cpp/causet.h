@@ -9,9 +9,7 @@
 #include <vector>
 #include <unordered_set>
 
-using std::vector;
-using std::set;
-using std::unordered_set;
+
 
 /**
  * @brief Causet class.
@@ -33,19 +31,19 @@ class Causet
 {
     public:
         // Attributes
-        vector<vector<int8_t>> _CMatrix = {};
+        std::vector<std::vector<int8_t>> _CMatrix = {};
         bool _special_matrix = false;
         int _size = 0;
         int _dim = 0;
-        vector<std::unordered_set<int>> _pasts   = {};
-        vector<std::unordered_set<int>> _futures = {};
-        vector<std::unordered_set<int>> _past_links   = {};
-        vector<std::unordered_set<int>> _future_links = {};
+        std::vector<std::unordered_set<int>> _pasts   = {};
+        std::vector<std::unordered_set<int>> _futures = {};
+        std::vector<std::unordered_set<int>> _past_links   = {};
+        std::vector<std::unordered_set<int>> _future_links = {};
 
 
         // CONSTRUCTOR
         Causet ();
-        Causet(vector<vector<double>> Cmatrix, 
+        Causet(std::vector<std::vector<double>> Cmatrix, 
                 bool past_links = false, bool fut_links = false);
         
 
@@ -57,7 +55,7 @@ class Causet
         void make_past_links();
         void make_future_links();
 
-        vector<vector<int>> CMatrix(set<int> labels = {});
+        std::vector<std::vector<int>> CMatrix(std::vector<int> labels = {});
         int size();
         bool is_CMatrix_special();
         bool is_Cij_special();
@@ -72,12 +70,12 @@ class Causet
         static double ord_fr(Causet A,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
-        static double ord_fr(vector<vector<int8_t>> A,
+        static double ord_fr(std::vector<std::vector<int8_t>> A,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
         template<typename SET>
-        static double ord_fr(vector<SET> A_futures, 
-                      vector<SET> A_pasts,
+        static double ord_fr(std::vector<SET> A_futures, 
+                      std::vector<SET> A_pasts,
                       const char* denominator = "choose",
                       bool isdisjoined = true);
         double ord_fr(int a, int b,
@@ -85,7 +83,7 @@ class Causet
 
         static double MM_drelation(double d); 
         
-        vector<double> MMdim_est(const char* method = "random",
+        std::vector<double> MMdim_est(const char* method = "random",
                         int d0 = 2, int Nsamples = 20,
                         int size_min = 10, double size_max = nan(""));   
         
@@ -100,11 +98,8 @@ class Causet
 
 
         // CAUSET REPRESENTATION & SAVING (to be added...)
-        vector<vector<double>> LMatrix (set<int> labels = {});
-        void saveCasCSV(const char* filename);
-        void saveCasTXT(const char* filename);
-        void saveLasCSV(const char* filename);
-        void saveLasTXT(const char* filename);
+        std::vector<std::vector<double>> LMatrix (std::vector<int> labels = {});
+        void saveC(const char* path_file_ext);
 
 
         // MODIFIERS
@@ -123,7 +118,7 @@ class Causet
 
         void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
-        void discard(vector<int> labels, bool make_matrix = true, 
+        void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);     
 };
 

@@ -335,6 +335,24 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     
 }   
 
+//=============================================================================
+//=============================================================================
+//REP & SAVE  //===============================================================
+//=============================================================================
+//=============================================================================
+void Causet::saveC(const char* path_file_ext)
+{
+    std::ofstream out;
+    out.open(path_file_ext);
+    for (auto row : _CMatrix) 
+    {
+        for (auto col : row)
+            {out << col <<',';}
+        out<<std::endl;
+    }
+    out.close();
+    return;
+}
 
 //=============================================================================
 //=============================================================================
@@ -361,12 +379,12 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
         if (a<b)
         {
             for (int i = a+1; i<b; i++)
-                {Ninteresections += _CMatrix[a][i] && _CMatrix[i][b];}
+                {Nintersections += _CMatrix[a][i] && _CMatrix[i][b];}
         }
         else
         {
             for (int i = b+1; i<a; i++)
-                {Ninteresections += _CMatrix[i][a] && _CMatrix[b][i];}
+                {Nintersections += _CMatrix[i][a] && _CMatrix[b][i];}
         }
         return Nintersections;
     }

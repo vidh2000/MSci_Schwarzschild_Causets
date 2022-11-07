@@ -14,10 +14,6 @@
 #include <set>
 #include <unordered_set>
 
-using std::vector;
-using std::set;
-using std::unordered_set;
-
 
 /**
  * @brief           Root finder in some interval [x_left,x_right]
@@ -166,10 +162,10 @@ num setmin(std::set<num> my_set)
 }
 
 
-void discard_from_set(unordered_set<int> &myset, int label)
+void discard_from_set(std::unordered_set<int> &myset, int label)
 {
     int N = myset.size();
-    unordered_set<int> buffer;
+    std::unordered_set<int> buffer;
     for (int j : myset)
     {
         if (j<label)
@@ -181,11 +177,11 @@ void discard_from_set(unordered_set<int> &myset, int label)
 }
 
 template<typename m>
-void discard_from_set(unordered_set<m> &myset, vector<int> labels)
+void discard_from_set(std::unordered_set<m> &myset, std::vector<int> labels)
 {
     std::sort(labels.begin(),labels.end());
     int N = myset.size();
-    unordered_set<m> buffer;
+    std::unordered_set<m> buffer;
     int startpoint = 0;
     for (m j : myset) //not ordered
     {

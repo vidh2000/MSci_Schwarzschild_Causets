@@ -19,8 +19,6 @@
 
 #include "shapes.h"
 
-using std::vector;
-
 
 class Spacetime
 /**
@@ -34,7 +32,7 @@ class Spacetime
         std::map<const char*, double> _params;
 
         bool _isPeriodic = false;
-        vector<double> _period = {};
+        std::vector<double> _period = {};
 
         // CONSTRUCTOR
         Spacetime();
@@ -43,17 +41,17 @@ class Spacetime
         virtual double Parameter (const char* key);
         virtual CoordinateShape DefaultShape();  
         
-        virtual vector<double>_T_slice_sampling(double t, 
-                                                    vector<double>origin,
+        virtual std::vector<double>_T_slice_sampling(double t, 
+                                                    std::vector<double>origin,
                                                     int samplingsize = -1); 
 
         // CAUSALITY
-        typedef vector<bool> (*func)
-        (vector<double> xvec, vector<double> yvec, vector<double> period);
+        typedef std::vector<bool> (*func)
+        (std::vector<double> xvec, std::vector<double> yvec, std::vector<double> period);
         func Causality();  
         
-        static vector<bool> causal1d(vector<double> xvec, vector<double> yvec,
-                                     vector<double> period={});
+        static std::vector<bool> causal1d(std::vector<double> xvec, std::vector<double> yvec,
+                                     std::vector<double> period={});
 };
 
 
@@ -73,23 +71,23 @@ class FlatSpacetime: public Spacetime
 {
     public:
         
-        FlatSpacetime(int dim = 4, vector<double> period = {});
+        FlatSpacetime(int dim = 4, std::vector<double> period = {});
         
         CoordinateShape DefaultShape();
 
-        double ds2    (vector<double> xvec, vector<double> yvec);
-        double ds     (vector<double> xvec, vector<double> yvec);
+        double ds2    (std::vector<double> xvec, std::vector<double> yvec);
+        double ds     (std::vector<double> xvec, std::vector<double> yvec);
         
-        typedef vector<bool> (*func)
-        (vector<double> xvec, vector<double> yvec, vector<double> period);
+        typedef std::vector<bool> (*func)
+        (std::vector<double> xvec, std::vector<double> yvec, std::vector<double> period);
         func Causality();   
 
-        static vector<bool> causal (vector<double> xvec, 
-                                    vector<double> yvec,
-                                    vector<double> period={});
-        static vector<bool> causal_periodic (vector<double> xvec, 
-                                            vector<double> yvec,
-                                            vector<double>period={});
+        static std::vector<bool> causal (std::vector<double> xvec, 
+                                    std::vector<double> yvec,
+                                    std::vector<double> period={});
+        static std::vector<bool> causal_periodic (std::vector<double> xvec, 
+                                            std::vector<double> yvec,
+                                            std::vector<double>period={});
 };
 
 
@@ -108,14 +106,14 @@ class BlackHoleSpacetime: public Spacetime
                            const char* metric = "Eddington-Finkelstein");
                 
         // Methods
-        double ds2(vector<double> xvec, vector<double> yvec);
+        double ds2(std::vector<double> xvec, std::vector<double> yvec);
 
-        double ds(vector<double> xvec, vector<double> yvec);
+        double ds(std::vector<double> xvec, std::vector<double> yvec);
 
         CoordinateShape DefaultShape();
         
-        typedef vector<bool> (*func)
-        (vector<double> xvec, vector<double> yvec);
+        typedef std::vector<bool> (*func)
+        (std::vector<double> xvec, std::vector<double> yvec);
         func Causality();     
 };
 #endif /* SPACETIMES_H */

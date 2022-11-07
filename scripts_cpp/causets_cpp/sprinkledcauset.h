@@ -4,15 +4,11 @@
 #ifndef SPRINKLEDCAUSET_H
 #define SPRINKLEDCAUSET_H
 
-#include <set>
 #include <vector>
 #include "causet.h"
 #include "embeddedcauset.h"
 #include "spacetimes.h"
 #include "shapes.h"
-
-using std::vector;
-using std::set;
 
 /**
  * @brief An causet obtained from sprinkling in a spacetime subset 
@@ -51,12 +47,13 @@ class SprinkledCauset: public EmbeddedCauset
         
 
         // Methods
-        static vector<vector<double>> sprinkle(int count, CoordinateShape shape, 
-                                                bool poisson = false,
-                                                int seed = 0);
-        static vector<vector<double>> sprinkle_coords(int count,
-                                                 CoordinateShape shape,
-                                                 int seed = 0);
+        static std::vector<std::vector<double>> sprinkle(int count, 
+                                                        CoordinateShape shape, 
+                                                        bool poisson = false,
+                                                        int seed = 0);
+        static std::vector<std::vector<double>> sprinkle_coords(int count,
+                                                        CoordinateShape shape,
+                                                        int seed = 0);
 };
 
 #endif /* SPRINKLEDCAUSET_H */

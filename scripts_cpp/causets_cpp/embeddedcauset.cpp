@@ -16,8 +16,6 @@
 #include <chrono>
 #include <unordered_set>
 
-//using namespace std::chrono;
-
 
 #include "functions.h"
 #include "vecfunctions.h"
@@ -748,5 +746,6 @@ void EmbeddedCauset::discard(vector<int> labels,
 
 int main(){
 std::cout << "embeddedcauset.cpp WORKS! :)";
+return 0;
 
-}
+};
