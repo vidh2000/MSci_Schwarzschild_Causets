@@ -22,19 +22,31 @@
 //#include "shapes.h"
 //#include "spacetimes.h"
 
-
+using namespace std::chrono;
 
 int main(){
+
 std::cout << "Hello World" << std::endl;
 
 std::set<int> s1 = {1,2,3,4};
 std::set<int> s2 = {2,4};
 
+auto start = high_resolution_clock::now();
+
+int k = 1;
+for (int i=1; i<1000000001; i++)
+{
+    k=i;
+    //std::cout << k << std::endl;
+}
+
+std::cout << "k =" << k << std::endl;
+
 std::set<int> s = set_intersection(s1,s2);
 print_set(s);
 
 std::vector<int> a;
-a = distinct_randint1(100,3);
+a = distinct_randint1(3,10);
 print_vector(a);
 
 /*
@@ -43,14 +55,14 @@ int N = 10000;
 vector<vector<double>> coords = generate_2Dvector(N,DIM,0,2);
 //std::cout << "This file works" << std::endl;
 
-auto start = high_resolution_clock::now();
+
 
 Causet c(coords,"cmatrix");
-
+*/
 auto stop = high_resolution_clock::now();
 double duration = duration_cast<microseconds>(stop - start).count();
-std::cout << "Time taken by function in D=" << DIM << ": "
+std::cout << "Time taken: "
          << duration/pow(10,6) << " seconds" << std::endl;
-*/
+
 
 };  
