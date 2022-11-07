@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 
 //_____________________________________________________________________
 //
@@ -31,11 +29,11 @@ using namespace std;
  *  random entries lying in range [min,max]
 */
 inline
-vector<vector<double>> generate_2Dvector(int rows, int cols, 
+std::vector<std::vector<double>> generate_2Dvector(int rows, int cols, 
                                          double min, double max)
 {
     srand(time(0)); // to generate pseudo random numbers each time
-    vector<std::vector<double>> matrix;
+    std::vector<std::vector<double>> matrix;
     matrix.resize(rows);
     
     // Random generator stuff
@@ -62,6 +60,9 @@ vector<int> distinct_randint1(int size, int N, int seed)
 {   
     vector<int> result;
     result.resize(size);
+std::vector<int> distinct_randint1(int size, int N, int seed)
+{
+    std::vector<int> result(size);
     if (!seed)
     {
         std::random_device rd;
@@ -86,9 +87,9 @@ vector<int> distinct_randint1(int size, int N, int seed)
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
 inline
-vector<int> distinct_randint2(int size, int N, int seed)
+std::vector<int> distinct_randint2(int size, int N, int seed)
 {
-    vector<int> result(N); 
+    std::vector<int> result(N); 
     if (!seed)
     {
          std::random_device rd;
@@ -110,7 +111,7 @@ vector<int> distinct_randint2(int size, int N, int seed)
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
 inline
-vector<int> distinct_randint(int size, int N, int seed)
+std::vector<int> distinct_randint(int size, int N, int seed)
 {
     if (size < N/2){
         return distinct_randint1(size, N, seed);}
@@ -156,7 +157,7 @@ void print_vector(const std::vector<T> & vec,
 
 template <typename T>
 inline
-void print_vector(std::vector<vector<T>> vec, 
+void print_vector(std::vector<std::vector<T>> vec, 
                   std::string sep=" , ",
                   bool brackets = true)
     /** @brief rints given vector, with given separator.
@@ -180,7 +181,7 @@ void print_vector(std::vector<vector<T>> vec,
             }
             std::cout<<"}";
 
-            if (index != size -1) {cout<<sep;}
+            if (index != size -1) {std::cout<<sep;}
         }
         if (brackets) {std::cout<<" }";}
         std::cout<<std::endl;  
@@ -189,12 +190,12 @@ void print_vector(std::vector<vector<T>> vec,
 
 template <typename T>
 inline
-T myvecsum(vector <T> v)
-    {return accumulate(v.begin(),v.end(), .0);}
+T myvecsum(std::vector <T> v)
+    {return std::accumulate(v.begin(),v.end(), .0);}
 
 template <typename T, typename F>
 inline
-double myvecsum(vector <T> v, F func)
+double myvecsum(std::vector <T> v, F func)
 {
     double sum = 0;
     for (int i = 0; i < v.size(); i++) sum += func(v[i]);
@@ -204,13 +205,13 @@ double myvecsum(vector <T> v, F func)
 
 template <typename T1>
 inline
-T1 vecmax(vector<T1> v)
-    {return *(max_element(v.begin(), v.end()));}
+T1 vecmax(std::vector<T1> v)
+    {return *(std::max_element(v.begin(), v.end()));}
 
 template <typename T1>
 inline
-T1 vecmin(vector<T1> v)
-    {return *(min_element(v.begin(), v.end()));}
+T1 vecmin(std::vector<T1> v)
+    {return *(std::min_element(v.begin(), v.end()));}
 
 
 template <typename T1, typename T2>
@@ -281,9 +282,9 @@ void remove_indices(std::vector<T>& v, const std::vector<INT>& rm )
  **/
 template<typename T>
 inline
-vector <int> getIndexes(vector<T> v, T x)
+std::vector <int> getIndexes(std::vector<T> v, T x)
 {
-    vector <int> sol;
+    std::vector <int> sol;
     auto it = v.begin();
     while (it != v.end()) 
     {
@@ -300,7 +301,7 @@ vector <int> getIndexes(vector<T> v, T x)
 
 template <typename T1, typename T2>
 inline
-bool contains(vector <T1> v, T2 x)
+bool contains(std::vector <T1> v, T2 x)
     {return std::find(v.begin(), v.end(), x) != v.end();
 }
 
@@ -314,17 +315,17 @@ bool contains(vector <T1> v, T2 x)
 
 template <typename T1>
 inline
-double mymean(vector <T1> x)
+double mymean(std::vector <T1> x)
     {return (double)myvecsum(x) / x.size();}
 
 template <typename T1, typename F>
 inline
-double mymean(vector <T1> x, F func)
+double mymean(std::vector <T1> x, F func)
     {return (double)myvecsum(x, func) / x.size();}
 
 template <typename T1, typename T2>
 inline
-double mymean(vector <T1> x, vector <T2> w = {1})
+double mymean(std::vector <T1> x, std::vector <T2> w = {1})
 {   
     if (x.size() != w.size())
     {
@@ -342,7 +343,7 @@ double mymean(vector <T1> x, vector <T2> w = {1})
 
 template <typename T1, typename T2, typename F>
 inline
-double mymean(vector <T1> x, F func, vector <T2> w = {1})
+double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
 {   
     if (w.size () == 1) return mymean(x, func);
 
