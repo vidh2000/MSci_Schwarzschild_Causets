@@ -26,47 +26,77 @@ using std::set;
 using std::unordered_set;
 
 
-/**
- * @brief Causet class.
- * 
- * @param causet: a vector of vectors of integers. //not implemented
- *  Essentially it is the causal matrix where (M)_{i,j}
- *  can take value of 1 if e_j<e_i, 0 if they aren't related and
- *  -1 if e_j<e_i and they are a link.
- * @param pasts: a vector of sets for all elements.
- * 
- * @param pastLinks: a vector of sets containing past links to each element
- */
 // CONSTRUCTORS
-Causet::Causet(){}
-Causet::Causet(vector<vector<double>> Cmatrix, 
-                bool past_links, // = false,
-                bool fut_links) // = false);
-{}
+/**
+ * @brief Construct a new Causet:: Causet object
+ * 
+ * @param Cmatrix 
+ */
+Causet::Causet(vector<vector<int8_t>> Cmatrix)
+{
+    _CMatrix = Cmatrix;
+    _size = Cmatrix.size();
+}
+
+/**
+ * @brief Construct Causet Object.
+ * 
+ * @param Cmatrix 
+ */
+template <typename num>
+Causet::Causet(vector<vector<num>> Cmatrix)
+{
+    _CMatrix = (int8_t)Cmatrix;
+    _size = Cmatrix.size();
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+// SETTERS/GETTERS
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+void Causet::make_cmatrix(){}
+void Causet::make_pasts(){}
+void Causet::make_futures(){}
+void Causet::make_past_links(){}
+void Causet::make_future_links(){}
+
+std::vector<std::vector<int8_t>> Causet::CMatrix(std::vector<int> labels = {})
+{
+    if (!labels.size())
+        {return _CMatrix;}
+    else
+        {return {};}
+}
+int Causet::size() 
+    {return _size;}
+bool Causet::is_CMatrix_special()
+    {return _special_matrix;}
+bool Causet::is_Cij_special()
+    {return _special_matrix;}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // ORDERING FRACTION FUNCTIONS (OVERRIDING FOR TYPES)
+///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 /**
  * @brief   Find the ordering fraction of an interval: 
             The ratio of actual relations over possible ones in such interval.
  * 
- * @param mode: string
-            Use as denominator:
-            - 'choose' -> |A|(|A|-1)/2, i.e. |A| choose 2 (Default).
-            - 'n2'     -> (|A|^2)/2.
+ * @param A Causet : the entire interval. 
+ * @param mode string : Use as denominator:
+- 'choose' -> |A|(|A|-1)/2, i.e. |A| choose 2 (Default).
+- 'n2'     -> (|A|^2)/2.
  *            
- * @return  Ordering fraction of Alexandrov Interval
-            This is nrelations / (N choose 2)
+ * @return  Ordering fraction of Alexandrov Interval. 
+ * This is nrelations / (N choose 2)
  */
-
-/**
- * @brief   Ordering fraction determined for a "Causet" object.
- *          Can either be determined via a matrix or via pasts/futures sets.
- *          See above description above all ord_fr definitions.
- */
-double Causet::ord_fr(Causet A,
-            const char* denominator) // = "choose"
+double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
 {
     if (A._CMatrix.size())
     {
@@ -75,6 +105,10 @@ double Causet::ord_fr(Causet A,
     else if (A._pasts.size())
     {
         return Causet::ord_fr(A._pasts,denominator);
+    }
+    else if (A._futures.size())
+    {
+        return Causet::ord_fr(A._futures,denominator);
     }
     else{
         const char* errormsg = "Provided Causet is empty! Size matters...";
@@ -88,11 +122,13 @@ double Causet::ord_fr(Causet A,
  *          See above description above all ord_fr definitions
  */
 double Causet::ord_fr(vector<vector<int8_t>> M,
-                const char* denominator)// = "choose",
+                        const char* denominator)// = "choose",
 {
-    if (denominator!= "choose" || denominator!= "n2"){
+    if (denominator!= "choose" || denominator!= "n2")
+    {
         throw std::invalid_argument("Param 'denominator' must be \
-                                'choose' or 'n2'");}
+                                'choose' or 'n2'");
+    }
     int N = M.size();
     int nrelations = 0;
     for (int j; j<N; j++){
@@ -107,8 +143,8 @@ double Causet::ord_fr(vector<vector<int8_t>> M,
 }
 
 /**
- * @brief   Ordering fraction determined from sets of futures and pasts.
- *          See above description above all ord_fr definitions
+ * @brief   Ordering fraction determined from sets of pasts (or also futures).
+ *          See above description above all ord_fr definitions. 
  */
 template<typename SET>
 double Causet::ord_fr(vector<SET> A_pasts,
@@ -145,7 +181,9 @@ double Causet::ord_fr(int a, int b,
 
 
 ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Dimension estimator
+///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 /**
  * @brief Use Myrheim-Meyers dimensional estimator to compute the 
@@ -352,6 +390,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     
 }   
 
+
 //=============================================================================
 //=============================================================================
 //REP & SAVE  //===============================================================
@@ -371,12 +410,12 @@ void Causet::saveC(const char* path_file_ext)
     return;
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 //\\ INTERVALS   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
 /**
  * @brief Compute cardinality of causality interval between a and b.
  * 

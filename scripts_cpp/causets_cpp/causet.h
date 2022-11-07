@@ -25,8 +25,6 @@
  * @param size: the number of elements
  * @param dim: the Myrheim Meyer dimension.
  */
-
-
 class Causet
 {
     public:
@@ -42,20 +40,20 @@ class Causet
 
 
         // CONSTRUCTOR
-        Causet();
-        Causet(std::vector<std::vector<double>> Cmatrix, 
-                bool past_links = false, bool fut_links = false);
+        Causet(std::vector<std::vector<int8_t>> Cmatrix = {});
+        
+        template <typename num>
+        Causet(std::vector<std::vector<num>> Cmatrix);
         
 
         //SETTERS/GETTERS
         void make_cmatrix();
-        void make_lmatrix();
         void make_pasts();
         void make_futures();
         void make_past_links();
         void make_future_links();
 
-        std::vector<std::vector<int>> CMatrix(std::vector<int> labels = {});
+        std::vector<std::vector<int8_t>> CMatrix(std::vector<int> labels = {});
         int size();
         bool is_CMatrix_special();
         bool is_Cij_special();

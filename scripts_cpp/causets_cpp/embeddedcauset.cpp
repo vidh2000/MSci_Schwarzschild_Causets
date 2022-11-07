@@ -63,6 +63,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
                                 bool make_sets,// = false,
                                 bool make_links,// = false,
                                 const char* sets_type)// = "past
+                                : Causet()
 {
     _size = coordinates.size();
     _coords = coordinates;
@@ -744,8 +745,6 @@ void EmbeddedCauset::discard(vector<int> labels,
     _size--;
     _dim = 0;
 }
-
-EmbeddedCauset::~EmbeddedCauset() {}
 
 
 
