@@ -48,8 +48,6 @@ class Causet
         Causet ();
         Causet(vector<vector<double>> Cmatrix, 
                 bool past_links = false, bool fut_links = false);
-        Causet(vector<vector<double>> coordinates,
-               const char* method = "pasts");
         
 
         //SETTERS/GETTERS
@@ -112,13 +110,17 @@ class Causet
 
         // MODIFIERS
         void coarsegrain(int card, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true);
+                     bool make_sets = false, bool make_links = true,
+                     int seed = 0);
         void cgrain(int card, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true);
+                     bool make_sets = false, bool make_links = true,
+                     int seed = 0);
         void coarsegrain(double fract, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true);
+                     bool make_sets = false, bool make_links = true,
+                     int seed = 0);
         void cgrain(double fract, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true);
+                     bool make_sets = false, bool make_links = true,
+                     int seed = 0);
 
         void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  

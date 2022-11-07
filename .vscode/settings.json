@@ -111,6 +111,7 @@
         "*.ipp": "cpp",
         "*.tcc": "cpp",
         "string_view": "cpp",
-        "cuchar": "cpp"
+        "rope": "cpp",
+        "slist": "cpp"
     }
 }

@@ -47,17 +47,6 @@ Causet::Causet(vector<vector<double>> Cmatrix,
 {
 
 }
-Causet::Causet(vector<vector<double>> coordinates,
-               const char* method) // = "pasts");
-{
-
-}
-
-Causet::Causet(vector<vector<double>> coordinates,
-                const char* method)
-{
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORDERING FRACTION FUNCTIONS (OVERRIDING FOR TYPES)
@@ -185,6 +174,7 @@ double Causet::MM_drelation(double d)
     double c = 4* std::tgamma(3*d/2);
     return a*b/c;
 }
+
 vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int d0,// = 2,
                                 int Nsamples,// = 20,
@@ -205,12 +195,15 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 
     if (method == "random")
     {
-        while (isample < Nsamples)
+        int fails = 0;
+        int successes = 0;
+
+        while (Nsamples>0)
         {
             if (fails>= 1000 && successes == 0)
             {
                 std::cout << "Found 0/1000 OK Alexandrov intervals. \
-                Causet portion too smol. Returning Dim<0 values.";
+                Causet portion too small. Returning {-1,-1} values.";
                 vector<double> returnerr = {-1,-1};
                 return returnerr;
             }
@@ -223,8 +216,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             std::mt19937 gen(seed);
             std::uniform_real_distribution<> dis(0,*N);
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
-            int a;
-            int b;
+            int a; int b;
             if (e1 == e2){
                 fails += 1;
                 continue;
@@ -250,7 +242,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 if (fr_i ==1)
                 {
                     destimates.push_back(1);
-                    isample +=1;
+                    Nsamples --;
                 }
                 else
                 {
@@ -261,12 +253,12 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                     auto MM_to_solve = [fr_i](double d){
                         return Causet::MM_drelation(d) - fr_i/2;};
 
-                    double dmin = 0.1;
-                    double dmax = 5;
+                    double dmin = 0.75;
+                    double dmax = 10;
                     // Estimate dimension of Causet
                     double d_i = bisection(MM_to_solve,dmin,dmax);
                     destimates.push_back(d_i);
-                    isample +=1;
+                    Nsamples --;
                 }
             }
             else
@@ -317,7 +309,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                         // Estimate dimension of Causet
                         double d_i = bisection(MM_to_solve,dmin,dmax);
                         destimates.push_back(d_i);
-                        isample +=1;
+                        Nsamples --;
                     }
                 }
             }
@@ -348,12 +340,84 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 }   
 
 
+//=============================================================================
+//=============================================================================
+//INTERVALS   //===============================================================
+//=============================================================================
+//=============================================================================
+/**
+ * @brief Compute cardinality of causality interval between a and b.
+ * 
+ * @param a int : label of event a.
+ * @param b int : label of event b
+ * @param includeBoundary bool : innclude a and b in count?
+ * @return int : Cardinality of Interval
+ */
+int IntervalCard(int a, int b, bool includeBoundary)
+{
+    if (a==b)
+        {return 1;}
+    // IF DEFINED USE CMATRIX
+    if (_CMatrix.size())
+    {
+        int Nintersections = 2 * includeBoundary;
+        if (a<b)
+        {
+            for (int i = a+1; i<b; i++)
+                {Ninteresections += _CMatrix[a][i] && _Cmatrix[i][b];}
+        }
+        else
+        {
+            for (int i = b+1; i<a; i++)
+                {Ninteresections += _CMatrix[i][a] && _Cmatrix[b][i];}
+        }
+        return Nintersections;
+    }
+    // ELSE USE SETS
+    else //if ( _pasts.size() && _futures.size())
+    {
+        if (a<b)
+        {
+            int Nintersections = 2 * includeBoundary;
+            if (_futures[a].size()<_pasts[b].size())
+            {
+                for (int e_ai : _futures[a])
+                    {Nintersections += _pasts[b].find(e_ai) !=_pasts[b].end();}
+            }
+            else
+            {
+                for (int e_bi : _pasts[b])
+                    {Nintersections += _futures[a].find(e_bi) !=_futures[a].end();}
+            }
+            return Nintersections;
+        }
+        else /*b<a*/
+        {
+            int Nintersections = 2 * includeBoundary;
+            if (_pasts[a].size()<_futures[b].size())
+            {
+                for (int e_ai : _pasts[a])
+                    {Nintersections += _futures[b].find(e_ai) !=_futures[b].end();}
+            }
+            else
+            {
+                for (int e_bi : _futures[b])
+                    {Nintersections += _pasts[a].find(e_bi) !=_pasts[a].end();}
+            }
+            return Nintersections;
+        }
+    }  
+}
+
+
+
 
 //=============================================================================
 //=============================================================================
 //MODIFIERS   //===============================================================
 //=============================================================================
 //=============================================================================
+
 /**
  * @brief Coarse grain Causet of "card" events.
  * 
@@ -364,31 +428,41 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
  * @param make_links : if true, update _past and/or _future links, if they are 
  * defined
  */
-
 void Causet::coarsegrain(int card, bool make_matrix, 
-                         bool make_sets, bool make_links)
+                         bool make_sets, bool make_links, int seed)
 {
-    vector<int> labels = distinct_randint(card, _size);
+    vector<int> labels = distinct_randint(card, _size, seed);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
 void Causet::cgrain(int card, bool make_matrix, 
-                    bool make_sets, bool make_links)
+                    bool make_sets, bool make_links, int seed)
 {
-    vector<int> labels = distinct_randint(card, _size);
+    vector<int> labels = distinct_randint(card, _size, seed);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
+
+/**
+ * @brief Coarse grain Causet of "fract*_size" events.
+ * 
+ * @param fract : double, fraction of elements to remove
+ * @param make_matrix bool: if true and _CMatrix non-empty, update _CMatrix 
+ * @param make_sets bool: if true, update _pasts and/or _futures, if they are 
+ * defined
+ * @param make_links bool: if true, update _past and/or _future links, if they 
+ * are defined
+ */
 void Causet::coarsegrain(double fract, bool make_matrix, 
-                         bool make_sets, bool make_links)
+                         bool make_sets, bool make_links, int seed)
 {
     int card = fract * _size;
-    vector<int> labels = distinct_randint(card, _size);
+    vector<int> labels = distinct_randint(card, _size, seed);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
 void Causet::cgrain(double fract, bool make_matrix, 
-                    bool make_sets, bool make_links)
+                    bool make_sets, bool make_links, int seed)
 {
     int card = fract * _size;
-    vector<int> labels = distinct_randint(card, _size);
+    vector<int> labels = distinct_randint(card, _size, seed);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
 
@@ -402,8 +476,8 @@ void Causet::cgrain(double fract, bool make_matrix,
  * @param make_links : if true, update _past and/or _future links, if they are 
  * defined
  */
-void Causet::discard(int label, bool make_matrix = true, 
-                bool make_sets = false, bool make_links = true)
+void Causet::discard(int label, bool make_matrix, 
+                     bool make_sets, bool make_links)
 {
     if (make_matrix)
     {
@@ -459,8 +533,8 @@ void Causet::discard(int label, bool make_matrix = true,
  * @param make_links : if true, update _past and/or _future links, if they are 
  * defined
  */
-void Causet::discard(vector<int> labels, bool make_matrix = true, 
-                bool make_sets = false, bool make_links = true)
+void Causet::discard(vector<int> labels, bool make_matrix, 
+                    bool make_sets, bool make_links)
 {
     if (make_matrix)
     {
