@@ -123,19 +123,7 @@ class Causet
         void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
         void discard(vector<int> labels, bool make_matrix = true, 
-                     bool make_sets = false, bool make_links = true);
-        
-        static void discard_from_set(unordered_set<int> &myset, int label);
-        template<typename m>
-        static void discard_from_set(unordered_set<m> &myset, 
-                                        vector<int> labels);
-        
-        static vector<int> distinct_int_random (int card, int N, seed = 0);
-        static vector<int> distinct_int_random1(int card, int N, seed = 0);
-        static vector<int> distinct_int_random2(int card, int N, seed = 0);
-        
-
-
+                     bool make_sets = false, bool make_links = true);     
 };
 
 #endif /*CAUSET_H*/
