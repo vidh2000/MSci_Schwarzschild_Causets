@@ -19,15 +19,17 @@
 
 #include "shapes.h"
 
-# define M_PI           3.14159265358979323846  /* pi */
+#define M_PI           3.14159265358979323846  /* pi */
 
-CoordinateShape::CoordinateShape(int dim=4, char name='diamond', 
-                                std::vector<double> center = {},
-                                double radius   = 1,
-                                double edge     = 1,
-                                std::vector<double> edges = {},
-                                double hollow   = 0,
-                                double duration = 2)
+using std::vector;
+
+CoordinateShape::CoordinateShape(int dim, const char* name, 
+                                vector<double> center,
+                                double radius,
+                                double edge,
+                                vector<double> edges,
+                                double hollow,
+                                double duration)
 /**
  * @brief Sets the embedding shape, but does not adjust event coordinates.
         The dimension parameter dim must be an integer greater than zero.
@@ -77,17 +79,18 @@ CoordinateShape::CoordinateShape(int dim=4, char name='diamond',
     _dim = dim;
 
     // Set Name
-    name = (name == 'diamond') ? 'bicone' : name;
-    if (name!='ball' || name!='bicone' || name!='cylinder'
-     || name!='cube' || name!='cuboid')
+    name = (name == "diamond") ? "bicone" : name;
+    if (name!="ball" || name!="bicone" || name!="cylinder"
+     || name!="cube" || name!="cuboid")
      { 
-        std::string dim_error = "The given shape is " + name; 
+        std::string dim_error = "The given shape is ";
+        dim_error += name; 
         throw std::invalid_argument(dim_error + " and not supported!");
      }
     _name = name;
 
     // Set Center
-    std::vector<double> zero_center (_dim, 0.0);
+    vector<double> zero_center (_dim, 0.0);
     if (center.size() == dim)
         {_center = center;}
     else if (center.size() == 0)
@@ -97,7 +100,7 @@ CoordinateShape::CoordinateShape(int dim=4, char name='diamond',
     
     
     // Set Shape Parameters
-    if (name == 'ball' or name == 'bicone')
+    if (name == "ball" or name == "bicone")
     {
         _params.insert({"radius", radius}); 
         this->param_rangecheck("radius");
@@ -105,7 +108,7 @@ CoordinateShape::CoordinateShape(int dim=4, char name='diamond',
         _params.insert({"hollow", hollow}); 
         this->param_rangecheck("hollow", 1.0, true);
     }
-    else if (name == 'cylinder')
+    else if (name == "cylinder")
     {
         _params.insert({"radius", radius}); 
         this->param_rangecheck("radius");
@@ -116,14 +119,14 @@ CoordinateShape::CoordinateShape(int dim=4, char name='diamond',
         _params.insert({"duration", duration}); 
         this->param_rangecheck("duration");   
     }
-    else if (name == 'cube')
+    else if (name == "cube")
     {
         _params.insert({"edge", edge}); 
         this->param_rangecheck("edge"); 
     }
-    else if (name == 'cuboid')
+    else if (name == "cuboid")
     {
-        std::vector my_edges (_dim, 1.0);
+        vector my_edges (_dim, 1.0);
         if (edges.size() != 0 && edges.size() != _dim)
             {throw std::invalid_argument("Cuboid's |edges| neither 0 nor _dim");}
         else if (edges.size() == 0)
@@ -180,13 +183,13 @@ double CoordinateShape::Parameter (const char* key)
     {return _params.find(key)->second;}
 
 
-std::vector<double> CoordinateShape::Edges ()
+vector<double> CoordinateShape::Edges ()
 /**
  * @brief Return value of [0, _dim-1] edges.
  * @exception Raise error if undefined.
  */
 {
-    std::vector<double> edges (_dim);
+    vector<double> edges (_dim);
     for (int i = 0; i<_dim; i++)
     {
         std::string key_s = "edge_"+to_string(i);
@@ -204,7 +207,7 @@ double CoordinateShape::Volume()
 {
     if (_volume != 0)
         {return _volume;}
-    else if (_name == 'ball')
+    else if (_name == "ball")
     {
         double r = this->Parameter("radius");
         _volume  = std::pow(r, _dim); //for now
@@ -212,7 +215,7 @@ double CoordinateShape::Volume()
         _volume -= (h_fr>0)? std::pow(h_fr*r, _dim) : 0.0;
         _volume *= std::pow(M_PI, _dim/2) / std::tgamma(_dim/2 +1);
     }
-    else if (_name == 'cylinder')
+    else if (_name == "cylinder")
     {
         double r = this->Parameter("radius");
         _volume  = std::pow(r, _dim-1); //for now
@@ -221,7 +224,7 @@ double CoordinateShape::Volume()
         _volume *= std::pow(M_PI, _dim/2 -0.5) / std::tgamma(_dim/2 +0.5);
         _volume *= this->Parameter("duration");
     }
-    else if (_name == 'bicone')
+    else if (_name == "bicone")
     {
         double r = this->Parameter("radius");
         _volume  = std::pow(r, _dim); //for now
@@ -230,11 +233,11 @@ double CoordinateShape::Volume()
         _volume *= std::pow(M_PI, _dim/2 -0.5) / std::tgamma(_dim/2 +0.5);
         _volume *= 2/_dim;
     }
-    else if (_name == 'cube')
+    else if (_name == "cube")
     {
         _volume = std::pow(this->Parameter("edge"), _dim);
     }
-    else if (_name == 'cuboid')
+    else if (_name == "cuboid")
     {
         _volume = 1;
         for (int i = 0; i<_dim; i++)
@@ -248,7 +251,7 @@ double CoordinateShape::Volume()
 }
 
 
-std::vector<double> CoordinateShape::Limits(int dim)
+vector<double> CoordinateShape::Limits(int dim)
 /**
  * @brief Returns a vector<double> for the minimum (left) and maximum (right) 
  *        of a shape along coordinate dimension 'dim' (0-indexed).
@@ -260,15 +263,15 @@ std::vector<double> CoordinateShape::Limits(int dim)
                                + "[0, " + to_string(_dim)+" ]!");
     }
     double l = 0;
-    if ((dim == 0) && (_name == 'cylinder'))
+    if ((dim == 0) && (_name == "cylinder"))
         {l = this->Parameter("duration") /2;}
-    else if (_name == 'cube')
+    else if (_name == "cube")
         {l = this->Parameter("edge") /2;}
-    else if (_name == 'cuboid')
+    else if (_name == "cuboid")
         {l = this->Parameter(("edge_"+to_string(dim)).c_str()) /2;}
     else
         {l = this->Parameter("radius");}
     double shift = _center[dim];
-    std::vector<double> limits = {-l + shift, l + shift};
+    vector<double> limits = {-l + shift, l + shift};
     return limits; 
 }

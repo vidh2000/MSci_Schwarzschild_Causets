@@ -1,5 +1,4 @@
 #include <algorithm>
-//#include <boost/>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -110,9 +109,7 @@ for (int i = 0; i<frs.size(); i++)
 
 }
 
-
-
-}
+} /*end main*/
 
     
 
