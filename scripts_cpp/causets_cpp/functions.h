@@ -183,14 +183,14 @@ void discard_from_set(unordered_set<int> &myset, int label)
 template<typename m>
 void discard_from_set(unordered_set<m> &myset, vector<int> labels)
 {
-    labels.sort();
+    std::sort(labels.begin(),labels.end());
     int N = myset.size();
     unordered_set<m> buffer;
     int startpoint = 0;
     for (m j : myset) //not ordered
     {
         if (j>labels[-1])
-            {buffer.insert[j-labels.size()];}
+            {buffer.insert(j-labels.size());}
         else
         {
             for (int s = 0; s<labels.size(); s++)
@@ -198,7 +198,7 @@ void discard_from_set(unordered_set<m> &myset, vector<int> labels)
                     if (labels[s] == j)
                         {break;}
                     else if (labels[s] > j)
-                        {buffer.insert[j-s]; break;}
+                        {buffer.insert(j-s); break;}
                 }
         }
     }

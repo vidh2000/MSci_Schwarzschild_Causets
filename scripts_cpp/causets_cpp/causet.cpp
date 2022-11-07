@@ -173,15 +173,18 @@ double Causet::ord_fr(int a, int b,
         - dimension estimate: float
         - dimension std: float
  */
+
 double Causet::MM_drelation(double d)
+    /*
+    Dimension function to be solved for with
+    order fraction for MM-dimension estimation.
+    */
 {
     double a = std::tgamma(d+1);
     double b = std::tgamma(d/2);
     double c = 4* std::tgamma(3*d/2);
     return a*b/c;
 }
-
-
 vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int d0,// = 2,
                                 int Nsamples,// = 20,
@@ -190,9 +193,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 {
     std::cout << "NOTE: MMd works only in flat spacetime" << std::endl;
 
-    auto MM_to_solve = [](double d, double ord_fr){
-        return Causet::MM_drelation(d) - ord_fr/2;
-        };
     
     // Variables to be used
     int* N = &_size;
@@ -253,11 +253,17 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 }
                 else
                 {
-                    double fr_i = fr_i * (n-1)/n; //correction for MMestimator
-                    double min = 0;
-                    double max = 5;
+                    //Order fraction correction for MMestimator
+                    double fr_i = fr_i * (n-1)/n;
+
+                    // Define function whose root needs to be found
+                    auto MM_to_solve = [fr_i](double d){
+                        return Causet::MM_drelation(d) - fr_i/2;};
+
+                    double dmin = 0.1;
+                    double dmax = 5;
                     // Estimate dimension of Causet
-                    double d_i = bisect(min,max,......);
+                    double d_i = bisection(MM_to_solve,dmin,dmax);
                     destimates.push_back(d_i);
                     isample +=1;
                 }
@@ -298,12 +304,19 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                     }
                     else
                     {
-                        double fr_i = fr_i * (n-1)/n; //correction for MMestimator
-                        double min = 0;
-                        double max = 5;
+                        //Order fraction correction for MMestimator
+                        double fr_i = fr_i * (n-1)/n;
+
+                        // Define function whose root needs to be found
+                        auto MM_to_solve = [fr_i](double d){
+                            return Causet::MM_drelation(d) - fr_i/2;};
+
+                        double dmin = 0.1;
+                        double dmax = 5;
                         // Estimate dimension of Causet
-                        double d_i = bisect(min,max,......);
+                        double d_i = bisection(MM_to_solve,dmin,dmax);
                         destimates.push_back(d_i);
+                        isample +=1;
                     }
                 }
             }
