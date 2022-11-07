@@ -29,9 +29,9 @@ class EmbeddedCauset: public Causet
         // vector<std::unordered_set<int>> _futures = {};
         // vector<std::unordered_set<int>> _past_links   = {};
         // vector<std::unordered_set<int>> _future_links = {};
-        std::vector<std::vector<double>> _coords;
-        CoordinateShape _shape;
-        Spacetime _spacetime;
+        std::vector<std::vector<double>> _coords = {};
+        CoordinateShape _shape = CoordinateShape();
+        Spacetime _spacetime = FlatSpacetime();
 
         // CONSTRUCTORS
         EmbeddedCauset();
