@@ -12,7 +12,7 @@
 #include <set>
 #include <stack>
 #include <stdio.h>
-#include <stdlib.h>     /* abs */
+#include <stdlib.h>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -56,15 +56,15 @@ std::vector<std::vector<double>> generate_2Dvector(int rows, int cols,
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
 inline
-std::vector<int> distinct_randint1(int size, int N, int seed)
+std::vector<int> distinct_randint1(int size, int N, int seed=0)
 {
     std::vector<int> result;
     result.resize(size);
-    if (!seed)
-    {
+
+    if (!seed){
         std::random_device rd;
-        seed = rd();
-    }  
+        seed = rd();}
+
     std::mt19937 gen(seed);
     std::uniform_real_distribution<> dis(0,1.0);
     
