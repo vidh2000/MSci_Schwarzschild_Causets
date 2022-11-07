@@ -20,7 +20,7 @@
 
 
 #include "functions.h"
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 #include "causet.h"
 #include "embeddedcauset.h"
 #include "sprinkledcauset.h"
@@ -174,8 +174,10 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
     // Define mersenne_twister_engine Random Generator (with seed)
     if (seed==0)
-        {std::random_device rd;
-        seed = rd();}  
+    {
+        std::random_device rd;
+        seed = rd();
+    }  
     std::mt19937 gen(seed);
 
     

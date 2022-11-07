@@ -14,6 +14,11 @@
 #include <set>
 #include <unordered_set>
 
+using std::vector;
+using std::set;
+using std::unordered_set;
+
+
 template <typename obj>  
 inline
 void print_set(std::set<obj> set)
@@ -103,6 +108,46 @@ num setmin(std::set<num> my_set)
  
     // return the minimum element
     return min_element;
+}
+
+
+void discard_from_set(unordered_set<int> &myset, int label)
+{
+    int N = myset.size();
+    unordered_set<int> buffer;
+    for (int j : myset)
+    {
+        if (j<label)
+            {buffer.insert(j);}
+        if (j>label)
+            {buffer.insert(j-1);}
+    }
+    myset = buffer;
+}
+
+template<typename m>
+void discard_from_set(unordered_set<m> &myset, vector<int> labels)
+{
+    labels.sort();
+    int N = myset.size();
+    unordered_set<m> buffer;
+    int startpoint = 0;
+    for (m j : myset) //not ordered
+    {
+        if (j>labels[-1])
+            {buffer.insert[j-labels.size()];}
+        else
+        {
+            for (int s = 0; s<labels.size(); s++)
+                {
+                    if (labels[s] == j)
+                        {break;}
+                    else if (labels[s] > j)
+                        {buffer.insert[j-s]; break;}
+                }
+        }
+    }
+    myset = buffer;
 }
 
 

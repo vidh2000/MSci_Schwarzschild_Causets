@@ -4,33 +4,42 @@
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <fstream>
+#include <numeric>
+#include <set>
 #include <stack>
-#include <string>
 #include <stdio.h>
+#include <stdexcept>
+#include <string>
 #include <vector>
-#include <random>
 
 using namespace std;
 
 
-vector<vector<double>> generate_2Dvector(
-        int rows, int cols, double min, double max)
-    /*
-    Generates a matrix of size (rows, cols) with
-    random entries lying in range [min,max]
-    */
+//_____________________________________________________________________
+//
+//---------------------------------------------------------------------
+// RANDOM GENERATORS FUNCTIONS
+//---------------------------------------------------------------------
+//_____________________________________________________________________
+/*
+ *  Generates a matrix of size (rows, cols) with
+ *  random entries lying in range [min,max]
+*/
+inline
+vector<vector<double>> generate_2Dvector(int rows, int cols, 
+                                         double min, double max)
 {
     srand(time(0)); // to generate pseudo random numbers each time
     vector<std::vector<double>> matrix;
     matrix.resize(rows);
     
     // Random generator stuff
-    random_device rd;  
-    mt19937 gen(rd()); 
-    uniform_real_distribution<> dis(0,1.0);
+    std::random_device rd;  
+    std::mt19937 gen(rd()); 
+    std::uniform_real_distribution<> dis(0,1.0);
 
     for(int i=0; i<rows; i++)
     {
@@ -42,10 +51,69 @@ vector<vector<double>> generate_2Dvector(
     return matrix;
 }
 
+/**
+ * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
+ */
+inline
+vector<int> distinct_randint(int size, int N, int seed)
+{
+    if (size < N/2) {return distinct_randint1(size, N, seed);}
+    else {return distinct_randint2(size, N, seed);}
+}
+
+
+/**
+ * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
+ */
+inline
+vector<int> distinct_randint1(int size, int N, int seed)
+{
+    vector<int> result(size);
+    if (!seed)
+    {
+        std::random_device rd;
+        seed = rd();
+    }  
+    std::mt19937 gen(seed);
+    std::uniform_real_distribution<> dis(0,1.0);
+    
+    for(int i = 0; i < size; ++i)
+    {
+    int r;
+    while(std::find(result.begin(), result.end(), r) != result.end())
+    {
+        r = dis(gen) * N;
+        result[i] = r;   
+    }
+    return result;
+}
+
+/**
+ * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
+ */
+inline
+vector<int> distinct_randint2(int size, int N, int seed)
+{
+    vector<int> result(N);
+    if (!seed)
+        {
+         std::random_device rd;
+         seed = rd();
+        }
+    for(int i = 0; i < N; ++i)
+        {result[i] = i;}
+    auto rng = std::default_random_engine{seed};
+
+    std::shuffle(std::begin(resul), std::end(result), rng);
+    result = result.resize(size);
+    return result;
+}
+
+
 //_____________________________________________________________________
 //
 //---------------------------------------------------------------------
-// VECTORS ADDITIONAL FUNCTIONS
+// CLASSIC FUNCTIONS
 //---------------------------------------------------------------------
 //_____________________________________________________________________
 //From https://thispointer.com/cpp-vector-print-all-elements/
@@ -225,6 +293,69 @@ bool contains(vector <T1> v, T2 x)
     {return std::find(v.begin(), v.end(), x) != v.end();}
 
 
+//_____________________________________________________________________
+//
+//---------------------------------------------------------------------
+// VECTOR MATH FUNCTIONS
+//---------------------------------------------------------------------
+//_____________________________________________________________________
+
+template <typename T1>
+inline
+double mymean(vector <T1> x)
+    {return (double)myvecsum(x) / x.size();}
+
+template <typename T1, typename F>
+inline
+double mymean(vector <T1> x, F func)
+    {return (double)myvecsum(x, func) / x.size();}
+
+template <typename T1, typename T2>
+inline
+double mymean(vector <T1> x, vector <T2> w = {1})
+{   
+    if (x.size() != w.size())
+    {
+        throw std::invalid_argument
+        ("vector and weight have different sizes: "
+        +to_string(x.size()) +" and " 
+        +to_string(w.size()) + "!");
+    }
+    T2 sumw = myvecsum(w);
+    double mean = 0;
+    for (int i = 0; i < x.size(); i++)
+        {mean += (double) x[i] * w[i] / sumw;}
+    return mean;
+}
+
+template <typename T1, typename T2, typename F>
+inline
+double mymean(vector <T1> x, F func, vector <T2> w = {1})
+{   
+    if (w.size () == 1) return mymean(x, func);
+
+    else if (x.size() != w.size())
+    {
+        throw std::invalid_argument
+        ("vector and weight have different sizes: "
+        +to_string(x.size()) +" and " 
+        +to_string(w.size()) + "!");
+    }
+
+    T2 sumw = myvecsum(w);
+    double mean = 0;
+    for (int i = 0; i < x.size(); i++)
+        {mean += (double) func(x[i]) * w[i];}
+    return (double) mean / sumw;
+}
+
+
+//_____________________________________________________________________
+//
+//---------------------------------------------------------------------
+// ADVANCED FUNCTIONS
+//---------------------------------------------------------------------
+//_____________________________________________________________________
 template <typename T1, typename T2>
 inline
 vector <T1> getAwhereB(vector<T1> v1, vector<T2> v2, T2 x)
@@ -449,61 +580,7 @@ std::vector<T> linspace(T a, T b, size_t N) {
     return xs;
 }
 
-//_____________________________________________________________________
-//
-//---------------------------------------------------------------------
-// PROPER VECTOR MATH FUNCTIONS
-//---------------------------------------------------------------------
-//_____________________________________________________________________
 
-template <typename T1>
-inline
-double mymean(vector <T1> x)
-    {return (double)myvecsum(x) / x.size();}
-
-template <typename T1, typename F>
-inline
-double mymean(vector <T1> x, F func)
-    {return (double)myvecsum(x, func) / x.size();}
-
-template <typename T1, typename T2>
-inline
-double mymean(vector <T1> x, vector <T2> w = {1})
-{   
-    if (x.size() != w.size())
-    {
-        throw std::invalid_argument
-        ("vector and weight have different sizes: "
-        +to_string(x.size()) +" and " 
-        +to_string(w.size()) + "!");
-    }
-    T2 sumw = myvecsum(w);
-    double mean = 0;
-    for (int i = 0; i < x.size(); i++)
-        {mean += (double) x[i] * w[i] / sumw;}
-    return mean;
-}
-
-template <typename T1, typename T2, typename F>
-inline
-double mymean(vector <T1> x, F func, vector <T2> w = {1})
-{   
-    if (w.size () == 1) return mymean(x, func);
-
-    else if (x.size() != w.size())
-    {
-        throw std::invalid_argument
-        ("vector and weight have different sizes: "
-        +to_string(x.size()) +" and " 
-        +to_string(w.size()) + "!");
-    }
-
-    T2 sumw = myvecsum(w);
-    double mean = 0;
-    for (int i = 0; i < x.size(); i++)
-        {mean += (double) func(x[i]) * w[i];}
-    return (double) mean / sumw;
-}
 
 
 /*
@@ -536,15 +613,14 @@ double cumulative (vector <T> v, bool norm = true)
 }*/
 
 
-template <typename T>
-inline
-int get_sign (T x)
-{
-    return (x > 0) - (x < 0);
-}
 
-struct Point
-        {double x, y;};
+
+//_____________________________________________________________________
+//
+//---------------------------------------------------------------------
+// GEOMETRY
+//---------------------------------------------------------------------
+//_____________________________________________________________________
 
 
 /*
@@ -676,6 +752,15 @@ double Shoelace (vector<vector<T>> posvec)
 // ADDITIONAL STUFF YOU ARE LIKELY TO NEVER USE 
 // BUT THEY ARE USED INSIDE SOME OF ABOVE FUNCTIONS
 /////////////////////////////////////////////////////////////////////////
+template <typename T>
+inline
+int get_sign (T x)
+{
+    return (x > 0) - (x < 0);
+}
+
+struct Point
+    {double x, y;};
 
 // A utility function to find next to top in a stack
 inline

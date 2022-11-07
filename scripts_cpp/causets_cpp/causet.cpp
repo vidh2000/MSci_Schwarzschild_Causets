@@ -18,7 +18,7 @@
 #include <random>
 
 #include "functions.h"
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 #include "causet.h"
 
 using std::vector;
@@ -354,29 +354,30 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 void Causet::coarsegrain(int card, bool make_matrix, 
                          bool make_sets, bool make_links)
 {
-    vector<int> labels = Causet::distinct_int_random(card, _size);
+    vector<int> labels = distinct_randint(card, _size);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
 void Causet::cgrain(int card, bool make_matrix, 
                     bool make_sets, bool make_links)
 {
-    vector<int> labels = Causet::distinct_int_random(card, _size);
+    vector<int> labels = distinct_randint(card, _size);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
 void Causet::coarsegrain(double fract, bool make_matrix, 
                          bool make_sets, bool make_links)
 {
     int card = fract * _size;
-    vector<int> labels = Causet::distinct_int_random(card, _size);
+    vector<int> labels = distinct_randint(card, _size);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
 void Causet::cgrain(double fract, bool make_matrix, 
                     bool make_sets, bool make_links)
 {
     int card = fract * _size;
-    vector<int> labels = Causet::distinct_int_random(card, _size);
+    vector<int> labels = distinct_randint(card, _size);
     this->discard(labels, make_matrix, make_sets, make_links); 
 }
+
 /**
  * @brief Discard event number "label" (from 0 to N-1)
  * 
@@ -405,13 +406,13 @@ void Causet::discard(int label, bool make_matrix = true,
         {
             _pasts.erase(_pasts.begin()+label);
             for (unordered_set<int> past_i : _pasts)
-                {Causet::discard_from_set(past_i, label);}
+                {discard_from_set(past_i, label);}
         } 
         if (_futures.size())
         {
             _futures.erase(_futures.begin()+label);
             for (unordered_set<int> fut_i : _futures)
-                {Causet::discard_from_set(fut_i, label);}
+                {discard_from_set(fut_i, label);}
         }   
     }
     if (make_links)
@@ -420,13 +421,13 @@ void Causet::discard(int label, bool make_matrix = true,
         {
             _past_links.erase(_past_links.begin()+label);
             for (unordered_set<int> plinks_i : _past_links)
-                {Causet::discard_from_set(plinks_i, label);}
+                {discard_from_set(plinks_i, label);}
         } 
         if (_future_links.size())
         {
             _future_links.erase(_future_links.begin()+label);
             for (unordered_set<int> flinks_i : _future_links)
-                {Causet::discard_from_set(flinks_i, label);}
+                {discard_from_set(flinks_i, label);}
         }   
     }
     _size--;
@@ -462,13 +463,13 @@ void Causet::discard(vector<int> labels, bool make_matrix = true,
         {
             remove_indices(_pasts, labels);
             for (unordered_set<int> past_i : _pasts)
-                {Causet::discard_from_set(past_i, labels);}
+                {discard_from_set(past_i, labels);}
         } 
         if (_futures.size())
         {
             remove_indices(_futures, labels);
             for (unordered_set<int> fut_i : _futures)
-                {Causet::discard_from_set(fut_i, labels);}
+                {discard_from_set(fut_i, labels);}
         }   
     }
     if (make_links)
@@ -477,13 +478,13 @@ void Causet::discard(vector<int> labels, bool make_matrix = true,
         {
             remove_indices(_past_links, labels);
             for (unordered_set<int> plinks_i : _past_links)
-                {Causet::discard_from_set(plinks_i, labels);}
+                {discard_from_set(plinks_i, labels);}
         } 
         if (_future_links.size())
         {
             remove_indices(_future_links, labels);
             for (unordered_set<int> flinks_i : _future_links)
-                {Causet::discard_from_set(flinks_i, labels);}
+                {discard_from_set(flinks_i, labels);}
         }   
     }
     _size--;
@@ -491,94 +492,4 @@ void Causet::discard(vector<int> labels, bool make_matrix = true,
 } 
 
 
-void Causet::discard_from_set(unordered_set<int> &myset, int label)
-{
-    int N = myset.size();
-    unordered_set<int> buffer;
-    for (int j : myset)
-    {
-        if (j<label)
-            {buffer.insert(j);}
-        if (j>label)
-            {buffer.insert(j-1);}
-    }
-    myset = buffer;
-}
 
-template<typename m>
-void Causet::discard_from_set(unordered_set<m> &myset, vector<int> labels)
-{
-    labels.sort();
-    int N = myset.size();
-    unordered_set<m> buffer;
-    int startpoint = 0;
-    for (m j : myset) //not ordered
-    {
-        if (j>labels[-1])
-            {buffer.insert[j-labels.size()];}
-        else
-        {
-            for (int s = 0; s<labels.size(); s++)
-                {
-                    if (labels[s] == j)
-                        {break;}
-                    else if (labels[s] > j)
-                        {buffer.insert[j-s]; break;}
-                }
-        }
-    }
-    myset = buffer;
-}
-
-
-/**
- * @brief Generate "size" random ints between 0 and N-1.
- */
-vector<int> Causet::distinct_int_random(int size, int N, int seed)
-{
-    if (size < N/2) {return distinct_int_random1(size, N, seed);}
-    else {return distinct_int_random2(size, N, seed);}
-}
-
-
-/**
- * @brief Generate "size" random ints between 0 and N-1.
- */
-vector<int> Causet::distinct_int_random1(int size, int N, int seed)
-{
-    vector<int> result(size);
-    if (!seed)
-        {
-         auto rd = std::random_device {};
-         seed = rd();
-        }
-    for(int i = 0; i < size; ++i)
-    {
-    int r;
-    while(std::find(result.begin(), result.end(), r) != result.end())
-    {
-        r = rand(seed)%N;
-        result[i] = r;   
-    }
-    return result;
-}
-
-/**
- * @brief Generate "size" random ints between 0 and N-1.
- */
-vector<int> Causet::distinct_int_random2(int size, int N, int seed)
-{
-    vector<int> result(N);
-    if (!seed)
-        {
-         auto rd = std::random_device {};
-         seed = rd();
-        }
-    for(int i = 0; i < N; ++i)
-        {result[i] = i;}
-    auto rng = std::default_random_engine{seed};
-
-    std::shuffle(std::begin(resul), std::end(result), rng);
-    result = result.resize(size);
-    return result;
-}

@@ -15,7 +15,7 @@
 #include "shapes.h"
 #include "spacetimes.h"
 #include "functions.h"
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 
 /*============================================================================
 * ============================================================================

@@ -12,7 +12,7 @@
                 "_UNICODE"
             ],
             //"windowsSdkVersion": "10.0.19041.0",
-            "compilerPath": "C:/Program Files/MinGW-W64/bin/gcc.exe",
+            "compilerPath": "C:/Program Files/MinGW-W64/bin/g++.exe",
             "cStandard": "c17",
             "intelliSenseMode": "windows-gcc-x64",
             "cppStandard": "c++17"

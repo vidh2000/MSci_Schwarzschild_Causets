@@ -18,7 +18,7 @@
 // Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project\Project\causets_code\causets_cpp\"header".h...
 
 #include "functions.h"
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 #include "causetevent.h"
 #include "causet.h"
 

@@ -20,7 +20,7 @@
 
 
 #include "functions.h"
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 //#include "causet.h"
 #include "embeddedcauset.h"
 //#include "shapes.h"

@@ -11,7 +11,7 @@
 #include <set>
 
 #include "functions.h"
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 using namespace std;
 
 int main()

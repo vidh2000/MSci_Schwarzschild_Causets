@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "MyVecFunctions.h"
+#include "vecfunctions.h"
 #include "functions.h"
 
 #include "shapes.h"
