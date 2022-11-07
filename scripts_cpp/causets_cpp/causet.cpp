@@ -91,7 +91,8 @@ double Causet::ord_fr(vector<vector<int8_t>> A,
                 const char* denominator,// = "choose",
                 bool isdisjoined)// = true);
 {
-    
+    double ord_fr = 1.0;
+    return ord_fr; 
 }
 
 /**
@@ -104,14 +105,8 @@ double Causet::ord_fr(vector<SET> A_futures,
                 const char* denominator,// = "choose",
                 bool isdisjoined)// = true);
 {
-    if (_CMatrix.size())
-    {
-
-    }
-    else if (_pasts.size())
-    {
-        
-    }
+    double ord_fr = 1.0;
+    return ord_fr; 
 }
 
 /**
@@ -124,7 +119,8 @@ double Causet::ord_fr(vector<SET> A_futures,
 double Causet::ord_fr(int a, int b,
                 const char* denominator)// = "choose"
 {
-
+    double ord_fr = 1.0;
+    return ord_fr; 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -188,12 +184,11 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     int* N = &_size;
     vector<double> destimates;
     
-    // Track looping
-    int fails = 0;
-    int successes = 0;
 
     if (method == "random")
     {
+        int fails = 0;
+        int successes = 0;
         while (Nsamples>0)
         {
             if (fails>= 1000 && successes == 0)
@@ -205,6 +200,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             }
 
             // Pick two random elements
+            
 
             // Define mersenne_twister_engine Random Gen. (with random seed)
             std::random_device rd;
@@ -349,7 +345,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
  * @param includeBoundary bool : innclude a and b in count?
  * @return int : Cardinality of Interval
  */
-int IntervalCard(int a, int b, bool includeBoundary)
+int Causet::IntervalCard(int a, int b, bool includeBoundary)
 {
     if (a==b)
         {return 1;}
@@ -360,12 +356,12 @@ int IntervalCard(int a, int b, bool includeBoundary)
         if (a<b)
         {
             for (int i = a+1; i<b; i++)
-                {Ninteresections += _CMatrix[a][i] && _Cmatrix[i][b];}
+                {Nintersections += _CMatrix[a][i] && _CMatrix[i][b];}
         }
         else
         {
             for (int i = b+1; i<a; i++)
-                {Ninteresections += _CMatrix[i][a] && _Cmatrix[b][i];}
+                {Nintersections += _CMatrix[i][a] && _CMatrix[b][i];}
         }
         return Nintersections;
     }
@@ -576,5 +572,8 @@ void Causet::discard(vector<int> labels, bool make_matrix,
 } 
 
 
+int main(){
 
+    std::cout << "causet.cpp WORKS!" << std::endl;
+}
 

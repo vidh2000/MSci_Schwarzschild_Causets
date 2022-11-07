@@ -59,7 +59,7 @@ vector<vector<double>> generate_2Dvector(int rows, int cols,
  */
 inline
 vector<int> distinct_randint1(int size, int N, int seed)
-{
+{   
     vector<int> result(size);
     if (!seed)
     {
