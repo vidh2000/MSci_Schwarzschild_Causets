@@ -36,7 +36,7 @@ using std::unordered_set;
 //CONSTRUCTORS  //=============================================================
 //=============================================================================
 //=============================================================================
-EmbeddedCauset::EmbeddedCauset() {}
+EmbeddedCauset::EmbeddedCauset(){}
 
 /**
  * @brief Embed given coordinates in a causet.

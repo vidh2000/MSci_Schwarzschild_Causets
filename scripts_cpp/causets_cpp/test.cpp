@@ -17,17 +17,15 @@
 
 #include "functions.h"
 #include "vecfunctions.h"
-#include "causet.h"
-#include "embeddedcauset.h"
-#include "shapes.h"
-#include "spacetimes.h"
-
-using std::vector;
-//njnljnòmòm
+//#include "causet.h"
+//#include "embeddedcauset.h"
+//#include "shapes.h"
+//#include "spacetimes.h"
 
 
-int main() {
-std::cout << "Hello World 4" << std::endl;
+
+int main(){
+std::cout << "Hello World" << std::endl;
 
 
 /*
