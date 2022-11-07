@@ -19,6 +19,57 @@ using std::set;
 using std::unordered_set;
 
 
+/**
+ * @brief 
+ * 
+ * @tparam F :      function/method returning a double
+ * @param f:        the function name whose roots we're searching for
+ * @param xleft:    the left boundary of search
+ * @param xright:   the right boundary of search
+ * @param epsilon:  the allowed uncertainty (error) in the result 
+ * @param Nstop:    the upper limit of iterations
+ * @return double 
+ */
+template <typename F>
+inline
+double bisection (F f, double xleft, double xright, double epsilon = 1e-8, 
+                  int Nstop = 1000)
+{
+  double fl = f(xleft);
+  double fr = f(xright);
+  double xnew;
+  double fnew;
+
+  int counter = 0;
+  double e = 1;
+  while (e > epsilon && counter < Nstop)
+  {
+      xnew = (xleft + xright) /2;
+      fnew = f(xnew);
+      if (fnew * fl > 0)
+      {
+        e = xnew-xleft;
+        xleft = xnew*1.0;
+      }
+      else
+      {
+        e = xright-xnew;
+        xright = xnew*1.0;
+      }
+      counter ++;
+  }
+  return xnew;
+}
+
+inline
+double MM_drelation(double d)
+{
+    double a = std::tgamma(d+1);
+    double b = std::tgamma(d/2);
+    double c = 4* std::tgamma(3*d/2);
+    return a*b/c;
+}
+
 template <typename obj>  
 inline
 void print_set(std::set<obj> set)
