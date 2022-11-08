@@ -45,13 +45,11 @@ auto start = high_resolution_clock::now();
 // std::set<int> s = set_intersection(s1,s2);
 // print_set(s);
 
-int b=0;
-{std::cout<<!b<<std::endl;}
 
 std::vector<int> a;
-a = distinct_randint(2500,10000);
-print_vector(a);
-
+a = distinct_randint(100000,1000000);
+//print_vector(a);
+std::cout << a[1000] << std::endl;
 /*
 int DIM = 4;
 int N = 10000;
