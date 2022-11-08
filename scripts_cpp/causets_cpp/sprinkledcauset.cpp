@@ -19,14 +19,13 @@
 
 //using namespace std::chrono;
 
-
-#include "functions.h"
-#include "vecfunctions.h"
-#include "causet.h"
 #include "embeddedcauset.h"
 #include "sprinkledcauset.h"
-#include "shapes.h"
-#include "spacetimes.h"
+//#include "functions.h"
+//#include "vecfunctions.h"
+//#include "causet.h"
+//#include "shapes.h"
+//#include "spacetimes.h"
 
 using std::vector;
 using std::set;
@@ -70,7 +69,8 @@ SprinkledCauset::SprinkledCauset(int card,
                                  bool make_sets,// = false,
                                  bool make_links,// = false,
                                  const char* sets_type,// = "past",
-                                 int seed)// = 0)
+                                 int seed)
+                                : EmbeddedCauset()
 {
     if (poisson)
         {_intensity = card*1;}

@@ -52,7 +52,7 @@ class Spacetime
                                           std::vector<double> yvec,
                                           std::vector<double> period={});
         
-        virtual ~Spacetime();
+        //virtual ~Spacetime();
 };
 
 
@@ -88,34 +88,40 @@ class FlatSpacetime: public Spacetime
                                             std::vector<double> yvec,
                                             std::vector<double>period={});
         
-        ~FlatSpacetime();
+        //~FlatSpacetime();
 };
 
 
-/*=============================================================================
-=============================================================================*/
-class BlackHoleSpacetime: public Spacetime
-/**
- * @brief Implementation of black hole spacetimes, globally hyperbolic.
- */
-{
-    public:
+// /*=============================================================================
+// =============================================================================*/
+// class BlackHoleSpacetime: public Spacetime
+// /**
+//  * @brief Implementation of black hole spacetimes, globally hyperbolic.
+//  */
+// {
+//     public:
         
-        // Constructor
-        BlackHoleSpacetime(int dim = 2,
-                           double r_S = 0.5,
-                           const char* metric = "Eddington-Finkelstein");
+//         // Constructor
+//         BlackHoleSpacetime(int dim = 2,
+//                            double r_S = 0.5,
+//                            const char* metric = "Eddington-Finkelstein");
                 
-        // Methods
-        double ds2(std::vector<double> xvec, std::vector<double> yvec);
+//         // Methods
+//         double ds2(std::vector<double> xvec, std::vector<double> yvec);
 
-        double ds(std::vector<double> xvec, std::vector<double> yvec);
+//         double ds(std::vector<double> xvec, std::vector<double> yvec);
         
-        typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period);
-        func Causality();   
+//         typedef std::vector<bool> (*func)
+//         (std::vector<double> xvec, std::vector<double> yvec, 
+//         std::vector<double> period);
+//         func Causality();   
 
-        ~BlackHoleSpacetime();  
-};
+//         ~BlackHoleSpacetime();  
+// };
+
+
+
+
+
+
 #endif /* SPACETIMES_H */

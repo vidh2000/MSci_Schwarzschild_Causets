@@ -32,6 +32,7 @@ using std::unordered_set;
  * 
  * @param Cmatrix 
  */
+//Causet::Causet(){}
 Causet::Causet(vector<vector<int8_t>> Cmatrix)
 {
     _CMatrix = Cmatrix;
@@ -697,10 +698,10 @@ void Causet::discard(vector<int> labels, bool make_matrix,
     _dim = 0;
 } 
 
-Causet::~Causet() {}
+//Causet::~Causet() {}
 
-int main(){
+// int main(){
 
-    std::cout << "causet.cpp WORKS!" << std::endl;
-}
+//     std::cout << "causet.cpp WORKS!" << std::endl;
+// }
 

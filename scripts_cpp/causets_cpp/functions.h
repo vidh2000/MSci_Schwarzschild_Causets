@@ -199,7 +199,7 @@ num setmin(std::set<num> my_set)
     return min_element;
 }
 
-
+inline
 void discard_from_set(std::unordered_set<int> &myset, int label)
 {
     int N = myset.size();
@@ -215,6 +215,7 @@ void discard_from_set(std::unordered_set<int> &myset, int label)
 }
 
 template<typename m>
+inline
 void discard_from_set(std::unordered_set<m> &myset, std::vector<int> labels)
 {
     std::sort(labels.begin(),labels.end());

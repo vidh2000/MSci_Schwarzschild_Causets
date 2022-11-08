@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "vecfunctions.h"
-#include "functions.h"
+//#include "functions.h"
 
 #include "shapes.h"
 
@@ -277,9 +277,9 @@ vector<double> CoordinateShape::Limits(int dim)
     return limits; 
 }
 
-CoordinateShape::~CoordinateShape() {}
+//CoordinateShape::~CoordinateShape() {}
 
-int main(){
+// int main(){
 
-    std::cout << "shape.cpp WORKS!" << std::endl;
-}
+//     std::cout << "shapes.cpp WORKS!" << std::endl;
+// }

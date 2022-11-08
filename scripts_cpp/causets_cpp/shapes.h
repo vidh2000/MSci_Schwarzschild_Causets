@@ -60,7 +60,8 @@ class CoordinateShape
         // std::vector<std::vector<double>> CubeSurface();
         // std::vector<std::vector<double>> CylinderlSurface();
         // std::vector<std::vector<double>> OpenConeSurface();
-        ~CoordinateShape();
+        
+        //~CoordinateShape();
 
 };
 

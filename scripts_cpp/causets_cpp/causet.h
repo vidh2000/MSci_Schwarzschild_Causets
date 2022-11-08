@@ -40,6 +40,7 @@ class Causet
 
 
         // CONSTRUCTOR
+        //Causet();
         Causet(std::vector<std::vector<int8_t>> Cmatrix = {});
         
         template <typename num>
@@ -110,13 +111,13 @@ class Causet
                      bool make_sets = false, bool make_links = true,
                      int seed = 0);
 
-        virtual void discard(int label, bool make_matrix = true, 
+        void discard(int label, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
-        virtual void discard(std::vector<int> labels, bool make_matrix = true, 
+        void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);  
 
         //Destructor
-        virtual ~Causet();   
+        //virtual ~Causet();   
 };
 
 #endif /*CAUSET_H*/

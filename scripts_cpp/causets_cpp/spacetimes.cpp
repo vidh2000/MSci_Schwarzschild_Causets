@@ -14,7 +14,7 @@
 
 #include "shapes.h"
 #include "spacetimes.h"
-#include "functions.h"
+//#include "functions.h"
 #include "vecfunctions.h"
 
 using std::vector;
@@ -67,7 +67,7 @@ func Spacetime::Causality()
     {return &Spacetime::causal1d;}
 
 
-Spacetime::~Spacetime(){}
+//Spacetime::~Spacetime(){}
 
 
 
@@ -210,60 +210,57 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
            };
 }
 
-FlatSpacetime::~FlatSpacetime(){}
+//FlatSpacetime::~FlatSpacetime(){}
 
 
 
 
-/*============================================================================
-* ============================================================================
-* BLACK HOLES SPACETIME
-* Notes: does not support anything actually at the moment
-* ============================================================================
-============================================================================*/
-BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
-                            double r_S,// = 0.5,
-                            const char* metric)// = "Eddington-Finkelstein")
-                            : Spacetime()
-/**
- * @brief Initialises a Black Hole Spacetime.
- *
- * @param dim: dimension of spacetime. Default 2.
- * @param r_S: Schwarzschild radius. Default 0.5
- * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
- *                (default), or "Schwarzschild" or "S".
- */
-{
-    if (dim < 2 || dim > 4)
-    {
-        throw std::invalid_argument("Dimension has to be 2, 3 or 4.");
-    }
-    _dim = dim;
-    _name = "black hole";
+// /*============================================================================
+// * ============================================================================
+// * BLACK HOLES SPACETIME
+// * Notes: does not support anything actually at the moment
+// * ============================================================================
+// ============================================================================*/
+// BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
+//                             double r_S,// = 0.5,
+//                             const char* metric)// = "Eddington-Finkelstein")
+//                             : Spacetime()
+// /**
+//  * @brief Initialises a Black Hole Spacetime.
+//  *
+//  * @param dim: dimension of spacetime. Default 2.
+//  * @param r_S: Schwarzschild radius. Default 0.5
+//  * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
+//  *                (default), or "Schwarzschild" or "S".
+//  */
+// {
+//     if (dim < 2 || dim > 4)
+//     {
+//         throw std::invalid_argument("Dimension has to be 2, 3 or 4.");
+//     }
+//     _dim = dim;
+//     _name = "black hole";
 
-    if (metric == "Eddington-Finkelstein" || metric == "EF")
-        {_metricname = "Eddington-Finkelstein";}
-    else if (metric == "Schwarzschild" || metric == "S")
-        {_metricname = "Schwarzschild";}
-}
+//     if (metric == "Eddington-Finkelstein" || metric == "EF")
+//         {_metricname = "Eddington-Finkelstein";}
+//     else if (metric == "Schwarzschild" || metric == "S")
+//         {_metricname = "Schwarzschild";}
+// }
 
 
-typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period);
-        func BlackHoleSpacetime::Causality()
-{
 
-} 
-
-BlackHoleSpacetime::~BlackHoleSpacetime(){}
+// typedef std::vector<bool> (*func)
+//         (std::vector<double> xvec, std::vector<double> yvec, 
+//         std::vector<double> period);
+//         func BlackHoleSpacetime::Causality()
+// {} 
+// BlackHoleSpacetime::~BlackHoleSpacetime(){}
 
 
 
 
 
-int main(){
-std::cout << "spacetime.cpp WORKS! :)";
-return 0;
+// int main(){
+// std::cout << "spacetimes.cpp WORKS! :)";
 
-};
+// }
