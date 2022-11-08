@@ -77,6 +77,7 @@ func Spacetime::Causality()
 * FLAT SPACETIME
 * ============================================================================
 ============================================================================*/
+
 /**
  * @brief Construct a new Flat Spacetime:: Flat Spacetime object
  * 

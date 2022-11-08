@@ -29,6 +29,11 @@
  *          - This creates the executable sprinkle.exe
  *          - Run sprinkle.exe by typing into command line:
  *              ./sprinkle
+ * 
+ *  All individual file inside causets_cpp work.
+ *  Running this script now gives:
+ *   error: invalid conversion from 'CoordinateShape (*)()' to 'int'
+ *                                                    [-fpermissive]
  */
 
 
@@ -36,7 +41,7 @@
 int card = 10;
 int dim = 4;
 FlatSpacetime S(dim);
-CoordinateShape shape(dim,"ball");
+CoordinateShape shape;
 SprinkledCauset C(card,S,shape);
 
 int main(){

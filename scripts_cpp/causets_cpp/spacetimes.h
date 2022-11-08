@@ -59,6 +59,17 @@ class Spacetime
 
 /*=============================================================================
 =============================================================================*/
+
+
+/**
+ * @brief Construct a new Flat Spacetime:: Flat Spacetime object
+ * 
+ * @param dim int:   dimension of flat spacetime. Default 4.
+ * @param period vector<double>:   periodicity vector: ith entry is period 
+ * along ith SPATIAL diemnsion (0->x, 1->y, 2->z). Default is no periodicty.
+ * No periodicity along ith direction requires 0. Usually, but not necessarily,
+ * with cuboid might want period[i]=shape_object.Edges()[i].
+ */
 class FlatSpacetime: public Spacetime
 /**
  * @brief Initializes Minkowski spacetime for dim >= 1.
