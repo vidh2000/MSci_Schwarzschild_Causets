@@ -84,7 +84,7 @@ class EmbeddedCauset: public Causet
                      bool make_sets = false, bool make_links = true);
         
         //Destructor
-        ~EmbeddedCauset();       
+        virtual ~EmbeddedCauset();       
 };
 
 #endif /*EMBEDDEDCAUSET_H*/

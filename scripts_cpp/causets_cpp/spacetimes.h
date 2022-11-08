@@ -52,7 +52,7 @@ class Spacetime
                                           std::vector<double> yvec,
                                           std::vector<double> period={});
         
-        ~Spacetime();
+        virtual ~Spacetime();
 };
 
 
