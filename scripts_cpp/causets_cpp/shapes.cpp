@@ -79,16 +79,22 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
        {throw std::invalid_argument("Dim smaller than 1!");}
     _dim = dim;
 
+    std::cout<< "After set dimension check" << std::endl;
+    std::cout<< "Name = " << name << std::endl;
     // Set Name
     name = (name == "diamond") ? "bicone" : name;
-    if (name!="ball" || name!="bicone" || name!="cylinder"
-     || name!="cube" || name!="cuboid")
+
+    std::cout<< "Name new = " << name << std::endl;
+    if (name!="ball" && name!="bicone" && name!="cylinder"
+     && name!="cube" && name!="cuboid")
      { 
-        std::string dim_error = "The given shape is ";
-        dim_error += name; 
-        throw std::invalid_argument(dim_error + " and not supported!");
+        std::cout << "The given shape is "<< name << ". Choose: ";
+        std::cout << "'ball', 'bicone', 'cylinder', 'cube' or 'cuboid'.\n"; 
+        throw std::invalid_argument("Wrong name chosen");
      }
     _name = name;
+
+    std::cout<< "After set name check" << std::endl;
 
     // Set Center
     vector<double> zero_center (_dim, 0.0);
@@ -277,10 +283,14 @@ vector<double> CoordinateShape::Limits(int dim)
     vector<double> limits = {-l + shift, l + shift};
     return limits; 
 }
-
 //CoordinateShape::~CoordinateShape() {}
 
-// int main(){
 
-//     std::cout << "shapes.cpp WORKS!" << std::endl;
-// }
+int dim = 2;
+CoordinateShape shape;
+
+
+int main(){
+
+    std::cout << "shapes.cpp WORKS!" << std::endl;
+}
