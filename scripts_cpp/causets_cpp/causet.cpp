@@ -63,7 +63,7 @@ void Causet::make_futures(){}
 void Causet::make_past_links(){}
 void Causet::make_future_links(){}
 
-std::vector<std::vector<int8_t>> Causet::CMatrix(std::vector<int> labels = {})
+std::vector<std::vector<int8_t>> Causet::CMatrix(std::vector<int> labels)
 {
     if (!labels.size())
         {return _CMatrix;}

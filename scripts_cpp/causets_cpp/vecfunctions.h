@@ -61,21 +61,22 @@ std::vector<int> distinct_randint1(int size, int N, int seed=0)
     std::vector<int> result;
     result.resize(size);
 
-    if (!seed){
+    if (seed==0){
         std::random_device rd;
         seed = rd();}
+    std::cout<<seed<<std::endl;
 
     std::mt19937 gen(seed);
-    std::uniform_real_distribution<> dis(0,1.0);
+    std::uniform_real_distribution<> dis(0, N);
     
     for(int i = 0; i < size; ++i)
     {
         int r;
         while(std::find(result.begin(), result.end(), r) != result.end())
         {
-            r = dis(gen) * N;
-            result[i] = r;   
+            r = (int) dis(gen);  
         }
+        result[i] = r; 
     }
     return result;
 }
@@ -84,10 +85,10 @@ std::vector<int> distinct_randint1(int size, int N, int seed=0)
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
 inline
-std::vector<int> distinct_randint2(int size, int N, int seed)
+std::vector<int> distinct_randint2(int size, int N, int seed=0)
 {
     std::vector<int> result(N); 
-    if (!seed)
+    if (seed==0)
     {
          std::random_device rd;
          seed = rd();
@@ -108,9 +109,10 @@ std::vector<int> distinct_randint2(int size, int N, int seed)
  * @brief Generate "size" DIFFERENT random ints between 0 and N-1.
  */
 inline
-std::vector<int> distinct_randint(int size, int N, int seed)
+std::vector<int> distinct_randint(int size, int N, int seed = 0)
 {
-    if (size < N/2){
+    //RANDINT1 NOT WORKING AT THE MOMENT
+    if (size < 0 ){
         return distinct_randint1(size, N, seed);}
     else{
         return distinct_randint2(size, N, seed);}
