@@ -26,27 +26,30 @@ using namespace std::chrono;
 
 int main(){
 
-std::cout << "Hello World" << std::endl;
+// std::cout << "Hello World" << std::endl;
 
-std::set<int> s1 = {1,2,3,4};
-std::set<int> s2 = {2,4};
+// std::set<int> s1 = {1,2,3,4};
+// std::set<int> s2 = {2,4};
 
 auto start = high_resolution_clock::now();
 
-int k = 1;
-for (int i=1; i<1000000001; i++)
-{
-    k=i;
-    //std::cout << k << std::endl;
-}
+// int k = 1;
+// for (int i=1; i<1000000001; i++)
+// {
+//     k=i;
+//     //std::cout << k << std::endl;
+// }
 
-std::cout << "k =" << k << std::endl;
+// std::cout << "k =" << k << std::endl;
 
-std::set<int> s = set_intersection(s1,s2);
-print_set(s);
+// std::set<int> s = set_intersection(s1,s2);
+// print_set(s);
+
+int b=0;
+{std::cout<<!b<<std::endl;}
 
 std::vector<int> a;
-a = distinct_randint2(3,10);
+a = distinct_randint(2500,10000);
 print_vector(a);
 
 /*

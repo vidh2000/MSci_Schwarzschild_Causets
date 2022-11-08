@@ -116,7 +116,7 @@ class Causet
                      bool make_sets = false, bool make_links = true);  
 
         //Destructor
-        ~Causet();   
+        virtual ~Causet();   
 };
 
 #endif /*CAUSET_H*/
