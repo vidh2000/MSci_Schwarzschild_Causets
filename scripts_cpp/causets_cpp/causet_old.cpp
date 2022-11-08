@@ -97,6 +97,7 @@ Causet::Causet(vector<vector<int>> M, bool Lmatrix = false,
     int colcount = M[0].size();
     if (colcount != rowcount)
     {
+        std::cout<<"The given matrix is not a square matrix!"<<std::endl;
         throw std::invalid_argument
         ("The given matrix is not a square matrix!");
     }
@@ -110,6 +111,7 @@ Causet::Causet(vector<vector<int>> M, bool Lmatrix = false,
         {
             if (M[i][j] && M[j][i])
             {
+                std::cout<<"The given matrix is not antisymmetric!"<<std::endl;
                 throw std::invalid_argument
                 ("The given matrix is not antisymmetric!");
             }
