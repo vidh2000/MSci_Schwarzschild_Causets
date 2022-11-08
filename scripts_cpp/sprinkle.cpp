@@ -22,18 +22,11 @@
  * @brief   To run this file, you must:
  *          - Go to to the folder in which it is located
  *          - Type into the command line:
- *              g++ -g causets_cpp/causet.cpp causets_cpp/shapes.cpp
- *              causets_cpp/spacetimes.cpp causets_cpp/embeddedcauset.cpp
- *              causets_cpp/sprinkledcauset.cpp sprinkle.cpp
- *              -std=c++17 -o sprinkle -O2
+ *              g++ -g causets_cpp/causet.cpp causets_cpp/shapes.cpp causets_cpp/spacetimes.cpp causets_cpp/embeddedcauset.cpp causets_cpp/sprinkledcauset.cpp sprinkle.cpp -std=c++17 -o sprinkle -O2
  *          - This creates the executable sprinkle.exe
  *          - Run sprinkle.exe by typing into command line:
  *              ./sprinkle
  * 
- *  All individual file inside causets_cpp work.
- *  Running this script now gives:
- *   error: invalid conversion from 'CoordinateShape (*)()' to 'int'
- *                                                    [-fpermissive]
  */
 
 
@@ -43,8 +36,8 @@ int dim = 2;
 std::vector<double> center = {0,1};
 
 FlatSpacetime S(dim);
-//CoordinateShape shape(dim);
-//SprinkledCauset C(card,S,shape);
+CoordinateShape shape(dim);
+SprinkledCauset C(card,S,shape);
 
 int main(){
     int a = 5;

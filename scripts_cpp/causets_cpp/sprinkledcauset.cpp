@@ -75,12 +75,15 @@ SprinkledCauset::SprinkledCauset(int card,
     if (poisson)
         {_intensity = card*1;}
     
+    std::cout << "Before sprinkling... \n";
     _coords = sprinkle_coords(card, shape, seed);
+    std::cout << "After sprinkling...\n";
     _size = _coords.size();
     _spacetime = spacetime;
     _shape = shape; 
-    
+    std::cout << "Before sorting coords..\n";
     this->sort_coords(0, false);
+    std::cout << "Making causet..\n";
     if (make_matrix)
         {this->make_cmatrix("coordinates", special, use_transitivity,
                                 make_sets, make_links, sets_type);}
