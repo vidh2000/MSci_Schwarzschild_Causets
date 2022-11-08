@@ -46,7 +46,7 @@ std::set<int> s = set_intersection(s1,s2);
 print_set(s);
 
 std::vector<int> a;
-a = distinct_randint1(3,10);
+a = distinct_randint2(3,10);
 print_vector(a);
 
 /*

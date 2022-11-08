@@ -63,7 +63,7 @@ void Causet::make_futures(){}
 void Causet::make_past_links(){}
 void Causet::make_future_links(){}
 
-std::vector<std::vector<int8_t>> Causet::CMatrix(std::vector<int> labels = {})
+std::vector<std::vector<int8_t>> Causet::CMatrix(std::vector<int> labels)
 {
     if (!labels.size())
         {return _CMatrix;}
@@ -111,7 +111,7 @@ double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
         return Causet::ord_fr(A._futures,denominator);
     }
     else{
-        const char* errormsg = "Provided Causet is empty! Size matters...";
+        const char* errormsg = "Provided Causet is empty! Size matters... ;)";
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
         return 0.0;
     }
@@ -175,8 +175,55 @@ double Causet::ord_fr(int a, int b,
 {
     if (denominator!= "choose" || denominator!= "n2"){
         throw std::invalid_argument("Param 'denominator' must be \
-                                'choose' or 'n2'");}
-    return 0.0;
+                                    'choose' or 'n2'");}
+    
+    if (b>=a){
+        throw std::invalid_argument("a<b is enforced. Please behave.");}
+
+    int nrelations = 0;
+    int N;
+    if (_CMatrix.size())
+    {
+        // Get all elements in the Alexander interval [A,B]
+        std::vector<int> A = {a};
+
+        // Find all elements in the past of a and future of b
+        for (int i = a; i<b;i++)
+        {
+            if (_CMatrix[i][b] != 0 && _CMatrix[a][i]){
+                A.push_back(i);}
+        }
+        // Also append b
+        A.push_back(b);
+        // N = size of Alexander interval
+        N = A.size();
+        for (auto i: A)
+        {
+            for (auto j: A)
+            {
+                if (_CMatrix[i][j] != 0){
+                    nrelations +=1;}
+            }
+        }
+    }       
+    else if (_pasts.size() && _futures.size())
+    {
+        std::unordered_set<int> afutr = _futures[a];
+        std::unordered_set<int> bpast = _pasts[a];
+        std::unordered_set<int> A = set_intersection(afutr,bpast);
+        N = A.size();
+        for (auto e: A){
+            nrelations += (set_intersection(_futures[e],A)).size();
+        }
+    }
+    else
+    {
+        const char* errormsg = "Provided Causet is empty! Size matters... ;)";
+        std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
+        return 0.0;}
+
+    int fr = 2 * nrelations / (N * (N - (denominator == "choose")));
+    return fr;
 }
 
 
