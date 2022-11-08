@@ -70,10 +70,10 @@ class CoordinateShape
 
         CoordinateShape(int dim = 4,
                         const char* name = "diamond", 
-                        std::vector<double> center = {0},
+                        std::vector<double> center = {},//{0}
                         double radius   = 1,
                         double edge     = 1,
-                        std::vector<double> edges = {1},
+                        std::vector<double> edges = {},//{1}
                         double hollow   = 0,
                         double duration = 2);
         
