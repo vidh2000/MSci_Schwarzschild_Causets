@@ -328,6 +328,7 @@ double mymean(std::vector <T1> x, std::vector <T2> w = {1})
 {   
     if (x.size() != w.size())
     {
+        std::cout<<"Vector and weight have different sizes."<<std::endl;
         throw std::invalid_argument
         ("vector and weight have different sizes: "
         +std::to_string(x.size()) +" and " 
@@ -348,6 +349,7 @@ double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
 
     else if (x.size() != w.size())
     {
+        std::cout<<"Vector and weight have different sizes."<<std::endl;
         throw std::invalid_argument
         ("vector and weight have different sizes: "
         +std::to_string(x.size()) +" and " 

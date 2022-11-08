@@ -112,7 +112,8 @@ double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
         return Causet::ord_fr(A._futures,denominator);
     }
     else{
-        const char* errormsg = "Provided Causet is empty! Size matters... ;)";
+        const char* errormsg = "Provided Causet is empty! It has no _CMatrix \
+                                nor pasts-future sets. Size matters... ;)";
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
         return 0.0;
     }
@@ -127,6 +128,7 @@ double Causet::ord_fr(vector<vector<int8_t>> M,
 {
     if (denominator!= "choose" || denominator!= "n2")
     {
+        std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
                                 'choose' or 'n2'");
     }
@@ -151,9 +153,12 @@ template<typename SET>
 double Causet::ord_fr(vector<SET> A_pasts,
                 const char* denominator)// = "choose",
 {
-    if (denominator!= "choose" || denominator!= "n2"){
+    if (denominator!= "choose" || denominator!= "n2")
+    {
+        std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
-                                'choose' or 'n2'");}
+                                'choose' or 'n2'");
+    }
     int N = A_pasts.size();
     int nrelations = 0;
     for (auto e_i : A_pasts)
@@ -174,12 +179,18 @@ double Causet::ord_fr(vector<SET> A_pasts,
 double Causet::ord_fr(int a, int b,
                 const char* denominator)// = "choose"
 {
-    if (denominator!= "choose" || denominator!= "n2"){
+    if (denominator!= "choose" || denominator!= "n2")
+    {
+        std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
-                                    'choose' or 'n2'");}
+                                    'choose' or 'n2'");
+    }
     
-    if (b>=a){
-        throw std::invalid_argument("a<b is enforced. Please behave.");}
+    if (b>=a)
+    {
+        std::cout<<"a<b is enforced. Please behave."<<std::endl;
+        throw std::invalid_argument("a<b is enforced. Please behave.");
+    }
 
     int nrelations = 0;
     int N;
@@ -219,7 +230,8 @@ double Causet::ord_fr(int a, int b,
     }
     else
     {
-        const char* errormsg = "Provided Causet is empty! Size matters... ;)";
+        const char* errormsg = "Provided Causet is empty! It has no _CMatrix \
+                                nor pasts-future sets. Size matters... ;)";
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
         return 0.0;}
 
@@ -416,7 +428,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     }
     else
     {
-        const char* errormsg = "Choose 'method' parameter 'random' or 'big'";
+        const char* errormsg = "'method' parameter must be 'random' or 'big'";
+        std::cout<<errormsg<<std::endl;
         throw std::invalid_argument(errormsg);
     }
 

@@ -90,7 +90,10 @@ func Spacetime::Causality()
 FlatSpacetime::FlatSpacetime(int dim, vector<double> period) : Spacetime()
 {
     if (dim < 1)
-        {throw std::invalid_argument("Dimension has to be at least 1.");}
+        {
+            std::cout<<"Given dim was smaller than 1."<<std::endl;
+            throw std::invalid_argument("Dimension has to be at least 1.");
+        }
 
     _dim = dim;
     _name = "flat";

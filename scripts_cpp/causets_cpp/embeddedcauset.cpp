@@ -101,7 +101,9 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
         }
 
     else
-        {
+        {   
+            std::cout<<"At least one among make_matrix, \
+                        make_sets and make_links must be true"<<std::endl;
             throw std::invalid_argument("At least one among make_matrix, \
                                     make_sets and make_links must be true");
         }

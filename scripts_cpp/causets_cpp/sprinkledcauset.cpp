@@ -113,6 +113,8 @@ SprinkledCauset::SprinkledCauset(int card,
 
     else
         {
+            std::cout<<"At least one among make_matrix, \
+                        make_sets and make_links must be true"<<std::endl;
             throw std::invalid_argument("At least one among make_matrix, \
                                     make_sets and make_links must be true");
         }
@@ -139,7 +141,10 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
                                                     int seed)// = 0)
 {
     if (count<0)
-        {   throw std::invalid_argument(
+        {   
+            std::cout<<"The sprinkle cardinality has to be a\
+             non-negative integer."<<std::endl;
+            throw std::invalid_argument(
                 "The sprinkle cardinality has to be a non-negative integer.");
         }
     if (poisson)
@@ -168,7 +173,10 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                                                     int seed)// = 0)
 {
     if (count < 0)
-    {   throw std::invalid_argument(
+    {   
+        std::cout<<"The sprinkle cardinality has to be a\
+             non-negative integer."<<std::endl;
+        throw std::invalid_argument(
             "The sprinkle cardinality has to be a non-negative integer.");
     }
     vector<vector<double>> coords (count);
