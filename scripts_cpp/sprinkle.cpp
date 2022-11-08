@@ -39,10 +39,12 @@
 
 // Sprinkled causet parameters
 int card = 10;
-int dim = 4;
+int dim = 2;
+std::vector<double> center = {0,1};
+
 FlatSpacetime S(dim);
-CoordinateShape shape;
-SprinkledCauset C(card,S,shape);
+//CoordinateShape shape(dim);
+//SprinkledCauset C(card,S,shape);
 
 int main(){
     int a = 5;
