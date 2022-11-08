@@ -287,8 +287,8 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
 
 
-int main(){
-    std::cout << "sprinkledcauset.cpp WORKS! :)";
-}
+// int main(){
+//     std::cout << "sprinkledcauset.cpp WORKS! :)";
+// }
 
 

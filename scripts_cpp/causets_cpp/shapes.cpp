@@ -23,13 +23,7 @@
 
 using std::vector;
 
-CoordinateShape::CoordinateShape(int dim, const char* name, 
-                                vector<double> center,
-                                double radius,
-                                double edge,
-                                vector<double> edges,
-                                double hollow,
-                                double duration)
+
 /**
  * @brief Sets the embedding shape, but does not adjust event coordinates.
         The dimension parameter dim must be an integer greater than zero.
@@ -39,39 +33,46 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
  * @param name: (const char*). 
         Accepted shape names (and parameters)
         -------------------------------------
-        'ball' ('radius': float, default: 1.0, must be > 0.0,
-                'hollow': float, default: 0.0, must be >= 0.0 and < 1.0)
+        "ball" ("radius": float, default: 1.0, must be > 0.0,
+                "hollow": float, default: 0.0, must be >= 0.0 and < 1.0)
             Ball shape in all spacetime coordinates. 
-        'bicone' or'diamond'('radius': float, default: 1.0, must be > 0.0,
-                  'hollow': float, default: 0.0, must be >= 0.0 and < 1.0)
+        "bicone" or"diamond"("radius": float, default: 1.0, must be > 0.0,
+                  "hollow": float, default: 0.0, must be >= 0.0 and < 1.0)
             Ball shape in all space coordinates and conical to the past and 
             future. 
-        'cylinder' ('radius': float, default: 1.0, must be > 0.0,
-                    'duration': float, default: 2.0 * radius, must be > 0.0,
-                    'hollow': float, default: 0.0, must be >= 0.0 and < 1.0)
+        "cylinder" ("radius": float, default: 1.0, must be > 0.0,
+                    "duration": float, default: 2.0 * radius, must be > 0.0,
+                    "hollow": float, default: 0.0, must be >= 0.0 and < 1.0)
             Ball shape in all space coordinates and straight along the time 
-            coordinate for the length 'duration'. 
-        'cube' ('edge': float, default: 1.0, must be > 0.0)
-            Cube shape with the same edge length 'edge' in all spacetime 
+            coordinate for the length "duration". 
+        "cube" ("edge": float, default: 1.0, must be > 0.0)
+            Cube shape with the same edge length "edge" in all spacetime 
             coordinates.
-        'cuboid' ('edges': Iterable[float], default: [1.0, 1.0, ...], 
+        "cuboid" ("edges": Iterable[float], default: [1.0, 1.0, ...], 
                                             must all be > 0.0)
-            Cuboid shape with distinct edge lengths 'edges' in the respective 
+            Cuboid shape with distinct edge lengths "edges" in the respective 
             spacetime coordinates. The default edges yield a cube.
     
     @param center: vector of coordinates of center. Default 0\vec.
 
-    @param radius: float > 0 for 'ball', 'bicone', 'cylinder'. Default 1.
+    @param radius: float > 0 for "ball", "bicone", "cylinder". Default 1.
 
-    @param edge: float > 0 for 'cube'. Default 1.
+    @param edge: float > 0 for "cube". Default 1.
 
-    @param edges: vector of floats > 0 for 'cuboid'. Default {1}.
+    @param edges: vector of floats > 0 for "cuboid". Default {1}.
 
     @param hollow: fraction [0,1) of interior which is hollow. Default 0.
 
     @param duration: time extension of cylinder. Default 2.
  * 
  */
+CoordinateShape::CoordinateShape(int dim, const char* name, 
+                                vector<double> center,
+                                double radius,
+                                double edge,
+                                vector<double> edges,
+                                double hollow,
+                                double duration)
 {
     // Set Dimension
     if (dim < 1)
@@ -254,7 +255,7 @@ double CoordinateShape::Volume()
 vector<double> CoordinateShape::Limits(int dim)
 /**
  * @brief Returns a vector<double> for the minimum (left) and maximum (right) 
- *        of a shape along coordinate dimension 'dim' (0-indexed).
+ *        of a shape along coordinate dimension "dim" (0-indexed).
  */
 {
     if ((dim < 0) || (dim >= _dim))
