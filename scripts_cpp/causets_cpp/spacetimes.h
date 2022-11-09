@@ -21,6 +21,11 @@
 #include "shapes.h"
 
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+// The old, working version. Your newest version with BH and bugs is 
+// fully commented out below (in its entirety)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+
 class Spacetime
 /**
  * @brief Super class for implementation of spacetimes
@@ -38,7 +43,8 @@ class Spacetime
         // CONSTRUCTOR
         Spacetime();
 
-        // FUNCTIONS
+        // VIRTUAL FUNCTIONS
+      
         std::vector<double>_T_slice_sampling(double t, 
                                                     std::vector<double>origin,
                                                     int samplingsize = -1); 
@@ -46,13 +52,12 @@ class Spacetime
         // CAUSALITY
         typedef std::vector<bool> (*func)
         (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period, double mass);
+         std::vector<double> period);
         virtual func Causality();  
         
         static std::vector<bool> causal1d(std::vector<double> xvec, 
                                           std::vector<double> yvec,
-                                          std::vector<double> period={},
-                                          double mass = 0);
+                                          std::vector<double> period={});
         
         //virtual ~Spacetime();
 };
@@ -94,18 +99,15 @@ class FlatSpacetime: public Spacetime
         double ds     (std::vector<double> xvec, std::vector<double> yvec);
         
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period, double mass);
+        (std::vector<double> xvec, std::vector<double> yvec, std::vector<double> period);
         func Causality();   
 
         static std::vector<bool> causal (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
-                                            std::vector<double> period={}, 
-                                            double mass = 0);
+                                    std::vector<double> yvec,
+                                    std::vector<double> period={});
         static std::vector<bool> causal_periodic (std::vector<double> xvec, 
                                             std::vector<double> yvec,
-                                            std::vector<double>period={}, 
-                                            double mass = 0);
+                                            std::vector<double>period={});
         
         //~FlatSpacetime();
 };

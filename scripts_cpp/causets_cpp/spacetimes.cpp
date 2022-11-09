@@ -23,6 +23,13 @@ using std::vector;
 
 #define M_PI  3.14159265358979323846  /* pi */
 
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+// The old, working version. Your newest version with BH and bugs is 
+// fully commented out below (in its entirety)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+
+
 /*============================================================================
 * ============================================================================
 * GENERAL SPACETIME METHODS
@@ -48,30 +55,27 @@ vector<double> Spacetime::_T_slice_sampling(double t,
 
 
 /**
- * @brief Return most simple causal function: t_2>t_1, useful in 1D cases. 
- */
-typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
-func Spacetime::Causality()
-    {return &Spacetime::causal1d;}
-
-
-/**
  * @brief Simplest function of two events in 1D
  * 
  * @param xvec : vector<double>(1), time-coordinate of x
  * @param yvec : vector<double>(1), time-coordinate of y
  * @param period : needed for consistency with Causality, not used
- * @param mass : needed for consistency with BlackHoles, not used
- * 
  * @return vector<bool> : {1, x<=y, x>y}
  */
 vector<bool> Spacetime::causal1d(vector<double> xvec, vector<double> yvec,
-                                 vector<double> period, double mass)
+                                 vector<double> period)
 {
     double t_delta = yvec[0] - xvec[0];
     return {1, t_delta >= 0.0, t_delta < 0.0};
 }
+
+/**
+ * @brief Return most simple causal function: t_2>t_1, useful in 1D cases. 
+ */
+typedef vector<bool> (*func)
+(vector<double> xvec, vector<double> yvec, vector<double> period);
+func Spacetime::Causality()
+    {return &Spacetime::causal1d;}
 
 
 //Spacetime::~Spacetime(){}
@@ -153,7 +157,7 @@ double FlatSpacetime::ds(vector<double> xvec, vector<double> yvec)
  *        {x-y timelike, x<=y, x>y}
  */    
 typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
+(vector<double> xvec, vector<double> yvec, vector<double> period);
 func FlatSpacetime::Causality()
 {
     if (_dim == 1)
@@ -170,12 +174,10 @@ func FlatSpacetime::Causality()
  * @param xvec vector<double>:  coordinates of x
  * @param yvec vector<double>:  coordinates of y
  * @param period not used, needed for consistency with Causality
- * @param mass : needed for consistency with BlackHoles, not used
- * 
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
 vector<bool> FlatSpacetime::causal(vector<double> xvec, vector<double> yvec,
-                                    vector<double>period, double mass)
+                                    vector<double>period)
 {
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
@@ -197,13 +199,11 @@ vector<bool> FlatSpacetime::causal(vector<double> xvec, vector<double> yvec,
  * @param yvec : vector<double>, coordinates of y
  * @param period : vector<double>, ith entry is periodicty along ith SPATIAL
  * dimension (0->x, 1->y, 2-->z)
- * @param mass : needed for consistency with BlackHoles, not used
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
 vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec, 
                                             vector<double> yvec,
-                                            vector<double> period,
-                                            double mass)
+                                            vector<double> period)
 {
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
@@ -226,6 +226,93 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
 }
 
 //FlatSpacetime::~FlatSpacetime(){}
+
+// int main(){
+// std::cout << "spacetimes.cpp WORKS! :)";
+
+// }
+
+// scroll down for your newest code commented out in entirety...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+// All below is the "newest version you posted" - please debug and make it work.
+// Nicely done otherwise, I see you implemented most of the paper already.
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+
+// /*============================================================================
+// * ============================================================================
+// * GENERAL SPACETIME METHODS
+// * ============================================================================
+// ============================================================================*/
+
+// Spacetime::Spacetime(){}
+
+// /**
+//  * @brief Internal function for the time sampling array for a cone from 
+//  * "origin point"(hence take t0=origin[0]) to time "t".
+//  */
+// vector<double> Spacetime::_T_slice_sampling(double t, 
+//                                             vector<double>origin,
+//                                             int samplingsize)
+// {
+//     vector<double> ts (samplingsize);
+//     double t_i = (t-origin[0])/samplingsize;
+//     for (int i = 0; i<samplingsize; i++)
+//         {ts[i] += origin[0] + t_i*i;}
+//     return ts;
+// }     
+
+
+// /**
+//  * @brief Return most simple causal function: t_2>t_1, useful in 1D cases. 
+//  */
+// typedef vector<bool> (*func)
+// (vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
+// func Spacetime::Causality()
+//     {return &Spacetime::causal1d;}
+
+
+// /**
+//  * @brief Simplest function of two events in 1D
+//  * 
+//  * @param xvec : vector<double>(1), time-coordinate of x
+//  * @param yvec : vector<double>(1), time-coordinate of y
+//  * @param period : needed for consistency with Causality, not used
+//  * @param mass : needed for consistency with BlackHoles, not used
+//  * 
+//  * @return vector<bool> : {1, x<=y, x>y}
+//  */
+// vector<bool> Spacetime::causal1d(vector<double> xvec, vector<double> yvec,
+//                                  vector<double> period, double mass)
+// {
+//     double t_delta = yvec[0] - xvec[0];
+//     return {1, t_delta >= 0.0, t_delta < 0.0};
+// }
+
+
+// //Spacetime::~Spacetime(){}
 
 
 
@@ -265,16 +352,16 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
 
 
 
-typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period,
- double mass);
-func BlackHoleSpacetime::Causality()
-{
-    if (_dim == 1)
-        {return &Spacetime::causal1d;}
-    else// if (!_isPeriodic)
-        {return &BlackHoleSpacetime::causal;} 
-}
+// typedef vector<bool> (*func)
+// (vector<double> xvec, vector<double> yvec, vector<double> period,
+//  double mass);
+// func BlackHoleSpacetime::Causality()
+// {
+//     if (_dim == 1)
+//         {return &Spacetime::causal1d;}
+//     else// if (!_isPeriodic)
+//         {return &BlackHoleSpacetime::causal;} 
+// }
 
 
 /**
@@ -296,121 +383,121 @@ vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec,
     if (yvec[0]<xvec[0])
         {return BlackHoleSpacetime::causal(yvec, xvec, period);}
 
-    double t1     = xvec[0]; double t2     = yvec[0];
-    double r1     = xvec[1]; double r2     = yvec[1];
-    double theta1 = xvec[2]; double theta2 = yvec[2];
-    double phi1   = xvec[3]; double phi2   = yvec[3];
+//     double t1     = xvec[0]; double t2     = yvec[0];
+//     double r1     = xvec[1]; double r2     = yvec[1];
+//     double theta1 = xvec[2]; double theta2 = yvec[2];
+//     double phi1   = xvec[3]; double phi2   = yvec[3];
 
-    double vartheta1 = M_PI / 2;
-    double vartheta2 = M_PI / 2; 
-    double varphi1 = 0;
-    double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
-                    +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
+//     double vartheta1 = M_PI / 2;
+//     double vartheta2 = M_PI / 2; 
+//     double varphi1 = 0;
+//     double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
+//                     +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
     
-    // Hope this one never becomes true
-    bool do_integral;
+//     // Hope this one never becomes true
+//     bool do_integral;
     
-    // Section 2.2: Radially separated pairs and radial null geodesics
-    if (varphi2<1e-6) //should be ==zero, but leave room for some error
-    {
-        if (r1>=r2)
-        {
-            // all 3 cases of the paper return same
-            if (t2 >= t1 + r1 - r2 - 1e-6)
-                    {return {true, true, false};}
-            else
-                {return {false, false, false};}
-        }
-        else
-        {
-            if (r1<=2*mass)
-                {return {false, false, false};}
-            else // if (r1>2*mass)
-            {
-                if (t2 >= t1 + r2 - r1 + 
-                            4*mass*std::log((r2-2*mass)/(r1-2*mass)))
-                    {return {true, true, false};}
-                else
-                    {return {false, false, false};}
-            }
-        }
+//     // Section 2.2: Radially separated pairs and radial null geodesics
+//     if (varphi2<1e-6) //should be ==zero, but leave room for some error
+//     {
+//         if (r1>=r2)
+//         {
+//             // all 3 cases of the paper return same
+//             if (t2 >= t1 + r1 - r2 - 1e-6)
+//                     {return {true, true, false};}
+//             else
+//                 {return {false, false, false};}
+//         }
+//         else
+//         {
+//             if (r1<=2*mass)
+//                 {return {false, false, false};}
+//             else // if (r1>2*mass)
+//             {
+//                 if (t2 >= t1 + r2 - r1 + 
+//                             4*mass*std::log((r2-2*mass)/(r1-2*mass)))
+//                     {return {true, true, false};}
+//                 else
+//                     {return {false, false, false};}
+//             }
+//         }
 
-    }
+//     }
 
-    // Section 2.3: Sufficient Conditions for c. related and unrelated
-    //// 2.3.1 Spacelike Bounds
-    if (r1 >= r2)
-    {
-        //spacelike
-        if (t2-t1 < r1-r2)
-            {return {false, false, false};}
-        //spacelike
-        else if (t2-t1 < r2*varphi2) 
-            {return {false, false, false};}
-        //timelike
-        else if (r1 > 2*mass)
-        {
-            double r0;
-            if (r2 >= 3*mass){r0 = r2;}
-            else if (r1 >= 3*mass && 3*mass > r2) {r0 = 3*mass;}
-            else if (3*mass > r1 && r1 > 2*mass) {r0 = r1;}
-            //then
-            if (t2 >= t1 + r1 - r2 + (r0/std::sqrt(1-2*mass/r0))*varphi2 )
-                {return {true, true, false};}
-            else
-                {do_integral = true;}
-        }
-        else
-            {do_integral = true;}
-    }
-    else if (r2 > r1 && r1 > 2*mass)
-    {
-        //spacelike
-        if (t2-t1 < r2-r1 + 4*std::log((r2-2*mass)/(r1-2*mass)))
-            {return {false, false, false};}
-        else if (r1 > 3*mass)
-        {
-            //spacelike
-            double r0 = r1;
-            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
-                {return {false, false, false};}
-            //timelike
-            else if (t2>= t1 +r2 -r1 
-                    + 4*mass * std::log((r2-2*mass)/(r1-2*mass))
-                    + (r0/std::sqrt(1-2*mass/r0))*varphi2)
-                {return {true, true, false};}
-            else
-                {do_integral = true;}
+//     // Section 2.3: Sufficient Conditions for c. related and unrelated
+//     //// 2.3.1 Spacelike Bounds
+//     if (r1 >= r2)
+//     {
+//         //spacelike
+//         if (t2-t1 < r1-r2)
+//             {return {false, false, false};}
+//         //spacelike
+//         else if (t2-t1 < r2*varphi2) 
+//             {return {false, false, false};}
+//         //timelike
+//         else if (r1 > 2*mass)
+//         {
+//             double r0;
+//             if (r2 >= 3*mass){r0 = r2;}
+//             else if (r1 >= 3*mass && 3*mass > r2) {r0 = 3*mass;}
+//             else if (3*mass > r1 && r1 > 2*mass) {r0 = r1;}
+//             //then
+//             if (t2 >= t1 + r1 - r2 + (r0/std::sqrt(1-2*mass/r0))*varphi2 )
+//                 {return {true, true, false};}
+//             else
+//                 {do_integral = true;}
+//         }
+//         else
+//             {do_integral = true;}
+//     }
+//     else if (r2 > r1 && r1 > 2*mass)
+//     {
+//         //spacelike
+//         if (t2-t1 < r2-r1 + 4*std::log((r2-2*mass)/(r1-2*mass)))
+//             {return {false, false, false};}
+//         else if (r1 > 3*mass)
+//         {
+//             //spacelike
+//             double r0 = r1;
+//             if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+//                 {return {false, false, false};}
+//             //timelike
+//             else if (t2>= t1 +r2 -r1 
+//                     + 4*mass * std::log((r2-2*mass)/(r1-2*mass))
+//                     + (r0/std::sqrt(1-2*mass/r0))*varphi2)
+//                 {return {true, true, false};}
+//             else
+//                 {do_integral = true;}
 
-        }
-        else if(r1 < 3*mass && 3*mass < r2)
-        {
-            //spacelike
-            double r0 = 3*mass;
-            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
-                {return {false, false, false};}
-            else
-                {do_integral = true;}
-        }
-        else if(r2 <= 3*mass)
-        {
-            //spacelike
-            double r0 = r2;
-            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
-                {return {false, false, false};}
-            else
-                {do_integral = true;}
-        }
-        else
-            {do_integral = true;}
-    }
-    else if (!do_integral) //r2>2*mass>r1
-        {return {false, false, false};}
-    else //do_integral
-        {return {false, false, false};}
-}
+//         }
+//         else if(r1 < 3*mass && 3*mass < r2)
+//         {
+//             //spacelike
+//             double r0 = 3*mass;
+//             if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+//                 {return {false, false, false};}
+//             else
+//                 {do_integral = true;}
+//         }
+//         else if(r2 <= 3*mass)
+//         {
+//             //spacelike
+//             double r0 = r2;
+//             if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+//                 {return {false, false, false};}
+//             else
+//                 {do_integral = true;}
+//         }
+//         else
+//             {do_integral = true;}
+//     }
+//     else if (!do_integral) //r2>2*mass>r1
+//         {return {false, false, false};}
+//     else //do_integral
+//         {return {false, false, false};}
+// }
 
-BlackHoleSpacetime::~BlackHoleSpacetime(){}
+// BlackHoleSpacetime::~BlackHoleSpacetime(){}
 
 
 
