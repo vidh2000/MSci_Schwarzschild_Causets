@@ -44,12 +44,13 @@ class Spacetime
         // CAUSALITY
         typedef std::vector<bool> (*func)
         (std::vector<double> xvec, std::vector<double> yvec, 
-         std::vector<double> period);
+        std::vector<double> period, double mass);
         virtual func Causality();  
         
         static std::vector<bool> causal1d(std::vector<double> xvec, 
                                           std::vector<double> yvec,
-                                          std::vector<double> period={});
+                                          std::vector<double> period={},
+                                          double mass = 0);
         
         //virtual ~Spacetime();
 };
@@ -88,15 +89,18 @@ class FlatSpacetime: public Spacetime
         double ds     (std::vector<double> xvec, std::vector<double> yvec);
         
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, std::vector<double> period);
+        (std::vector<double> xvec, std::vector<double> yvec, 
+        std::vector<double> period, double mass);
         func Causality();   
 
         static std::vector<bool> causal (std::vector<double> xvec, 
-                                    std::vector<double> yvec,
-                                    std::vector<double> period={});
+                                            std::vector<double> yvec,
+                                            std::vector<double> period={}, 
+                                            double mass = 0);
         static std::vector<bool> causal_periodic (std::vector<double> xvec, 
                                             std::vector<double> yvec,
-                                            std::vector<double>period={});
+                                            std::vector<double>period={}, 
+                                            double mass = 0);
         
         //~FlatSpacetime();
 };
@@ -112,7 +116,7 @@ class BlackHoleSpacetime: public Spacetime
     public:
         double _mass;
         double _r_S;
-        char _metric = 'Eddington-Finkelstein';
+        char _metric = "Eddington-Finkelstein";
 
         // Constructor
         BlackHoleSpacetime(int dim = 2,
@@ -126,19 +130,16 @@ class BlackHoleSpacetime: public Spacetime
         
         typedef std::vector<bool> (*func)
         (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period);
+        std::vector<double> period, double mass);
         func Causality();   
 
-        std::vector<bool> causal (std::vector<double> xvec, 
-                                    std::vector<double> yvec,
-                                    std::vector<double> period={});
+        static std::vector<bool> causal (std::vector<double> xvec, 
+                                         std::vector<double> yvec,
+                                         std::vector<double> period={},
+                                         double mass = 0);
 
         ~BlackHoleSpacetime();  
 };
-
-
-
-
 
 
 #endif /* SPACETIMES_H */
