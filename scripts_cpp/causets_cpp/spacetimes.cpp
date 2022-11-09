@@ -9,6 +9,7 @@
 #include <numeric>
 #include <stdexcept>
 #include <stdio.h>
+#include <string.h>
 #include <stack>
 #include <string>
 #include <vector>

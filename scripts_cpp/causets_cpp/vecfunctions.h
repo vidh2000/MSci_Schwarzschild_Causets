@@ -157,7 +157,7 @@ void print_vector(const std::vector<T> & vec,
 template <typename T>
 inline
 void print_vector(std::vector<std::vector<T>> vec, 
-                  std::string sep=" , ",
+                  std::string sep=", ",
                   bool brackets = true)
     /** @brief rints given vector, with given separator.
     *
