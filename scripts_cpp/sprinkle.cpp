@@ -13,11 +13,16 @@
 #include <vector>
 #include <chrono>
 #include <unordered_set>
+#include <chrono>
 
-//#include "causets_cpp/sprinkledcauset.h"
+#include "causets_cpp/sprinkledcauset.h"
 #include "causets_cpp/shapes.h"
-//#include "causets_cpp/spacetimes.h"
+#include "causets_cpp/spacetimes.h"
 
+#include "causets_cpp/functions.h"
+#include "causets_cpp/vecfunctions.h"
+
+using namespace std::chrono;
 /**
  * @brief   To run this file, you must:
  *          - Go to to the folder in which it is located
@@ -36,22 +41,41 @@
 
 
 // Sprinkled causet parameters
-int card = 10;
-int dim = 2;
-std::vector<double> center = {0,0};
+int card = 10000;
+int dim = 4;
+std::vector<double> center = {0,0,0,0};
 
 
 int main(){
-    //FlatSpacetime S(dim);
+    auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    CoordinateShape shape(dim,"bicone", center, 2.0);
-    std::cout << shape._params["radius"] << std::endl;
-    std::cout << "sprinkle.cpp 'shape' radius= " << shape.Parameter("radius") << std::endl;
-    //std::cout << "Coordinate Shape Created!" << std::endl;
-    //SprinkledCauset C(card,S,shape);
-    //std::cout << "Sprinkled Causet Created!" << std::endl;
-
+    CoordinateShape shape(dim,"bicone", center, 1.0);
+    // std::cout << "N_params = " << shape._params.size() << std::endl;
+    // std::cout << "Params?" << std::endl;
+    // for (auto const& p : shape._params)
+    // {
+    // std::cout << p.first << ' ' << p.second << '\n';
+    // }
+    // gives 0 but doesn't create a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params.find("radius")->second << std::endl;
+    // gives 0 but creates a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params["radius"]<< std::endl;
+    FlatSpacetime S(dim);
+    SprinkledCauset C(card,S,shape);
+    std::cout << "=========================================================\n";
+    std::cout << "Sprinkled Causet Created!" << std::endl;
+    std::cout << "What are the parameters at the end?" << std::endl;
+    for (auto const& p : C._shape._params)
+    {
+    std::cout << p.first << ' ' << p.second << '\n';
+    }
+    //print_vector(C._CMatrix);
+    
     std::cout << "\n ====================================\n \
                     This file works!" << std::endl;
+
+    auto stop = high_resolution_clock::now();
+    double duration = duration_cast<microseconds>(stop - start).count();
+    std::cout << "Time taken: "
+            << duration/pow(10,6) << " seconds" << std::endl;
+
     return 0;
 };

@@ -590,7 +590,9 @@ double EmbeddedCauset:: length_scale()
  */
 bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 {
+    //std::cout << "In areTimelike\n";
     auto atimelikeb = _spacetime.Causality();
+    //std::cout << "After checking causality...\n";
     return atimelikeb(xvec, yvec, _spacetime._period, _spacetime._mass)[0];
 };
 
@@ -634,9 +636,9 @@ void EmbeddedCauset::sort_coords(int dim,// = 0,
     auto sort_lambda = [dim, rev_factor] (vector<double> v1, vector<double> v2) 
                       {return rev_factor * v1[dim]<v2[dim];};
     std::sort(_coords.begin(), _coords.end(), sort_lambda);
-    std::cout << "Coords after sorting:" << std::endl;
-    print_vector(_coords);
-    std::cout << std::endl;
+    //std::cout << "Coords after sorting:" << std::endl;
+    //print_vector(_coords);
+    //std::cout << std::endl;
 }
 
 

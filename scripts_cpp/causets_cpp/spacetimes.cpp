@@ -160,6 +160,7 @@ typedef vector<bool> (*func)
 (vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
 func FlatSpacetime::Causality()
 {
+    std::cout << "Checking causality\n";
     if (_dim == 1)
         {return &Spacetime::causal1d;}
     else if (!_isPeriodic)

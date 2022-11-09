@@ -29,9 +29,11 @@ using namespace std::chrono;
 using namespace std;
 int main(){
 
-std::map<const char*, double> p = {{"ha", 1}};
-std::cout << p["ha"] << std::endl;
-std::cout << p["nah"] << std::endl;
+std::map<const char*, double> p = {{"a", 1},{"b",2}, {"c",3}};
+
+double t = p["c"];
+std::cout << t << std::endl;
+
 // int count = 3;
 // int dim = 2;
 // vector<vector<double>> coords(count,(vector<double>(dim,0.0)));

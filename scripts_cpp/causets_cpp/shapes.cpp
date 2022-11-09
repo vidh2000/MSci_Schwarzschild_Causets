@@ -107,19 +107,16 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         std::cout << "Center's size neither 0 nor _dim" << std::endl;
         throw std::invalid_argument("Center's size neither 0 nor _dim");}
     
-    std::cout << "isBicone before radius setting = " << isBicone << std::endl;
+    //std::cout << "isBicone before radius setting = " << isBicone << std::endl;
 
     // Set Shape Parameters
     if (strcmp(name,"ball")==0 || isBicone)
     {
-        std::cout << "radius = " << radius << std::endl;
         _params["radius"] = radius;//_params.insert({"radius", radius}); 
         this->param_rangecheck("radius");
-        std::cout << "radius param = " << _params["radius"] << std::endl;
-
+        
         _params["hollow"] = hollow;//.insert({"hollow", hollow}); 
         this->param_rangecheck("hollow", 1.0, true);
-        std::cout << "radius param after hollow = "<< _params["radius"] << std::endl;
     }
     else if (strcmp(name,"cylinder")==0)
     {
@@ -150,8 +147,6 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
             double edge_i = edges[i];
             std::string key_s = "edge_"+std::to_string(i);
             const char* key_i = key_s.c_str();
-            //char key_i[key_s.length() + 1]; 
-	        //std::strcpy(key_i, key_s.c_str());
             _params.insert({key_i, edge_i}); 
             this->param_rangecheck(key_i);
         } 
@@ -164,7 +159,6 @@ void CoordinateShape::param_rangecheck(const char* name,
                                         bool canBeZero)
 {
     double p = _params.find(name)->second;
-    std::cout << "Inside param_rangecheck: name = " << name << std::endl;
     bool isTooLow = ((canBeZero && p < 0.0) or (!canBeZero && p<=0));
     const char* errorchar = (canBeZero) ? "greater than or equal to 0" 
                                         : "greater than 0";
@@ -197,7 +191,11 @@ double CoordinateShape::Parameter (const char* key)
  * @brief Return value of parameter corresponding to "key". 
  *        Note: for cuboid, need to call "edge_i" where i in [0, _dim-1].
  */
-    {return _params[key];} 
+{
+    double paramval = _params.at(key);
+    //std::cout << "Parameter::paramval[" << key << "] = " << paramval << std::endl;
+    return paramval;
+}
 
 
 vector<double> CoordinateShape::Edges ()
@@ -222,7 +220,6 @@ double CoordinateShape::Volume()
  * @brief Return Volume. On first call volume is computed. 
  */
 {
-    std::cout << "in CoordinateShape::Volume(), isBicone =" << isBicone << std::endl;
     if (_volume != 0)
         {return _volume;}
     else if (strcmp(_name, "ball")==0)

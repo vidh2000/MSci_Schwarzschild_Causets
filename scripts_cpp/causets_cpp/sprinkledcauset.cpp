@@ -75,16 +75,14 @@ SprinkledCauset::SprinkledCauset(int card,
 {
     if (poisson)
         {_intensity = card*1;}
-    std::cout << "Before sprinkling... shape.radius = " << shape.Parameter("radius") << std::endl;
+
+    for (auto const& p : shape._params)
     _coords = sprinkle_coords(card, shape, seed);
-    std::cout << "Sprinkled Coordinates =";
-    print_vector(_coords);
     _size = _coords.size();
     _spacetime = spacetime;
     _shape = shape; 
-    std::cout << "Before sorting coords..\n";
+
     this->sort_coords(0, false);
-    std::cout << "Making causet..\n";
     if (make_matrix)
         {this->make_cmatrix("coordinates", special, use_transitivity,
                                 make_sets, make_links, sets_type);}
@@ -177,7 +175,6 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                                                     int seed)// = 0)
 {
 
-    std::cout << "Shape._name = " << shape._name << std::endl;
 
     if (count < 0)
     {   
@@ -186,8 +183,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
         throw std::invalid_argument(
             "The sprinkle cardinality has to be a non-negative integer.");
     }
-    std::cout << "count =" << count << std::endl; 
-    std::cout << "dim = " << shape._dim << std::endl;
+
     vector<vector<double>> coords(count,(vector<double>(shape._dim,0.0)));
 
     // Define mersenne_twister_engine Random Generator (with seed)
@@ -200,7 +196,6 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
 
     bool bolean = (strcmp(shape._name, "bicone")==0);
-    std::cout << "strcmp(name,'bicone')==0 gives bool=" << bolean << std::endl;
 
     if (strcmp(shape._name, "cube")==0 || strcmp(shape._name, "cuboid")==0)
     {
@@ -231,16 +226,19 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
         bool isDiamond = strcmp(shape._name, "diamond") == 0 ||
                          strcmp(shape._name, "bicone") == 0;
         
-        std::cout << "isDiamond = " << isDiamond << std::endl;
-
         int d = shape._dim;
-        double R = shape.Parameter("radius");
-        std::cout << "R_outside =" << R << std::endl;
-       
+        
+        // Get radius. Other methods failed.. loop is supershort and unrepeatd
+        double R;
+        for (auto const& p : shape._params)
+        {
+            if (strcmp(p.first, "radius")==0){
+                R = p.second;}
+        }
+
         if (d==2 && isDiamond)
         {
-            std::cout << "in u-v coordinates generation" << std::endl;
-            std::cout << "R_inside =" << R << std::endl;
+
             //pick "count" random coordinate tuples uniformly:
             vector<vector<double>> uv;
             std::uniform_real_distribution<> dis(-1.0,1.0);
@@ -251,7 +249,6 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                 coords[i][0] = (u + v)*R/2.0;
                 coords[i][1] = (u - v)*R/2.0;
             } 
-            print_vector(coords);
         }
 
         else
