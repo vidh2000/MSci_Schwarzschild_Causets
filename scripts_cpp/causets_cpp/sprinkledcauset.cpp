@@ -83,8 +83,9 @@ SprinkledCauset::SprinkledCauset(int card,
     _shape = shape; 
 
     this->sort_coords(0, false);
-    if (make_matrix)
-        {this->make_cmatrix("coordinates", special, use_transitivity,
+    if (make_matrix){
+        std::cout << "Making a matrix\n";    
+        this->make_cmatrix("coordinates", special, use_transitivity,
                                 make_sets, make_links, sets_type);}
     
     else if (make_sets)
@@ -197,24 +198,58 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
     bool bolean = (strcmp(shape._name, "bicone")==0);
 
-    if (strcmp(shape._name, "cube")==0 || strcmp(shape._name, "cuboid")==0)
+    if (strcmp(shape._name, "cuboid")==0)
     {
         // vector<double> low; "
         // vector<double> high;
 
-        //Generate Coordinates
+        
+        // Get edge values <-- Copied from CoordinateShape::Eges()
+        vector<double> edges(shape._dim);
         for (int i = 0; i<shape._dim; i++)
         {
-            double low  = shape._center[i] - shape.Edges()[i]/2;
-            double high = shape._center[i] + shape.Edges()[i]/2;
+            std::string key_s = "edge_"+std::to_string(i);
+            const char* key_i = key_s.c_str();
+            for (auto const& p : shape._params)
+            {
+                if (strcmp(p.first, key_i)==0){
+                    edges[i] = p.second;}
+            }
+        }
+        //Generate Coordinates
+        for (int j = 0; j<shape._dim; j++)
+        {
+            double low  = shape._center[j] - edges[j]/2.0;
+            double high = shape._center[j] + edges[j]/2.0;
             std::uniform_real_distribution<> dis(low,high);
-            for (int j=0; j<count; j++)
+            for (int i=0; i<count; i++)
             {
                 coords[i][j] = dis(gen);
             }
         }
     }
 
+    else if (strcmp(shape._name, "cube")==0)
+    {
+        //Generate Coordinates
+        double edge;
+        for (auto const& p : shape._params)
+        {
+                if (strcmp(p.first, "edge")==0){
+                    edge = p.second;}
+        }
+        for (int j = 0; j<shape._dim; j++)
+        {
+            double low  = shape._center[j] - edge/2;
+            double high = shape._center[j] + edge/2;
+            std::uniform_real_distribution<> dis(low,high);
+            for (int i=0; i<count; i++)
+            {
+                coords[i][j] = dis(gen);
+            }
+        }
+
+    }
 
     else if ((strcmp(shape._name, "ball")==0) ||
              (strcmp(shape._name, "cylinder")==0) ||
@@ -259,8 +294,14 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
             if (isCylindrical)
             {   
                 //Get time done separately
-                double t_low = shape._center[0]-shape.Parameter("duration")/2;
-                double t_high= shape._center[0]+shape.Parameter("duration")/2;
+                double duration;
+                for (auto const& p : shape._params)
+                {
+                    if (strcmp(p.first, "duration")==0){
+                        duration = p.second;}
+                }
+                double t_low = shape._center[0]-duration/2;
+                double t_high= shape._center[0]+duration/2;
                 std::uniform_real_distribution<> cyltime(t_low, t_high);
                 for (int i = 0; i<count; i++)
                     {coords[i][0] = cyltime(gen);} 
