@@ -143,13 +143,13 @@ void print_vector(const std::vector<T> & vec,
                   bool brackets = true)
     {   
         int size = vec.size();
-        if (brackets) {std::cout<<"\n{ ";}
+        if (brackets) {std::cout<<"{";}
         for(int index = 0; index < size ; index++)
         {   
             if (index == 0) {std::cout<<vec[index];}
             else {std::cout<<sep<<vec[index];}
         }
-        if (brackets) {std::cout<<" }";}
+        if (brackets) {std::cout<<"}";}
         std::cout<<std::endl;  
 }
 
@@ -168,21 +168,23 @@ void print_vector(std::vector<std::vector<T>> vec,
     *  @return Void.
     **/
     {   int size = vec.size();
-        if (brackets) {std::cout<<"\n{ ";}
+        if (brackets) {std::cout<<"{";}
         for(int index = 0; index < size ; index++)
         {
             std::vector<T> vind = vec[index];
-            std::cout<<"{";
+            if (index != 0)
+            {std::cout<<" {";}
+            else {std::cout << "{";}
             for (int j = 0; j < vind.size(); j++)
             {
                 if (j == 0) {std::cout<<vind[0];}
                 else {std::cout<<sep<<vind[j];}
             }
-            std::cout<<"}";
+            std::cout << "}";
 
-            if (index != size -1) {std::cout<<sep;}
+            if (index != size -1) {std::cout<< sep << std::endl;}
         }
-        if (brackets) {std::cout<<" }";}
+        if (brackets) {std::cout<<"}";}
         std::cout<<std::endl;  
 }
 

@@ -1,5 +1,13 @@
 ## INSTRUCTIONS and USEFUL TIPS
 
+
+To fix:
+- Volume() method should probably not work in the shapes.cpp
+
+
+
+
+
 HOW TO RUN C++ code using compiler optimisation:
 g++ -g -O3 filename.cpp -std=c++17
 -> Creates a.exe file 

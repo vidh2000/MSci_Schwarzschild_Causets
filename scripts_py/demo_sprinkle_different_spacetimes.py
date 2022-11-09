@@ -22,7 +22,7 @@ figname = "Minkowski 1+1 spacetime"
 S: CoordinateShape = CoordinateShape(3, 'cylinder', duration=2.0, hollow=0)
 #S: CoordinateShape = CoordinateShape(2, 'cuboid', edges=[3,2])
 #S: CoordinateShape = CoordinateShape(2, 'diamond', edges=[3,2])
-C: SprinkledCauset = SprinkledCauset(intensity=100.0,
+C: SprinkledCauset = SprinkledCauset(intensity=10.0,
                                      spacetime=FlatSpacetime(3),
                                      #spacetime="Minkowski",
                                      shape=S)

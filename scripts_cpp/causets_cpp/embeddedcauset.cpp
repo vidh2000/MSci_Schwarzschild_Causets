@@ -145,12 +145,16 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                                     const char* sets_type)// = "past")
 {
     //std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
-    int8_t special_factor = (special)? -1 : 1;
+    int special_factor = (special)? -1 : 1;
     _special_matrix = special;
-    _CMatrix.resize(_size, vector<int8_t>(_size));
+    _CMatrix.resize(_size, vector<int>(_size,0));
     
+    std::cout << "_Cmatrix shape = (" << _CMatrix.size() << ", "
+                    << _CMatrix[0].size() << ")" << std::endl;
+
     if (make_links == false && make_sets == false)
     {
+        std::cout << "Inside loop for making a cmatrix without links and sets..\n";
         for(int i=0; i<_size; i++)
         {
             //_CMatrix[i].resize(_size);
@@ -161,12 +165,16 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 if (strcmp(method, "coordinates")==0 && areTimelike(_coords[i], _coords[j]))
                 {
                     _CMatrix[j][i] = special_factor;
+                    std::cout << "(j,i) = " << j << " " << i << "\n";
+                    std::cout << "Value = " << _CMatrix[j][i] << "\n";
                     if (use_transitivity)
                     {
                         for (int k = j-1; k>-1; k--)
                         {
                             if(_CMatrix[k][j] != 0)
-                                {_CMatrix[k][i] = 1;}
+                            {
+                                _CMatrix[k][i] = 1;
+                            }
                         }
                     }
                 }
@@ -663,7 +671,7 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
         if (_CMatrix.size())
         {
             _CMatrix.erase(_CMatrix.begin() + label);
-            for (vector<int8_t> row : _CMatrix)
+            for (vector<int> row : _CMatrix)
                 {row.erase(row.begin() + label);}
         } 
     }
@@ -714,7 +722,7 @@ void EmbeddedCauset::discard(vector<int> labels,
         if (_CMatrix.size())
         {
             remove_indices(_CMatrix, labels);
-            for (vector<int8_t> row : _CMatrix)
+            for (vector<int> row : _CMatrix)
                 {remove_indices(row, labels);}
         } 
     }

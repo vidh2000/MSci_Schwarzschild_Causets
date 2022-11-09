@@ -34,7 +34,7 @@ using std::unordered_set;
  * @param Cmatrix 
  */
 //Causet::Causet(){}
-Causet::Causet(vector<vector<int8_t>> Cmatrix)
+Causet::Causet(vector<vector<int>> Cmatrix)
 {
     _CMatrix = Cmatrix;
     _size = Cmatrix.size();
@@ -48,7 +48,7 @@ Causet::Causet(vector<vector<int8_t>> Cmatrix)
 template <typename num>
 Causet::Causet(vector<vector<num>> Cmatrix)
 {
-    _CMatrix = (int8_t)Cmatrix;
+    _CMatrix = (int)Cmatrix;
     _size = Cmatrix.size();
 }
 
@@ -65,7 +65,7 @@ void Causet::make_futures(){}
 void Causet::make_past_links(){}
 void Causet::make_future_links(){}
 
-std::vector<std::vector<int8_t>> Causet::CMatrix(std::vector<int> labels)
+std::vector<std::vector<int>> Causet::CMatrix(std::vector<int> labels)
 {
     if (!labels.size())
         {return _CMatrix;}
@@ -124,7 +124,7 @@ double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
  * @brief   Ordering fraction determined from a CMatrix.
  *          See above description above all ord_fr definitions
  */
-double Causet::ord_fr(vector<vector<int8_t>> M,
+double Causet::ord_fr(vector<vector<int>> M,
                         const char* denominator)// = "choose",
 {
     if (strcmp(denominator, "choose")!=0 || strcmp(denominator, "n2")!=0)
@@ -617,7 +617,7 @@ void Causet::discard(int label, bool make_matrix,
         if (_CMatrix.size())
         {
             _CMatrix.erase(_CMatrix.begin() + label);
-            for (vector<int8_t> row : _CMatrix)
+            for (vector<int> row : _CMatrix)
                 {row.erase(row.begin() + label);}
         } 
     }
@@ -674,7 +674,7 @@ void Causet::discard(vector<int> labels, bool make_matrix,
         if (_CMatrix.size())
         {
             remove_indices(_CMatrix, labels);
-            for (vector<int8_t> row : _CMatrix)
+            for (vector<int> row : _CMatrix)
                 {remove_indices(row, labels);}
         } 
     }

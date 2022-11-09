@@ -107,15 +107,14 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         std::cout << "Center's size neither 0 nor _dim" << std::endl;
         throw std::invalid_argument("Center's size neither 0 nor _dim");}
     
-    //std::cout << "isBicone before radius setting = " << isBicone << std::endl;
-
+  
     // Set Shape Parameters
     if (strcmp(name,"ball")==0 || isBicone)
     {
-        _params["radius"] = radius;//_params.insert({"radius", radius}); 
+        _params.insert({"radius", radius}); 
         this->param_rangecheck("radius");
-        
-        _params["hollow"] = hollow;//.insert({"hollow", hollow}); 
+
+        _params.insert({"hollow", hollow}); 
         this->param_rangecheck("hollow", 1.0, true);
     }
     else if (strcmp(name,"cylinder")==0)
@@ -136,12 +135,14 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
     }
     else if (strcmp(name,"cuboid")==0)
     {
-        vector<double> my_edges (_dim, 1.0);
+        vector<double> my_edges(_dim, 1.0);
         if (edges.size() != 0 && edges.size() != _dim){
             std::cout << "Cuboid's |edges| neither 0 nor _dim" << std::endl;
             throw std::invalid_argument("Cuboid's |edges| neither 0 nor _dim");}
         else if (edges.size() == 0)
             {edges = my_edges;}
+        
+        // Save edge values into parameter
         for (int i = 0; i<_dim; i++)
         {
             double edge_i = edges[i];
@@ -192,13 +193,18 @@ double CoordinateShape::Parameter (const char* key)
  *        Note: for cuboid, need to call "edge_i" where i in [0, _dim-1].
  */
 {
-    double paramval = _params.at(key);
+    double paramval;
+    for (auto const& p : _params)
+    {
+        if (strcmp(p.first, key)==0){
+            paramval = p.second;}
+    }
     //std::cout << "Parameter::paramval[" << key << "] = " << paramval << std::endl;
     return paramval;
 }
 
 
-vector<double> CoordinateShape::Edges ()
+vector<double> CoordinateShape::Edges()
 /**
  * @brief Return value of [0, _dim-1] edges.
  * @exception Raise error if undefined.
@@ -207,9 +213,19 @@ vector<double> CoordinateShape::Edges ()
     vector<double> edges (_dim);
     for (int i = 0; i<_dim; i++)
     {
+        // // Old method which doesn't work
+        // std::string key_s = "edge_"+std::to_string(i);
+        // const char* key_i = key_s.c_str();
+        // edges[i] = _params.find(key_i)->second;
+
+        // Vid's method
         std::string key_s = "edge_"+std::to_string(i);
         const char* key_i = key_s.c_str();
-        edges[i] = _params.find(key_i)->second;
+        for (auto const& p : _params)
+        {
+            if (strcmp(p.first, key_i)==0){
+                edges[i] = p.second;}
+        }
     }
     return edges;
 }

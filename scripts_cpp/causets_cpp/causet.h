@@ -29,7 +29,7 @@ class Causet
 {
     public:
         // Attributes
-        std::vector<std::vector<int8_t>> _CMatrix = {};
+        std::vector<std::vector<int>> _CMatrix = {};
         bool _special_matrix = false;
         int _size = 0;
         int _dim = 0;
@@ -41,7 +41,7 @@ class Causet
 
         // CONSTRUCTOR
         //Causet();
-        Causet(std::vector<std::vector<int8_t>> Cmatrix = {});
+        Causet(std::vector<std::vector<int>> Cmatrix = {});
         
         template <typename num>
         Causet(std::vector<std::vector<num>> Cmatrix);
@@ -54,7 +54,7 @@ class Causet
         void make_past_links();
         void make_future_links();
 
-        std::vector<std::vector<int8_t>> CMatrix(std::vector<int> labels = {});
+        std::vector<std::vector<int>> CMatrix(std::vector<int> labels = {});
         int size();
         bool is_CMatrix_special();
         bool is_Cij_special();
@@ -68,7 +68,7 @@ class Causet
         // KINEMATICS
         static double ord_fr(Causet A,
                       const char* denominator = "choose");
-        static double ord_fr(std::vector<std::vector<int8_t>> A,
+        static double ord_fr(std::vector<std::vector<int>> A,
                       const char* denominator = "choose");
         template<typename SET>
         static double ord_fr(std::vector<SET> A_pasts,
