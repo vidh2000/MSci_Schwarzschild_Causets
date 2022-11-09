@@ -236,10 +236,7 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
 * Notes: does not support anything actually at the moment
 * ============================================================================
 ============================================================================*/
-BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
-                                        double r_S,// = 0.5,
-                                        const char* metric)// = "Eddington-Finkelstein")
-                                        : Spacetime()
+
 /**
  * @brief Initialises a Black Hole Spacetime.
  *
@@ -248,6 +245,9 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
  * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
  *                (default), or "Schwarzschild" or "S".
  */
+BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
+                                        double r_S,// = 0.5,
+                                        std::string metric)// = "EF")
 {
     if (dim < 2 || dim > 4)
     {
@@ -256,14 +256,13 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
     }
     _dim = dim;
     _name = "black hole";
-    
 
-    if (std::strcmp(metric, "Eddington-Finkelstein") == 0 || 
-        std::strcmp(metric, "EF") == 0)
-        {_metricname = "Eddington-Finkelstein";}
-    else if (std::strcmp(metric, "Schwarzschild") == 0 || 
-             std::strcmp(metric, "S") == 0)
-        {_metricname = "Schwarzschild";}
+    // if (std::strcmp(metric, "Eddington-Finkelstein") == 0 || 
+    //     std::strcmp(metric, "EF") == 0)
+    //     {_metricname = "Eddington-Finkelstein";}
+    // else if (std::strcmp(metric, "Schwarzschild") == 0 || 
+    //          std::strcmp(metric, "S") == 0)
+    //     {_metricname = "Schwarzschild";}
 }
 
 

@@ -28,7 +28,7 @@ class Spacetime
     public:
         int  _dim;
         const char* _name;
-        const char* _metricname;
+        char _metricname;
 
         bool _isPeriodic = false;
         std::vector<double> _period = {};
@@ -116,17 +116,16 @@ class BlackHoleSpacetime: public Spacetime
     public:
         double _mass;
         double _r_S;
-        char _metric = "Eddington-Finkelstein";
 
-//         // Constructor
-//         BlackHoleSpacetime(int dim = 2,
-//                            double r_S = 0.5,
-//                            std::string metric = "Eddington-Finkelstein");
-                
-//         // Methods
-//         double ds2(std::vector<double> xvec, std::vector<double> yvec);
+        // Constructor
+        BlackHoleSpacetime(int dim = 2,
+                           double r_S = 0.5,
+                           std::string metric = "Eddington-Finkelstein");
+    
+        // Methods
+        double ds2(std::vector<double> xvec, std::vector<double> yvec);
 
-//         double ds(std::vector<double> xvec, std::vector<double> yvec);
+        double ds(std::vector<double> xvec, std::vector<double> yvec);
         
         typedef std::vector<bool> (*func)
         (std::vector<double> xvec, std::vector<double> yvec, 
