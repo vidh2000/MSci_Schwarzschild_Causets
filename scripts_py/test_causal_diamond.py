@@ -19,8 +19,8 @@ from time import time
 
 from functions import *
 
-Ndim=3
-N_events = 300
+Ndim=2
+N_events = 10
 #S: CoordinateShape = CoordinateShape(Ndim, 'cylinder', duration=1.0,
 #                                    radius=1.0,hollow=0.0)
 #S: CoordinateShape = CoordinateShape(Ndim, 'cuboid', edges=[3,2,3])
