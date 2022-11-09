@@ -75,9 +75,9 @@ SprinkledCauset::SprinkledCauset(int card,
 {
     if (poisson)
         {_intensity = card*1;}
-    
+    std::cout << "Before sprinkling...";
     _coords = sprinkle_coords(card, shape, seed);
-    std::cout << "Coordinates =";
+    std::cout << "Sprinkled Coordinates =";
     print_vector(_coords);
     _size = _coords.size();
     _spacetime = spacetime;
@@ -176,6 +176,9 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                                                     CoordinateShape shape,
                                                     int seed)// = 0)
 {
+
+    std::cout << "Shape._name = " << shape._name << std::endl;
+
     if (count < 0)
     {   
         std::cout<<"The sprinkle cardinality has to be a\
@@ -211,6 +214,10 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
             }
         }
     }
+
+
+    //bool bolean = (strcmp(shape._name, "bicone")==0);
+    //std::cout << "strcmp(name,'bicone')==0 gives bool=" << bolean << std::endl;
 
     else if (strcmp(shape._name, "ball")==0 ||
              strcmp(shape._name, "cylinder")==0 ||
