@@ -10,6 +10,7 @@
 #include <stack>
 #include <string>
 #include <stdio.h>
+#include <string.h>
 #include <bits/stdc++.h>
 #include <stdexcept>
 #include <vector>
@@ -83,7 +84,7 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
     // Set Name
 
     bool isBicone = strcmp(name,"diamond")==0 || strcmp(name, "bicone")==0;
-    std::cout << "isBicone = " << isBicone << "\n";
+
     if (strcmp(name,"ball")!=0 && !isBicone &&
         strcmp(name,"cylinder")!=0 && strcmp(name,"cube")!=0 &&
         strcmp(name,"cuboid")!=0)

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <string>
+#include <string.h>
 #include <vector>
 #include <chrono>
 #include <unordered_set>
@@ -78,25 +79,25 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
         {
             if (make_links)
             {
-                if (sets_type == "past")
+                if (strcmp(sets_type, "past")==0)
                     {this->make_all_pasts("coordinates");}
-                else if (sets_type == "future")
+                else if (strcmp(sets_type, "future")==0)
                     {this->make_all_futures("coordinates");}
             }
             else
             {
-                if (sets_type == "past")
+                if (strcmp(sets_type, "past")==0)
                     {this->make_pasts("coordinates");}
-                else if (sets_type == "future")
+                else if (strcmp(sets_type, "future")==0)
                     {this->make_futures("coordinates");}
             }
         }
 
     else if (make_links)
         {
-            if (sets_type == "past")
+            if (strcmp(sets_type, "past")==0)
                     {this->make_past_links("coordinates");}
-            else if (sets_type == "future")
+            else if (strcmp(sets_type, "future")==0)
                 {this->make_fut_links("coordinates");}   
         }
 
@@ -157,7 +158,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
             {
                 if (_CMatrix[j][i] != 0)
                     {continue;}
-                if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
+                if (strcmp(method, "coordinates")==0 && areTimelike(_coords[i], _coords[j]))
                 {
                     _CMatrix[j][i] = special_factor;
                     if (use_transitivity)
@@ -175,7 +176,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
 
     else if (make_links == true && make_sets == false)
     {
-        if (sets_type == "past")
+        if (strcmp(sets_type, "past")==0)
         {
             _past_links.resize(_size);
             for(int i=0; i<_size; i++)
@@ -184,7 +185,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 {
                     if (_CMatrix[j][i] != 0)
                         {continue;}
-                    if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
+                    if (strcmp(method, "coordinates")==0 && areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
                         _past_links[i].insert(j); 
@@ -198,7 +199,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 }
             }
         }
-        else if (sets_type == "future")
+        else if (strcmp(sets_type, "future")==0)
         {
             _future_links.resize(_size);
             for(int i=_size-1; i>-1; i--)
@@ -207,7 +208,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 {
                     if (_CMatrix[j][i] != 0)
                         {continue;}
-                    if (method == "coordinates" && areTimelike(_coords[i], _coords[j]))
+                    if (strcmp(method, "coordinates")==0 && areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
                         _future_links[i].insert(j);
@@ -226,7 +227,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
     
     else if (make_links == false && make_sets == true)
     {
-        if (sets_type == "past")
+        if (strcmp(sets_type, "past")==0)
         {
             _pasts.resize(_size);
             for(int i=0; i<_size; i++)
@@ -236,7 +237,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 {
                     if (_CMatrix[j][i] != 0)
                         {continue;}
-                    if (method == "coordinates" && 
+                    if (strcmp(method, "coordinates")==0 && 
                         areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
@@ -254,7 +255,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 }
             }
         }
-        else if (sets_type == "future")
+        else if (strcmp(sets_type, "future")==0)
         {
             _futures.resize(_size);
             for(int i=_size-1; i>-1; i--)
@@ -264,7 +265,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 {
                     if (_CMatrix[j][i] != 0)
                         {continue;}
-                    if (method == "coordinates" && 
+                    if (strcmp(method, "coordinates")==0 && 
                         areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
@@ -287,7 +288,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
 
     else /*both make_sets and links*/
     {
-        if (sets_type == "past")
+        if (strcmp(sets_type, "past")==0)
         {
             _pasts.resize(_size);
             for(int i=0; i<_size; i++)
@@ -297,7 +298,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 {
                     if (_CMatrix[j][i] != 0)
                         {continue;}
-                    if (method == "coordinates" && 
+                    if (strcmp(method, "coordinates")==0 && 
                         areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
@@ -314,7 +315,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 }
             }
         }
-        else if (sets_type == "future")
+        else if (strcmp(sets_type, "future")==0)
         {
             _futures.resize(_size);
             for(int i=_size-1; i>-1; i--)
@@ -324,7 +325,7 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
                 {
                     if (_CMatrix[j][i] != 0)
                         {continue;}
-                    if (method == "coordinates" && 
+                    if (strcmp(method, "coordinates")==0 && 
                         areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[j][i] = special_factor;
@@ -370,7 +371,7 @@ void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
                 {continue;}
             else
             {
-                if (method == "coordinates" &&
+                if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
                 {
                     _past_links[i].insert(j);
@@ -407,7 +408,7 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
                 {continue;}
             else
             {
-                if (method == "coordinates" &&
+                if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
                 {
                     _future_links[i].insert(j);
@@ -444,7 +445,7 @@ void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
                 {continue;}
             else
             {
-                if (method == "coordinates" &&
+                if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
                 {
                     _pasts[i].insert(j);
@@ -479,7 +480,7 @@ void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
                 {continue;}
             else
             {
-                if (method == "coordinates" &&
+                if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
                 {
                     _futures[i].insert(j);
@@ -515,7 +516,7 @@ void EmbeddedCauset::make_past_links(const char* method)// = "coordinates")
                 {continue;}
             else
             {
-                if (method == "coordinates" &&
+                if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
                     {_past_links[i].insert(j);}
             }
@@ -547,7 +548,7 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
                 {continue;}
             else
             {
-                if (method == "coordinates" &&
+                if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
                     {_future_links[i].insert(j);}
             }
@@ -633,6 +634,9 @@ void EmbeddedCauset::sort_coords(int dim,// = 0,
     auto sort_lambda = [dim, rev_factor] (vector<double> v1, vector<double> v2) 
                       {return rev_factor * v1[dim]<v2[dim];};
     std::sort(_coords.begin(), _coords.end(), sort_lambda);
+    std::cout << "Coords after sorting:" << std::endl;
+    print_vector(_coords);
+    std::cout << std::endl;
 }
 
 

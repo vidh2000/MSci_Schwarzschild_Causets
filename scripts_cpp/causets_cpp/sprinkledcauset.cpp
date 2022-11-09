@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <string>
+#include <string.h>
 #include <vector>
 #include <chrono>
 #include <unordered_set>
@@ -21,8 +22,8 @@
 
 #include "embeddedcauset.h"
 #include "sprinkledcauset.h"
-//#include "functions.h"
-//#include "vecfunctions.h"
+#include "functions.h"
+#include "vecfunctions.h"
 //#include "causet.h"
 //#include "shapes.h"
 //#include "spacetimes.h"
@@ -75,9 +76,9 @@ SprinkledCauset::SprinkledCauset(int card,
     if (poisson)
         {_intensity = card*1;}
     
-    std::cout << "Before sprinkling... \n";
     _coords = sprinkle_coords(card, shape, seed);
-    std::cout << "After sprinkling...\n";
+    std::cout << "Coordinates =";
+    print_vector(_coords);
     _size = _coords.size();
     _spacetime = spacetime;
     _shape = shape; 
@@ -92,25 +93,25 @@ SprinkledCauset::SprinkledCauset(int card,
         {
             if (make_links)
             {
-                if (sets_type == "past")
+                if (strcmp(sets_type, "past")==0)
                     {this->make_all_pasts("coordinates");}
-                else if (sets_type == "future")
+                else if (strcmp(sets_type, "future")==0)
                     {this->make_all_futures("coordinates");}
             }
             else
             {
-                if (sets_type == "past")
+                if (strcmp(sets_type, "past")==0)
                     {this->make_pasts("coordinates");}
-                else if (sets_type == "future")
+                else if (strcmp(sets_type, "future")==0)
                     {this->make_futures("coordinates");}
             }
         }
 
     else if (make_links)
         {
-            if (sets_type == "past")
+            if (strcmp(sets_type, "past")==0)
                     {this->make_past_links("coordinates");}
-            else if (sets_type == "future")
+            else if (strcmp(sets_type, "future")==0)
                 {this->make_fut_links("coordinates");}   
         }
 
@@ -193,7 +194,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
     std::mt19937 gen(seed);
 
     
-    if ((shape._name == "cube") || (shape._name == "cuboid"))
+    if (strcmp(shape._name, "cube")==0 || strcmp(shape._name, "cuboid")==0)
     {
         // vector<double> low; "
         // vector<double> high;
@@ -211,12 +212,15 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
         }
     }
 
-    else if ((shape._name == "ball") || (shape._name == "cylinder") ||
-             (shape._name == "diamond") || (shape._name == "bicone"))
+    else if (strcmp(shape._name, "ball")==0 ||
+             strcmp(shape._name, "cylinder")==0 ||
+             strcmp(shape._name, "diamond")==0 ||
+             strcmp(shape._name, "bicone")==0)
     {
         // Create circle based sprinkle:
-        bool isCylindrical = shape._name == "cylinder";
-        bool isDiamond =(shape._name=="diamond")||(shape._name=="bicone");
+        bool isCylindrical = strcmp(shape._name, "cylinder")==0;
+        bool isDiamond = strcmp(shape._name, "diamond") == 0 ||
+                         strcmp(shape._name, "bicone") == 0;
 
         int d = shape._dim;
         double R = shape.Parameter("radius");
@@ -237,7 +241,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
         else
         {
-            int n_different = (shape._name == "ball")? 0 : 1;
+            int n_different = (strcmp(shape._name, "ball")==0)? 0 : 1;
             int n_rad = d - n_different;
             
             if (isCylindrical)

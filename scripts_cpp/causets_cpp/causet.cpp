@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <string>
+#include <string.h>
 #include <vector>
 #include <chrono>
 #include <unordered_set>
@@ -126,7 +127,7 @@ double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
 double Causet::ord_fr(vector<vector<int8_t>> M,
                         const char* denominator)// = "choose",
 {
-    if (denominator!= "choose" || denominator!= "n2")
+    if (strcmp(denominator, "choose")!=0 || strcmp(denominator, "n2")!=0)
     {
         std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
@@ -141,7 +142,7 @@ double Causet::ord_fr(vector<vector<int8_t>> M,
             }
         }
     }
-    double fr = 2 * nrelations/ (N* (N - (denominator=="choose")));
+    double fr = 2 * nrelations/ (N* (N - (strcmp(denominator,"choose")==0)));
     return fr;
 }
 
@@ -153,7 +154,7 @@ template<typename SET>
 double Causet::ord_fr(vector<SET> A_pasts,
                 const char* denominator)// = "choose",
 {
-    if (denominator!= "choose" || denominator!= "n2")
+    if (strcmp(denominator,"choose")!=0 || strcmp(denominator,"n2")!=0)
     {
         std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
@@ -165,7 +166,7 @@ double Causet::ord_fr(vector<SET> A_pasts,
     {
         nrelations += e_i.size();
     }
-    double fr = 2 * nrelations/ (N* (N - (denominator=="choose")));
+    double fr = 2 * nrelations/ (N* (N - (strcmp(denominator,"choose")==0)));
     return fr;
 }
 
@@ -179,7 +180,7 @@ double Causet::ord_fr(vector<SET> A_pasts,
 double Causet::ord_fr(int a, int b,
                 const char* denominator)// = "choose"
 {
-    if (denominator!= "choose" || denominator!= "n2")
+    if (strcmp(denominator,"choose")!=0 || strcmp(denominator, "n2")!=0)
     {
         std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
@@ -235,7 +236,7 @@ double Causet::ord_fr(int a, int b,
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
         return 0.0;}
 
-    int fr = 2 * nrelations / (N * (N - (denominator == "choose")));
+    int fr = 2 * nrelations / (N * (N - (strcmp(denominator,"choose")==0)));
     return fr;
 }
 
@@ -304,7 +305,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     vector<double> destimates;
     
 
-    if (method == "random")
+    if (strcmp(method,"random")==0)
     {
         int fails = 0;
         int successes = 0;
@@ -379,7 +380,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             }
         }
     }
-    else if (method == "big")
+    else if (strcmp(method, "big")==0)
     {
         vector<int> As = {};
         vector<int> Bs = {};
