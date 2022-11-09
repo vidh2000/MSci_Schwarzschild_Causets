@@ -41,8 +41,9 @@ using namespace std::chrono;
    
 
 // Sprinkled causet parameters
-int card = 100;
-int dim = 3;
+int card = 10;
+int dim = 2;
+double radius = 4.0;
 std::vector<double> center (dim, 0.0);
 
 bool poisson = false;
@@ -55,14 +56,13 @@ bool make_links = false;
 int main(){
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    std::vector<const char*> names = {"ball", "bicone", "diamond", "cylinder",
-                                      "cube", "cuboid"};
+    std::vector<const char*> names = {"bicone"};//, {"ball", "bicone", "diamond", "cylinder","cube", "cuboid"};
     
     for (const char* name : names)
     {
         std::cout<<"\n\n============= USING "<<name<<" ====================\n";
         std::cout << "What are the just-Shape's parameters?\n";
-        CoordinateShape shape(dim,name, center);
+        CoordinateShape shape(dim,name,center,radius);
         for (auto const& p : shape._params)
             {std::cout << "-- " << p.first << "=" << p.second << '\n';}
         
@@ -85,6 +85,17 @@ int main(){
         std::cout<<"Min Time       : "<<C.min_along(0) <<std::endl;
         std::cout<<"Max Along x    : "<<C.max_along(1) <<std::endl;
         std::cout<<"Min Along x    : "<<C.min_along(1) <<std::endl;
+        // std::cout<<"Max Along y    : "<<C.max_along(2) <<std::endl;
+        // std::cout<<"Min Along y    : "<<C.min_along(2) <<std::endl;
+        // std::cout<<"Max Along z    : "<<C.max_along(3) <<std::endl;
+        // std::cout<<"Min Along z    : "<<C.min_along(3) <<std::endl;
+
+        std::cout << "\nCoordinates:\n";
+        print_vector(C._coords);
+
+        std::cout<<"Causal Matrix:\n";
+        print_vector(C._CMatrix);
+
     }
 
     std::cout << "\n ====================================\n \

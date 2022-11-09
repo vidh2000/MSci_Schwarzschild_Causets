@@ -155,33 +155,33 @@ void EmbeddedCauset::make_cmatrix (const char* method,// = "coordinates",
     if (make_links == false && make_sets == false)
     {
         std::cout << "Inside loop for making a cmatrix without links and sets..\n";
-        for(int i=0; i<_size; i++)
+        for(int j=0; j<_size; j++)
         {
-            //_CMatrix[i].resize(_size);
-            for(int j=i-1; j>-1; j--)
+            for(int i=j-1; i>-1; i--)
             {
-                if (_CMatrix[j][i] != 0)
-                    {continue;}
-                if (strcmp(method, "coordinates")==0 && areTimelike(_coords[i], _coords[j]))
+                if (_CMatrix[i][j] == 1){
+                    continue;
+                }
+                else
                 {
-                    _CMatrix[j][i] = special_factor;
-                    std::cout << "(j,i) = " << j << " " << i << "\n";
-                    std::cout << "Value = " << _CMatrix[j][i] << "\n";
-                    if (use_transitivity)
-                    {
-                        for (int k = j-1; k>-1; k--)
-                        {
-                            if(_CMatrix[k][j] != 0)
-                            {
-                                _CMatrix[k][i] = 1;
-                            }
-                        }
-                    }
+                    if (strcmp(method, "coordinates")==0 &&
+                        areTimelike(_coords[i], _coords[j])){
+                        // In testing ... keep it simple
+                        _CMatrix[i][j] = 1;}
+                    // _CMatrix[j][i] = special_factor;
+                    // if (use_transitivity)
+                    // {
+                    //     for (int k = j-1; k>-1; k--)
+                    //     {
+                    //         if(_CMatrix[k][j] != 0)
+                    //         {
+                    //             _CMatrix[k][i] = 1;
+                    //         }
                 }
             }
         }
     }
-
+ 
     else if (make_links == true && make_sets == false)
     {
         if (strcmp(sets_type, "past")==0)
