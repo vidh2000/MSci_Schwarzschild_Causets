@@ -63,7 +63,7 @@ vector<double> Spacetime::_T_slice_sampling(double t,
  * @return vector<bool> : {1, x<=y, x>y}
  */
 vector<bool> Spacetime::causal1d(vector<double> xvec, vector<double> yvec,
-                                 vector<double> period)
+                                 vector<double> period, double mass)
 {
     double t_delta = yvec[0] - xvec[0];
     return {1, t_delta >= 0.0, t_delta < 0.0};
@@ -73,7 +73,7 @@ vector<bool> Spacetime::causal1d(vector<double> xvec, vector<double> yvec,
  * @brief Return most simple causal function: t_2>t_1, useful in 1D cases. 
  */
 typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period);
+(vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
 func Spacetime::Causality()
     {return &Spacetime::causal1d;}
 
@@ -157,7 +157,7 @@ double FlatSpacetime::ds(vector<double> xvec, vector<double> yvec)
  *        {x-y timelike, x<=y, x>y}
  */    
 typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period);
+(vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
 func FlatSpacetime::Causality()
 {
     if (_dim == 1)
@@ -177,7 +177,7 @@ func FlatSpacetime::Causality()
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
 vector<bool> FlatSpacetime::causal(vector<double> xvec, vector<double> yvec,
-                                    vector<double>period)
+                                    vector<double>period, double mass)
 {
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
@@ -203,7 +203,8 @@ vector<bool> FlatSpacetime::causal(vector<double> xvec, vector<double> yvec,
  */
 vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec, 
                                             vector<double> yvec,
-                                            vector<double> period)
+                                            vector<double> period,
+                                            double mass)
 {
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
@@ -226,94 +227,6 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
 }
 
 //FlatSpacetime::~FlatSpacetime(){}
-
-// int main(){
-// std::cout << "spacetimes.cpp WORKS! :)";
-
-// }
-
-// scroll down for your newest code commented out in entirety...
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-// All below is the "newest version you posted" - please debug and make it work.
-// Nicely done otherwise, I see you implemented most of the paper already.
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-
-// /*============================================================================
-// * ============================================================================
-// * GENERAL SPACETIME METHODS
-// * ============================================================================
-// ============================================================================*/
-
-// Spacetime::Spacetime(){}
-
-// /**
-//  * @brief Internal function for the time sampling array for a cone from 
-//  * "origin point"(hence take t0=origin[0]) to time "t".
-//  */
-// vector<double> Spacetime::_T_slice_sampling(double t, 
-//                                             vector<double>origin,
-//                                             int samplingsize)
-// {
-//     vector<double> ts (samplingsize);
-//     double t_i = (t-origin[0])/samplingsize;
-//     for (int i = 0; i<samplingsize; i++)
-//         {ts[i] += origin[0] + t_i*i;}
-//     return ts;
-// }     
-
-
-// /**
-//  * @brief Return most simple causal function: t_2>t_1, useful in 1D cases. 
-//  */
-// typedef vector<bool> (*func)
-// (vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
-// func Spacetime::Causality()
-//     {return &Spacetime::causal1d;}
-
-
-// /**
-//  * @brief Simplest function of two events in 1D
-//  * 
-//  * @param xvec : vector<double>(1), time-coordinate of x
-//  * @param yvec : vector<double>(1), time-coordinate of y
-//  * @param period : needed for consistency with Causality, not used
-//  * @param mass : needed for consistency with BlackHoles, not used
-//  * 
-//  * @return vector<bool> : {1, x<=y, x>y}
-//  */
-// vector<bool> Spacetime::causal1d(vector<double> xvec, vector<double> yvec,
-//                                  vector<double> period, double mass)
-// {
-//     double t_delta = yvec[0] - xvec[0];
-//     return {1, t_delta >= 0.0, t_delta < 0.0};
-// }
-
-
-// //Spacetime::~Spacetime(){}
-
 
 
 
@@ -352,16 +265,16 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
 
 
 
-// typedef vector<bool> (*func)
-// (vector<double> xvec, vector<double> yvec, vector<double> period,
-//  double mass);
-// func BlackHoleSpacetime::Causality()
-// {
-//     if (_dim == 1)
-//         {return &Spacetime::causal1d;}
-//     else// if (!_isPeriodic)
-//         {return &BlackHoleSpacetime::causal;} 
-// }
+typedef vector<bool> (*func)
+(vector<double> xvec, vector<double> yvec, vector<double> period,
+ double mass);
+func BlackHoleSpacetime::Causality()
+{
+    if (_dim == 1)
+        {return &Spacetime::causal1d;}
+    else// if (!_isPeriodic)
+        {return &BlackHoleSpacetime::causal;} 
+}
 
 
 /**
@@ -379,9 +292,9 @@ vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec,
                                          std::vector<double> period,
                                          double mass)
 {
-    //IF WORKING IN EF COORDINATES
-    if (yvec[0]<xvec[0])
-        {return BlackHoleSpacetime::causal(yvec, xvec, period);}
+    // //IF WORKING IN EF COORDINATES
+    // if (yvec[0]<xvec[0])
+    //     {return BlackHoleSpacetime::causal(yvec, xvec, period);}
 
 //     double t1     = xvec[0]; double t2     = yvec[0];
 //     double r1     = xvec[1]; double r2     = yvec[1];
@@ -495,7 +408,7 @@ vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec,
 //         {return {false, false, false};}
 //     else //do_integral
 //         {return {false, false, false};}
-// }
+}
 
 // BlackHoleSpacetime::~BlackHoleSpacetime(){}
 
