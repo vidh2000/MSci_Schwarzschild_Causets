@@ -64,18 +64,19 @@ int main(){
         std::cout << "What are the just-Shape's parameters?\n";
         CoordinateShape shape(dim,name, center);
         for (auto const& p : shape._params)
-            {std::cout << p.first << ' ' << p.second << '\n';}
+            {std::cout << "-- " << p.first << "=" << p.second << '\n';}
         
 
         FlatSpacetime S(dim);
-        SprinkledCauset C(card,S,shape);
+        SprinkledCauset C(card,S,shape,poisson,make_matrix,special,
+                use_transitivity,make_sets,make_links);
         
 
         std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
-        for (auto const& p : C._shape._params)
-        {
-        std::cout << p.first << ' ' << p.second << '\n';
-        }
+        for (auto const& p : C._shape._params){
+        std::cout << "-- " << p.first << '=' << p.second << '\n';}
+        std::cout<<"-- cardinality=" << C._size << "\n";
+        std::cout<<"-- dim=" << C.spacetime_dim() << "\n";
 
         std::cout << "\nLet's look at the sprinkled values\n";
         std::cout<<"Max Eu Distance: "<<C.max_eu_dist()<<std::endl;
