@@ -580,6 +580,128 @@ double EmbeddedCauset:: length_scale()
     {return std::pow( _size/_shape.Volume(), (double)1/_spacetime._dim );}
 
 
+/**
+ * @brief Compute Euclidean distances of points from _shape_center.
+ * @return vector<double> : distances
+ */
+vector<double> EmbeddedCauset::eu_distances()
+{
+    vector<double> distances(_size, 0.0); 
+    for (int i = 0; i < _size; i++)
+    {
+        vector<double>ivec = _coords[i];
+        for (int mu = 0; mu < _spacetime._dim; mu++)
+        {
+            distances[i] += (ivec[mu] - _shape._center[mu])
+                           *(ivec[mu] - _shape._center[mu]);
+        }
+        distances[i] = std::sqrt(distances[i]);
+    }
+    return distances;
+}
+
+
+/**
+ * @brief Compute Euclidean distances of points from _shape_center.
+ * @return vector<double> : distances
+ */
+vector<double> EmbeddedCauset::sp_radii()
+{
+    vector<double> radii(_size, 0.0); 
+    for (int i = 0; i < _size; i++)
+    {
+        vector<double>ivec = _coords[i];
+        for (int j = 1; j < _spacetime._dim; j++)
+        {
+            radii[i] += (ivec[j] - _shape._center[j])
+                       *(ivec[j] - _shape._center[j]);
+        }
+        radii[i] = std::sqrt(radii[i]);
+    }
+    return radii;
+}
+
+
+/**
+ * @brief Get maximum euclidean distance from center among sprinkled points.
+ *
+ * @return double : maximum value
+ */
+double EmbeddedCauset::max_eu_dist()
+{
+    double m = 0;
+    for (int i = 0; i<_size; i++)
+    {
+        vector<double>ivec = _coords[i];
+        double dist_i = 0;
+        for (int mu = 0; mu < _spacetime._dim; mu++)
+        {
+            dist_i += (ivec[mu] - _shape._center[mu])
+                     *(ivec[mu] - _shape._center[mu]);
+        }
+        if (dist_i>m) {m = dist_i*1.;}
+    }
+    return std::sqrt(m);
+}
+
+
+/**
+ * @brief Get maximum SPATIAL distance from center among sprinkled points.
+ *
+ * @return double : maximum value
+ */
+double EmbeddedCauset::max_sp_rad()
+{
+    double m = 0;
+    for (int i = 0; i<_size; i++)
+    {
+        vector<double>ivec = _coords[i];
+        double rad_i = 0;
+        for (int j = 1; j < _spacetime._dim; j++)
+        {
+            rad_i += (ivec[j] - _shape._center[j])
+                     *(ivec[j] - _shape._center[j]);
+        }
+        if (rad_i>m) {m = rad_i*1.;}
+    }
+    return std::sqrt(m);
+}
+
+
+/**
+ * @brief Get maximum value of coordinate "dim" among sprinkled points.
+ * 
+ * @param dim : int
+ * @return double : maximum value
+ */
+double EmbeddedCauset::max_along(int dim)
+{
+    double m = _coords[0][dim];
+    for (int i = 1; i<_size; i++)
+    {
+        if (_coords[i][dim]>m) {m = _coords[i][dim]*1.;}
+    }
+    return m;
+}
+
+/**
+ * @brief Get minimum value of coordinate "dim" among sprinkled points.
+ * 
+ * @param dim : int
+ * @return double : minimum value
+ */
+double EmbeddedCauset::min_along(int dim)
+{
+    double m = _coords[0][dim];
+    for (int i = 1; i<_size; i++)
+    {
+        if (_coords[i][dim]<m) {m = _coords[i][dim]*1.;}
+    }
+    return m;
+}
+
+
+
 
 //=============================================================================
 //=============================================================================
@@ -763,7 +885,13 @@ void EmbeddedCauset::discard(vector<int> labels,
 // Destructor
 EmbeddedCauset::~EmbeddedCauset(){}    
 
-
+// Run with
+// cd sprinkle.cpp/causet.cpp
+// g++ -g causet.cpp shapes.cpp spacetimes.cpp embeddedcauset.cpp -std=c++17 -o embeddedcauset -O2
+// ./embeddedcauset
+// rm embeddedcauset.exe
+// cd ../
+// cd../
 // int main(){
 // std::cout << "embeddedcauset.cpp WORKS! :)";
 // }

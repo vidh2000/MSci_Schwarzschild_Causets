@@ -36,23 +36,23 @@ using std::vector;
         -------------------------------------
         "ball" ("radius": float, default: 1.0, must be > 0.0,
                 "hollow": float, default: 0.0, must be >= 0.0 and < 1.0)
-            Ball shape in all spacetime coordinates. 
-        "bicone" or"diamond"("radius": float, default: 1.0, must be > 0.0,
+            Ball shape in all spacetime coordinates. -----------------
+        "bicone" or "diamond"("radius": float, default: 1.0, must be > 0.0,
                   "hollow": float, default: 0.0, must be >= 0.0 and < 1.0)
             Ball shape in all space coordinates and conical to the past and 
-            future. 
+            future. -------------------
         "cylinder" ("radius": float, default: 1.0, must be > 0.0,
                     "duration": float, default: 2.0 * radius, must be > 0.0,
                     "hollow": float, default: 0.0, must be >= 0.0 and < 1.0)
             Ball shape in all space coordinates and straight along the time 
-            coordinate for the length "duration". 
+            coordinate for the length "duration". ---------------
         "cube" ("edge": float, default: 1.0, must be > 0.0)
             Cube shape with the same edge length "edge" in all spacetime 
-            coordinates.
+            coordinates. --------------
         "cuboid" ("edges": Iterable[float], default: [1.0, 1.0, ...], 
                                             must all be > 0.0)
             Cuboid shape with distinct edge lengths "edges" in the respective 
-            spacetime coordinates. The default edges yield a cube.
+            spacetime coordinates. The default edges yield a cube.-------
     
     @param center: vector of coordinates of center. Default 0\vec.
 
@@ -65,7 +65,6 @@ using std::vector;
     @param hollow: fraction [0,1) of interior which is hollow. Default 0.
 
     @param duration: time extension of cylinder. Default 2.
- * 
  */
 CoordinateShape::CoordinateShape(int dim, const char* name, 
                                 vector<double> center,
@@ -83,7 +82,7 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
 
     // Set Name
     isBicone = strcmp(name,"diamond")==0 || strcmp(name, "bicone")==0;
-    if (strcmp(name,"ball")!=0 && !isBicone &&
+    if (strcmp(name,"ball")!=0     && !isBicone              &&
         strcmp(name,"cylinder")!=0 && strcmp(name,"cube")!=0 &&
         strcmp(name,"cuboid")!=0)
      { 
@@ -92,9 +91,9 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         std::cout << std::endl; 
         throw std::invalid_argument("Wrong name chosen");
     }
-     if (isBicone){
+    if (isBicone){
         _name = "bicone";}
-     else{
+    else{
         _name = name;}
 
     // Set Center
@@ -137,7 +136,8 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
     {
         vector<double> my_edges(_dim, 1.0);
         if (edges.size() != 0 && edges.size() != _dim){
-            std::cout << "Cuboid's |edges| neither 0 nor _dim" << std::endl;
+            std::cout << "Size of vector of Cuboid's edges neither 0 nor _dim" 
+                      << std::endl;
             throw std::invalid_argument("Cuboid's |edges| neither 0 nor _dim");}
         else if (edges.size() == 0)
             {edges = my_edges;}
@@ -183,15 +183,18 @@ void CoordinateShape::param_rangecheck(const char* name,
         std::cout << error << std::endl;
         throw std::invalid_argument(error);
     }
-
 }
 
 
-double CoordinateShape::Parameter (const char* key)
 /**
  * @brief Return value of parameter corresponding to "key". 
  *        Note: for cuboid, need to call "edge_i" where i in [0, _dim-1].
+ * @param key const char* : name of parameter
+ *
+ * @return double : value corresponding to "key"
+ * @exception Raise error if undefined.
  */
+double CoordinateShape::Parameter (const char* key)
 {
     double paramval;
     for (auto const& p : _params)
@@ -207,8 +210,10 @@ double CoordinateShape::Parameter (const char* key)
 vector<double> CoordinateShape::Edges()
 /**
  * @brief Return value of [0, _dim-1] edges.
+ * 
  * @exception Raise error if undefined.
  */
+vector<double> CoordinateShape::Edges ()
 {
     vector<double> edges (_dim);
     for (int i = 0; i<_dim; i++)
@@ -231,10 +236,10 @@ vector<double> CoordinateShape::Edges()
 }
 
 
-double CoordinateShape::Volume()
 /**
  * @brief Return Volume. On first call volume is computed. 
  */
+double CoordinateShape::Volume()
 {
     if (_volume != 0)
         {return _volume;}

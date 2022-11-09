@@ -21,11 +21,6 @@
 #include "shapes.h"
 
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-// The old, working version. Your newest version with BH and bugs is 
-// fully commented out below (in its entirety)
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-
 class Spacetime
 /**
  * @brief Super class for implementation of spacetimes
@@ -149,6 +144,10 @@ class BlackHoleSpacetime: public Spacetime
                                          std::vector<double> yvec,
                                          std::vector<double> period={},
                                          double mass = 0);
+        
+        static std::vector<bool> BH_last_resort(std::vector<double> xvec, 
+                                                std::vector<double> yvec,
+                                                double mass = 0);
 
         ~BlackHoleSpacetime();  
 };

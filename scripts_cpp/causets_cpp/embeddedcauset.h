@@ -68,6 +68,13 @@ class EmbeddedCauset: public Causet
         CoordinateShape &get_shape = _shape;
         Spacetime &get_spacetime = _spacetime;
 
+        std::vector<double> eu_distances();
+        std::vector<double> sp_radii();
+        double max_eu_dist();
+        double max_sp_rad();
+        double max_along(int ndim = 0);
+        double min_along(int ndim = 0);
+
 
         // RELATIONS
         bool areTimelike(std::vector<double> xvec, std::vector<double> yvec);
