@@ -82,9 +82,7 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
     _dim = dim;
 
     // Set Name
-
-    bool isBicone = strcmp(name,"diamond")==0 || strcmp(name, "bicone")==0;
-
+    isBicone = strcmp(name,"diamond")==0 || strcmp(name, "bicone")==0;
     if (strcmp(name,"ball")!=0 && !isBicone &&
         strcmp(name,"cylinder")!=0 && strcmp(name,"cube")!=0 &&
         strcmp(name,"cuboid")!=0)
@@ -92,15 +90,15 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         std::cout << "The given shape is "<< name << ". Choose: ";
         std::cout << "'ball', 'bicone', 'cylinder', 'cube' or 'cuboid'.";
         std::cout << std::endl; 
-        throw std::invalid_argument("Wrong name chosen");}
-     
+        throw std::invalid_argument("Wrong name chosen");
+    }
      if (isBicone){
         _name = "bicone";}
      else{
         _name = name;}
 
     // Set Center
-    vector<double> zero_center (_dim, 0.0);
+    vector<double> zero_center(_dim, 0.0);
     if (center.size() == dim)
         {_center = center;}
     else if (center.size() == 0){
@@ -109,15 +107,19 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         std::cout << "Center's size neither 0 nor _dim" << std::endl;
         throw std::invalid_argument("Center's size neither 0 nor _dim");}
     
-    
+    std::cout << "isBicone before radius setting = " << isBicone << std::endl;
+
     // Set Shape Parameters
     if (strcmp(name,"ball")==0 || isBicone)
     {
-        _params.insert({"radius", radius}); 
+        std::cout << "radius = " << radius << std::endl;
+        _params["radius"] = radius;//_params.insert({"radius", radius}); 
         this->param_rangecheck("radius");
+        std::cout << "radius param = " << _params["radius"] << std::endl;
 
-        _params.insert({"hollow", hollow}); 
+        _params["hollow"] = hollow;//.insert({"hollow", hollow}); 
         this->param_rangecheck("hollow", 1.0, true);
+        std::cout << "radius param after hollow = "<< _params["radius"] << std::endl;
     }
     else if (strcmp(name,"cylinder")==0)
     {
@@ -162,6 +164,7 @@ void CoordinateShape::param_rangecheck(const char* name,
                                         bool canBeZero)
 {
     double p = _params.find(name)->second;
+    std::cout << "Inside param_rangecheck: name = " << name << std::endl;
     bool isTooLow = ((canBeZero && p < 0.0) or (!canBeZero && p<=0));
     const char* errorchar = (canBeZero) ? "greater than or equal to 0" 
                                         : "greater than 0";
@@ -194,7 +197,7 @@ double CoordinateShape::Parameter (const char* key)
  * @brief Return value of parameter corresponding to "key". 
  *        Note: for cuboid, need to call "edge_i" where i in [0, _dim-1].
  */
-    {return _params.find(key)->second;}
+    {return _params[key];} 
 
 
 vector<double> CoordinateShape::Edges ()
@@ -219,6 +222,7 @@ double CoordinateShape::Volume()
  * @brief Return Volume. On first call volume is computed. 
  */
 {
+    std::cout << "in CoordinateShape::Volume(), isBicone =" << isBicone << std::endl;
     if (_volume != 0)
         {return _volume;}
     else if (strcmp(_name, "ball")==0)
@@ -238,9 +242,10 @@ double CoordinateShape::Volume()
         _volume *= std::pow(M_PI, _dim/2 -0.5) / std::tgamma(_dim/2 +0.5);
         _volume *= this->Parameter("duration");
     }
-    else if (strcmp(_name, "bicone")==0)
+    else if (isBicone)
     {
         double r = this->Parameter("radius");
+        std::cout << "r = " << r << std::endl;
         _volume  = std::pow(r, _dim); //for now
         double h_fr = this->Parameter("hollow");
         _volume -= (h_fr>0)? std::pow(h_fr*r, _dim) : 0.0;
@@ -300,5 +305,6 @@ vector<double> CoordinateShape::Limits(int dim)
 // int main(){
 //     CoordinateShape S;
 //     std::cout << "S._name = " << S._name << std::endl;
+//     std::cout << "radius = " << S.Parameter("radius") << std::endl;
 //     std::cout << "shapes.cpp WORKS!" << std::endl;
 // }

@@ -75,7 +75,7 @@ SprinkledCauset::SprinkledCauset(int card,
 {
     if (poisson)
         {_intensity = card*1;}
-    std::cout << "Before sprinkling...";
+    std::cout << "Before sprinkling... shape.radius = " << shape.Parameter("radius") << std::endl;
     _coords = sprinkle_coords(card, shape, seed);
     std::cout << "Sprinkled Coordinates =";
     print_vector(_coords);
@@ -186,7 +186,9 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
         throw std::invalid_argument(
             "The sprinkle cardinality has to be a non-negative integer.");
     }
-    vector<vector<double>> coords (count);
+    std::cout << "count =" << count << std::endl; 
+    std::cout << "dim = " << shape._dim << std::endl;
+    vector<vector<double>> coords(count,(vector<double>(shape._dim,0.0)));
 
     // Define mersenne_twister_engine Random Generator (with seed)
     if (seed==0)
@@ -196,7 +198,10 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
     }  
     std::mt19937 gen(seed);
 
-    
+
+    bool bolean = (strcmp(shape._name, "bicone")==0);
+    std::cout << "strcmp(name,'bicone')==0 gives bool=" << bolean << std::endl;
+
     if (strcmp(shape._name, "cube")==0 || strcmp(shape._name, "cuboid")==0)
     {
         // vector<double> low; "
@@ -216,24 +221,26 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
     }
 
 
-    //bool bolean = (strcmp(shape._name, "bicone")==0);
-    //std::cout << "strcmp(name,'bicone')==0 gives bool=" << bolean << std::endl;
-
-    else if (strcmp(shape._name, "ball")==0 ||
-             strcmp(shape._name, "cylinder")==0 ||
-             strcmp(shape._name, "diamond")==0 ||
-             strcmp(shape._name, "bicone")==0)
+    else if ((strcmp(shape._name, "ball")==0) ||
+             (strcmp(shape._name, "cylinder")==0) ||
+             (strcmp(shape._name, "diamond")==0) ||
+             (strcmp(shape._name, "bicone")==0))
     {
         // Create circle based sprinkle:
         bool isCylindrical = strcmp(shape._name, "cylinder")==0;
         bool isDiamond = strcmp(shape._name, "diamond") == 0 ||
                          strcmp(shape._name, "bicone") == 0;
+        
+        std::cout << "isDiamond = " << isDiamond << std::endl;
 
         int d = shape._dim;
         double R = shape.Parameter("radius");
+        std::cout << "R_outside =" << R << std::endl;
        
         if (d==2 && isDiamond)
         {
+            std::cout << "in u-v coordinates generation" << std::endl;
+            std::cout << "R_inside =" << R << std::endl;
             //pick "count" random coordinate tuples uniformly:
             vector<vector<double>> uv;
             std::uniform_real_distribution<> dis(-1.0,1.0);
@@ -241,9 +248,10 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
             {
                 double u = dis(gen);
                 double v = dis(gen);
-                coords[i][0] = (u + v)*R/2;
-                coords[i][1] = (u - v)*R/2;
+                coords[i][0] = (u + v)*R/2.0;
+                coords[i][1] = (u - v)*R/2.0;
             } 
+            print_vector(coords);
         }
 
         else

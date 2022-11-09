@@ -14,9 +14,9 @@
 #include <chrono>
 #include <unordered_set>
 
-#include "causets_cpp/sprinkledcauset.h"
+//#include "causets_cpp/sprinkledcauset.h"
 #include "causets_cpp/shapes.h"
-#include "causets_cpp/spacetimes.h"
+//#include "causets_cpp/spacetimes.h"
 
 /**
  * @brief   To run this file, you must:
@@ -38,21 +38,20 @@
 // Sprinkled causet parameters
 int card = 10;
 int dim = 2;
-std::vector<double> center = {0,1};
+std::vector<double> center = {0,0};
 
 
 int main(){
-    std::cout<<"Let's start"<<std::endl;
-    FlatSpacetime S(dim);
-    std::cout << "Flat Spacetime Created!" << std::endl;
-    CoordinateShape shape(dim);
-    std::cout << "Coordinate Shape Created!" << std::endl;
-    SprinkledCauset C(card,S,shape);
-    std::cout << "Sprinkled Causet Created!" << std::endl;
+    //FlatSpacetime S(dim);
+    //std::cout << "Starting building shape..." << std::endl;
+    CoordinateShape shape(dim,"bicone", center, 2.0);
+    std::cout << shape._params["radius"] << std::endl;
+    std::cout << "sprinkle.cpp 'shape' radius= " << shape.Parameter("radius") << std::endl;
+    //std::cout << "Coordinate Shape Created!" << std::endl;
+    //SprinkledCauset C(card,S,shape);
+    //std::cout << "Sprinkled Causet Created!" << std::endl;
 
-    int a = 5;
-    int b = 20;
-    std::cout << "a x b = " << a*b << std::endl;
-    std::cout << "This file works!" << std::endl;
+    std::cout << "\n ====================================\n \
+                    This file works!" << std::endl;
     return 0;
 };

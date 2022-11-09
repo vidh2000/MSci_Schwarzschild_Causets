@@ -14,6 +14,7 @@
 #include <chrono>
 #include <unordered_set>
 #include <random>
+#include <map>
 //#include <boost/asio.hpp>
 
 #include "functions.h"
@@ -23,11 +24,27 @@
 //#include "shapes.h"
 //#include "spacetimes.h"
 
-using namespace std::chrono;
 
+using namespace std::chrono;
+using namespace std;
 int main(){
 
+std::map<const char*, double> p = {{"ha", 1}};
+std::cout << p["ha"] << std::endl;
+std::cout << p["nah"] << std::endl;
+// int count = 3;
+// int dim = 2;
+// vector<vector<double>> coords(count,(vector<double>(dim,0.0)));
+// std::cout << coords.size() << std::endl;
 
+// for (int i=0; i<count; i++)
+// {
+//     for (int j=0; j<count; j++)
+//     {
+//         coords[i][j] = 1.0;
+//     }
+// }
+// print_vector(coords);
 
 // std::cout << "Hello World" << std::endl;
 

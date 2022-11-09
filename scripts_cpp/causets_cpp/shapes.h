@@ -67,6 +67,7 @@ class CoordinateShape
         std::vector<double> _center;
         std::map<const char*, double> _params;
         double _volume = 0;
+        bool isBicone;
 
         CoordinateShape(int dim = 4,
                         const char* name = "bicone", 
