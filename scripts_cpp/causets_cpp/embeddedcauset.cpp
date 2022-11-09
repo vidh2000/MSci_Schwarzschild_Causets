@@ -591,7 +591,7 @@ double EmbeddedCauset:: length_scale()
 bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 {
     auto atimelikeb = _spacetime.Causality();
-    return atimelikeb(xvec, yvec, _spacetime._period)[0];
+    return atimelikeb(xvec, yvec, _spacetime._period, _spacetime._mass)[0];
 };
 
 
@@ -608,7 +608,7 @@ bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 bool EmbeddedCauset::AprecB(vector<double> xvec, vector<double> yvec)
 {
     auto atimelikeb = _spacetime.Causality();
-    return atimelikeb(xvec, yvec, _spacetime._period)[1];
+    return atimelikeb(xvec, yvec, _spacetime._period, _spacetime._mass)[1];
 };
 
 

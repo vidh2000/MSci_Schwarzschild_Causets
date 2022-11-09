@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -28,7 +29,8 @@ class Spacetime
     public:
         int  _dim;
         const char* _name;
-        char _metricname;
+        std::string _metricname;
+        double _mass = 0; //for Black Hole, but required here for generality
 
         bool _isPeriodic = false;
         std::vector<double> _period = {};
@@ -82,6 +84,9 @@ class FlatSpacetime: public Spacetime
  */
 {
     public:
+        // int  _dim;
+        // const char* _name;
+        // std::string _metricname;
         
         FlatSpacetime(int dim = 4, std::vector<double> period = {});
 
@@ -114,7 +119,9 @@ class BlackHoleSpacetime: public Spacetime
  */
 {
     public:
-        double _mass;
+        // int  _dim;
+        // const char* _name;
+        // std::string _metricname;
         double _r_S;
 
         // Constructor

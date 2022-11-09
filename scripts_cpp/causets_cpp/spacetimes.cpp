@@ -249,20 +249,18 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
                                         double r_S,// = 0.5,
                                         std::string metric)// = "EF")
 {
-    if (dim < 2 || dim > 4)
+    if (dim != 4)
     {
-        std::cout<<"Dimension has to be 2, 3 or 4."<<std::endl;
+        std::cout<<"Dimension has to be 4."<<std::endl;
         throw std::invalid_argument("Dimension has to be 4.");
     }
     _dim = dim;
     _name = "black hole";
 
-    // if (std::strcmp(metric, "Eddington-Finkelstein") == 0 || 
-    //     std::strcmp(metric, "EF") == 0)
-    //     {_metricname = "Eddington-Finkelstein";}
-    // else if (std::strcmp(metric, "Schwarzschild") == 0 || 
-    //          std::strcmp(metric, "S") == 0)
-    //     {_metricname = "Schwarzschild";}
+    if (metric == "Eddington-Finkelstein" || metric == "EF")
+        {_metricname = "Eddington-Finkelstein";}
+    else if (metric == "Schwarzschild" || metric == "S")
+        {_metricname = "Schwarzschild";}
 }
 
 
@@ -291,7 +289,7 @@ func BlackHoleSpacetime::Causality()
  */
 vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec, 
                                          std::vector<double> yvec,
-                                         std::vector<double> period={},
+                                         std::vector<double> period,
                                          double mass)
 {
     //IF WORKING IN EF COORDINATES
@@ -420,5 +418,4 @@ BlackHoleSpacetime::~BlackHoleSpacetime(){}
 
 // int main(){
 // std::cout << "spacetimes.cpp WORKS! :)";
-
 // }
