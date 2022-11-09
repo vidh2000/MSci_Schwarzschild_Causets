@@ -20,6 +20,11 @@
 #include "shapes.h"
 
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+// The old, working version. Your newest version with BH and bugs is 
+// fully commented out below (in its entirety)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+
 class Spacetime
 /**
  * @brief Super class for implementation of spacetimes
@@ -28,7 +33,7 @@ class Spacetime
     public:
         int  _dim;
         const char* _name;
-        char _metricname;
+        const char* _metricname;
 
         bool _isPeriodic = false;
         std::vector<double> _period = {};
@@ -36,7 +41,8 @@ class Spacetime
         // CONSTRUCTOR
         Spacetime();
 
-        // FUNCTIONS
+        // VIRTUAL FUNCTIONS
+      
         std::vector<double>_T_slice_sampling(double t, 
                                                     std::vector<double>origin,
                                                     int samplingsize = -1); 
@@ -44,13 +50,12 @@ class Spacetime
         // CAUSALITY
         typedef std::vector<bool> (*func)
         (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period, double mass);
+         std::vector<double> period);
         virtual func Causality();  
         
         static std::vector<bool> causal1d(std::vector<double> xvec, 
                                           std::vector<double> yvec,
-                                          std::vector<double> period={},
-                                          double mass = 0);
+                                          std::vector<double> period={});
         
         //virtual ~Spacetime();
 };
@@ -89,56 +94,166 @@ class FlatSpacetime: public Spacetime
         double ds     (std::vector<double> xvec, std::vector<double> yvec);
         
         typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period, double mass);
+        (std::vector<double> xvec, std::vector<double> yvec, std::vector<double> period);
         func Causality();   
 
         static std::vector<bool> causal (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
-                                            std::vector<double> period={}, 
-                                            double mass = 0);
+                                    std::vector<double> yvec,
+                                    std::vector<double> period={});
         static std::vector<bool> causal_periodic (std::vector<double> xvec, 
                                             std::vector<double> yvec,
-                                            std::vector<double>period={}, 
-                                            double mass = 0);
+                                            std::vector<double>period={});
         
         //~FlatSpacetime();
 };
 
 
-/*=============================================================================
-=============================================================================*/
-class BlackHoleSpacetime: public Spacetime
-/**
- * @brief Implementation of black hole spacetimes, globally hyperbolic.
- */
-{
-    public:
-        double _mass;
-        double _r_S;
 
-        // Constructor
-        BlackHoleSpacetime(int dim = 2,
-                           double r_S = 0.5,
-                           std::string metric = "Eddington-Finkelstein");
-    
-        // Methods
-        double ds2(std::vector<double> xvec, std::vector<double> yvec);
 
-        double ds(std::vector<double> xvec, std::vector<double> yvec);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+// All below is the "newest version you posted" - please debug and make it work.
+// Nicely done otherwise, I see you implemented most of the paper already.
+// BH code is commented out twice.. :P
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+
+// class Spacetime
+// /**
+//  * @brief Super class for implementation of spacetimes
+//  */
+// {
+//     public:
+//         int  _dim;
+//         const char* _name;
+//         const char* _metricname;
+
+//         bool _isPeriodic = false;
+//         std::vector<double> _period = {};
+
+//         // CONSTRUCTOR
+//         Spacetime();
+
+//         // FUNCTIONS
+//         std::vector<double>_T_slice_sampling(double t, 
+//                                                     std::vector<double>origin,
+//                                                     int samplingsize = -1); 
+
+//         // CAUSALITY
+//         typedef std::vector<bool> (*func)
+//         (std::vector<double> xvec, std::vector<double> yvec, 
+//         std::vector<double> period);//, double mass);
+//         virtual func Causality();  
         
-        typedef std::vector<bool> (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, 
-        std::vector<double> period, double mass);
-        func Causality();   
+//         static std::vector<bool> causal1d(std::vector<double> xvec, 
+//                                           std::vector<double> yvec,
+//                                           std::vector<double> period={});//,
+//                                           //double mass = 0);
+        
+//         //virtual ~Spacetime();
+// };
 
-        static std::vector<bool> causal (std::vector<double> xvec, 
-                                         std::vector<double> yvec,
-                                         std::vector<double> period={},
-                                         double mass = 0);
 
-        ~BlackHoleSpacetime();  
-};
+
+// /*=============================================================================
+// =============================================================================*/
+
+
+// /**
+//  * @brief Construct a new Flat Spacetime:: Flat Spacetime object
+//  * 
+//  * @param dim int:   dimension of flat spacetime. Default 4.
+//  * @param period vector<double>:   periodicity vector: ith entry is period 
+//  * along ith SPATIAL diemnsion (0->x, 1->y, 2->z). Default is no periodicty.
+//  * No periodicity along ith direction requires 0. Usually, but not necessarily,
+//  * with cuboid might want period[i]=shape_object.Edges()[i].
+//  */
+// class FlatSpacetime: public Spacetime
+// /**
+//  * @brief Initializes Minkowski spacetime for dim >= 1.
+//     As additional parameter, the spatial periodicity can be specified (using 
+//     the key "period") as float (to be applied for all spatial directions 
+//     equally) or as tuple (with a float for each spatial dimension). A positive 
+//     float switches on the periodicity along the respective spatial direction, 
+//     using this value as period. The default is 0.0, no periodicity in any 
+//     direction.
+//  */
+// {
+//     public:
+        
+//         FlatSpacetime(int dim = 4, std::vector<double> period = {});
+
+//         double ds2    (std::vector<double> xvec, std::vector<double> yvec);
+//         double ds     (std::vector<double> xvec, std::vector<double> yvec);
+        
+//         typedef std::vector<bool> (*func)
+//         (std::vector<double> xvec, std::vector<double> yvec, 
+//         std::vector<double> period); //, double mass);
+//         func Causality();   
+
+//         static std::vector<bool> causal (std::vector<double> xvec, 
+//                                             std::vector<double> yvec,
+//                                             std::vector<double> period={});//, 
+//                                             //double mass = 0);
+//         static std::vector<bool> causal_periodic (std::vector<double> xvec, 
+//                                             std::vector<double> yvec,
+//                                             std::vector<double>period={});//, 
+//                                             //double mass = 0);
+        
+//         //~FlatSpacetime();
+// };
+
+
+// // /*=============================================================================
+// // =============================================================================*/
+// // class BlackHoleSpacetime: public Spacetime
+// // /**
+// //  * @brief Implementation of black hole spacetimes, globally hyperbolic.
+// //  */
+// // {
+// //     public:
+// //         double _mass;
+// //         double _r_S;
+
+// //         // Constructor
+// //         BlackHoleSpacetime(int dim = 2,
+// //                            double r_S = 0.5,
+// //                            std::string metric = "Eddington-Finkelstein");
+    
+// //         // Methods
+// //         double ds2(std::vector<double> xvec, std::vector<double> yvec);
+
+// //         double ds(std::vector<double> xvec, std::vector<double> yvec);
+        
+// //         typedef std::vector<bool> (*func)
+// //         (std::vector<double> xvec, std::vector<double> yvec, 
+// //         std::vector<double> period, double mass);
+// //         func Causality();   
+
+// //         static std::vector<bool> causal (std::vector<double> xvec, 
+// //                                          std::vector<double> yvec,
+// //                                          std::vector<double> period={},
+// //                                          double mass = 0);
+
+// //         ~BlackHoleSpacetime();  
+// // };
 
 
 #endif /* SPACETIMES_H */
