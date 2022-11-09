@@ -69,6 +69,7 @@ class CoordinateShape
         double _volume = 0;
         bool isBicone;
 
+        //CONSTRUCTOR (& RELATED)
         CoordinateShape(int dim = 4,
                         const char* name = "bicone", 
                         std::vector<double> center = {},//{0}
@@ -82,10 +83,10 @@ class CoordinateShape
                                 double maxValue = std::nan(""),
                                 bool canBeZero = false);
         
+        //GETTERS
         double Parameter (const char* key);
         std::vector<double> Edges ();
         double Volume();
-
         std::vector<double> Limits(int dimension);
 
         // The following functions are only used in plotting, 

@@ -34,48 +34,57 @@ using namespace std::chrono;
  *              ./sprinkle
  * 
  *          NOTE: running in Windows cmd does not print no matetr what
- *          cd scripts_cpp && g++ -g causets_cpp/causet.cpp causets_cpp/shapes.cpp causets_cpp/spacetimes.cpp causets_cpp/embeddedcauset.cpp causets_cpp/sprinkledcauset.cpp sprinkle.cpp -std=c++17 -o sprinkle -O2 && start sprinkle.exe & cd ../
-
  * 
  */
 
 
 // Sprinkled causet parameters
-int card = 10000;
-int dim = 4;
-std::vector<double> center = {0,0,0,0};
+int card = 100;
+int dim = 3;
+std::vector<double> center (dim, 0.0);
 
 
 int main(){
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    CoordinateShape shape(dim,"bicone", center, 1.0);
-    // std::cout << "N_params = " << shape._params.size() << std::endl;
-    // std::cout << "Params?" << std::endl;
-    // for (auto const& p : shape._params)
-    // {
-    // std::cout << p.first << ' ' << p.second << '\n';
-    // }
-    // gives 0 but doesn't create a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params.find("radius")->second << std::endl;
-    // gives 0 but creates a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params["radius"]<< std::endl;
-    FlatSpacetime S(dim);
-    SprinkledCauset C(card,S,shape);
-    std::cout << "=========================================================\n";
-    std::cout << "Sprinkled Causet Created!" << std::endl;
-    std::cout << "What are the parameters at the end?" << std::endl;
-    for (auto const& p : C._shape._params)
-    {
-    std::cout << p.first << ' ' << p.second << '\n';
-    }
-    //print_vector(C._CMatrix);
+    std::vector<const char*> names = {"ball", "bicone", "diamond", "cylinder",
+                                      "cube", "cuboid"};
     
+    for (const char* name : names)
+    {
+        std::cout<<"\n\n============= USING "<<name<<" ====================\n";
+        std::cout << "What are the just-Shape's parameters?\n";
+        CoordinateShape shape(dim,name, center);
+        for (auto const& p : shape._params)
+            {std::cout << p.first << ' ' << p.second << '\n';}
+        
+
+        FlatSpacetime S(dim);
+        SprinkledCauset C(card,S,shape);
+        
+
+        std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
+        for (auto const& p : C._shape._params)
+        {
+        std::cout << p.first << ' ' << p.second << '\n';
+        }
+
+        std::cout << "\nLet's look at the sprinkled values\n";
+        std::cout<<"Max Eu Distance: "<<C.max_eu_dist()<<std::endl;
+        std::cout<<"Max Sp Radius  : "<<C.max_sp_rad() <<std::endl;
+        std::cout<<"Max Time       : "<<C.max_along(0) <<std::endl;
+        std::cout<<"Min Time       : "<<C.min_along(0) <<std::endl;
+        std::cout<<"Max Along x    : "<<C.max_along(1) <<std::endl;
+        std::cout<<"Min Along x    : "<<C.min_along(1) <<std::endl;
+    }
+
     std::cout << "\n ====================================\n \
                     This file works!" << std::endl;
 
+
     auto stop = high_resolution_clock::now();
     double duration = duration_cast<microseconds>(stop - start).count();
-    std::cout << "Time taken: "
+    std::cout << "\nTime taken: "
             << duration/pow(10,6) << " seconds" << std::endl;
-
     return 0;
 };

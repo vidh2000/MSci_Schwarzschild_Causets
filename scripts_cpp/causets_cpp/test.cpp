@@ -29,10 +29,26 @@ using namespace std::chrono;
 using namespace std;
 int main(){
 
-std::map<const char*, double> p = {{"a", 1},{"b",2}, {"c",3}};
 
-double t = p["c"];
-std::cout << t << std::endl;
+////TESTING MAPS' METHODS
+/////////////////////////
+std::map<const char*, double> mymap = {{"a", 1},{"b",2}, {"c",3}};
+
+mymap["c"] = 10;
+std::cout<< "After 'mymap['c'] = 10', the size is "<<mymap.size()<<endl;
+
+double a = mymap["c"];
+std::cout<< "And the element is "<<a<<endl;
+std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
+
+mymap.insert({"c", 100});
+std::cout<< "After 'mymap.insert({'c', 100})', the size is "<<mymap.size()<<endl;
+a = mymap.find("c")->second;
+std::cout<< "and the element is "<<mymap["c"]<<endl;
+std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
+
+mymap["d"] = 5;
+std::cout<< "After 'mymap['d'] = 5', the size is "<<mymap.size()<<endl;
 
 // int count = 3;
 // int dim = 2;
@@ -67,11 +83,12 @@ auto start = high_resolution_clock::now();
 // std::set<int> s = set_intersection(s1,s2);
 // print_set(s);
 
-
-std::vector<int> a;
-a = distinct_randint(100000,1000000);
-//print_vector(a);
-std::cout << a[1000] << std::endl;
+//// TEST RANDOM INTERGERS
+///////////////////////////
+// std::vector<int> a;
+// a = distinct_randint(100000,1000000);
+// //print_vector(a);
+// std::cout << a[1000] << std::endl;
 /*
 int DIM = 4;
 int N = 10000;
