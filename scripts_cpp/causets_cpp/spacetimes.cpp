@@ -300,16 +300,16 @@ vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec,
     if (yvec[0]<xvec[0])
         {return BlackHoleSpacetime::causal(yvec, xvec, period);}
 
-//     double t1     = xvec[0]; double t2     = yvec[0];
-//     double r1     = xvec[1]; double r2     = yvec[1];
-//     double theta1 = xvec[2]; double theta2 = yvec[2];
-//     double phi1   = xvec[3]; double phi2   = yvec[3];
+    double t1     = xvec[0]; double t2     = yvec[0];
+    double r1     = xvec[1]; double r2     = yvec[1];
+    double theta1 = xvec[2]; double theta2 = yvec[2];
+    double phi1   = xvec[3]; double phi2   = yvec[3];
 
-//     double vartheta1 = M_PI / 2;
-//     double vartheta2 = M_PI / 2; 
-//     double varphi1 = 0;
-//     double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
-//                     +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
+    double vartheta1 = M_PI / 2;
+    double vartheta2 = M_PI / 2; 
+    double varphi1 = 0;
+    double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
+                    +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
     
     // Section 2.2: Radially separated pairs and radial null geodesics
     if (varphi2<1e-6) //should be ==zero, but leave room for some error
@@ -336,7 +336,7 @@ vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec,
             }
         }
 
-//     }
+    }
 
     // Section 2.3: Sufficient Conditions for c. related and unrelated
     //// 2.3.1 Spacelike Bounds

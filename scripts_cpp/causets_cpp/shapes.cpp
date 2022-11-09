@@ -213,7 +213,6 @@ vector<double> CoordinateShape::Edges()
  * 
  * @exception Raise error if undefined.
  */
-vector<double> CoordinateShape::Edges ()
 {
     vector<double> edges (_dim);
     for (int i = 0; i<_dim; i++)
