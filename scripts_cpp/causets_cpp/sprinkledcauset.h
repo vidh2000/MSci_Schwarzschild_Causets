@@ -51,7 +51,8 @@ class SprinkledCauset: public EmbeddedCauset
         // Spacetime _spacetime;
         double _intensity = -1;
        
-        // Constructor
+        // CONSTRUCTOR
+
         SprinkledCauset(int card,
                         Spacetime spacetime, 
                         CoordinateShape shape, 
@@ -65,7 +66,8 @@ class SprinkledCauset: public EmbeddedCauset
                         int seed = 0);
 
 
-        // Methods
+        // METHODS
+
         static std::vector<std::vector<double>> sprinkle(int count, 
                                                         CoordinateShape shape, 
                                                         bool poisson = false,

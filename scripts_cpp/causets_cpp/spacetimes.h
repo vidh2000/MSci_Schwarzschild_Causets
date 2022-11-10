@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "shapes.h"
+//#include "shapes.h"
 
 
 class Spacetime
@@ -43,7 +43,7 @@ class Spacetime
 
 
         // GENERAL FUNCTIONS
-    
+
         std::vector<double>T_slice_sampling(double t, 
                                             std::vector<double>origin,
                                             int samplingsize = -1); 
