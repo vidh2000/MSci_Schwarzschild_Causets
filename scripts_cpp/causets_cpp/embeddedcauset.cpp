@@ -512,29 +512,42 @@ void EmbeddedCauset::make_cmatrix(const char* method,
 {
     if (strcmp(method, "coordinates")==0)
     {
-        int special_factor = (special && use_transitivity)? -1 : 1;
+        int special_factor = (special)? -1 : 1;
         _CMatrix.resize(_size, vector<int>(_size,0));
         std::cout << "Inside loop for making a cmatrix without links and sets..\n";
-        for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+        if (use_transitivity)
         {
-            for(int i=j-1; i>-1; i--) //i can only preceed j
+            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
-                if (_CMatrix[i][j] != 0 && use_transitivity){
-                    continue;}
-                else
+                for(int i=j-1; i>-1; i--) //i can only preceed j
                 {
-                    if (this->areTimelike(_coords[i], _coords[j]))
+                    if (_CMatrix[i][j] != 0){
+                        continue;}
+                    else
                     {
-                        _CMatrix[i][j] = special_factor;
-                        if (use_transitivity)
+                        if (this->areTimelike(_coords[i], _coords[j]))
                         {
+                            _CMatrix[i][j] = special_factor;
                             for (int k = i-1; k>-1; k--)
                             {
                                 if(_CMatrix[k][i] != 0) //k<i<j -> k<j
                                     { _CMatrix[k][j] = 1;}
                             }
+                            
                         }
                     }
+                }
+            }
+        }
+        else 
+        {
+            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+            {
+                for(int i=j-1; i>-1; i--) //i can only preceed j
+                {
+                    if (this->areTimelike(_coords[i], _coords[j])){
+                        _CMatrix[i][j] = 1;
+                    }    
                 }
             }
         }
@@ -627,17 +640,17 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
         int special_factor = (special && use_transitivity)? -1 : 1;
         _CMatrix.resize(_size, vector<int>(_size,0));
         _pasts.resize(_size);
+        std::cout << "PASTS SIZE = " << _pasts.size() << std::endl; 
         for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
         {
             for(int i=j-1; i>-1; i--) //i can only preceed j
             {
-                if (_CMatrix[i][j] != 0 && use_transitivity){
+                if (_CMatrix[i][j] != 0){
                     continue;}
                 else
                 {
                     if (areTimelike(_coords[i], _coords[j]))
                     {
-                        // In testing ... keep it simple
                         _CMatrix[i][j] = special_factor;
                         _pasts[j].insert(i);
                         _pasts[j].insert(_pasts[i].begin(), _pasts[i].end());
