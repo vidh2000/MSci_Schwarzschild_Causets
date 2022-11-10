@@ -36,16 +36,20 @@ std::map<const char*, double> mymap = {{"a", 1},{"b",2}, {"c",3}};
 
 mymap["c"] = 10;
 std::cout<< "After 'mymap['c'] = 10', the size is "<<mymap.size()<<endl;
-
 double a = mymap["c"];
 std::cout<< "And the element is "<<a<<endl;
 std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
+a++;
+std::cout<< "After modification of a, the element is "<<mymap["c"]<<endl;
 
 mymap.insert({"c", 100});
 std::cout<< "After 'mymap.insert({'c', 100})', the size is "<<mymap.size()<<endl;
-a = mymap.find("c")->second;
-std::cout<< "and the element is "<<mymap["c"]<<endl;
+double b = mymap.find("c")->second;
+std::cout<< "and the element is "<<b<<endl;
 std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
+b++;
+std::cout<< "After modification of b, the element is "<<mymap["c"]<<endl;
+
 
 mymap["d"] = 5;
 std::cout<< "After 'mymap['d'] = 5', the size is "<<mymap.size()<<endl;

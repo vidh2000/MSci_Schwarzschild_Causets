@@ -147,14 +147,15 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         {
             double edge_i = edges[i];
             std::string key_s = "edge_"+std::to_string(i);
-            _params.insert({key_s, edge_i}); 
-            this->param_rangecheck(key_s);
+            const char* key_i = key_s.c_str();
+            _params.insert({key_i, edge_i}); 
+            this->param_rangecheck(key_i);
         } 
     }
 }
        
         
-void CoordinateShape::param_rangecheck(std::string name, 
+void CoordinateShape::param_rangecheck(const char* name, 
                                         double maxValue,
                                         bool canBeZero)
 {
@@ -193,17 +194,16 @@ void CoordinateShape::param_rangecheck(std::string name,
  * @return double : value corresponding to "key"
  * @exception Raise error if undefined.
  */
-double CoordinateShape::Parameter (std::string key)
+double CoordinateShape::Parameter (const char* key)
 {
-    return _params.find(key)->second;
-    // double paramval;
-    // for (auto const& p : _params)
-    // {
-    //     if (strcmp(p.first, key)==0){
-    //         paramval = p.second;}
-    // }
-    // //std::cout << "Parameter::paramval[" << key << "] = " << paramval << std::endl;
-    // return paramval;
+    double paramval;
+    for (auto const& p : _params)
+    {
+        if (strcmp(p.first, key)==0){
+            paramval = p.second;}
+    }
+    //std::cout << "Parameter::paramval[" << key << "] = " << paramval << std::endl;
+    return paramval;
 }
 
 
@@ -218,14 +218,17 @@ vector<double> CoordinateShape::Edges()
     for (int i = 0; i<_dim; i++)
     {
         std::string key_s = "edge_"+std::to_string(i);
-        edges[i] = _params.find(key_s)->second;
+        const char* key_i = key_s.c_str();
+        
+        // // Old method which doesn't work
+        // edges[i] = _params.find(key_i)->second;
 
         // Vid's method
-        // for (auto const& p : _params)
-        // {
-        //     if (strcmp(p.first, key_i)==0){
-        //         edges[i] = p.second;}
-        // }
+        for (auto const& p : _params)
+        {
+            if (strcmp(p.first, key_i)==0){
+                edges[i] = p.second;}
+        }
     }
     return edges;
 }

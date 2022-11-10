@@ -78,10 +78,6 @@ SprinkledCauset::SprinkledCauset(int card,
 
     for (auto const& p : shape._params)
     _coords = sprinkle_coords(card, shape, seed);
-    
-    // std::cout<<"The just-created coordinates in SprinkledConstructor\n";
-    // print_vector(_coords);
-
     _size = _coords.size();
     _spacetime = spacetime;
     _shape = shape; 
@@ -148,18 +144,18 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
                                                     int seed)// = 0)
 {
     if (count<0)
-    {   
-        std::cout<<"The sprinkle cardinality has to be a\
-            non-negative integer."<<std::endl;
-        throw std::invalid_argument(
-            "The sprinkle cardinality has to be a non-negative integer.");
-    }
+        {   
+            std::cout<<"The sprinkle cardinality has to be a\
+             non-negative integer."<<std::endl;
+            throw std::invalid_argument(
+                "The sprinkle cardinality has to be a non-negative integer.");
+        }
     if (poisson)
-    {
-        std::default_random_engine generator;
-        std::poisson_distribution<int> distribution(count);
-        count = distribution(generator);
-    }
+        {
+            std::default_random_engine generator;
+            std::poisson_distribution<int> distribution(count);
+            count = distribution(generator);
+        }
     vector<vector<double>> coords = SprinkledCauset::sprinkle_coords
                                                       (count,shape,seed); 
     return coords;
@@ -179,6 +175,7 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                                                         CoordinateShape shape,
                                                         int seed)// = 0)
 {
+
 
     if (count < 0)
     {   
@@ -206,8 +203,13 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
         {
             double edge_mu = 0;
             // 1. Get edge value <-- Copied from CoordinateShape::Eges()
-            std::string key_mu = "edge_"+std::to_string(mu);
-            edge_mu = shape.Parameter(key_mu);
+            std::string key_s = "edge_"+std::to_string(mu);
+            const char* key_mu = key_s.c_str();
+            for (auto const& p : shape._params)
+            {
+                if (strcmp(p.first, key_mu)==0){
+                    edge_mu = p.second;}
+            }
             // 2. // 2. Generate Coordinates (by first finding limits)
             double low  = shape._center[mu] - edge_mu/2.0;
             double high = shape._center[mu] + edge_mu/2.0;
@@ -222,7 +224,12 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
     else if (strcmp(shape._name, "cube")==0)
     {
         // 1. Get Edge Value
-        double edge = shape.Parameter("edge");
+        double edge;
+        for (auto const& p : shape._params)
+        {
+                if (strcmp(p.first, "edge")==0){
+                    edge = p.second;}
+        }
         // 2. Generate Coordinates (by first finding limits)
         for (int mu = 0; mu<shape._dim; mu++)
         {
@@ -246,9 +253,14 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
         bool isDiamond     = strcmp(shape._name, "diamond") == 0 ||
                              strcmp(shape._name, "bicone") == 0;
         
-        double d = shape._dim;
+        int d = shape._dim;
         // Get radius. Other methods failed.. loop is supershort and unrepeatd
-        double R = shape.Parameter("radius");
+        double R;
+        for (auto const& p : shape._params)
+        {
+            if (strcmp(p.first, "radius")==0){
+                R = p.second;}
+        }
 
         if (d==2 && isDiamond)
         {
@@ -266,16 +278,27 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
         else
         {
-            double n_different = (strcmp(shape._name, "ball")==0)? 0 : 1;
-            double n_rad = d - n_different;
+            int n_different = (strcmp(shape._name, "ball")==0)? 0 : 1;
+            int n_rad = d - n_different;
 
             //Get lower bound for hollow case
-            double r_low = std::pow(shape.Parameter("hollow"), n_rad);
-
+            double hollow_fr;
+            for (auto const& p : shape._params)
+            {
+                if (strcmp(p.first, "hollow")==0){
+                    hollow_fr = p.second;}
+            }
+            double r_low = std::pow(hollow_fr, n_rad);
+            
             //Get time done separately for cylinder
             if (isCylindrical)
             {   
-                double duration = shape.Parameter("duration");
+                double duration;
+                for (auto const& p : shape._params)
+                {
+                    if (strcmp(p.first, "duration")==0){
+                        duration = p.second;}
+                }
                 double t_low = shape._center[0]-duration/2;
                 double t_high= shape._center[0]+duration/2;
                 std::uniform_real_distribution<> cyltime(t_low, t_high);
@@ -283,37 +306,46 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                     {coords[n][0] = cyltime(gen);} 
             }
 
-            // Prepare scaling factor, where to accumulate all
+            // Prepare coordinates and scaling factor, where to accumulate all
             // scaling factors to apply at the end
-            double r_scaling_i = 0;
-            std::uniform_real_distribution<> r_uni(r_low, 1);
-            std::uniform_real_distribution<> other_uni(0, 1);
+            double r_scaling = 0;
+            std::uniform_real_distribution<> uni(0, 1);
             for (int i = 0; i<count; i++)
             {
                 //1)First generate random numbers on (n_rad-1)-sphere of rad 1
                 std::normal_distribution<> gauss(0,1);
-                double r2_gauss = 0;
-                for (int a = n_different; a<d; a++)
+                double r_gauss = 0;
+                for (int a = n_different; a<n_rad; a++)
                 {
                     double x_a = gauss(gen);
                     coords[i][a] = x_a;
-                    r2_gauss += x_a*x_a;
+                    r_gauss += x_a*x_a;
                 }
                 // 1/r2 brings the points on a sphere of radius 1
-                r_scaling_i = 1/std::sqrt(r2_gauss);
+                r_scaling = 1/r_gauss;
                 // 2)Scale points radially inside n_rad-ball
-                r_scaling_i *= R * std::pow(r_uni(gen), 1/n_rad);
+                r_scaling *= R * std::pow(uni(gen), 1/n_rad);
                 if (isDiamond)
                 {
                     //Set time properly
-                    double droot_k = std::pow(other_uni(gen), 1/d);
-                    double t_sign = (other_uni(gen)<0.5)? -1. : 1.;
-                    coords[i][0] = t_sign * (1-droot_k) * R + shape._center[0];
-                    r_scaling_i *= droot_k;
+                    double k = uni(gen);
+                    int t_sign = 1;
+                    double droot_k;
+                    if (k<0.5)
+                    {
+                        t_sign = -1;
+                        droot_k = std::pow(k*2, 1/d); 
+                    }
+                    else if (k>=0.5)
+                    {
+                        droot_k = std::pow((k-0.5)*2, 1/d); 
+                    }
+                    r_scaling *= droot_k;
+                    coords[i][0] = t_sign * (1-droot_k) * R;
                 }
-                for (int a = n_different; a<d; a++)
+                for (int a = n_different; a<n_rad; a++)
                 {
-                    coords[i][a] *= r_scaling_i;
+                    coords[i][a] *= r_scaling;
                     coords[i][a] += shape._center[a];
                 }
             }

@@ -41,10 +41,17 @@ using namespace std::chrono;
    
 
 // Sprinkled causet parameters
-int card = 10;
-int dim = 2;
-double radius = 4.0;
+int card = 100;
+int dim = 4;
 std::vector<double> center (dim, 0.0);
+double radius = 4.0;
+double myduration = 10;
+double edge = 1.5;
+std::vector<double> edges = {1,2,3,4}; 
+
+//Analysis Parameters
+bool want_matrix = false;
+bool want_coords = false;
 
 bool poisson = false;
 bool make_matrix = true;
@@ -56,13 +63,15 @@ bool make_links = false;
 int main(){
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    std::vector<const char*> names = {"bicone"};//, {"ball", "bicone", "diamond", "cylinder","cube", "cuboid"};
-    
+    std::vector<const char*> names = {"bicone", "ball", "cylinder", "cube", "cuboid"};
+    edges.resize(dim);
+    card = (want_coords)? 10 : card;
     for (const char* name : names)
     {
+
         std::cout<<"\n\n============= USING "<<name<<" ====================\n";
         std::cout << "What are the just-Shape's parameters?\n";
-        CoordinateShape shape(dim,name,center,radius);
+        CoordinateShape shape(dim,name,center,radius,edge,edges,0.0,myduration);
         for (auto const& p : shape._params)
             {std::cout << "-- " << p.first << "=" << p.second << '\n';}
         
@@ -74,32 +83,88 @@ int main(){
 
         std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
         for (auto const& p : C._shape._params){
-        std::cout << "-- " << p.first << '=' << p.second << '\n';}
-        std::cout<<"-- cardinality=" << C._size << "\n";
-        std::cout<<"-- dim=" << C.spacetime_dim() << "\n";
+            std::cout << "-- " << p.first << '=' << p.second << '\n';}
+        if ((strcmp(shape._name, "ball")==0)      ||
+             (strcmp(shape._name, "cylinder")==0) ||
+             (strcmp(shape._name, "diamond")==0)  ||
+             (strcmp(shape._name, "bicone")==0))
+        {
+            std::cout<<"Radius obtained from Parameter: "
+                 <<C._shape.Parameter("radius")<<std::endl;
+        }
+        // std::cout<<"-- cardinality=" << C._size << "\n";
+        // std::cout<<"-- dim=" << C.spacetime_dim() << "\n";
 
-        std::cout << "\nLet's look at the sprinkled values\n";
-        std::cout<<"Max Eu Distance: "<<C.max_eu_dist()<<std::endl;
-        std::cout<<"Max Sp Radius  : "<<C.max_sp_rad() <<std::endl;
-        std::cout<<"Max Time       : "<<C.max_along(0) <<std::endl;
-        std::cout<<"Min Time       : "<<C.min_along(0) <<std::endl;
-        std::cout<<"Max Along x    : "<<C.max_along(1) <<std::endl;
-        std::cout<<"Min Along x    : "<<C.min_along(1) <<std::endl;
+        std::cout << "\nSprinkled values after"<<card<<"sprinkling"<<std::endl;
+        std::vector<double> comparisons (6, radius); //for ball and bicone
+        if ((strcmp(shape._name, "cylinder")==0))
+        {
+            comparisons[0] = std::sqrt(radius*radius+myduration/2*myduration/2);
+            comparisons[1] = radius;
+            comparisons[2] = myduration/2;
+            comparisons[3] = myduration/2;
+            comparisons[4] = radius;
+            comparisons[5] = radius;
+        }
+        else if ((strcmp(shape._name, "cube")==0))
+        {
+            comparisons[0] = std::sqrt(dim)*edge/2;
+            comparisons[1] = std::sqrt(dim-1)*edge/2;
+            comparisons[2] = edge/2;
+            comparisons[3] = edge/2;
+            comparisons[4] = edge/2;
+            comparisons[5] = edge/2;
+        }
+        else if ((strcmp(shape._name, "cuboid")==0))
+        {
+            double c0 = edges[0]/2*edges[0]/2; double c1=0;
+            for (int i = 0; i<dim; i++)
+            {
+                double e2 = edges[i]/2*edges[i]/2;
+                c0 += e2;
+                c1 += e2;
+            }
+            comparisons[0] = std::sqrt(c0);
+            comparisons[1] = std::sqrt(c1);
+            comparisons[2] = edges[0]/2;
+            comparisons[3] = edges[0]/2;
+            comparisons[4] = edges[1]/2;
+            comparisons[5] = edges[1]/2;
+        }
+        std::cout<<"Max Eu Distance: "<<C.max_eu_dist()<<" <= "
+                 <<comparisons[0] <<"  ->  "<<(C.max_eu_dist()<=comparisons[0])
+                 <<std::endl;
+        std::cout<<"Max Sp Radius  : "<<C.max_sp_rad() <<" <= "
+                 <<comparisons[1]<<"  ->  "<<(C.max_sp_rad()<=comparisons[1])
+                 <<std::endl;
+        std::cout<<"Max Time       : "<<C.max_along(0) <<" <= "
+                 <<comparisons[2]<<"  ->  "<<(C.max_along(0)<=comparisons[2])
+                 <<std::endl;
+        std::cout<<"Min Time       : "<<C.min_along(0) <<"  >= -"
+                 <<comparisons[3]<<"  ->  "<<(C.min_along(0)<=comparisons[3])
+                 <<std::endl;
+        std::cout<<"Max Along x    : "<<C.max_along(1) <<" <= "
+                 <<comparisons[4]<<"  ->  "<<(C.max_along(1)<=comparisons[4])
+                 <<std::endl;
+        std::cout<<"Min Along x    : "<<C.min_along(1) <<"  >= -"
+                 <<comparisons[5]<<"  ->  "<<(C.min_along(1)<=comparisons[5])
+                 <<std::endl;
         // std::cout<<"Max Along y    : "<<C.max_along(2) <<std::endl;
         // std::cout<<"Min Along y    : "<<C.min_along(2) <<std::endl;
         // std::cout<<"Max Along z    : "<<C.max_along(3) <<std::endl;
         // std::cout<<"Min Along z    : "<<C.min_along(3) <<std::endl;
 
+        if (want_coords){
         std::cout << "\nCoordinates:\n";
-        print_vector(C._coords);
+        print_vector(C._coords);}
 
+        if (want_matrix){
         std::cout<<"Causal Matrix:\n";
-        print_vector(C._CMatrix);
+        print_vector(C._CMatrix);}
 
     }
 
-    std::cout << "\n ====================================\n \
-                    This file works!" << std::endl;
+    std::cout << "\n =========This file works!==========\n" << std::endl;
 
 
     auto stop = high_resolution_clock::now();

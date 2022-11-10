@@ -51,6 +51,10 @@ int main(){
         CoordinateShape shape(dim,name, center);
         for (auto const& p : shape._params)
             {std::cout << p.first << ' ' << p.second << '\n';}
+        
+        std::cout<<"Radius: "<<shape.Parameter("radius")<<std::endl;
+        std::cout<<"Radius: "<<shape._params["radius"]<<std::endl;
+        std::cout<<"Radius: "<<shape._params.find("radius")->second<<std::endl;
     }
 
     auto stop = high_resolution_clock::now();

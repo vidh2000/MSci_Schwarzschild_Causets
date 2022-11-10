@@ -65,7 +65,7 @@ class CoordinateShape
         int _dim;
         const char* _name;
         std::vector<double> _center;
-        std::map<std::string, double> _params;
+        std::map<const char*, double> _params;
         double _volume = 0;
         bool isBicone;
 
@@ -79,12 +79,12 @@ class CoordinateShape
                         double hollow   = 0,
                         double duration = 2);
         
-        void param_rangecheck(std::string name, 
+        void param_rangecheck(const char* name, 
                                 double maxValue = std::nan(""),
                                 bool canBeZero = false);
         
         //GETTERS
-        double Parameter (std::string key);
+        double Parameter (const char* key);
         std::vector<double> Edges ();
         double Volume();
         std::vector<double> Limits(int dimension);
