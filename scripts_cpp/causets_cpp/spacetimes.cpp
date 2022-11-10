@@ -24,11 +24,6 @@ using std::vector;
 #define M_PI  3.14159265358979323846  /* pi */
 
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-// The old, working version. Your newest version with BH and bugs is 
-// fully commented out below (in its entirety)
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-
 
 /*============================================================================
 * ============================================================================
@@ -101,15 +96,21 @@ func Spacetime::Causality()
 FlatSpacetime::FlatSpacetime(int dim, vector<double> period) : Spacetime()
 {
     if (dim < 1)
-        {
-            std::cout<<"Given dim was smaller than 1."<<std::endl;
-            throw std::invalid_argument("Dimension has to be at least 1.");
-        }
+    {
+        std::cout<<"Given dim was smaller than 1."<<std::endl;
+        throw std::invalid_argument("Dimension has to be at least 1.");
+    }
+    else if (period.size()!=0 && period.size()!=dim-1)
+    {
+        std::cout<<"Period size was "<<period.size()<<", it has to be either\
+ 0 or dim-1. Note: "<<"dimension was "<<dim<<std::endl;
+        throw std::invalid_argument("Period's size is wrong!");
+    }
 
     _dim = dim;
     _name = "flat";
     _metricname = "Minkowski";
-    if (period.size()) 
+    if (period.size() && std::count(period.begin(), period.end(), 0)!=dim-1) 
     {
         _isPeriodic = true;
         _period = period;
@@ -240,44 +241,44 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
 // * ============================================================================
 // ============================================================================*/
 
-// /**
-//  * @brief Initialises a Black Hole Spacetime.
-//  *
-//  * @param dim: dimension of spacetime. Default 2.
-//  * @param r_S: Schwarzschild radius. Default 0.5
-//  * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
-//  *                (default), or "Schwarzschild" or "S".
-//  */
-// BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
-//                                         double r_S,// = 0.5,
-//                                         std::string metric)// = "EF")
-// {
-//     if (dim != 4)
-//     {
-//         std::cout<<"Dimension has to be 4."<<std::endl;
-//         throw std::invalid_argument("Dimension has to be 4.");
-//     }
-//     _dim = dim;
-//     _name = "black hole";
+/**
+ * @brief Initialises a Black Hole Spacetime.
+ *
+ * @param dim: dimension of spacetime. Default 2.
+ * @param r_S: Schwarzschild radius. Default 0.5
+ * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
+ *                (default), or "Schwarzschild" or "S".
+ */
+BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
+                                        double r_S,// = 0.5,
+                                        std::string metric)// = "EF")
+{
+    if (dim != 4)
+    {
+        std::cout<<"Dimension has to be 4."<<std::endl;
+        throw std::invalid_argument("Dimension has to be 4.");
+    }
+    _dim = dim;
+    _name = "black hole";
 
-//     if (metric == "Eddington-Finkelstein" || metric == "EF")
-//         {_metricname = "Eddington-Finkelstein";}
-//     else if (metric == "Schwarzschild" || metric == "S")
-//         {_metricname = "Schwarzschild";}
-// }
+    if (metric == "Eddington-Finkelstein" || metric == "EF")
+        {_metricname = "Eddington-Finkelstein";}
+    else if (metric == "Schwarzschild" || metric == "S")
+        {_metricname = "Schwarzschild";}
+}
 
 
 
-// typedef vector<bool> (*func)
-// (vector<double> xvec, vector<double> yvec, vector<double> period,
-//  double mass);
-// func BlackHoleSpacetime::Causality()
-// {
-//     if (_dim == 1)
-//         {return &Spacetime::causal1d;}
-//     else// if (!_isPeriodic)
-//         {return &BlackHoleSpacetime::causal;} 
-// }
+typedef vector<bool> (*func)
+(vector<double> xvec, vector<double> yvec, vector<double> period,
+ double mass);
+func BlackHoleSpacetime::Causality()
+{
+    if (_dim == 1)
+        {return &Spacetime::causal1d;}
+    else// if (!_isPeriodic)
+        {return &BlackHoleSpacetime::causal;} 
+}
 
 
 /**

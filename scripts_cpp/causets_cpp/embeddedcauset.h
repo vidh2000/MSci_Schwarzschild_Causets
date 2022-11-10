@@ -46,22 +46,19 @@ class EmbeddedCauset: public Causet
                        const char* sets_type = "past");
         
 
-        // Methods of constructing the causal set attributes
-        void make_cmatrix(const char* method = "coordinates",
-                                    bool special = false,
-                                    bool use_transitivity = true,
-                                    bool make_sets = false,
-                                    bool make_links = false,
-                                    const char* sets_type = "past");
-        void make_all_pasts  (const char* method = "coordinates");
-        void make_all_futures(const char* method = "coordinates");
-        void make_pasts      (const char* method = "coordinates");
-        void make_futures    (const char* method = "coordinates");
-        void make_past_links (const char* method = "coordinates");
-        void make_fut_links  (const char* method = "coordinates");
-
+        //MAKE ATTRIBUTES
+        //Calls appropriate behind-the-scenes-constructor, see header's bottom
+        
+        void make_attrs(const char* method = "coordinates",
+                            bool make_matrix = true,
+                            bool special = true,
+                            bool use_transitivity = true,
+                            bool make_sets = false,
+                            bool make_links = false,
+                            const char* sets_type = "past");
 
         // GETTERS
+
         int spacetime_dim();
         double density();
         double length_scale();
@@ -77,11 +74,13 @@ class EmbeddedCauset: public Causet
 
 
         // RELATIONS
+
         bool areTimelike(std::vector<double> xvec, std::vector<double> yvec);
         bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
 
         // MODIFIERS
+
         void sort_coords(int dim = 0, bool reverse = false);
         void relabel(const char* method = "0", bool reverse = false);   
         void add(std::vector<double> xvec);
@@ -89,6 +88,32 @@ class EmbeddedCauset: public Causet
                      bool make_sets = false, bool make_links = true);  
         void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
+
+
+        // Methods of constructing the causal set attributes
+        // BEHIND THE SCENES
+
+        void make_cmatrix_and_allpasts(bool special = true);
+        void make_cmatrix_and_allfuts(bool special = true);
+        void make_cmatrix_and_pasts(const char* method = "coordinates",
+                                        bool special = true,
+                                        bool use_transitivity = true);
+        void make_cmatrix_and_futs(const char* method = "coordinates",
+                                        bool special = true,
+                                        bool use_transitivity = true);
+        void make_cmatrix_and_pastlinks(const char* method = "coordinates",
+                                        bool special = true);
+        void make_cmatrix_and_futlinks(const char* method = "coordinates",
+                                        bool special = true);
+        void make_cmatrix(const char* method = "coordinates",
+                            bool special = true,
+                            bool use_transitivity = true);
+        void make_all_pasts  (const char* method = "coordinates");
+        void make_all_futures(const char* method = "coordinates");
+        void make_pasts      (const char* method = "coordinates");
+        void make_futures    (const char* method = "coordinates");
+        void make_past_links (const char* method = "coordinates");
+        void make_fut_links  (const char* method = "coordinates");
         
         //Destructor
         //virtual ~EmbeddedCauset();

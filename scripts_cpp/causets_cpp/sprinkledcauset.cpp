@@ -87,44 +87,8 @@ SprinkledCauset::SprinkledCauset(int card,
     _shape = shape; 
 
     this->sort_coords(0, false);
-    if (make_matrix){
-        std::cout << "Making a matrix\n";    
-        this->make_cmatrix("coordinates", special, use_transitivity,
-                                make_sets, make_links, sets_type);}
-    
-    else if (make_sets)
-        {
-            if (make_links)
-            {
-                if (strcmp(sets_type, "past")==0)
-                    {this->make_all_pasts("coordinates");}
-                else if (strcmp(sets_type, "future")==0)
-                    {this->make_all_futures("coordinates");}
-            }
-            else
-            {
-                if (strcmp(sets_type, "past")==0)
-                    {this->make_pasts("coordinates");}
-                else if (strcmp(sets_type, "future")==0)
-                    {this->make_futures("coordinates");}
-            }
-        }
-
-    else if (make_links)
-        {
-            if (strcmp(sets_type, "past")==0)
-                    {this->make_past_links("coordinates");}
-            else if (strcmp(sets_type, "future")==0)
-                {this->make_fut_links("coordinates");}   
-        }
-
-    else
-        {
-            std::cout<<"At least one among make_matrix, \
-                        make_sets and make_links must be true"<<std::endl;
-            throw std::invalid_argument("At least one among make_matrix, \
-                                    make_sets and make_links must be true");
-        }
+    this->make_attrs("coordinates", make_matrix, special, use_transitivity,
+                     make_sets, make_links, sets_type);
 }
 
 
@@ -324,7 +288,13 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
 
 
-
+// Run with
+// cd scripts_cpp/causet_cpp
+// g++ -g causet.cpp shapes.cpp spacetimes.cpp sprinkledcauset.cpp embeddedcauset.cpp -std=c++17 -o sprinkledcauset -O2
+// .\sprinklededcauset
+// rm sprinkledcauset.exe
+// cd ../
+// cd../
 // int main(){
 //     std::cout << "sprinkledcauset.cpp WORKS! :)";
 // }

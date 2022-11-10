@@ -50,7 +50,7 @@ double edge = 1.5;
 std::vector<double> edges = {1,2,3,4}; 
 
 //Analysis Parameters
-bool want_matrix = false;
+bool want_matrix = true;
 bool want_coords = false;
 
 bool poisson = false;
@@ -63,9 +63,9 @@ bool make_links = false;
 int main(){
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    std::vector<const char*> names = {"bicone", "ball", "cylinder", "cube", "cuboid"};
+    std::vector<const char*> names = {"bicone"};// "ball", "cylinder", "cube", "cuboid"};
     edges.resize(dim);
-    card = (want_coords)? 10 : card;
+    card = (want_coords || want_matrix)? 20 : card;
     for (const char* name : names)
     {
 
@@ -77,8 +77,9 @@ int main(){
         
 
         FlatSpacetime S(dim);
-        SprinkledCauset C(card,S,shape,poisson,make_matrix,special,
-                use_transitivity,make_sets,make_links);
+        SprinkledCauset C(card, S, shape, poisson,
+                          make_matrix, special, use_transitivity,
+                          make_sets, make_links);
         
 
         std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
