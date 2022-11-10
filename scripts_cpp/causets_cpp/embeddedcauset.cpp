@@ -526,14 +526,14 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                     if (this->areTimelike(_coords[i], _coords[j]))
                     {
                         _CMatrix[i][j] = special_factor;
-                        // if (use_transitivity)
-                        // {
-                        //     for (int k = i-1; k>-1; k--)
-                        //     {
-                        //         if(_CMatrix[k][i] != 0) //k<i<j -> k<j
-                        //             { _CMatrix[k][j] = 1;}
-                        //     }
-                        // }
+                        if (use_transitivity)
+                        {
+                            for (int k = i-1; k>-1; k--)
+                            {
+                                if(_CMatrix[k][i] != 0) //k<i<j -> k<j
+                                    { _CMatrix[k][j] = 1;}
+                            }
+                        }
                     }
                 }
             }

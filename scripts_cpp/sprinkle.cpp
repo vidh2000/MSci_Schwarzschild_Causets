@@ -135,22 +135,28 @@ int main(){
             comparisons[5] = edges[1]/2;
         }
         std::cout<<"Max Eu Distance: "<<C.max_eu_dist()<<" <= "
-                 <<comparisons[0] <<"  ->  "<<(C.max_eu_dist()<=comparisons[0])
+                 <<comparisons[0] <<"        ->  "
+                 <<(C.max_eu_dist()<=comparisons[0])
                  <<std::endl;
         std::cout<<"Max Sp Radius  : "<<C.max_sp_rad() <<" <= "
-                 <<comparisons[1]<<"  ->  "<<(C.max_sp_rad()<=comparisons[1])
+                 <<comparisons[1]<<"         ->  "
+                 <<(C.max_sp_rad()<=comparisons[1])
                  <<std::endl;
         std::cout<<"Max Time       : "<<C.max_along(0) <<" <= "
-                 <<comparisons[2]<<"  ->  "<<(C.max_along(0)<=comparisons[2])
+                 <<comparisons[2]<<"         ->  "
+                 <<(C.max_along(0)<=comparisons[2])
                  <<std::endl;
         std::cout<<"Min Time       : "<<C.min_along(0) <<"  >= -"
-                 <<comparisons[3]<<"  ->  "<<(C.min_along(0)<=comparisons[3])
+                 <<comparisons[3]<<"       ->  "
+                 <<(C.min_along(0)<=comparisons[3])
                  <<std::endl;
         std::cout<<"Max Along x    : "<<C.max_along(1) <<" <= "
-                 <<comparisons[4]<<"  ->  "<<(C.max_along(1)<=comparisons[4])
+                 <<comparisons[4]<<"         ->  "
+                 <<(C.max_along(1)<=comparisons[4])
                  <<std::endl;
         std::cout<<"Min Along x    : "<<C.min_along(1) <<"  >= -"
-                 <<comparisons[5]<<"  ->  "<<(C.min_along(1)<=comparisons[5])
+                 <<comparisons[5]<<"       ->  "
+                 <<(C.min_along(1)<=comparisons[5])
                  <<std::endl;
         // std::cout<<"Max Along y    : "<<C.max_along(2) <<std::endl;
         // std::cout<<"Min Along y    : "<<C.min_along(2) <<std::endl;
@@ -179,9 +185,8 @@ int main(){
         print_vector(C._coords);}
 
         if (want_matrix){
-        std::cout<<"Causal Matrix:\n";
+        std::cout<<"\nCausal Matrix:\n";
         print_vector(C._CMatrix);}
-
     }
 
     std::cout << "\n =========This file works!==========\n" << std::endl;
