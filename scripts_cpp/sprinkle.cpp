@@ -76,12 +76,13 @@ int main(){
             {std::cout << "-- " << p.first << "=" << p.second << '\n';}
         
 
-        FlatSpacetime S(dim);
+        Spacetime S = Spacetime();
+        S.FlatSpacetime(dim);
         SprinkledCauset C(card, S, shape, poisson,
                           make_matrix, special, use_transitivity,
                           make_sets, make_links);
         
-
+        //PARAMETERS
         std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
         for (auto const& p : C._shape._params){
             std::cout << "-- " << p.first << '=' << p.second << '\n';}
@@ -96,6 +97,7 @@ int main(){
         // std::cout<<"-- cardinality=" << C._size << "\n";
         // std::cout<<"-- dim=" << C.spacetime_dim() << "\n";
 
+        //SPRINKLED COORDINATES
         std::cout << "\nSprinkled values after"<<card<<"sprinkling"<<std::endl;
         std::vector<double> comparisons (6, radius); //for ball and bicone
         if ((strcmp(shape._name, "cylinder")==0))
@@ -154,6 +156,23 @@ int main(){
         // std::cout<<"Min Along y    : "<<C.min_along(2) <<std::endl;
         // std::cout<<"Max Along z    : "<<C.max_along(3) <<std::endl;
         // std::cout<<"Min Along z    : "<<C.min_along(3) <<std::endl;
+
+        //CAUSALITY
+        auto aretimelike = S.Causality();
+        std::vector<double> ovec (dim, 0.0);
+        std::vector<double> xvec (dim, 0.0);
+        std::vector<double> yvec (dim, 0.0);
+        xvec[1] += 1;
+        yvec[0] += 1;
+        std::cout<<"\nTESTING CAUSALITY\nShould be :          0";
+        std::cout<<"\nFrom Spacetime:      "<<aretimelike(ovec, xvec, {}, 0)[0];
+        std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(ovec, xvec);
+        std::cout<<"\nShould be :          1";
+        std::cout<<"\nFrom Spacetime:      "<<aretimelike(ovec, yvec, {}, 0)[0];
+        std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(ovec, yvec);
+        std::cout<<"\nShould be :          1";
+        std::cout<<"\nFrom Spacetime:      "<<aretimelike(yvec, ovec, {}, 0)[0];
+        std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(yvec, ovec);
 
         if (want_coords){
         std::cout << "\nCoordinates:\n";

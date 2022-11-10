@@ -63,7 +63,7 @@ class SprinkledCauset: public EmbeddedCauset
                         bool make_links = false,
                         const char* sets_type = "past",
                         int seed = 0);
-        
+
 
         // Methods
         static std::vector<std::vector<double>> sprinkle(int count, 

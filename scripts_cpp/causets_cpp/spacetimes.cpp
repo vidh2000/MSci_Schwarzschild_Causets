@@ -37,7 +37,7 @@ Spacetime::Spacetime(){}
  * @brief Internal function for the time sampling array for a cone from 
  * "origin point"(hence take t0=origin[0]) to time "t".
  */
-vector<double> Spacetime::_T_slice_sampling(double t, 
+vector<double> Spacetime::T_slice_sampling(double t, 
                                             vector<double>origin,
                                             int samplingsize)
 {
@@ -60,17 +60,35 @@ vector<double> Spacetime::_T_slice_sampling(double t,
 vector<bool> Spacetime::causal1d(vector<double> xvec, vector<double> yvec,
                                  vector<double> period, double mass)
 {
+    //std::cout<<"For debuggin: calling Spacetime::causal1d\n";
     double t_delta = yvec[0] - xvec[0];
     return {1, t_delta >= 0.0, t_delta < 0.0};
 }
 
-/**
- * @brief Return most simple causal function: t_2>t_1, useful in 1D cases. 
- */
+
+
 typedef vector<bool> (*func)
 (vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
+/**
+ * @brief Return callable "vector<bool> callable (vector<double> xvec, 
+ * vector<double> yvec, vector<double> period, double mass", i.e.
+ * returns a function that returns a vector of bools {x-y timelike, x<=y, x>y},
+ * based on spacetime features.
+ */
 func Spacetime::Causality()
-    {return &Spacetime::causal1d;}
+{
+    if (_dim == 1)
+        {return &Spacetime::causal1d;}
+    else if (std::strcmp(_name, "Flat")==0)
+    {
+        if (_isPeriodic) return &Spacetime::Flat_causal_periodic;
+        else return &Spacetime::Flat_causal;
+    }
+    else //if (std::strcmp(_name, "BlackHole")==0)
+    {
+        return &Spacetime::BH_causal;
+    }
+}
 
 
 //Spacetime::~Spacetime(){}
@@ -93,7 +111,7 @@ func Spacetime::Causality()
  * No periodicity along ith direction requires 0. Usually, but not necessarily,
  * with cuboid might want period[i]=shape_object.Edges()[i].
  */
-FlatSpacetime::FlatSpacetime(int dim, vector<double> period) : Spacetime()
+void Spacetime::FlatSpacetime(int dim, vector<double> period)
 {
     if (dim < 1)
     {
@@ -108,7 +126,7 @@ FlatSpacetime::FlatSpacetime(int dim, vector<double> period) : Spacetime()
     }
 
     _dim = dim;
-    _name = "flat";
+    _name = "Flat";
     _metricname = "Minkowski";
     if (period.size() && std::count(period.begin(), period.end(), 0)!=dim-1) 
     {
@@ -125,7 +143,7 @@ FlatSpacetime::FlatSpacetime(int dim, vector<double> period) : Spacetime()
 /**
  * @brief Spacetime Interval Squared t squared - x_i*x^i
  */
-double FlatSpacetime::ds2(vector<double> xvec, vector<double> yvec)
+double Spacetime::Flat_ds2(vector<double> xvec, vector<double> yvec)
 {
     
     double time_delta2  = (yvec[0] - xvec[0])*(yvec[0] - xvec[0]);
@@ -139,7 +157,7 @@ double FlatSpacetime::ds2(vector<double> xvec, vector<double> yvec)
 /**
  * @brief Spacetime Interval sqrt(t squared - x_i*x^i)
  */
-double FlatSpacetime::ds(vector<double> xvec, vector<double> yvec)
+double Spacetime::Flat_ds(vector<double> xvec, vector<double> yvec)
 {
     
     double time_delta2  = (yvec[0] - xvec[0])*(yvec[0] - xvec[0]);
@@ -151,25 +169,6 @@ double FlatSpacetime::ds(vector<double> xvec, vector<double> yvec)
 
 
 /**
- * @brief Returns causality function based on spacetime parameters
- * 
- * @return "{bool1, bool2, bool3} &callable (vector<double> xvec, yvec)" :
- * i.e. a callable that takes coordinates of 2 points and returns vector<bool>
- *        {x-y timelike, x<=y, x>y}
- */    
-typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
-func FlatSpacetime::Causality()
-{
-    if (_dim == 1)
-        {return &Spacetime::causal1d;}
-    else if (!_isPeriodic)
-        {return &FlatSpacetime::causal;}
-    else
-        {return &FlatSpacetime::causal_periodic;}
-}
-
-/**
  * @brief Function of two events in any D returning {x-y timelike?, x<=y, x>y}.
  * 
  * @param xvec vector<double>:  coordinates of x
@@ -177,9 +176,10 @@ func FlatSpacetime::Causality()
  * @param period not used, needed for consistency with Causality
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> FlatSpacetime::causal(vector<double> xvec, vector<double> yvec,
+vector<bool> Spacetime::Flat_causal(vector<double> xvec, vector<double> yvec,
                                     vector<double>period, double mass)
 {
+    //std::cout<<"For debuggin: calling Flat_causal\n";
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
     double space_delta2 = 0;
@@ -202,11 +202,12 @@ vector<bool> FlatSpacetime::causal(vector<double> xvec, vector<double> yvec,
  * dimension (0->x, 1->y, 2-->z)
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec, 
+vector<bool> Spacetime::Flat_causal_periodic(vector<double> xvec, 
                                             vector<double> yvec,
                                             vector<double> period,
                                             double mass)
 {
+    //std::cout<<"For debuggin: calling Flat_causal_periodic\n";
     double t_delta = (yvec[0] - xvec[0]);
     double t_delta2 = t_delta*t_delta;
     double space_delta2 = 0;
@@ -249,9 +250,9 @@ vector<bool> FlatSpacetime::causal_periodic(vector<double> xvec,
  * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
  *                (default), or "Schwarzschild" or "S".
  */
-BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
-                                        double r_S,// = 0.5,
-                                        std::string metric)// = "EF")
+void Spacetime::BlackHoleSpacetime(int dim,// = 2,
+                                    double r_S,// = 0.5,
+                                    std::string metric)// = "EF")
 {
     if (dim != 4)
     {
@@ -268,19 +269,6 @@ BlackHoleSpacetime::BlackHoleSpacetime(int dim,// = 2,
 }
 
 
-
-typedef vector<bool> (*func)
-(vector<double> xvec, vector<double> yvec, vector<double> period,
- double mass);
-func BlackHoleSpacetime::Causality()
-{
-    if (_dim == 1)
-        {return &Spacetime::causal1d;}
-    else// if (!_isPeriodic)
-        {return &BlackHoleSpacetime::causal;} 
-}
-
-
 /**
  * @brief Causality algorithm for two events in 4D EF coordinates, from
  * Song He and David Rideout 2009 Class. Quantum Grav. 26 125015. 
@@ -292,14 +280,14 @@ func BlackHoleSpacetime::Causality()
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec, 
+vector<bool> Spacetime::BH_causal (std::vector<double> xvec, 
                                          std::vector<double> yvec,
                                          std::vector<double> period,
                                          double mass)
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return BlackHoleSpacetime::causal(yvec, xvec, period);}
+        {return Spacetime::BH_causal(yvec, xvec, period);}
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
@@ -422,7 +410,7 @@ vector<bool> BlackHoleSpacetime::causal (std::vector<double> xvec,
  * @param mass double : BH mass
  * @return vector<bool> : causality booleans
  */
-vector<bool> BlackHoleSpacetime::BH_last_resort(std::vector<double> xvec, 
+vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec, 
                                                 std::vector<double> yvec,
                                                 double mass)
 {

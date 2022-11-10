@@ -112,10 +112,6 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
     //std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
     int special_factor = (special && (use_transitivity||make_links))? -1 : 1;
     _special_matrix = special && use_transitivity;
-    _CMatrix.resize(_size, vector<int>(_size,0));
-    
-    std::cout << "_Cmatrix shape = (" << _CMatrix.size() << ", "
-                    << _CMatrix[0].size() << ")" << std::endl;
 
     if (make_matrix)
     {
@@ -340,7 +336,7 @@ double EmbeddedCauset::min_along(int dim)
 bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
 {
     //std::cout << "In areTimelike\n";
-    auto atimelikeb = _spacetime.Causality();
+    auto atimelikeb = this->_spacetime.Causality();
     //std::cout << "After checking causality...\n";
     return atimelikeb(xvec, yvec, _spacetime._period, _spacetime._mass)[0];
 };
@@ -527,18 +523,17 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                     continue;}
                 else
                 {
-                    if (areTimelike(_coords[i], _coords[j]))
+                    if (this->areTimelike(_coords[i], _coords[j]))
                     {
-                        // In testing ... keep it simple
                         _CMatrix[i][j] = special_factor;
-                        if (use_transitivity)
-                        {
-                            for (int k = i-1; k>-1; k--)
-                            {
-                                if(_CMatrix[k][i] != 0) //k<i<j -> k<j
-                                    { _CMatrix[k][j] = 1;}
-                            }
-                        }
+                        // if (use_transitivity)
+                        // {
+                        //     for (int k = i-1; k>-1; k--)
+                        //     {
+                        //         if(_CMatrix[k][i] != 0) //k<i<j -> k<j
+                        //             { _CMatrix[k][j] = 1;}
+                        //     }
+                        // }
                     }
                 }
             }

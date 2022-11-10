@@ -41,7 +41,7 @@ using std::unordered_set;
  * @brief Construct a new Sprinkled Causet object. 
  * 
  * @param card: int, number of events to sprinkle
- * @param spacetime: Spacetime.
+ * @param spacetime: FlatSpacetime.
  * @param shape: CoordinateShape.
  * @param poisson: bool, if true card is used as average of a Poisson
  * distribution to get a new cardinality, otherwise card is used.
@@ -73,23 +73,24 @@ SprinkledCauset::SprinkledCauset(int card,
                                  int seed)
                                 : EmbeddedCauset()
 {
+    _spacetime = spacetime;
+    _shape = shape; 
+
     if (poisson)
         {_intensity = card*1;}
-
-    for (auto const& p : shape._params)
     _coords = sprinkle_coords(card, shape, seed);
     
     // std::cout<<"The just-created coordinates in SprinkledConstructor\n";
     // print_vector(_coords);
 
     _size = _coords.size();
-    _spacetime = spacetime;
-    _shape = shape; 
 
     this->sort_coords(0, false);
     this->make_attrs("coordinates", make_matrix, special, use_transitivity,
                      make_sets, make_links, sets_type);
 }
+
+
 
 
 

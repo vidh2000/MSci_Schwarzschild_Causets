@@ -47,7 +47,8 @@ int main(){
     std::cout<<"\n===========FLATSPACETIME==========\n";
     
     //Periodicity
-    FlatSpacetime FS = FlatSpacetime(dim, period);
+    Spacetime FS = Spacetime();
+    FS.FlatSpacetime(dim, period);
     std::cout<<"Should have any period? "
              <<(std::count(period.begin(), period.end(), 0.0)!=dim-1)
              <<"\nDoes have any period? "

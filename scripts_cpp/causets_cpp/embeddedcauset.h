@@ -31,7 +31,7 @@ class EmbeddedCauset: public Causet
         // vector<std::unordered_set<int>> _future_links = {};
         std::vector<std::vector<double>> _coords = {};
         CoordinateShape _shape = CoordinateShape();
-        Spacetime _spacetime = FlatSpacetime();
+        Spacetime _spacetime = Spacetime();
 
         // CONSTRUCTORS
         EmbeddedCauset();
