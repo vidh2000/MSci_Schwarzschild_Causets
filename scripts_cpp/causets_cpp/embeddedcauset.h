@@ -92,8 +92,11 @@ class EmbeddedCauset: public Causet
                             bool make_links = false,
                             const char* sets_type = "past");
 
-        // behind the scenes
+        // Behind the scenes
 
+        void make_cmatrix(const char* method = "coordinates",
+                            bool special = true,
+                            bool use_transitivity = true);
         void make_cmatrix_and_allpasts(bool special = true);
         void make_cmatrix_and_allfuts(bool special = true);
         void make_cmatrix_and_pasts(const char* method = "coordinates",
@@ -106,9 +109,6 @@ class EmbeddedCauset: public Causet
                                         bool special = true);
         void make_cmatrix_and_futlinks(const char* method = "coordinates",
                                         bool special = true);
-        void make_cmatrix(const char* method = "coordinates",
-                            bool special = true,
-                            bool use_transitivity = true);
         void make_sets          (const char* method = "coordinates");
         void make_all_pasts     (const char* method = "coordinates");
         void make_all_futures   (const char* method = "coordinates");
@@ -117,8 +117,8 @@ class EmbeddedCauset: public Causet
         void make_past_links    (const char* method = "coordinates");
         void make_fut_links     (const char* method = "coordinates");
         
+
         //Destructor
-        //virtual ~EmbeddedCauset();
         ~EmbeddedCauset();       
 };
 

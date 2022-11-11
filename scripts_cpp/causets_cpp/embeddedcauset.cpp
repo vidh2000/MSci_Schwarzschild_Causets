@@ -661,6 +661,13 @@ void EmbeddedCauset::make_cmatrix_and_allfuts(bool special)
 }
 
 
+/**
+ * @brief Make _CMatrix and _pasts
+ * 
+ * @param method const char* : either "coordinates" or "futures"
+ * @param special bool : if true and use_transitivity, C_ij = -1 if ij link
+ * @param use_transitivity bool : use transitivity where possible
+ */
 void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
                                                bool special,
                                                bool use_transitivity)
@@ -708,7 +715,6 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
                 }
             }
         }
-
     }
     else
     {
@@ -720,7 +726,13 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
 
 }
 
-
+/**
+ * @brief Make _CMatrix and _futures
+ * 
+ * @param method const char* : either "coordinates" or "pasts"
+ * @param special bool : if true and use_transitivity, C_ij = -1 if ij link
+ * @param use_transitivity bool : use transitivity where possible
+ */
 void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
                                             bool special,
                                             bool use_transitivity)
@@ -731,29 +743,42 @@ void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
 
-        int special_factor = (special && use_transitivity)? -1 : 1;
         _CMatrix.resize(_size, vector<int>(_size,0));
         _futures.resize(_size);
-        for(int i=_size-1; i>-1; i--)
+        if (use_transitivity)
         {
-            _CMatrix[i].resize(_size);
-            for(int j=i+1; j<_size; j++)
+            int special_factor = (special && use_transitivity)? -1 : 1;
+            for(int i=_size-1; i>-1; i--)
             {
-                if (_CMatrix[j][i] != 0)
-                    {continue;}
-                else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                for(int j=i+1; j<_size; j++)
                 {
-                    _CMatrix[j][i] = special_factor;
-                    _futures[i].insert(j);
-                    _futures[i].insert(_futures[j].begin(), 
-                                        _futures[j].end());
-                    if (use_transitivity)
+                    if (_CMatrix[j][i] != 0)
+                        {continue;}
+                    else if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                     {
+                        _CMatrix[j][i] = special_factor;
+                        _futures[i].insert(j);
+                        _futures[i].insert(_futures[j].begin(), 
+                                            _futures[j].end());
                         for (int k = j+1; k<_size; k++)
                         {
                             if(_CMatrix[k][j] != 0)
                                 {_CMatrix[k][i] = 1;}
                         }
+                    }
+                }
+            }
+        }
+        else /*no transitivity*/
+        {
+            for(int i=_size-1; i>-1; i--)
+            {
+                for(int j=i+1; j<_size; j++)
+                {
+                    if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    {
+                        _CMatrix[j][i] = 1;
+                        _futures[i].insert(j);
                     }
                 }
             }
@@ -766,10 +791,15 @@ void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
         throw std::invalid_argument("Only coordinates method currently \
         supported");
     }
-
 }
 
 
+/**
+ * @brief Make _CMatrix and _past_links. Transitivity is mandatory.
+ * 
+ * @param method const char* : either "coordinates" or "futures"
+ * @param special bool : if true, C_ij = -1 if ij link
+ */
 void EmbeddedCauset::make_cmatrix_and_pastlinks(const char* method,
                                                bool special)
 {
@@ -813,6 +843,12 @@ void EmbeddedCauset::make_cmatrix_and_pastlinks(const char* method,
 }
 
 
+/**
+ * @brief Make _CMatrix and _future_links. Transitivity is mandatory.
+ * 
+ * @param method const char* : either "coordinates" or "pasts"
+ * @param special bool : if true, C_ij = -1 if ij link
+ */
 void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
                                                bool special)
 {
@@ -906,7 +942,7 @@ void EmbeddedCauset::make_sets(const char* method)
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
- * - "Cmatrix": create from already existing _CMatrix
+ * - "cmatrix": create from already existing _CMatrix
  * - "futures": create from already existing futures
  */
 void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
