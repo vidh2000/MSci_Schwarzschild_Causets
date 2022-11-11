@@ -33,7 +33,8 @@ class EmbeddedCauset: public Causet
         CoordinateShape _shape = CoordinateShape();
         Spacetime _spacetime = Spacetime();
 
-        // CONSTRUCTORS
+        // CONSTRUCTOR
+        
         EmbeddedCauset();
         EmbeddedCauset(Spacetime spacetime, 
                        CoordinateShape shape, 
@@ -45,17 +46,6 @@ class EmbeddedCauset: public Causet
                        bool make_links = false,
                        const char* sets_type = "past");
         
-
-        //MAKE ATTRIBUTES
-        //Calls appropriate behind-the-scenes-constructor, see header's bottom
-        
-        void make_attrs(const char* method = "coordinates",
-                            bool make_matrix = true,
-                            bool special = true,
-                            bool use_transitivity = true,
-                            bool make_sets = false,
-                            bool make_links = false,
-                            const char* sets_type = "past");
 
         // GETTERS
 
@@ -75,6 +65,8 @@ class EmbeddedCauset: public Causet
 
         // RELATIONS
 
+        std::vector<bool> causality(std::vector<double> xvec, 
+                                    std::vector<double> yvec);
         bool areTimelike(std::vector<double> xvec, std::vector<double> yvec);
         bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
@@ -90,8 +82,17 @@ class EmbeddedCauset: public Causet
                      bool make_sets = false, bool make_links = true);
 
 
-        // Methods of constructing the causal set attributes
-        // BEHIND THE SCENES
+        //MAKE ATTRIBUTES
+        
+        void make_attrs(const char* method = "coordinates",
+                            bool make_matrix = true,
+                            bool special = true,
+                            bool use_transitivity = true,
+                            bool make_sets = false,
+                            bool make_links = false,
+                            const char* sets_type = "past");
+
+        // behind the scenes
 
         void make_cmatrix_and_allpasts(bool special = true);
         void make_cmatrix_and_allfuts(bool special = true);
@@ -108,12 +109,13 @@ class EmbeddedCauset: public Causet
         void make_cmatrix(const char* method = "coordinates",
                             bool special = true,
                             bool use_transitivity = true);
-        void make_all_pasts  (const char* method = "coordinates");
-        void make_all_futures(const char* method = "coordinates");
-        void make_pasts      (const char* method = "coordinates");
-        void make_futures    (const char* method = "coordinates");
-        void make_past_links (const char* method = "coordinates");
-        void make_fut_links  (const char* method = "coordinates");
+        void make_sets          (const char* method = "coordinates");
+        void make_all_pasts     (const char* method = "coordinates");
+        void make_all_futures   (const char* method = "coordinates");
+        void make_pasts         (const char* method = "coordinates");
+        void make_futures       (const char* method = "coordinates");
+        void make_past_links    (const char* method = "coordinates");
+        void make_fut_links     (const char* method = "coordinates");
         
         //Destructor
         //virtual ~EmbeddedCauset();
