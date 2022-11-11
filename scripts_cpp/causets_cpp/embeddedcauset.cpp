@@ -436,8 +436,12 @@ void EmbeddedCauset::discard(vector<int> labels,
  * @param make_sets: bool, if true (non-default) make set (see sets_type)
  * @param make_links: bool, if true (non-default) make links (see sets_type)
  * @param sets_type: const char* specifying the type of set:
- * - "past": (default) make past related sets 
- * - "future": make future related sets.
+ * - "all" : OVERWRITE make_matrix and make_links -> 
+ * make CMatrix, _past and _futures. NOT LINKS. NOT SPECIAL. 
+ * - "both only" : OVERWRITE make_matrix and make_links 
+ * -> only do pasts and futures.
+ * - "past": (default) make past related sets. 
+ * - "future": make future related sets.  
  */
 void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_matrix,
@@ -447,15 +451,19 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_links,// = false,
                                     const char* sets_type)// = "past")
 {
-    _special_matrix = special && use_transitivity;
+    if (strcmp(sets_type, "all"))
+    {
+        this->make_all_but_links();
+    }
 
-    if (strcmp(sets_type, "both only")==0)
+    else if (strcmp(sets_type, "both only")==0)
     {
         this->make_sets(method);
     }
 
     else if (make_matrix)
     {
+        _special_matrix = special && use_transitivity;
         if (make_links == false && make_sets == false)
         {
             this->make_cmatrix(method, special, use_transitivity);
@@ -508,16 +516,56 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
         else
         {   
-            std::cout<<"At least one among make_matrix, \
-                        make_sets and make_links must be true"<<std::endl;
+            std::cout<<"At least one among make_matrix, " 
+                     << "make_sets and make_links must be true "
+                     << "or you need sets_type = 'all' or 'both only'."
+                     << std::endl;
             throw std::invalid_argument("At least one among make_matrix, \
                                     make_sets and make_links must be true");
         }
     }
 }
 
+
 //////////////////////////////////////////////////////////////////////////////
 //BEHIND THE SCENES
+
+/**
+ * @brief make CMatrix, pasts and futures from coordinates. NOT LINKS.
+ * 
+ */
+void EmbeddedCauset::make_all_but_links()
+{
+    auto xycausality = this->_spacetime.Causality();
+    std::vector<double> st_period = _spacetime._period;
+    double mass = _spacetime._mass;
+
+    _CMatrix.resize(_size, vector<int>(_size,0));
+    _pasts.resize(_size);
+    _futures.resize(_size);
+
+    for(int i=0; i<_size; i++) 
+    {
+        for(int j=0; j<_size; j++) 
+        {
+            std::vector<bool> causalities = xycausality(
+                                _coords[i],_coords[j],st_period,mass);
+            if (causalities[1]) //i in past of j, j in future of i
+            {
+                _CMatrix[i][j] = 1;
+                _pasts[j].insert(i);
+                _futures[i].insert(j);
+            }
+            else if (causalities[2]) //j in past of i, i in future of j
+            {
+                _CMatrix[j][i] = 1;
+                _pasts[i].insert(j);
+                _futures[j].insert(i);
+            }
+        }
+    }
+}
+
 
 /**
  * @brief Makes _CMatrix from coordinates or past/futures set

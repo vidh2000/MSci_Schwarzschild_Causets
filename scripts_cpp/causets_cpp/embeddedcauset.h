@@ -94,6 +94,7 @@ class EmbeddedCauset: public Causet
 
         // Behind the scenes
 
+        void make_all_but_links();
         void make_cmatrix(const char* method = "coordinates",
                             bool special = true,
                             bool use_transitivity = true);
