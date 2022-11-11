@@ -109,12 +109,17 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_links,// = false,
                                     const char* sets_type)// = "past")
 {
-    //std::cout << "Creating causet N=" << size << " via cmatrix" << std::endl;
     int special_factor = (special && (use_transitivity||make_links))? -1 : 1;
     _special_matrix = special && use_transitivity;
 
     if (make_matrix)
     {
+        const char* renamed_sets_type;
+        if (strcmp(sets_type, "all")==0)
+            {renamed_sets_type = "past";}
+        else
+            {renamed_sets_type = sets_type;}
+
         if (make_links == false && make_sets == false)
         {
             this->make_cmatrix(method, special, use_transitivity);
@@ -122,25 +127,26 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
  
         else if (make_links == true && make_sets == false)
         {
-            if (strcmp(sets_type, "past")==0){
+            if (strcmp(renamed_sets_type, "past")==0){
+                std::cout << "Making pasts from (+) cmatrix\n";
                 this->make_cmatrix_and_pastlinks(method, special);}
-            else if (strcmp(sets_type, "future")==0){
+            else if (strcmp(renamed_sets_type, "future")==0){
                 this->make_cmatrix_and_futlinks(method, special);}
         }
         
         else if (make_links == false && make_sets == true)
         {
-            if (strcmp(sets_type, "past")==0){
+            if (strcmp(renamed_sets_type, "past")==0){
                 this->make_cmatrix_and_pasts(method, special, use_transitivity);}
-            else if (strcmp(sets_type, "future")==0){
+            else if (strcmp(renamed_sets_type, "future")==0){
                 this->make_cmatrix_and_futs(method, special, use_transitivity);}
         }
 
         else /*both make_sets and links*/
         {
-            if (strcmp(sets_type, "past")==0){
+            if (strcmp(renamed_sets_type, "past")==0){
                 this->make_cmatrix_and_allpasts(special);}
-            else if (strcmp(sets_type, "future")==0){
+            else if (strcmp(renamed_sets_type, "future")==0){
                 this->make_cmatrix_and_allfuts(special);}
         }
     }
@@ -161,6 +167,9 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                 this->make_pasts(method);}
             else if (strcmp(sets_type, "future")==0){
                 this->make_futures(method);}
+            else if (strcmp(sets_type, "all")==0){
+                std::cout << "Making futures+pasts from sets\n";
+                this->make_futures_and_pasts(method);}
         }
 
         else if (make_links == true && make_sets == true)
@@ -886,8 +895,8 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
- * - "Cmatrix": create from already existing _CMatrix
- * - "futures": create from already existing futures
+ * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
+ * - "futures": create from already existing futures (not yet implemented)
  */
 void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
 {   
@@ -923,8 +932,8 @@ void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
- * - "Cmatrix": create from already existing _CMatrix
- * - "pasts": create from already existing pasts
+ * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
+ * - "pasts": create from already existing pasts (not yet implemented)
  */
 void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
 {   
@@ -949,6 +958,46 @@ void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
         }
     }
     //std::cout <<"Finished sprinkling..." << std::endl;
+}
+
+/**
+ * @brief Creates _futures and _pasts i.e. the sets of
+ *        the past and future events for each event. 
+ *        Requires _size to have already be defined, and events
+ *        sorted by a possible natural labelling.
+ * 
+ * @param method: const char*, possible choices are
+ * - "coordinates": create from coordinates causality
+ * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
+ */
+void EmbeddedCauset::make_futures_and_pasts(const char* method)// = "coordinates"
+{   
+    _futures.resize(_size);
+    _pasts.resize(_size);
+    if (strcmp(method, "coordinates")==0)
+    {
+        // Loop through coordinates t_min -> t_max.
+        // j>i automatically imposed as C_ij <-> i precedes j. 
+        for (int j = 1; j<_size; j++)
+        {
+            for(int i=j-1; i>-1; i--)
+            {
+                if (areTimelike(_coords[i], _coords[j]))
+                {
+                    // Add i and its past to the past of j
+                    _pasts[j].insert(i);
+                    _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
+                    // Insert j into i's future and into
+                    // the future of elements in i's past
+                    _futures[i].insert(j);
+                    for (int ind_in_ipast : _pasts[i])
+                    {    
+                        _futures[ind_in_ipast].insert(j);
+                    }
+                }
+            }
+        }
+    }
 }
 
 

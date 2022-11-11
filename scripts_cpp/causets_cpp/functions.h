@@ -89,6 +89,23 @@ void print_set(std::set<obj> set)
 
 template <typename obj>  
 inline
+void print_set(std::unordered_set<obj> set)
+{
+    
+    std::string beginstr = "{ ";
+    std::cout << beginstr;
+    for (obj e : set)
+    {
+        std::string separator = ", ";
+        std::cout << e << separator;
+    }
+    std::string endstr = " }";
+    std::cout << endstr;
+    std::cout << std::endl;
+}
+
+template <typename obj>  
+inline
 bool set_contains(obj element, std::set<obj> s)
 {
     bool is_in = s.find(element) != s.end();

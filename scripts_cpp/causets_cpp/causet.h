@@ -80,7 +80,8 @@ class Causet
         
         std::vector<double> MMdim_est(const char* method = "random",
                         int Nsamples = 20,
-                        int size_min = 10, double size_max = 1e9);   
+                        int size_min = 100,
+                        double size_max = 1e9);   
         
 
 

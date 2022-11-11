@@ -222,12 +222,13 @@ double Causet::ord_fr(int a, int b,
     }       
     else if (_pasts.size() && _futures.size())
     {
-        std::cout << "fr_i in pasts and futures one" << std::endl;
-        std::unordered_set<int> afutr = _futures[a];
-        std::unordered_set<int> bpast = _pasts[a];
-        std::unordered_set<int> A = set_intersection(afutr,bpast);
+        //std::cout << "here in pasts+futs\n";
+        std::unordered_set<int> A = set_intersection(
+                                _futures[a],_pasts[b]);
         N = A.size();
+        std::cout << "N= " << N << std::endl;
         for (auto e: A){
+            std::cout << "add " << (set_intersection(_futures[e],A)).size() << std::endl;
             nrelations += (set_intersection(_futures[e],A)).size();
         }
     }
@@ -295,8 +296,8 @@ double Causet::MM_drelation(double d)
 
 vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int Nsamples,// = 20,
-                                int size_min,// = 10,
-                                double size_max)// = nan("")
+                                int size_min,// = vecmin({1000,_size/2})
+                                double size_max)// = 1e9
 {
     std::cout << "NOTE: MMd works only in flat spacetime" << std::endl;
 
@@ -397,6 +398,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 Bs.push_back(e);
             }
         }
+        int counter = 0;
         std::cout << " Sizes of As, Bs = " << As.size() << ", " << Bs.size() << "\n";
         for (int i=0; i<As.size(); i++)
         {
@@ -407,10 +409,12 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 double n = (double)IntervalCard(a, b)*1.0;
                 if (n >= size_min && n<= size_max) 
                 {
-                    //std::cout << "\nn = " << n << std::endl;
+                    counter++;
+                    //std::cout << "Counter = " << counter << std::endl;
+                    std::cout << "n = " << n << std::endl;
                     //std::cout << "(a,b) = " << a << " " << b << std::endl;
                     double fr_i = this->ord_fr(a,b,"choose");
-                    //std::cout << "fr_i =" << fr_i << std::endl; 
+                    std::cout << "fr_i =" << fr_i << std::endl; 
                     if (fr_i ==1.0)
                     {
                         destimates.push_back(1);

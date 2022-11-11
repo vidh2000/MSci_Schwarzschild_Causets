@@ -24,10 +24,6 @@
  * causality relations. 
  * @param make_sets: bool, if true make set (see sets_type)
  * @param make_links: bool, if true make links (see sets_type)
- * @param method: const char* specifying
- * - "intensity": card is the average of Poisson distribution used to extract 
- * number of events to sprinkle
- * - "card": the number of events to sprinkle is fixed to card
  * @param sets_type: const char* specifying the type of set:
  * - "past": make _past_links
  * - "future": make _future_links
@@ -62,7 +58,7 @@ class SprinkledCauset: public EmbeddedCauset
                         bool use_transitivity = true,
                         bool make_sets = false,
                         bool make_links = false,
-                        const char* sets_type = "past",
+                        const char* sets_type = "all",
                         int seed = 0);
 
 

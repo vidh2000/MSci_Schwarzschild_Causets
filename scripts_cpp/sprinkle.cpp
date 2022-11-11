@@ -41,7 +41,7 @@ using namespace std::chrono;
    
 
 // Sprinkled causet parameters
-int card = 5000;
+int card = 4000;
 int dim = 4;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
@@ -54,11 +54,12 @@ bool want_matrix = false;
 bool want_coords = false;
 
 bool poisson = false;
-bool make_matrix = true;
+bool make_matrix = false;
 bool special = true;
 bool use_transitivity = false;
 bool make_sets = true;
 bool make_links = false;
+const char* sets_type = "all";
 
 int main(){
     auto start = high_resolution_clock::now();
@@ -80,9 +81,8 @@ int main(){
         S.FlatSpacetime(dim);
         SprinkledCauset C(card, S, shape, poisson,
                           make_matrix, special, use_transitivity,
-                          make_sets, make_links);
-        C.make_futures();
-        
+                          make_sets, make_links,sets_type);
+
         //PARAMETERS
         //std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
         //for (auto const& p : C._shape._params){
@@ -164,22 +164,22 @@ int main(){
         // std::cout<<"Max Along z    : "<<C.max_along(3) <<std::endl;
         // std::cout<<"Min Along z    : "<<C.min_along(3) <<std::endl;
 
-        //CAUSALITY
-        auto aretimelike = S.Causality();
-        std::vector<double> ovec (dim, 0.0);
-        std::vector<double> xvec (dim, 0.0);
-        std::vector<double> yvec (dim, 0.0);
-        xvec[1] += 1;
-        yvec[0] += 1;
-        std::cout<<"\nTESTING CAUSALITY\nShould be :          0";
-        std::cout<<"\nFrom Spacetime:      "<<aretimelike(ovec, xvec, {}, 0)[0];
-        std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(ovec, xvec);
-        std::cout<<"\nShould be :          1";
-        std::cout<<"\nFrom Spacetime:      "<<aretimelike(ovec, yvec, {}, 0)[0];
-        std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(ovec, yvec);
-        std::cout<<"\nShould be :          1";
-        std::cout<<"\nFrom Spacetime:      "<<aretimelike(yvec, ovec, {}, 0)[0];
-        std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(yvec, ovec);
+        // //CAUSALITY
+        // auto aretimelike = S.Causality();
+        // std::vector<double> ovec (dim, 0.0);
+        // std::vector<double> xvec (dim, 0.0);
+        // std::vector<double> yvec (dim, 0.0);
+        // xvec[1] += 1;
+        // yvec[0] += 1;
+        // std::cout<<"\nTESTING CAUSALITY\nShould be :          0";
+        // std::cout<<"\nFrom Spacetime:      "<<aretimelike(ovec, xvec, {}, 0)[0];
+        // std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(ovec, xvec);
+        // std::cout<<"\nShould be :          1";
+        // std::cout<<"\nFrom Spacetime:      "<<aretimelike(ovec, yvec, {}, 0)[0];
+        // std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(ovec, yvec);
+        // std::cout<<"\nShould be :          1";
+        // std::cout<<"\nFrom Spacetime:      "<<aretimelike(yvec, ovec, {}, 0)[0];
+        // std::cout<<"\nFrom EmbeddedCauset: "<<C.areTimelike(yvec, ovec);
 
         if (want_coords){
         std::cout << "\nCoordinates:\n";
@@ -189,9 +189,23 @@ int main(){
         std::cout<<"\nCausal Matrix:\n";
         print_vector(C._CMatrix);}
 
-        std::cout << "Doing MMd....." << std::endl;
+        // std::cout << "C_pasts, N_pasts = " << C._pasts.size() << std::endl;
+        // for (auto past : C._pasts)
+        // {
+        //     print_set(past);
+        // }
+        // std::cout << "C_futures, N_futures = " << C._futures.size() << std::endl;
+        // for (auto fut : C._futures)
+        // {
+        //     print_set(fut);
+        // }
+        //print_vector(C._pasts);
+        //print_vector(C._futures);
+
+        std::cout << "\nDoing MMd....." << std::endl;
         // MMd estimation
-        std::vector<double> MMd_result = C.MMdim_est("big",20,1000);
+        std::vector<double> MMd_result = C.MMdim_est("big",20,
+                                    vecmin(std::vector<int> {1000,C._size/2}));
         std::cout << "MMd (mean,std) = ";
         print_vector(MMd_result);
     }
@@ -202,7 +216,7 @@ int main(){
 
     auto stop = high_resolution_clock::now();
     double duration = duration_cast<microseconds>(stop - start).count();
-    std::cout << "\nTime taken: "
+    std::cout << "Time taken: "
             << duration/pow(10,6) << " seconds" << std::endl;
     return 0;
 };

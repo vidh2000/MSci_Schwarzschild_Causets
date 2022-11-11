@@ -43,7 +43,7 @@ class EmbeddedCauset: public Causet
                        bool use_transitivity = true,
                        bool make_sets = false,
                        bool make_links = false,
-                       const char* sets_type = "past");
+                       const char* sets_type = "all");
         
 
         //MAKE ATTRIBUTES
@@ -112,6 +112,7 @@ class EmbeddedCauset: public Causet
         void make_all_futures(const char* method = "coordinates");
         void make_pasts      (const char* method = "coordinates");
         void make_futures    (const char* method = "coordinates");
+        void make_futures_and_pasts(const char* method = "coordinates");
         void make_past_links (const char* method = "coordinates");
         void make_fut_links  (const char* method = "coordinates");
         
