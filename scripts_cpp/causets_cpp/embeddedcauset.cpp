@@ -536,21 +536,21 @@ void EmbeddedCauset::make_cmatrix(const char* method,
     double mass = _spacetime._mass;
     if (strcmp(method, "coordinates")==0)
     {
-        int special_factor = (special && use_transitivity)? -1 : 1;
-        _CMatrix.resize(_size, vector<int>(_size,0));
-        for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+        if (use_transitivity)
         {
-            for(int i=j-1; i>-1; i--) //i can only preceed j
+            int special_factor = (special)? -1 : 1;
+            _CMatrix.resize(_size, vector<int>(_size,0));
+            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
-                if (_CMatrix[i][j] != 0 && use_transitivity){
-                    continue;}
-                else
+                for(int i=j-1; i>-1; i--) //i can only preceed j
                 {
-                    if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    if (_CMatrix[i][j] != 0){
+                        continue;}
+                    else
                     {
-                        _CMatrix[i][j] = special_factor;
-                        if (use_transitivity)
+                        if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                         {
+                            _CMatrix[i][j] = special_factor;
                             for (int k = i-1; k>-1; k--)
                             {
                                 if(_CMatrix[k][i] != 0) //k<i<j -> k<j
@@ -558,6 +558,18 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                             }
                         }
                     }
+                }
+            }
+        }
+        else 
+        {
+            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+            {
+                for(int i=j-1; i>-1; i--) //i can only preceed j
+                {
+                    if(xycausality(_coords[i],_coords[j],st_period,mass)[0]){
+                        _CMatrix[i][j] = 1;
+                    }    
                 }
             }
         }
@@ -659,23 +671,22 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
 
-        int special_factor = (special && use_transitivity)? -1 : 1;
         _CMatrix.resize(_size, vector<int>(_size,0));
-        _pasts.resize(_size);
-        for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+        _pasts.resize(_size); 
+        if (use_transitivity)
         {
-            for(int i=j-1; i>-1; i--) //i can only preceed j
+            int special_factor = (special)? -1 : 1;
+            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
-                if (_CMatrix[i][j] != 0){
-                    continue;}
-                else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                for(int i=j-1; i>-1; i--) //i can only preceed j
                 {
-                    // In testing ... keep it simple
-                    _CMatrix[i][j] = special_factor;
-                    _pasts[j].insert(i);
-                    _pasts[j].insert(_pasts[i].begin(), _pasts[i].end());
-                    if (use_transitivity)
+                    if (_CMatrix[i][j] != 0){
+                        continue;}
+                    else if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                     {
+                        _CMatrix[i][j] = special_factor;
+                        _pasts[j].insert(i);
+                        _pasts[j].insert(_pasts[i].begin(), _pasts[i].end());
                         for (int k = i-1; k>-1; k--)
                         {
                             if(_CMatrix[k][i] != 0) //k<i<j -> k<j
@@ -685,6 +696,19 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
                 }
             }
         }
+        else /*no transitivity*/
+        for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+        {
+            for(int i=j-1; i>-1; i--) //i can only preceed j
+            {
+                if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                {
+                    _CMatrix[i][j] = 1;
+                    _pasts[j].insert(i);
+                }
+            }
+        }
+
     }
     else
     {

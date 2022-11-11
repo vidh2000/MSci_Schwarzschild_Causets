@@ -41,23 +41,23 @@ using namespace std::chrono;
    
 
 // Sprinkled causet parameters
-int card = 100;
+int card = 5000;
 int dim = 4;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
 double myduration = 10;
 double edge = 1.5;
-std::vector<double> edges = {1,2,3,4}; 
+std::vector<double> edges = {1,2,3,4};
 
 //Analysis Parameters
-bool want_matrix = true;
+bool want_matrix = false;
 bool want_coords = false;
 
 bool poisson = false;
 bool make_matrix = true;
 bool special = true;
-bool use_transitivity = true;
-bool make_sets = false;
+bool use_transitivity = false;
+bool make_sets = true;
 bool make_links = false;
 
 int main(){
@@ -65,7 +65,7 @@ int main(){
     //std::cout << "Starting building shape..." << std::endl;
     std::vector<const char*> names = {"bicone"};// "ball", "cylinder", "cube", "cuboid"};
     edges.resize(dim);
-    card = (want_coords || want_matrix)? 20 : card;
+    card = (want_coords || want_matrix)? 10 : card;
     for (const char* name : names)
     {
 
@@ -81,11 +81,12 @@ int main(){
         SprinkledCauset C(card, S, shape, poisson,
                           make_matrix, special, use_transitivity,
                           make_sets, make_links);
+        C.make_futures();
         
         //PARAMETERS
-        std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
-        for (auto const& p : C._shape._params){
-            std::cout << "-- " << p.first << '=' << p.second << '\n';}
+        //std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
+        //for (auto const& p : C._shape._params){
+        //    std::cout << "-- " << p.first << '=' << p.second << '\n';}
         if ((strcmp(shape._name, "ball")==0)      ||
              (strcmp(shape._name, "cylinder")==0) ||
              (strcmp(shape._name, "diamond")==0)  ||
@@ -98,7 +99,7 @@ int main(){
         // std::cout<<"-- dim=" << C.spacetime_dim() << "\n";
 
         //SPRINKLED COORDINATES
-        std::cout << "\nSprinkled values after"<<card<<"sprinkling"<<std::endl;
+        std::cout << "\nSprinkled values after "<<card<<" sprinklings"<<std::endl;
         std::vector<double> comparisons (6, radius); //for ball and bicone
         if ((strcmp(shape._name, "cylinder")==0))
         {
@@ -187,7 +188,14 @@ int main(){
         if (want_matrix){
         std::cout<<"\nCausal Matrix:\n";
         print_vector(C._CMatrix);}
+
+        std::cout << "Doing MMd....." << std::endl;
+        // MMd estimation
+        std::vector<double> MMd_result = C.MMdim_est("big",20,1000);
+        std::cout << "MMd (mean,std) = ";
+        print_vector(MMd_result);
     }
+
 
     std::cout << "\n =========This file works!==========\n" << std::endl;
 

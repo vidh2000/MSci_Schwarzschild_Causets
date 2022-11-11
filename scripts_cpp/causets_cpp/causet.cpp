@@ -180,21 +180,22 @@ double Causet::ord_fr(vector<SET> A_pasts,
 double Causet::ord_fr(int a, int b,
                 const char* denominator)// = "choose"
 {
-    if (strcmp(denominator,"choose")!=0 || strcmp(denominator, "n2")!=0)
+    if (strcmp(denominator, "choose")!=0 && strcmp(denominator, "n2")!=0)
     {
+        std::cout << "Param 'denominator' was " << denominator << std::endl; 
         std::cout<<"Param 'denominator' must be 'choose' or 'n2'"<<std::endl;
         throw std::invalid_argument("Param 'denominator' must be \
                                     'choose' or 'n2'");
     }
     
-    if (b>=a)
+    if (a>b)
     {
         std::cout<<"a<b is enforced. Please behave."<<std::endl;
         throw std::invalid_argument("a<b is enforced. Please behave.");
     }
 
-    int nrelations = 0;
-    int N;
+    double nrelations = 0;
+    double N;
     if (_CMatrix.size())
     {
         // Get all elements in the Alexander interval [A,B]
@@ -203,16 +204,16 @@ double Causet::ord_fr(int a, int b,
         // Find all elements in the past of a and future of b
         for (int i = a; i<b;i++)
         {
-            if (_CMatrix[i][b] != 0 && _CMatrix[a][i]){
+            if ((_CMatrix[i][b] != 0) && (_CMatrix[a][i] != 0)){
                 A.push_back(i);}
         }
         // Also append b
         A.push_back(b);
         // N = size of Alexander interval
         N = A.size();
-        for (auto i: A)
+        for (int i: A)
         {
-            for (auto j: A)
+            for (int j: A)
             {
                 if (_CMatrix[i][j] != 0){
                     nrelations +=1;}
@@ -221,6 +222,7 @@ double Causet::ord_fr(int a, int b,
     }       
     else if (_pasts.size() && _futures.size())
     {
+        std::cout << "fr_i in pasts and futures one" << std::endl;
         std::unordered_set<int> afutr = _futures[a];
         std::unordered_set<int> bpast = _pasts[a];
         std::unordered_set<int> A = set_intersection(afutr,bpast);
@@ -236,7 +238,7 @@ double Causet::ord_fr(int a, int b,
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
         return 0.0;}
 
-    int fr = 2 * nrelations / (N * (N - (strcmp(denominator,"choose")==0)));
+    double fr = 2 * nrelations / (N * (N - (strcmp(denominator,"choose")==0)));
     return fr;
 }
 
@@ -292,7 +294,6 @@ double Causet::MM_drelation(double d)
 }
 
 vector<double> Causet::MMdim_est(const char* method,// = "random",
-                                int d0,// = 2,
                                 int Nsamples,// = 20,
                                 int size_min,// = 10,
                                 double size_max)// = nan("")
@@ -350,7 +351,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             if (n >= size_min && n<= size_max) 
             {
                 successes += 1;
-                double fr_i = this->ord_fr(a,b,"choose");
+                double fr_i = this->ord_fr(a,b);//choose
+                std::cout << "fr_i = " << fr_i << std::endl;
                 if (fr_i ==1)
                 {
                     destimates.push_back(1);
@@ -382,8 +384,10 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     }
     else if (strcmp(method, "big")==0)
     {
+        std::cout << "in big..." << (2<*N) << std::endl;
         vector<int> As = {};
         vector<int> Bs = {};
+        std::cout << (_pasts.size()) << _futures.size() << std::endl;
         for (int e = 0; e<*N; e++)
         {
             if (_pasts[e].size() == 0){
@@ -393,35 +397,41 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 Bs.push_back(e);
             }
         }
+        std::cout << " Sizes of As, Bs = " << As.size() << ", " << Bs.size() << "\n";
         for (int i=0; i<As.size(); i++)
         {
             for (int j=0; j<Bs.size(); j++)
             {   
                 int a = As[i];
                 int b = Bs[j];
-                int n = IntervalCard(a, b);
+                double n = (double)IntervalCard(a, b)*1.0;
                 if (n >= size_min && n<= size_max) 
                 {
+                    //std::cout << "\nn = " << n << std::endl;
+                    //std::cout << "(a,b) = " << a << " " << b << std::endl;
                     double fr_i = this->ord_fr(a,b,"choose");
-                    if (fr_i ==1)
+                    //std::cout << "fr_i =" << fr_i << std::endl; 
+                    if (fr_i ==1.0)
                     {
                         destimates.push_back(1);
                     }
                     else
                     {
                         //Order fraction correction for MMestimator
-                        double fr_i = fr_i * (n-1)/n;
+                        //std::cout << "n after = " << (n-1.0)/n << std::endl;
+                        fr_i *= (n-1.0)/n;
+                        //std::cout << "fr_i after = " << fr_i << std::endl; 
 
                         // Define function whose root needs to be found
                         auto MM_to_solve = [fr_i](double d){
                             return Causet::MM_drelation(d) - fr_i/2;};
 
                         double dmin = 0.1;
-                        double dmax = 5;
+                        double dmax = 10;
                         // Estimate dimension of Causet
                         double d_i = bisection(MM_to_solve,dmin,dmax);
+                        //std::cout << "dim est = " << d_i << std::endl;
                         destimates.push_back(d_i);
-                        Nsamples --;
                     }
                 }
             }
@@ -434,6 +444,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
         throw std::invalid_argument(errormsg);
     }
 
+    std::cout << "Finished the loop, finding mean,std of MMd estimates\n";
     // Return mean and std of dimension estimate result
     double sum = std::accumulate(std::begin(destimates),
                                  std::end(destimates), 0.0);
