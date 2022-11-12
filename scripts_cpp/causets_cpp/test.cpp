@@ -30,29 +30,49 @@ using namespace std;
 int main(){
 
 
-////TESTING MAPS' METHODS
-/////////////////////////
-std::map<const char*, double> mymap = {{"a", 1},{"b",2}, {"c",3}};
+    ////TESTING MAPS' METHODS
+    /////////////////////////
+        // std::map<const char*, double> mymap = {{"a", 1},{"b",2}, {"c",3}};
 
-mymap["c"] = 10;
-std::cout<< "After 'mymap['c'] = 10', the size is "<<mymap.size()<<endl;
-double a = mymap["c"];
-std::cout<< "And the element is "<<a<<endl;
-std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
-a++;
-std::cout<< "After modification of a, the element is "<<mymap["c"]<<endl;
+        // mymap["c"] = 10;
+        // std::cout<< "After 'mymap['c'] = 10', the size is "<<mymap.size()<<endl;
+        // double a = mymap["c"];
+        // std::cout<< "And the element is "<<a<<endl;
+        // std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
+        // a++;
+        // std::cout<< "After modification of a, the element is "<<mymap["c"]<<endl;
 
-mymap.insert({"c", 100});
-std::cout<< "After 'mymap.insert({'c', 100})', the size is "<<mymap.size()<<endl;
-double b = mymap.find("c")->second;
-std::cout<< "and the element is "<<b<<endl;
-std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
-b++;
-std::cout<< "After modification of b, the element is "<<mymap["c"]<<endl;
+        // mymap.insert({"c", 100});
+        // std::cout<< "After 'mymap.insert({'c', 100})', the size is "<<mymap.size()<<endl;
+        // double b = mymap.find("c")->second;
+        // std::cout<< "and the element is "<<b<<endl;
+        // std::cout<< "After assignment, the size is "<<mymap.size()<<endl;
+        // b++;
+        // std::cout<< "After modification of b, the element is "<<mymap["c"]<<endl;
+        // mymap["d"] = 5;
+        // std::cout<< "After 'mymap['d'] = 5', the size is "<<mymap.size()<<endl;
+    
 
+    // TESTING INTERSECTION OF SETS
+    ////////////////////////////////
+        unordered_set<int> a = {1,2,3,4,5,6,7,8,9,10};
+        unordered_set<int> b = {1,3,5,6,8,10,14,22,37,48,59,62};
+        cout<<"Sets to intersect:\n";
+        cout<<"a = { ";
+        for (auto a_i : a)
+            {cout<<a_i<<", ";}
+        cout<<"}\n";
+        cout<<"b = { ";
+        for (auto b_i : b)
+            {cout<<b_i<<", ";}
+        cout<<"}\n";
+        cout<<"Intersection:\n";
+        auto result = set_intersection(a, b);
+        cout<<"r = {";
+        for (auto x : result)
+            {cout<<x<<", ";}
+        cout<<"}\n";
 
-mymap["d"] = 5;
-std::cout<< "After 'mymap['d'] = 5', the size is "<<mymap.size()<<endl;
 
 // int count = 3;
 // int dim = 2;

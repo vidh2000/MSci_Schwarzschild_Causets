@@ -75,9 +75,6 @@ SprinkledCauset::SprinkledCauset(int card,
     if (poisson)
         {_intensity = card*1;}
     _coords = sprinkle_coords(card, shape, seed);
-    
-    // std::cout<<"The just-created coordinates in SprinkledConstructor\n";
-    // print_vector(_coords);
 
     _size = _coords.size();
 

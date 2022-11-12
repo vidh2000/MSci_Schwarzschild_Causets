@@ -453,13 +453,11 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
 {
     if (strcmp(sets_type, "all")==0)
     {
-        std::cout << "all option...\n";
         this->make_all_but_links();
     }
 
     else if (strcmp(sets_type, "both only")==0)
     {
-        std::cout << "making both only..\n";
         this->make_sets(method);
     }
 
@@ -473,15 +471,6 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
         else if (make_links == true && make_sets == false)
         {
-            //it is never gonna give this error
-            if (strcmp(sets_type, "both only")==0 || strcmp(sets_type, "all")==0)
-            {
-                std::cout << "ERROR!\nYou store information in CMatrix primarily\
-                              not in 'pasts'/'futures' sets. " <<
-                              "Please choose 'pasts'/'futures' value for\
-                              sets_type parameter. " << std::endl;
-                throw std::invalid_argument("ERROR: Read msg above"); 
-            }
             if (strcmp(sets_type, "past")==0){
                 this->make_cmatrix_and_pastlinks(method, special);}
             else if (strcmp(sets_type, "future")==0){
@@ -962,19 +951,12 @@ void EmbeddedCauset::make_sets(const char* method)
 {   
     _futures.resize(_size);
     _pasts.resize(_size);
-
-    auto xycausality = this->_spacetime.Causality();
-    std::vector<double> st_period = _spacetime._period;
-    double mass = _spacetime._mass;
-
     if (strcmp(method, "coordinates")==0)
     {
-
         // Define causality function pointer directly
         auto xycausality = this->_spacetime.Causality();
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
-
 
         // Loop through coordinates t_min -> t_max.
         // j>i automatically imposed as C_ij <-> i precedes j. 
@@ -1002,12 +984,12 @@ void EmbeddedCauset::make_sets(const char* method)
             }
         }
     }
+    else if (strcmp(method, "cmatrix")==0)
+        {this->make_sets_fromC();}
     else
     {
-        std::cout<<"Creation of past+future sets failed as currently\
-        only method = 'coordinates' is supported."<<std::endl;
-        throw std::invalid_argument("Only coordinates method currently \
-        supported");
+        std::cout<<"method must be 'coordinates' or 'cmatrix'"<<std::endl;
+        throw std::invalid_argument("wrong method");
     }
 }
 

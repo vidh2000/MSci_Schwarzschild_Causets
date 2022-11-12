@@ -48,11 +48,12 @@ class Causet
         
 
         //SETTERS/GETTERS
-        void make_cmatrix();
-        void make_pasts();
-        void make_futures();
-        void make_past_links();
-        void make_future_links();
+        void make_sets_fromC();
+        virtual void make_cmatrix();
+        virtual void make_pasts();
+        virtual void make_futures();
+        virtual void make_past_links();
+        virtual void make_future_links();
 
         std::vector<std::vector<int>> CMatrix(std::vector<int> labels = {});
         int size();
@@ -61,11 +62,13 @@ class Causet
 
 
         // RELATIONS
+
         bool areTimelike(int a, int b);
         bool AprecB(int a, int b);
 
 
         // KINEMATICS
+
         static double ord_fr(Causet A,
                       const char* denominator = "choose");
         static double ord_fr(std::vector<std::vector<int>> A,
@@ -74,18 +77,21 @@ class Causet
         static double ord_fr(std::vector<SET> A_pasts,
                       const char* denominator = "choose");
         double ord_fr(int a, int b,
-                      const char* denominator = "choose");
+                      const char* denominator = "choose",
+                      bool from_matrix = true);
 
         static double MM_drelation(double d); 
         
         std::vector<double> MMdim_est(const char* method = "random",
                         int Nsamples = 20,
                         int size_min = 100,
-                        double size_max = 1e9);   
+                        double size_max = 1e9,
+                        bool from_matrix = true);   
         
 
 
         // INTERVAL
+
         Causet Interval(int a, int b,
                         bool includeBoundary = true,
                         bool disjoin = false,
@@ -94,11 +100,13 @@ class Causet
 
 
         // CAUSET REPRESENTATION & SAVING (to be added...)
+
         std::vector<std::vector<double>> LMatrix (std::vector<int> labels = {});
         void saveC(const char* path_file_ext);
 
 
         // MODIFIERS
+
         void coarsegrain(int card, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true,
                      int seed = 0);
@@ -118,7 +126,11 @@ class Causet
                      bool make_sets = false, bool make_links = true);  
 
         //Destructor
-        //virtual ~Causet();   
+        //virtual ~Causet();
+
+        //MAKE ATTRS
+
+
 };
 
 #endif /*CAUSET_H*/

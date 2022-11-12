@@ -59,6 +59,32 @@ Causet::Causet(vector<vector<num>> Cmatrix)
 // SETTERS/GETTERS
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+void Causet::make_sets_fromC()
+{
+    _futures.resize(_size);
+    _pasts.resize(_size);
+    // Loop through coordinates t_min -> t_max.
+    // j>i automatically imposed as C_ij <-> i precedes j. 
+    for (int j = 1; j<_size; j++)
+    {
+        for(int i=j-1; i>-1; i--)
+        {
+            if (_CMatrix[i][j]!=0) 
+            {
+                // Add i and its past to the past of j
+                _pasts[j].insert(i);
+                _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
+                // Insert j into i's future and into
+                // the future of elements in i's past
+                _futures[i].insert(j);
+                // for (int ind_in_ipast : _pasts[i])
+                // {    
+                //     _futures[ind_in_ipast].insert(j);
+                // }
+            }
+        }
+    }
+}
 void Causet::make_cmatrix(){}
 void Causet::make_pasts(){}
 void Causet::make_futures(){}
@@ -178,7 +204,8 @@ double Causet::ord_fr(vector<SET> A_pasts,
  * @param b: integer "causetevent", a<b wanted
  */
 double Causet::ord_fr(int a, int b,
-                const char* denominator)// = "choose"
+                      const char* denominator, // = "choose"
+                      bool from_matrix)
 {
     if (strcmp(denominator, "choose")!=0 && strcmp(denominator, "n2")!=0)
     {
@@ -190,14 +217,14 @@ double Causet::ord_fr(int a, int b,
     
     if (a>b)
     {
-        std::cout<<"a<b is enforced. Please behave."<<std::endl;
-        throw std::invalid_argument("a<b is enforced. Please behave.");
+        return this->ord_fr(b,a,denominator,from_matrix);
     }
 
     double nrelations = 0;
     double N;
-    std::cout << "N_pasts, N_futures = " << _pasts.size() << ", " << _futures.size() << std::endl;
-    if (_CMatrix.size())
+    //std::cout << "N_pasts, N_futures = " << _pasts.size() << ", " << _futures.size() << std::endl;
+    bool have_sets = _pasts.size() && _futures.size();
+    if (_CMatrix.size() && (from_matrix || !have_sets))
     {
         // Get all elements in the Alexander interval [A,B]
         std::vector<int> A = {a};
@@ -221,13 +248,14 @@ double Causet::ord_fr(int a, int b,
             }
         }
     }      
-    else if (_pasts.size() && _futures.size())
+    else if (have_sets)
     {
-        std::cout << "In pasts and futures ord_fr\n";
-        std::unordered_set<int> A = set_intersection(
-                                _futures[a],_pasts[b]);
+        //std::cout << "In pasts and futures ord_fr\n";
+        std::unordered_set<int> A = set_intersection(_futures[a],_pasts[b]);
+        A.insert(a);
+        A.insert(b);
         N = A.size();
-        std::cout << "N= " << N << std::endl;
+        //std::cout << "N= " << N << std::endl;
         for (auto e: A){
             //std::cout << "add " << (set_intersection(_futures[e],A)).size() << std::endl;
             nrelations += (set_intersection(_futures[e],A)).size();
@@ -238,7 +266,8 @@ double Causet::ord_fr(int a, int b,
         const char* errormsg = "Provided Causet is empty! It has no _CMatrix \
                                 nor pasts-future sets. Size matters... ;)";
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
-        return 0.0;}
+        return 0.0;
+    }
 
     double fr = 2 * nrelations / (N * (N - (strcmp(denominator,"choose")==0)));
     return fr;
@@ -250,44 +279,12 @@ double Causet::ord_fr(int a, int b,
 // Dimension estimator
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-/**
- * @brief Use Myrheim-Meyers dimensional estimator to compute the 
-          fractal dimension (not necesseraly int).
-          Only intended to work with a Causet with
-          _pasts, and _futures vector<set<int>> objects existing.
-        
- * 
- * @param method: str 
-            - 'random': randomly sample.
-            - 'big': take all events with no past, all with no future
-                     and apply estimator ro their combinations.
- *  
- * @param d0: float 
-            Initial guess for dimension.
-            Default is 2.
- * 
- * @param Nsamples: int 
-            Times to iterate procedure to then average on if method "random".
-            Default is 20.
- * 
- * @param size_min: int\n
-            Minimum size of Alexandrov Sets on which you apply estimators.
-            Default is 20 elements.
- * 
- * @param size_max: int\n
-            Maximum size of Alexandrov Sets on which you apply estimators.
-            Default and highly recommended is np.Inf.
- * 
- * @return
-        - dimension estimate: float
-        - dimension std: float
- */
 
+/*
+Dimension function to be solved for with
+order fraction for MM-dimension estimation.
+*/
 double Causet::MM_drelation(double d)
-    /*
-    Dimension function to be solved for with
-    order fraction for MM-dimension estimation.
-    */
 {
     double a = std::tgamma(d+1);
     double b = std::tgamma(d/2);
@@ -295,15 +292,39 @@ double Causet::MM_drelation(double d)
     return a*b/c;
 }
 
+/**
+ * @brief Use Myrheim-Meyers dimensional estimator to compute the 
+          fractal dimension (not necesseraly int).
+          Only intended to work with a Causet with
+          _pasts, and _futures vector<set<int>> objects existing.
+ * @param method: str 
+            - 'random': randomly sample.
+            - 'big': take all events with no past, all with no future
+                     and apply estimator ro their combinations.
+ * @param Nsamples: int 
+            Times to iterate procedure to then average on if method "random".
+            Default is 20.
+ * @param size_min: int\n
+            Minimum size of Alexandrov Sets on which you apply estimators.
+            Default is 20 elements.
+ * @param size_max: int\n
+            Maximum size of Alexandrov Sets on which you apply estimators.
+            Default and highly recommended is np.Inf.
+ *@param from_matrix bool : if true, use CMatrix for calculations, else sets.
+ * 
+ * @return
+        - dimension estimate: float
+        - dimension std: float
+ */
 vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int Nsamples,// = 20,
                                 int size_min,// = vecmin({1000,_size/2})
-                                double size_max)// = 1e9
+                                double size_max,// = 1e9
+                                bool from_matrix)
 {
-    std::cout << "NOTE (not error, chill): MMd works only in " <<
-                             "flat spacetime" << std::endl;
+    // std::cout << "NOTE (not error, chill): MMd works only in " <<
+    //                          "flat spacetime" << std::endl;
 
-    
     // Variables to be used
     int* N = &_size;
     vector<double> destimates;
@@ -323,14 +344,12 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 return returnerr;
             }
 
-            // Pick two random elements
-            
-
             // Define mersenne_twister_engine Random Gen. (with random seed)
             std::random_device rd;
             int seed = rd();
             std::mt19937 gen(seed);
             std::uniform_real_distribution<> dis(0,*N);
+            // Pick two random elements
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
             int a; int b;
             if (e1 == e2){
@@ -354,8 +373,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             if (n >= size_min && n<= size_max) 
             {
                 successes += 1;
-                double fr_i = this->ord_fr(a,b);//choose
-                std::cout << "fr_i = " << fr_i << std::endl;
+                double fr_i = this->ord_fr(a,b,"choose", from_matrix);
+                //std::cout << "fr_i = " << fr_i << std::endl;
                 if (fr_i ==1)
                 {
                     destimates.push_back(1);
@@ -387,7 +406,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     }
     else if (strcmp(method, "big")==0)
     {
-        std::cout << "in big...\n";
+        //std::cout << "in big...\n";
         vector<int> As = {};
         vector<int> Bs = {};
         for (int e = 0; e<*N; e++)
@@ -400,7 +419,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             }
         }
         int counter = 0;
-        std::cout << " Sizes of As, Bs = " << As.size() << ", " << Bs.size() << "\n";
+        //std::cout << " Sizes of As, Bs = " << As.size() << ", " << Bs.size() << "\n";
         for (int i=0; i<As.size(); i++)
         {
             for (int j=0; j<Bs.size(); j++)
@@ -412,10 +431,10 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 if (n >= size_min && n<= size_max) 
                 {
                     counter++;
-                    std::cout << "Counter = " << counter << std::endl;
-                    std::cout << "n_after = " << n << std::endl;
+                    //std::cout << "Counter = " << counter << std::endl;
+                    //std::cout << "n_after = " << n << std::endl;
                     //std::cout << "(a,b) = " << a << " " << b << std::endl;
-                    double fr_i = this->ord_fr(a,b,"choose");
+                    double fr_i = this->ord_fr(a,b,"choose", from_matrix);
                     //std::cout << "fr_i =" << fr_i << std::endl; 
                     if (fr_i ==1.0)
                     {
@@ -450,7 +469,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
         throw std::invalid_argument(errormsg);
     }
 
-    std::cout << "Finished the loop, finding mean,std of MMd estimates\n";
+    //std::cout << "Finished the loop, finding mean,std of MMd estimates\n";
     // Return mean and std of dimension estimate result
     double sum = std::accumulate(std::begin(destimates),
                                  std::end(destimates), 0.0);
@@ -526,36 +545,11 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
     // ELSE USE SETS
     else //if ( _pasts.size() && _futures.size())
     {
-        if (a<b)
-        {
-            int Nintersections = 2 * includeBoundary;
-            if (_futures[a].size()<_pasts[b].size()) //loop over shortest
-            {
-                for (int e_ai : _futures[a])
-                    {Nintersections += _pasts[b].find(e_ai) !=_pasts[b].end();}
-            }
-            else
-            {
-                for (int e_bi : _pasts[b])
-                    {Nintersections+= _futures[a].find(e_bi)!=_futures[a].end();}
-            }
-            return Nintersections;
-        }
-        else /*b<a*/
-        {
-            int Nintersections = 2 * includeBoundary;
-            if (_pasts[a].size()<_futures[b].size()) //loop over shortest
-            {
-                for (int e_ai : _pasts[a])
-                    {Nintersections+= _futures[b].find(e_ai)!=_futures[b].end();}
-            }
-            else
-            {
-                for (int e_bi : _futures[b])
-                    {Nintersections += _pasts[a].find(e_bi) !=_pasts[a].end();}
-            }
-            return Nintersections;
-        }
+        int Nintersections = 2* includeBoundary;
+        if (a<b){
+            Nintersections += set_intersection(_futures[a], _pasts[b]).size();}
+        else{
+            Nintersections += set_intersection(_futures[b], _pasts[a]).size();}
     }  
 }
 
@@ -735,4 +729,5 @@ void Causet::discard(vector<int> labels, bool make_matrix,
 
 //     std::cout << "causet.cpp WORKS!" << std::endl;
 // }
+
 
