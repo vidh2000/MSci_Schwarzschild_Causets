@@ -555,9 +555,9 @@ void EmbeddedCauset::make_all_but_links()
     _pasts.resize(_size);
     _futures.resize(_size);
 
-    for(int i=0; i<_size; i++) 
+    for(int j=1; j<_size; j++) 
     {
-        for(int j=0; j<_size; j++) 
+        for(int i=j-1; i>-1; i--) 
         {
             std::vector<bool> causalities = xycausality(
                                 _coords[i],_coords[j],st_period,mass);
@@ -565,14 +565,15 @@ void EmbeddedCauset::make_all_but_links()
             {
                 _CMatrix[i][j] = 1;
                 _pasts[j].insert(i);
+                _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
+                // Insert j into i's future and into
+                // the future of elements in i's past
                 _futures[i].insert(j);
-            }
-            else if (causalities[2]) //j in past of i, i in future of j
-            {
-                _CMatrix[j][i] = 1;
-                _pasts[i].insert(j);
-                _futures[j].insert(i);
-            }
+                for (int ind_in_ipast : _pasts[i])
+                {    
+                    _futures[ind_in_ipast].insert(j);
+                }
+            }    
         }
     }
 }

@@ -196,6 +196,7 @@ double Causet::ord_fr(int a, int b,
 
     double nrelations = 0;
     double N;
+    std::cout << "N_pasts, N_futures = " << _pasts.size() << ", " << _futures.size() << std::endl;
     if (_CMatrix.size())
     {
         // Get all elements in the Alexander interval [A,B]
@@ -219,16 +220,16 @@ double Causet::ord_fr(int a, int b,
                     nrelations +=1;}
             }
         }
-    }       
+    }      
     else if (_pasts.size() && _futures.size())
     {
-        //std::cout << "here in pasts+futs\n";
+        std::cout << "In pasts and futures ord_fr\n";
         std::unordered_set<int> A = set_intersection(
                                 _futures[a],_pasts[b]);
         N = A.size();
         std::cout << "N= " << N << std::endl;
         for (auto e: A){
-            std::cout << "add " << (set_intersection(_futures[e],A)).size() << std::endl;
+            //std::cout << "add " << (set_intersection(_futures[e],A)).size() << std::endl;
             nrelations += (set_intersection(_futures[e],A)).size();
         }
     }
@@ -299,7 +300,8 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int size_min,// = vecmin({1000,_size/2})
                                 double size_max)// = 1e9
 {
-    std::cout << "NOTE: MMd works only in flat spacetime" << std::endl;
+    std::cout << "NOTE (not error, chill): MMd works only in " <<
+                             "flat spacetime" << std::endl;
 
     
     // Variables to be used
@@ -385,10 +387,9 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     }
     else if (strcmp(method, "big")==0)
     {
-        std::cout << "in big..." << (2<*N) << std::endl;
+        std::cout << "in big...\n";
         vector<int> As = {};
         vector<int> Bs = {};
-        std::cout << (_pasts.size()) << _futures.size() << std::endl;
         for (int e = 0; e<*N; e++)
         {
             if (_pasts[e].size() == 0){
@@ -407,14 +408,15 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 int a = As[i];
                 int b = Bs[j];
                 double n = (double)IntervalCard(a, b)*1.0;
+                //std::cout << "n = " << n << std::endl;
                 if (n >= size_min && n<= size_max) 
                 {
                     counter++;
-                    //std::cout << "Counter = " << counter << std::endl;
-                    std::cout << "n = " << n << std::endl;
+                    std::cout << "Counter = " << counter << std::endl;
+                    std::cout << "n_after = " << n << std::endl;
                     //std::cout << "(a,b) = " << a << " " << b << std::endl;
                     double fr_i = this->ord_fr(a,b,"choose");
-                    std::cout << "fr_i =" << fr_i << std::endl; 
+                    //std::cout << "fr_i =" << fr_i << std::endl; 
                     if (fr_i ==1.0)
                     {
                         destimates.push_back(1);
