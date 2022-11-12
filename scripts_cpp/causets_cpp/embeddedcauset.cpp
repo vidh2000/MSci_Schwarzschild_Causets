@@ -473,6 +473,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
         else if (make_links == true && make_sets == false)
         {
+            //it is never gonna give this error
             if (strcmp(sets_type, "both only")==0 || strcmp(sets_type, "all")==0)
             {
                 std::cout << "ERROR!\nYou store information in CMatrix primarily\
