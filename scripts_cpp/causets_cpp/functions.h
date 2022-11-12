@@ -14,7 +14,6 @@
 #include <set>
 #include <unordered_set>
 
-
 /**
  * @brief           Root finder in some interval [x_left,x_right]
  *                  using the "bisection" iterative method.
@@ -79,10 +78,10 @@ void print_set(std::set<obj> set)
     std::cout << beginstr;
     for (obj e : set)
     {
-        std::string separator = ", ";
+        std::string separator = " ";
         std::cout << e << separator;
     }
-    std::string endstr = " }";
+    std::string endstr = "}";
     std::cout << endstr;
     std::cout << std::endl;
 }
@@ -96,10 +95,10 @@ void print_set(std::unordered_set<obj> set)
     std::cout << beginstr;
     for (obj e : set)
     {
-        std::string separator = ", ";
+        std::string separator = " ";
         std::cout << e << separator;
     }
-    std::string endstr = " }";
+    std::string endstr = "}";
     std::cout << endstr;
     std::cout << std::endl;
 }
@@ -180,8 +179,21 @@ inline
 std::unordered_set<obj> set_intersection(std::unordered_set<obj> s1,
                                          std::unordered_set<obj> s2)
 {
+    // Require sorted object...
+    std::set<obj> v1;
+    std::set<obj> v2;
+    for (auto it = s1.begin(); it != s1.end(); ) {
+        v1.insert(std::move(s1.extract(it++).value()));
+    }
+    for (auto it2 = s2.begin(); it2 != s2.end(); ) {
+        v2.insert(std::move(s2.extract(it2++).value()));
+    }
+    {Nintersections += _pasts[a].find(e_bi) !=_pasts[a].end();}
+    //std::sort(v2.begin(), v2.end());
+
+    // Find and return intersection of s1, s2
     std::unordered_set<obj> result;
-    std::set_intersection(s1.begin(), s1.end(),s2.begin(), s2.end(),
+    std::set_intersection(v1.begin(), v1.end(),v2.begin(), v2.end(),
                           std::inserter(result,result.end()));
     return result;
 }
