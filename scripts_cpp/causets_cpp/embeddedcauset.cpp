@@ -64,7 +64,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
                                 bool use_transitivity,// = true,
                                 bool make_sets,// = false,
                                 bool make_links,// = false,
-                                const char* sets_type)// = "past
+                                const char* sets_type)// = "both only"
 {
     _size = coordinates.size();
     _coords = coordinates;
@@ -449,20 +449,23 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool use_transitivity,// = true,
                                     bool make_sets,// = false,
                                     bool make_links,// = false,
-                                    const char* sets_type)// = "past")
+                                    const char* sets_type)// = "both only")
 {
-    if (strcmp(sets_type, "all"))
+    if (strcmp(sets_type, "all")==0)
     {
+        std::cout << "all option...\n";
         this->make_all_but_links();
     }
 
     else if (strcmp(sets_type, "both only")==0)
     {
+        std::cout << "making both only..\n";
         this->make_sets(method);
     }
 
     else if (make_matrix)
     {
+        std::cout << "in make_matrix...\n";
         _special_matrix = special && use_transitivity;
         if (make_links == false && make_sets == false)
         {
@@ -470,6 +473,14 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
         else if (make_links == true && make_sets == false)
         {
+            if (strcmp(sets_type, "both only")==0 || strcmp(sets_type, "all")==0)
+            {
+                std::cout << "ERROR!\nYou store information in CMatrix primarily\
+                              not in 'pasts'/'futures' sets. " <<
+                              "Please choose 'pasts'/'futures' value for\
+                              sets_type parameter. " << std::endl;
+                throw std::invalid_argument("ERROR: Read msg above"); 
+            }
             if (strcmp(sets_type, "past")==0){
                 this->make_cmatrix_and_pastlinks(method, special);}
             else if (strcmp(sets_type, "future")==0){
@@ -945,37 +956,53 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
  * @param method const char* : either "coordinates" or "cmatrix".
  */
 void EmbeddedCauset::make_sets(const char* method)
-{
+
+{   
+    _futures.resize(_size);
+    _pasts.resize(_size);
+
+    auto xycausality = this->_spacetime.Causality();
+    std::vector<double> st_period = _spacetime._period;
+    double mass = _spacetime._mass;
+
     if (strcmp(method, "coordinates")==0)
     {
+
+        // Define causality function pointer directly
         auto xycausality = this->_spacetime.Causality();
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
 
-        _pasts.resize(_size);
-        _futures.resize(_size);
-        for(int i=0; i<_size; i++) 
+
+        // Loop through coordinates t_min -> t_max.
+        // j>i automatically imposed as C_ij <-> i precedes j. 
+        for (int j = 1; j<_size; j++)
         {
-            for(int j=0; j<_size; j++) 
+            for(int i=j-1; i>-1; i--)
             {
+
+                // Does i precede j? == Is i<j?
                 std::vector<bool> causalities = xycausality(
                                     _coords[i],_coords[j],st_period,mass);
-                if (causalities[1]) //i in past of j, j in future of i
+                if (causalities[1]) 
                 {
+                    // Add i and its past to the past of j
                     _pasts[j].insert(i);
+                    _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
+                    // Insert j into i's future and into
+                    // the future of elements in i's past
                     _futures[i].insert(j);
-                }
-                else if (causalities[2]) //j in past of i, i in future of j
-                {
-                    _pasts[i].insert(j);
-                    _futures[j].insert(i);
+                    for (int ind_in_ipast : _pasts[i])
+                    {    
+                        _futures[ind_in_ipast].insert(j);
+                    }
                 }
             }
         }
     }
     else
     {
-        std::cout<<"Creation of Matrix and future_links failed as currently\
+        std::cout<<"Creation of past+future sets failed as currently\
         only method = 'coordinates' is supported."<<std::endl;
         throw std::invalid_argument("Only coordinates method currently \
         supported");
@@ -1130,46 +1157,6 @@ void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
         }
     }
     //std::cout <<"Finished sprinkling..." << std::endl;
-}
-
-/**
- * @brief Creates _futures and _pasts i.e. the sets of
- *        the past and future events for each event. 
- *        Requires _size to have already be defined, and events
- *        sorted by a possible natural labelling.
- * 
- * @param method: const char*, possible choices are
- * - "coordinates": create from coordinates causality
- * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
- */
-void EmbeddedCauset::make_futures_and_pasts(const char* method)// = "coordinates"
-{   
-    _futures.resize(_size);
-    _pasts.resize(_size);
-    if (strcmp(method, "coordinates")==0)
-    {
-        // Loop through coordinates t_min -> t_max.
-        // j>i automatically imposed as C_ij <-> i precedes j. 
-        for (int j = 1; j<_size; j++)
-        {
-            for(int i=j-1; i>-1; i--)
-            {
-                if (areTimelike(_coords[i], _coords[j]))
-                {
-                    // Add i and its past to the past of j
-                    _pasts[j].insert(i);
-                    _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
-                    // Insert j into i's future and into
-                    // the future of elements in i's past
-                    _futures[i].insert(j);
-                    for (int ind_in_ipast : _pasts[i])
-                    {    
-                        _futures[ind_in_ipast].insert(j);
-                    }
-                }
-            }
-        }
-    }
 }
 
 

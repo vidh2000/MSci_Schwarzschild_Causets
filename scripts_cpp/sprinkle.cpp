@@ -41,7 +41,7 @@ using namespace std::chrono;
    
 
 // Sprinkled causet parameters
-int card = 4000;
+int card = 5000;
 int dim = 4;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
@@ -59,7 +59,7 @@ bool special = true;
 bool use_transitivity = false;
 bool make_sets = true;
 bool make_links = false;
-const char* sets_type = "all";
+const char* sets_type = "both only"; // "both only", "all", "pasts", "futures"
 
 int main(){
     auto start = high_resolution_clock::now();
@@ -199,8 +199,6 @@ int main(){
         // {
         //     print_set(fut);
         // }
-        //print_vector(C._pasts);
-        //print_vector(C._futures);
 
         std::cout << "\nDoing MMd....." << std::endl;
         // MMd estimation
