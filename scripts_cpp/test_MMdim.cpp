@@ -32,16 +32,14 @@ using std::vector;
  *          - Type into the command line:
  *              cd scripts_cpp
  *              g++ -g causets_cpp/causet.cpp causets_cpp/shapes.cpp causets_cpp/spacetimes.cpp causets_cpp/embeddedcauset.cpp causets_cpp/sprinkledcauset.cpp test_MMdim.cpp -std=c++17 -o tMM -O2
- *          - This creates the executable sprinkle.exe
+ *          - This creates the executable tMM.exe
  *          - Run sprinkle.exe by typing into command line:
  *              ./tMM
  * 
  *          NOTE: running in Windows cmd does not print no matetr what
  * 
  */
-// gives 0 but doesn't create a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params.find("radius")->second << std::endl;
-// gives 0 but creates a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params["radius"]<< std::endl;
-   
+
 
 // Sprinkled causet parameters
 int card = 1000;

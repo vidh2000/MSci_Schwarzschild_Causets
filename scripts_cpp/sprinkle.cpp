@@ -36,9 +36,6 @@ using namespace std::chrono;
  *          NOTE: running in Windows cmd does not print no matetr what
  * 
  */
-// gives 0 but doesn't create a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params.find("radius")->second << std::endl;
-// gives 0 but creates a new entry std::cout << "sprinkle.cpp 'shape' radius= " << shape._params["radius"]<< std::endl;
-   
 
 // Sprinkled causet parameters
 int card = 4000;
