@@ -22,7 +22,7 @@
                 "-I",
                 "C:\\Program Files\\boost\\boost_1_80_0",
                 "-I",
-                "${workspaceFolder}\\extern\\pybind11\\include",
+                "${workspaceFolder}\\cpp_to_py\\pybind11\\include",
                 // Python path
                 "-I",
                 "C:\\Users\\Vid\\AppData\\Local\\Programs\\Python\\Python310\\include" // Vid's path to Python. Stef add yours below?

@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "C:\\Program Files\\boost\\boost_1_80_0",
-                "${workspaceFolder}\\extern\\pybind11\\include",
+                "${workspaceFolder}\\cpp_to_py\\pybind11\\include",
                 "C:\\Users\\Vid\\AppData\\Local\\Programs\\Python\\Python310\\include",
                 "${workspaceFolder}/**"
             ],
