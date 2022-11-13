@@ -6,11 +6,19 @@
             "command": "C:\\Program Files\\MinGW-w64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
+                // COMPILE COMMAND
+                "-g", "${file}",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
+                // EXECUTABLE
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-O2",
+                // OPTIMISATION FLAG
+                "-O2", 
+                //INCLUDE PATHS
                 "-I",
                 "C:\\Program Files\\boost\\boost_1_80_0"
                 //"-l'C:\\boost\\boost_1_80_0\\'"

@@ -43,7 +43,7 @@ std::vector<double> center (dim, 0.0);
 int main(){
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    std::vector<const char*> names = {"ball", "bicone", "diamond", "cylinder",
+    std::vector<const char*> names = {//"ball", "bicone", "diamond", "cylinder",
                                       "cube", "cuboid"};
     for (const char* name : names)
     {
