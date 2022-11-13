@@ -59,6 +59,32 @@ Causet::Causet(vector<vector<num>> Cmatrix)
 // SETTERS/GETTERS
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+void Causet::make_sets_fromC()
+{
+    _futures.resize(_size);
+    _pasts.resize(_size);
+    // Loop through coordinates t_min -> t_max.
+    // j>i automatically imposed as C_ij <-> i precedes j. 
+    for (int j = 1; j<_size; j++)
+    {
+        for(int i=j-1; i>-1; i--)
+        {
+            if (_CMatrix[i][j]!=0) 
+            {
+                // Add i and its past to the past of j
+                _pasts[j].insert(i);
+                _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
+                // Insert j into i's future and into
+                // the future of elements in i's past
+                _futures[i].insert(j);
+                // for (int ind_in_ipast : _pasts[i])
+                // {    
+                //     _futures[ind_in_ipast].insert(j);
+                // }
+            }
+        }
+    }
+}
 void Causet::make_cmatrix(){}
 void Causet::make_pasts(){}
 void Causet::make_futures(){}
@@ -193,12 +219,13 @@ double Causet::ord_fr(int a, int b,
     {
         std::cout<<"a<b is enforced. Please behave."<<std::endl;
         throw std::invalid_argument("a<b is enforced. Please behave.");
+        return this->ord_fr(b,a,denominator,from_matrix);
     }
 
     double nrelations = 0;
     double N;
-    std::cout << "N_pasts, N_futures = " << _pasts.size() << ", " << _futures.size() << std::endl;
-    if (_CMatrix.size())
+    bool have_sets = _pasts.size() && _futures.size();
+    if (_CMatrix.size() && (from_matrix || !have_sets))
     {
         // Get all elements in the Alexander interval [A,B]
         std::vector<int> A = {a};
@@ -222,13 +249,14 @@ double Causet::ord_fr(int a, int b,
             }
         }
     }      
-    else if (_pasts.size() && _futures.size())
+    else if (have_sets)
     {
         std::cout << "In pasts and futures ord_fr\n";
-        std::unordered_set<int> A = set_intersection(
-                                _futures[a],_pasts[b]);
+        std::unordered_set<int> A = set_intersection(_futures[a],_pasts[b]);
+        A.insert(a);
+        A.insert(b);
         N = A.size();
-        std::cout << "N= " << N << std::endl;
+        //std::cout << "N= " << N << std::endl;
         for (auto e: A){
             //std::cout << "add " << (set_intersection(_futures[e],A)).size() << std::endl;
             nrelations += (set_intersection(_futures[e],A)).size();
@@ -239,7 +267,8 @@ double Causet::ord_fr(int a, int b,
         const char* errormsg = "Provided Causet is empty! It has no _CMatrix \
                                 nor pasts-future sets. Size matters... ;)";
         std::cout << errormsg << " Returning ord_fr = 0.0" << std::endl;
-        return 0.0;}
+        return 0.0;
+        }
 
     double fr = 2 * nrelations / (N * (N - (strcmp(denominator,"choose")==0)));
     return fr;
