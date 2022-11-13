@@ -217,9 +217,7 @@ double Causet::ord_fr(int a, int b,
     
     if (a>b)
     {
-        std::cout<<"a<b is enforced. Please behave."<<std::endl;
-        throw std::invalid_argument("a<b is enforced. Please behave.");
-        return this->ord_fr(b,a,denominator,from_matrix);
+        return ord_fr(b, a, denominator, from_matrix);
     }
 
     double nrelations = 0;
@@ -256,7 +254,6 @@ double Causet::ord_fr(int a, int b,
         A.insert(a);
         A.insert(b);
         N = A.size();
-        //std::cout << "N= " << N << std::endl;
         for (auto e: A){
             //std::cout << "add " << (set_intersection(_futures[e],A)).size() << std::endl;
             nrelations += (set_intersection(_futures[e],A)).size();
@@ -353,15 +350,12 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 vector<double> returnerr = {-1,-1};
                 return returnerr;
             }
-
-            // Pick two random elements
-            
-
             // Define mersenne_twister_engine Random Gen. (with random seed)
             std::random_device rd;
             int seed = rd();
             std::mt19937 gen(seed);
             std::uniform_real_distribution<> dis(0,*N);
+            // Pick two random elements
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
             int a; int b;
             if (e1 == e2){
@@ -385,7 +379,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             if (n >= size_min && n<= size_max) 
             {
                 successes += 1;
-                double fr_i = this->ord_fr(a,b);//choose
+                double fr_i = this->ord_fr(a,b,denominator,from_matrix);//choose
                 std::cout << "fr_i = " << fr_i << std::endl;
                 if (fr_i ==1)
                 {
@@ -418,7 +412,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     }
     else if (strcmp(method, "big")==0)
     {
-        std::cout << "in big...\n";
         vector<int> As = {};
         vector<int> Bs = {};
         for (int e = 0; e<*N; e++)
@@ -431,7 +424,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             }
         }
         int counter = 0;
-        std::cout << " Sizes of As, Bs = " << As.size() << ", " << Bs.size() << "\n";
         for (int i=0; i<As.size(); i++)
         {
             for (int j=0; j<Bs.size(); j++)
@@ -443,10 +435,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 if (n >= size_min && n<= size_max) 
                 {
                     counter++;
-                    //std::cout << "Counter = " << counter << std::endl;
-                    std::cout << "n_after = " << n << std::endl;
-                    //std::cout << "(a,b) = " << a << " " << b << std::endl;
-                    double fr_i = this->ord_fr(a,b,"choose");
+                    double fr_i = this->ord_fr(a,b,"choose",from_matrix);
                     std::cout << "fr_i =" << fr_i << std::endl; 
                     if (fr_i ==1.0)
                     {
@@ -480,8 +469,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
         std::cout<<errormsg<<std::endl;
         throw std::invalid_argument(errormsg);
     }
-
-    std::cout << "Finished the loop, finding mean,std of MMd estimates\n";
     // Return mean and std of dimension estimate result
     double sum = std::accumulate(std::begin(destimates),
                                  std::end(destimates), 0.0);
