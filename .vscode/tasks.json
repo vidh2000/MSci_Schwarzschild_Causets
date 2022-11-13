@@ -10,7 +10,9 @@
                 "${file}",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-O2"
+                "-O2",
+                "-I",
+                "C:\\Program Files\\boost\\boost_1_80_0"
                 //"-l'C:\\boost\\boost_1_80_0\\'"
                 //"-lboost_system"
             ],
