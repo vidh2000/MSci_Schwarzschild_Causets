@@ -4,6 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "C:\\Program Files\\boost\\boost_1_80_0",
+                "${workspaceFolder}/extern/pybind11/include",
                 "${workspaceFolder}/**"
             ],
             "defines": [

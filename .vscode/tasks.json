@@ -20,9 +20,9 @@
                 "-O2", 
                 //INCLUDE PATHS
                 "-I",
-                "C:\\Program Files\\boost\\boost_1_80_0"
-                //"-I",
-                //"C:\\Program Files\\pybind11\\include"
+                "C:\\Program Files\\boost\\boost_1_80_0",
+                "-I",
+                "${workspaceFolder}/extern/pybind11/include",
             ],
             "options": {
                 "cwd": "${fileDirname}"
