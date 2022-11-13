@@ -114,5 +114,6 @@
         "rope": "cpp",
         "slist": "cpp",
         "cuchar": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
 }

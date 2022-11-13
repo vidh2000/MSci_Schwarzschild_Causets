@@ -8,11 +8,11 @@
                 "-fdiagnostics-color=always",
                 // COMPILE COMMAND
                 "-g", "${file}",
-                "${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
-                "${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
-                "${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
-                "${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
-                "${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
+                //"${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
+                //"${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
+                //"${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
+                //"${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
+                //"${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
                 // EXECUTABLE
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
@@ -22,7 +22,10 @@
                 "-I",
                 "C:\\Program Files\\boost\\boost_1_80_0",
                 "-I",
-                "${workspaceFolder}/extern/pybind11/include",
+                "${workspaceFolder}\\extern\\pybind11\\include",
+                // Python path
+                "-I",
+                "C:\\Users\\Vid\\AppData\\Local\\Programs\\Python\\Python310\\include" // Vid's path to Python. Stef add yours below?
             ],
             "options": {
                 "cwd": "${fileDirname}"
