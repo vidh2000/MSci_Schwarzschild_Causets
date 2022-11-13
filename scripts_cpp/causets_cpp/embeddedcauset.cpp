@@ -984,8 +984,8 @@ void EmbeddedCauset::make_sets(const char* method)
             }
         }
     }
-    else if (strcmp(method, "cmatrix")==0)
-        {this->make_sets_fromC();}
+    //else if (strcmp(method, "cmatrix")==0)
+    //    {this->make_sets_fromC();}
     else
     {
         std::cout<<"method must be 'coordinates' or 'cmatrix'"<<std::endl;
