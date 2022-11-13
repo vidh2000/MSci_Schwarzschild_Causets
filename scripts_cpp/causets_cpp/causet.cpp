@@ -379,7 +379,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             if (n >= size_min && n<= size_max) 
             {
                 successes += 1;
-                double fr_i = this->ord_fr(a,b,denominator,from_matrix);//choose
+                double fr_i = this->ord_fr(a,b,"choose",from_matrix);
                 std::cout << "fr_i = " << fr_i << std::endl;
                 if (fr_i ==1)
                 {
