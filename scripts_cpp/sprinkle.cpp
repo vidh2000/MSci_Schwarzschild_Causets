@@ -38,7 +38,7 @@ using namespace std::chrono;
  */
 
 // Sprinkled causet parameters
-int card = 4000;
+int card = 10;
 int dim = 4;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
@@ -58,7 +58,22 @@ bool make_sets = true;
 bool make_links = false;
 const char* sets_type = "all"; // "both only", "all", "pasts", "futures"
 
+int multiply(int a, int b){
+    return a*b;
+}
+
+std::vector<std::vector<double>> get_coords(){
+    CoordinateShape shape(dim,"bicone",center,radius,edge,edges,0.0,myduration);
+    Spacetime S = Spacetime();
+    S.FlatSpacetime(dim);
+    SprinkledCauset C(card, S, shape, poisson,
+                        make_matrix, special, use_transitivity,
+                        make_sets, make_links,sets_type);
+    return C._coords;
+}
+
 int main(){
+    /*
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
     std::vector<const char*> names = {"bicone"};// "ball", "cylinder", "cube", "cuboid"};
@@ -215,5 +230,6 @@ int main(){
     double duration = duration_cast<microseconds>(stop - start).count();
     std::cout << "Time taken: "
             << duration/pow(10,6) << " seconds" << std::endl;
+    */
     return 0;
 };

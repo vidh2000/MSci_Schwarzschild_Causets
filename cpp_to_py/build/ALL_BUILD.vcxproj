@@ -173,9 +173,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\module_name.vcxproj">
-      <Project>{F4575286-4329-3966-A4E9-6CCB54F76ECA}</Project>
-      <Name>module_name</Name>
+    <ProjectReference Include="D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\causets_cppmodule.vcxproj">
+      <Project>{D9BCA5A5-6693-3D19-9C28-8345F9711326}</Project>
+      <Name>causets_cppmodule</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
