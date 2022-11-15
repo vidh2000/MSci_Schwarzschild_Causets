@@ -60,7 +60,7 @@ void BH_dt_du_plus (double&dtdu, double u, double M, double c)
   dtdu = (c* std::pow(2*M*u*u*u - u*u + c*c, -0.5) - 2*M*u)/
                         (u*u - 2*M*u*u*u);
 };
-void BH_dt_du_plus (double&dtdu, double u, double M, double c)
+void BH_dt_du_minus (double&dtdu, double u, double M, double c)
 {
   dtdu = (-c* std::pow(2*M*u*u*u - u*u + c*c, -0.5) - 2*M*u)/
                         (u*u - 2*M*u*u*u);
@@ -159,23 +159,117 @@ double BH_c2_solver (double u1, double u2, double varphi2, double M)
     }
   }
 };
-double BH_time_causality(double u1, double u2, double t2, double M, double c)
+double BH_time_caus_check(double u1, double u2, double t2, double M, double c)
   {return BH_int_dt_du (u1, u2, M, c) <= t2;}
 
 
 int main()
 {
 
-    cout<<"\n============ TESTING BISECTION =============\n";
-    auto r = boost::math::tools::bisect(poly, 0, 8, TermCond());
-    cout<<"Boost's solution to x^3-8 is "<<(r.first+r.second)/2<<endl;
+    // cout<<"\n============== TESTING BISECTION ===============\n";
+    // auto r = boost::math::tools::bisect(poly, 0, 8, TermCond());
+    // cout<<"Boost's solution to x^3-8 is "<<(r.first+r.second)/2<<endl;
 
-    cout<<"\n============ TESTING DIFF EQS =============\n";
-    double u1 = 1./2.;
-    double u2 = 1./3.;
-    double deltau = u1-u2;
-    double varphi1 = 0;
-    double varphi2 = 1.;
-    size_t steps = integrate(BH_dvarphi_du, varphi1, u1, u2, deltau/50);
+    cout<<"\n================= TESTING BH DIFF EQS ==================\n";
+    cout<<"\n====== 1. Testing the integral of d(varphi)/du ======\n";
+    double M = 1;
+
+    cout<<"Test 1.1\n";
+    double c = 0.5;
+    double u1 = 1.;
+    double u2 = 2.;
+    cout<<"M=1; c=0.5; u1=1; u2=2        -> W.Alfa: 0.5002\n";
+    cout<<"                              -> We say: "<<BH_int_dvarphi_du
+                                                      (u1,u2,M,c*c)
+        <<endl;
+    
+    cout<<"Test 1.2\n";
+    c  = 1.25;
+    u1 = 1./3.;
+    u2 = 2.;
+    cout<<"M=1; c=1.25; u1=1/3; u2=2     -> W.Alfa: 0.9194\n";
+    cout<<"                              -> We say: "<<BH_int_dvarphi_du
+                                                       (u1,u2,M,c*c)
+        <<endl;
+
+    cout<<"Test 1.3\n";
+    c = 0.5;
+    u1 = 1./2.;
+    u2 = 1./3.;
+    cout<<"M=1; c=0.5; u1=1/2; u2=1/3    -> W.Alfa: 0.6522\n";
+    cout<<"                              -> We say: "<<BH_int_dvarphi_du
+                                                        (u1,u2,M,c*c)
+        <<endl;
+    
+
+    cout<<"\n========= 2. Testing the solver for c^2 =========\n";
+
+    cout<<"Test 1.1\n";
+    double varphi2 = 0.5002;
+    u1 = 1.;
+    u2 = 2.;
+    cout<<"M=1; vphi=0.5002; u1=1; u2=2  -> W.Alfa: 0.25\n";
+    cout<<"                              -> We say: "<<BH_c2_solver
+                                                        (u1, u2, varphi2, M)
+        <<endl;
+    
+    cout<<"Test 1.2\n";
+    varphi2 = 0.9194;
+    u1 = 1./3.;
+    u2 = 2.;
+    cout<<"M=1; vphi=0.5002; u1=1/3; u2=2-> W.Alfa: 1.5625\n";
+    cout<<"                              -> We say: "<<BH_c2_solver
+                                                       (u1, u2, varphi2, M)
+        <<endl;
+
+    cout<<"Test 1.3\n";
+    varphi2 = 0.6522;
+    u1 = 1./2.;
+    u2 = 1./3.;
+    cout<<"M=1; varphi2 = 0.6522; u1=1/2; u2=1/3-> W.Alfa: 0.25\n";
+    cout<<"                                     -> We say: "<<BH_c2_solver
+                                                           (u1, u2, varphi2, M)
+        <<endl;
+
+
+    cout<<"\n======= 3. Testing the integral of dt/du =======\n";
+
+    cout<<"Test 3.1\n";
+    c = 0.75;
+    u1 = 1./3;
+    u2 = 2.;
+    cout<<"M=1; c=0.75; u1=1/3; u2=2     -> W.Alfa: 3.15412\n";
+    cout<<"                              -> We say: "<<BH_int_dt_du
+                                                       (u1,u2,M,c*c)
+        <<endl;
+    
+    cout<<"Test 3.2\n";
+    c  = 1.25;
+    u1 = 1./3.;
+    u2 = 1/2.;
+    cout<<"M=1; c=1.25; u1=1/3; u2=1/2   -> W.Alfa: 1.054\n";
+    cout<<"                              -> We say: "<<BH_int_dt_du
+                                                       (u1,u2,M,c*c)
+        <<endl;
+
+    cout<<"Test 3.3\n";
+    c = 0.5;
+    u1 = 3;
+    u2 = 1.25;
+    cout<<"M=1; c=0.5; u1=3; u2=1.25     -> W.Alfa: -0.695754\n";
+    cout<<"                              -> We say: "<<BH_int_dt_du
+                                                        (u1,u2,M,c*c)
+        <<endl;
+    
+    cout<<"Test 3.4\n";
+    c = 1.25;
+    u1 = 0.666;
+    u2 = 0.5;
+    cout<<"M=1; c=1.25; u1=0.666; u2=0.5 -> W.Alfa: 0.6522\n";
+    cout<<"                              -> We say: "<<BH_int_dvarphi_du
+                                                        (u1,u2,M,c*c)
+        <<endl;
+    
+
     return 0;
 }
