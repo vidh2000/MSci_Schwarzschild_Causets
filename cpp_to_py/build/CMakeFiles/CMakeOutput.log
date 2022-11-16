@@ -7,7 +7,7 @@ Id flags:
 The output was:
 0
 MSBuild version 17.3.1+2badb37d1 for .NET Framework
-Build started 14/11/2022 13:53:49.
+Build started 14/11/2022 20:57:07.
 Project "D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\3.24.0-rc1\CompilerIdC\CompilerIdC.vcxproj" on node 1 (default targets).
 PrepareForBuild:
   Creating directory "Debug\".
@@ -33,7 +33,7 @@ Build succeeded.
     0 Warning(s)
     0 Error(s)
 
-Time Elapsed 00:00:01.13
+Time Elapsed 00:00:01.22
 
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -50,7 +50,7 @@ Id flags:
 The output was:
 0
 MSBuild version 17.3.1+2badb37d1 for .NET Framework
-Build started 14/11/2022 13:53:50.
+Build started 14/11/2022 20:57:08.
 Project "D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\3.24.0-rc1\CompilerIdCXX\CompilerIdCXX.vcxproj" on node 1 (default targets).
 PrepareForBuild:
   Creating directory "Debug\".
@@ -88,39 +88,39 @@ The CXX compiler identification is MSVC, found in "D:/Documents/Sola/Imperial Co
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: D:/Documents/Sola/Imperial College London/Year 4/MSci project/MSci_Schwarzschild_Causets/cpp_to_py/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_e042a.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_8b073.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
   Microsoft (R) C/C++ Optimizing Compiler Version 19.33.31630 for x64
   CMakeCCompilerABI.c
   Copyright (C) Microsoft Corporation.  All rights reserved.
-  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e042a.dir\Debug\\" /Fd"cmTC_e042a.dir\Debug\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\Program Files\CMake\share\cmake-3.24\Modules\CMakeCCompilerABI.c"
-  cmTC_e042a.vcxproj -> D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\Debug\cmTC_e042a.exe
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8b073.dir\Debug\\" /Fd"cmTC_8b073.dir\Debug\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\Program Files\CMake\share\cmake-3.24\Modules\CMakeCCompilerABI.c"
+  cmTC_8b073.vcxproj -> D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\Debug\cmTC_8b073.exe
 
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: D:/Documents/Sola/Imperial College London/Year 4/MSci project/MSci_Schwarzschild_Causets/cpp_to_py/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_a03ae.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_7ed73.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
   Microsoft (R) C/C++ Optimizing Compiler Version 19.33.31630 for x64
   CMakeCXXCompilerABI.cpp
   Copyright (C) Microsoft Corporation.  All rights reserved.
-  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_a03ae.dir\Debug\\" /Fd"cmTC_a03ae.dir\Debug\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\Program Files\CMake\share\cmake-3.24\Modules\CMakeCXXCompilerABI.cpp"
-  cmTC_a03ae.vcxproj -> D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\Debug\cmTC_a03ae.exe
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_7ed73.dir\Debug\\" /Fd"cmTC_7ed73.dir\Debug\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\Program Files\CMake\share\cmake-3.24\Modules\CMakeCXXCompilerABI.cpp"
+  cmTC_7ed73.vcxproj -> D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\Debug\cmTC_7ed73.exe
 
 
 
 Performing C++ SOURCE FILE Test HAS_MSVC_GL_LTCG succeeded with the following output:
 Change Dir: D:/Documents/Sola/Imperial College London/Year 4/MSci project/MSci_Schwarzschild_Causets/cpp_to_py/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_823fe.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_67ecd.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
   Microsoft (R) C/C++ Optimizing Compiler Version 19.33.31630 for x64
   src.cxx
   Copyright (C) Microsoft Corporation.  All rights reserved.
-  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_823fe.dir\Debug\\" /Fd"cmTC_823fe.dir\Debug\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\src.cxx"
-LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification [D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\cmTC_823fe.vcxproj]
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_67ecd.dir\Debug\\" /Fd"cmTC_67ecd.dir\Debug\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\src.cxx"
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification [D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\cmTC_67ecd.vcxproj]
   Generating code
   Finished generating code
-  cmTC_823fe.vcxproj -> D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\Debug\cmTC_823fe.exe
+  cmTC_67ecd.vcxproj -> D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets\cpp_to_py\build\CMakeFiles\CMakeTmp\Debug\cmTC_67ecd.exe
 
 
 Source file was:

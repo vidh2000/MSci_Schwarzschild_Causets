@@ -48,6 +48,9 @@ class Causet
         
 
         //SETTERS/GETTERS
+        std::vector<std::vector<int>> get_CMatrix();
+        
+        // MAKERS
         void make_sets_fromC();
         virtual void make_cmatrix();
         virtual void make_pasts();
