@@ -166,22 +166,8 @@ double BH_int_dt_du (double u1, double u2, double M, double c)
                                           /D;
                                   }
                                 };
-        if (0.5*M>=u2 || u1>=0.5*M) //0.5*M NOT in [u1, u2]
-        {
-            //Avoid divergence at 1-2*M*u=0
-            //u2 -= (u2==0.5*M)? 1e-3*M : 0;
-            //u1 += (u2==0.5*M)? 1e-3*M : 0;
-            boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
-                                              u1, u2, (u2-u1)/50.);
-        }
-        else /* 0.5*M IN [u1, u2] */
-        {
-            //Compute in 2 steps to avoid divergence
-            boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
-                                              u1, (0.5-0.0001)*M, (0.5-u1)/15.);
-            boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
-                                              (0.5+0.0001)*M, u2, (u2-0.5)/15.);
-        }
+        boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
+                                              u1, u2, (u2-u1)/20.);
     }
     else /* u1>u2 */
     {
@@ -291,7 +277,7 @@ int main()
     u2 = 1.5;
     cout<<"M=1; c=0.75; u1=1/3; u2=1.5   -> W.Alfa: 2.93751\n";
     cout<<"                              -> We say: "<<BH_int_dt_du
-                                                       (u1,u2,M,c*c)
+                                                       (u1,u2,M,c)
         <<endl;
     
     cout<<"Test 3.2\n";
@@ -300,7 +286,7 @@ int main()
     u2 = 2;
     cout<<"M=1; c=0.75; u1=0.75; u2=2    -> W.Alfa: 1.13855\n";
     cout<<"                              -> We say: "<<BH_int_dt_du
-                                                       (u1,u2,M,c*c)
+                                                       (u1,u2,M,c)
         <<endl;
     
     cout<<"Test 3.3\n";
@@ -309,7 +295,7 @@ int main()
     u2 = 1/3.;
     cout<<"M=1; c=1.25; u1=1/4; u2=1/3   -> W.Alfa: 1.02712\n";
     cout<<"                              -> We say: "<<BH_int_dt_du
-                                                       (u1,u2,M,c*c)
+                                                       (u1,u2,M,c)
         <<endl;
 
     cout<<"Test 3.4\n";
@@ -318,16 +304,16 @@ int main()
     u2 = 1.25;
     cout<<"M=1; c=0.5; u1=3; u2=1.25     -> W.Alfa: -0.695754\n";
     cout<<"                              -> We say: "<<BH_int_dt_du
-                                                        (u1,u2,M,c*c)
+                                                        (u1,u2,M,c)
         <<endl;
     
     cout<<"Test 3.5\n";
     c = 1.25;
     u1 = 0.666;
     u2 = 0.55;
-    cout<<"M=1; c=1.25; u1=0.666; u2=0.55-> W.Alfa: -0.352396\n";
-    cout<<"                              -> We say: "<<BH_int_dvarphi_du
-                                                        (u1,u2,M,c*c)
+    cout<<"M=1; c=1.25; u1=0.666; u2=0.55-> W.Alfa: -3.68198\n";
+    cout<<"                              -> We say: "<<BH_int_dt_du
+                                                        (u1,u2,M,c)
         <<endl;
     
 
