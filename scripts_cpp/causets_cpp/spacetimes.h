@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <vector>
 
+#include "boost/numeric/odeint.hpp"
+
 //#include "shapes.h"
 
 
@@ -112,6 +114,23 @@ class Spacetime
         static std::vector<bool> BH_last_resort(std::vector<double> xvec, 
                                                 std::vector<double> yvec,
                                                 double mass = 0);
+        
+        static void BH_dvarphi_du (double& dpdu, double u, double c2, 
+                                   double M);
+        static double BH_int_dvarphi_du(double u1, double u2, double c2,
+                                        double M);
+        static double BH_c_solver (double u1, double u2, double varphi2, 
+                                   double M);
+
+        static void BH_dt_du_plus  (double&dtdu, double u, double c,
+                                    double M);
+        static void BH_dt_du_minus (double&dtdu, double u, double c,
+                                    double M);
+        static double BH_int_dt_du (double u1, double u2, double c,
+                                    double M);
+        static bool BH_time_caus_check(double u1,double u2,double t1,double t2,
+                                       double c, double M);
+
 };
 
 #endif /* SPACETIMES_H */

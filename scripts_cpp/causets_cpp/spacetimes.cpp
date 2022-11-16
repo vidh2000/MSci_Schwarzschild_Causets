@@ -14,10 +14,12 @@
 #include <string>
 #include <vector>
 
+#include "boost/numeric/odeint.hpp"
+
 #include "shapes.h"
 #include "spacetimes.h"
-//#include "functions.h"
 #include "vecfunctions.h"
+#include "functions.h"
 
 using std::vector;
 
@@ -276,14 +278,14 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
  * @param xvec vector<double> : EF coordinates of x.
  * @param yvec vector<double> : EF coordinates of y.
  * @param period vector<double> : period along SPATIAL coordinates. Currently 
- * not implemented here.
+ * not implemented in BH, hence deafult is {}.
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
 vector<bool> Spacetime::BH_causal (std::vector<double> xvec, 
-                                         std::vector<double> yvec,
-                                         std::vector<double> period,
-                                         double mass)
+                                    std::vector<double> yvec,
+                                    std::vector<double> period,
+                                    double mass)
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
@@ -299,6 +301,9 @@ vector<bool> Spacetime::BH_causal (std::vector<double> xvec,
     double varphi1 = 0;
     double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
                     +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
+    
+    vector<double> transf_xvec = {t1, r1, vartheta1, varphi1};
+    vector<double> transf_yvec = {t2, r2, vartheta2, varphi2};
     
     // Section 2.2: Radially separated pairs and radial null geodesics
     if (varphi2<1e-6) //should be ==zero, but leave room for some error
@@ -349,10 +354,10 @@ vector<bool> Spacetime::BH_causal (std::vector<double> xvec,
             if (t2 >= t1 + r1 - r2 + (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return {true, true, false};}
             else
-                {return BH_last_resort(xvec, yvec, mass);}
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
         }
         else
-            {return BH_last_resort(xvec, yvec, mass);}
+            {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
     else if (r2 > r1 && r1 > 2*mass)
@@ -372,7 +377,7 @@ vector<bool> Spacetime::BH_causal (std::vector<double> xvec,
                     + (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return {true, true, false};}
             else
-                {return BH_last_resort(xvec, yvec, mass);}
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
 
         }
         else if(r1 < 3*mass && 3*mass < r2)
@@ -382,7 +387,7 @@ vector<bool> Spacetime::BH_causal (std::vector<double> xvec,
             if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return {false, false, false};}
             else
-                {return BH_last_resort(xvec, yvec, mass);}
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
         }
         else if(r2 <= 3*mass)
         {
@@ -391,10 +396,10 @@ vector<bool> Spacetime::BH_causal (std::vector<double> xvec,
             if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return {false, false, false};}
             else
-                {return BH_last_resort(xvec, yvec, mass);}
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
         }
         else
-            {return BH_last_resort(xvec, yvec, mass);}
+            {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
     else //r2>2*mass>r1
@@ -411,11 +416,249 @@ vector<bool> Spacetime::BH_causal (std::vector<double> xvec,
  * @return vector<bool> : causality booleans
  */
 vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec, 
-                                                std::vector<double> yvec,
-                                                double mass)
+                                       std::vector<double> yvec,
+                                       double mass)
 {
-    return {false, false, false};
+    double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
+    bool x_prec_y = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], mass, c) 
+                    <= yvec[0] - xvec[0];
+    return {x_prec_y, x_prec_y, false};
 }
+
+
+/**
+ * @brief d(varphi)/du for a BH as of He and Rideout (Eq.13).
+ * 
+ * @param dpdu double& : derivative gets updated.
+ * @param u double : u = 1/r.
+ * @param c2 double : c constant squared.
+ * @param M double : mass of BH.
+ */
+void Spacetime::BH_dvarphi_du (double& dpdu, double u, double c2, double M)
+{
+  dpdu = std::pow(2*M*u*u*u - u*u + c2, -0.5);
+}
+
+
+/**
+ * @brief Integral of d(varphi)/du from u1 to u2.
+ * 
+ * @param u1 double : 1/r_1
+ * @param u2 double : 1/r_2
+ * @param c2 double : c constant squared.
+ * @param M double : mass of BH.
+ * @return double : the result of the integral. 
+ */
+double Spacetime::BH_int_dvarphi_du(double u1, double u2, double c2, double M)
+{
+    auto BH_dvarphi_du_forint = [M, c2]
+                            (const double& varphi, double& dpdu, const double u)
+                            {dpdu = std::pow(u*u*(2*M*u - 1) + c2, -0.5);};
+    double varphi = 0;
+    if (u2>=u1)
+    {
+        boost::numeric::odeint::integrate(BH_dvarphi_du_forint, varphi, 
+                                          u1, u2, (u2-u1)/20.);
+    }
+    else
+    {
+        boost::numeric::odeint::integrate(BH_dvarphi_du_forint, varphi, 
+                                          u2, u1, (u1-u2)/20.);
+    }
+    return varphi;
+}
+
+
+/**
+ * @brief Fit the integral of d(varphi)/du to varphi2 to get best estimate of 
+ * c^2 by bisection method.
+ * 
+ * @param u1 double : 1/r_1
+ * @param u2 double : 1/r_2
+ * @param varphi2 double : the value we want the integral to be.
+ * @param M double : mass of BH.
+ * @return double : the best fit for c, up to uncertainty 1e-3.
+ */
+double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
+{
+  // U2>=U1 -> USE PLUS
+  if (u2>=u1) 
+  {
+    //SET MINIMUM BOUND
+    double c2min = 0;
+    if (2*M*u1<=1.)
+    {
+        double D1 = u1*u1 *(1 - 2*M*u1);
+        double D2 = u2*u2 *(1 - 2*M*u2);
+        c2min += (D1>D2)? D1 : D2;
+        c2min += 1e-3; //for anti-divergence purposes
+    }
+    //SET UPPER BOUND
+    double deltaphi_max = BH_int_dvarphi_du(u1, u2, M, c2min);
+    if (deltaphi_max <= varphi2)
+      {return std::sqrt(c2min);}
+    else
+    {
+      double eta = (u2-u1)/varphi2;
+      double c2max = 0;
+      if (2*M*u2 < 1)
+        {c2max += eta*eta;}
+      else
+        {c2max += (u2+eta)*(u2+eta);}
+      // check upper bound is on other side of solution. Since deltaphi_max
+      // is positive, this has to be negative. If not, double upper limit,
+      // turn lower limit to previous upper and check again.
+      while (BH_int_dvarphi_du(u1, u2, M, c2max) > varphi2)
+      {
+        std::cout<<"No biggy, just note in c2solver had to update upper limit"
+                 <<std::endl;
+        c2min = c2max*1;
+        c2max *= 2;
+      }
+      // SOLVE WITH BISECTION
+      auto BH_tosolve = [u1, u2, varphi2, M](double c2)
+                      {return BH_int_dvarphi_du(u1, u2, M, c2)-varphi2;};
+      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-3));
+    }
+  }
+  // U2<U1 -> USE MINUS (in dvarphi_du it means switch u1 and u2)
+  else 
+  {
+    //SET MINIMUM BOUND
+    double c2min = 0;
+    if (2*M*u2<=1.)
+    {
+        double D1 = u1*u1 *(1 - 2*M*u1);
+        double D2 = u2*u2 *(1 - 2*M*u2);
+        c2min += (D1>D2)? D1 : D2;
+        c2min += 1e-3; //for anti-divergence purposes
+    }
+    //SET UPPER BOUND
+    double deltaphi_max = BH_int_dvarphi_du(u2, u1, M, c2min);
+    if (deltaphi_max <= 0)
+      {return std::sqrt(c2min);}
+    else
+    {
+      double eta = (u1-u2)/varphi2;
+      double c2max = 0;
+      if (2*M*u1 < 1)
+        {c2max += eta*eta;}
+      else
+        {c2max += (u1+eta)*(u1+eta);}
+      // check upper bound is on other side of solution. Since deltaphi_max
+      // is positive, this has to be negative. If not, switch limits and check
+      // again.
+      while (BH_int_dvarphi_du(u2, u1, M, c2max) > varphi2)
+      {
+        std::cout<<"No biggy, just note in c2solver had to update upper limit"
+                 <<std::endl;
+        c2min = c2max*1;
+        c2max *= 2;
+      }
+      // SOLVE WITH BISECTION
+      auto BH_tosolve = [u2, u1, varphi2, M](double c2)
+                      {return BH_int_dvarphi_du(u2, u1, M, c2)-varphi2;};
+      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-3));
+    }
+  }
+}
+
+
+/**
+ * @brief dt/du for a BH as of He and Rideout (Eq.15), 
+ * for u2>u1 in the integral.
+ * 
+ * @param dpdu double& : derivative gets updated.
+ * @param u double : u = 1/r.
+ * @param c double : c constant (NOT squared)
+ * @param M double : mass of BH.
+ */
+void Spacetime::BH_dt_du_plus (double&dtdu, double u, double c, double M)
+{
+  double D = u*u*(1-2*M*u);
+  dtdu = (c*std::pow(c*c - D, -0.5) - 2*M*u)/D;
+}
+
+
+/**
+ * @brief dt/du for a BH as of He and Rideout (Eq.15), 
+ * for u1>u2 in the integral.
+ * 
+ * @param dpdu double& : derivative gets updated.
+ * @param u double : u = 1/r.
+ * @param c double : c constant (NOT squared)
+ * @param M double : mass of BH.
+ */
+void Spacetime::BH_dt_du_minus (double&dtdu, double u, double M, double c)
+{
+  double D = u*u*(1-2*M*u);
+  dtdu = (-c*std::pow(c*c - D, -0.5) - 2*M*u)/D;
+}
+
+
+/**
+ * @brief Integral of dt/du for a BH as of He and Rideout (Eq.15).
+ * 
+ * @param u1 double : u=1/r1
+ * @param u2 double : u = 1/r2.
+ * @param c double : c constant (NOT squared)
+ * @param M double : mass of BH.
+ */
+double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
+{
+    double t = 0;
+    if (u2>=u1) 
+    {
+        auto BH_dt_du_forint_plus = [M, c]
+                                (const double& t, double& dtdu, const double u)
+                                {
+                                  if (u==0.5)
+                                    {dtdu = 0.488889;}
+                                  else
+                                  {
+                                    double D = u*u*(1-2*M*u);
+                                    dtdu = (c/std::sqrt(c*c - D) - 2*M*u)
+                                          /D;
+                                  }
+                                };
+        boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
+                                              u1, u2, (u2-u1)/20.);
+    }
+    else /* u1>u2 */
+    {
+        auto BH_dt_du_forint_minus = [M, c]
+                                (const double& t, double& dtdu, const double u)
+                                {
+                                  double D = u*u*(1-2*M*u);
+                                  dtdu = (-c/std::sqrt(c*c - D) - 2*M*u)
+                                        /D;
+                                };
+        if (0.5*M>=u1 || u2>=0.5*M) //0.5*M NOT in [u2, u1]
+        {
+            //Avoid divergence at 1-2*M*u=0
+            u2 += (u2==0.5*M)? 1e-3*M : 0;
+            u1 -= (u2==0.5*M)? 1e-3*M : 0;
+            //Compute 
+            boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
+                                              u1, u2, -(u1-u2)/20.);
+        }
+        else /*0.5*M IN [u2, u1]*/
+        {
+            //Compute in 2 steps to avoid divergence
+            boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
+                                            u1, (0.5+0.0001)*M, -(u1-0.5)/20.);
+            boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
+                                            (0.5-0.0001)*M, u2, -(0.5-u2)/20.);
+        }
+    }
+    return t;
+}
+
+
+bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
+                                     double c, double M)
+    {return Spacetime::BH_int_dt_du (u1, u2, M, c) + t1<= t2;}
+
 
 //BlackHoleSpacetime::~BlackHoleSpacetime(){}
 
