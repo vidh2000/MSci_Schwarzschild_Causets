@@ -127,6 +127,57 @@ class EmbeddedCauset(Causet):
                 self.__raiseDimValueError__('coordinates')
             self.create(coordinates)
 
+
+    def create_EmbeddedCauset_from_file(self, file):
+        """
+        Providing coordinates, shape and Spacetime and causal matrix from
+        a text/csv file for naturally labeled events it creates the
+        EmbeddedCauset object.
+        The file either contains cmatrix or pasts+futures.
+        This is declared in the first line of the file as the
+        "Storage option".
+
+        Parameters inside:
+            - storage_option
+                        string: Either "sets" or "cmatrix"
+            - Size      Number of events sprinkled.
+            - Dimension Dimension of the spacetime in which we sprinkled.
+            - spacetime string - specifies the spacetime from which spacetime
+                        interval is obtained.
+                        e.g. "flat", "Minkowski", "black hole", "Schwarzschild"
+            - coords    Coordinates vector for N events in dim-D space (N,dim)
+            THEN depending on the storage_option parameter:
+            - cmatrix   NxN matrix containing of 1 (-1) or 0
+                        ->upper triangular matrix required input.
+            - past and future sets
+                        vector of vectors of size (N,setsize_n)
+
+        """
+        storage_option = str(np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[0])[1])
+        self.size = int(np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[1])[1])
+        self.dim = int(np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[2])[1])
+        self.shape_name = str(np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[3])[1])
+        self.spacetime_name = str(np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[4])[1])
+        if storage_option == "cmatrix":
+            self.cmatrix = np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[6: 6+self.size-1])
+        elif storage_option == "sets":
+            pass #placeholder
+        else: 
+            raise ValueError("Stored data is not in the format of\
+                             'sets' or 'cmatrix'.")
+        
+        self.coords = np.genfromtxt(file, delimiter=',', dtype=None,
+                            usecols=[-self.size:])
+
+
+
+    
     @staticmethod
     def _Permutation_Coords(P: List[int], radius: float) -> np.ndarray:
         '''
@@ -550,3 +601,5 @@ class EmbeddedCauset(Causet):
             sorted_idx = np.flip(sorted_idx)
         for i, idx in enumerate(sorted_idx):
             eventList[idx].Label = i + 1
+
+
