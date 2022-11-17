@@ -422,30 +422,58 @@ void EmbeddedCauset::discard(vector<int> labels,
 
 /**
  * @brief Save causet attributes in file (ideally txt or csv)
- * [0,1] -> size; 
- * [1,1] -> spacetime dimension; 
- * [2,1] -> spacetime name; 
- * [4 to 4+size-1, 0 to size-1] -> Cmatrix; 
- * [4+size+1, 0 to dim-1] -> coordinates
+ * [1,1] -> size; 
+ * [2,1] -> spacetime dimension;
+ * [3,1] -> shape name;  
+ * [4,1] -> spacetime name; 
+ * [6 to 6+size-1, 0 to size-1] -> Cmatrix; 
+ * [-size:] -> coordinates
  * 
  * @param path_file_ext const char* : path/file.ext 
  */
-void EmbeddedCauset::save_causet(const char* path_file_ext)
+void EmbeddedCauset::save_causet(const char* path_file_ext,
+                                 const char* storage_option)
 {
     std::ofstream out;
     out.open(path_file_ext);
+    out<<"Storage option, " << storage_option << std::endl;
     out<<"Size, "<<_size<<std::endl;
     out<<"Dimension, "<<_spacetime._dim<<std::endl;
-    //out<<"Shape, "<<_shape._name<<std::endl;
+    out<<"Shape, "<<_shape._name<<std::endl;
     out<<"Spacetime, "<<_spacetime._name<<std::endl;
-    out<<"Matrix,"<<std::endl;
-    for (auto row : _CMatrix) 
+    if (strcmp(storage_option, "cmatrix")==0)
     {
-        for (auto col : row)
-            {out << col <<',';}
-        out<<std::endl;
+        out<<"Matrix,"<<std::endl;
+        for (auto row : _CMatrix) 
+        {
+            for (auto col : row)
+                {out << col <<',';}
+            out<<std::endl;
+        }
     }
-    out<<"Cooridnates,"<<std::endl;
+    else if (strcmp(storage_option, "sets")==0)
+    {
+        out<<"Past sets, " << std::endl;
+        for (auto past : _pasts)
+        {
+            for (auto e : past){
+                out << e << ",";}
+            out<<std::endl;
+        }
+
+        out<<"Future sets, " << std::endl;
+        for (auto future : _futures)
+        {
+            for (auto e : future){
+                out << e << ",";}
+            out<<std::endl;
+        }
+    }
+    else {
+        std::cout << "Please choose 'cmatrix' or 'sets' option\n";
+        throw std::invalid_argument("Choose right parameter");
+    }
+    out<<"Coordinates,"<<std::endl;
     for (auto row : _coords) 
     {
         for (auto col : row)

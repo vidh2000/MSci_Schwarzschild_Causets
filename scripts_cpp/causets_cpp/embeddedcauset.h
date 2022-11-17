@@ -83,7 +83,8 @@ class EmbeddedCauset: public Causet
 
         // SAVE
         
-        void save_causet(const char* path_file_ext);
+        void save_causet(const char* path_file_ext,
+                         const char* storage_option);
 
 
         //MAKE ATTRIBUTES

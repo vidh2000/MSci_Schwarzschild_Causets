@@ -386,7 +386,7 @@ class Causet(object):
                 method = "causality") -> np.ndarray:
         """
         Returns the logical causal matrix such that `C[i, j]` is 1 if 
-        i preceds. 
+        i precedes j. 
         Events are indexed by `labeledEvents` (by default sorted by 
         causality).
         """

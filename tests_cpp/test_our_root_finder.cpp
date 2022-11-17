@@ -20,6 +20,7 @@
 //using boost::math::tools::bisect;
 using std::cout;
 using std::endl;
+using std::vector;
 
 template <typename F>
 double bisection (F f, double xleft, double xright, double epsilon = 1e-8, 
@@ -97,9 +98,7 @@ vector<double> sols = {1, 1.25, 1.5, 1.75, 2,
                        2.25, 2.5, 2.75, 3, 3.25,
                        3.5, 3.75, 4, 4.25,4.5,4.75,5};
 
-  }
-
-} /*end main*/
+}
 
     
 
