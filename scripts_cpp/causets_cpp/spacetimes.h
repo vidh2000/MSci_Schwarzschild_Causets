@@ -100,7 +100,7 @@ class Spacetime
                                 double mass = 1,
                                 std::string metric = "Eddington-Finkelstein");
     
-        // BH Methods
+        // BH Causality
 
         double BH_ds2(std::vector<double> xvec, std::vector<double> yvec);
         double BH_ds(std::vector<double> xvec, std::vector<double> yvec); 
@@ -135,6 +135,15 @@ class Spacetime
         static bool BH_time_caus_check(double u1,double u2,double t1,double t2,
                                        double c, double M);
 
+
+        // BH Coordinate Transformations
+
+        static void inEFtoS (std::vector<double>& xvec, 
+                                double mass = 1,
+                                const char* method = "original");
+        static void StoinEF (std::vector<double>& xvec,
+                                double mass = 1,
+                                const char* method = "original");
 };
 
 #endif /* SPACETIMES_H */

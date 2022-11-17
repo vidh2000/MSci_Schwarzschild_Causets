@@ -161,8 +161,8 @@ int main()
 
     //In depth analysis of all generic
     cout<<"\n\n======== TEST GENERIC CONNECTIONS =========\n";
-    double u1, u2, t1, t2, varphi2;
-    double M = 1;
+    // double u1, u2, t1, t2, varphi2;
+    // double M = 1;
     cout<<"\nChecking 0 -> 4: (should have c^2=0.04604, geo_time=4.6979) \n";
     bool c04 = C.AprecB(coords[0], coords[4]);
     cout<<"Should give 0 -> "<<c04<<endl;
