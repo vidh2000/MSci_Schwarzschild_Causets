@@ -160,6 +160,7 @@ int main()
     
 
     //In depth analysis of all generic
+    cout<<"\n\n======== TEST GENERIC CONNECTIONS =========\n";
     double u1, u2, t1, t2, varphi2;
     double M = 1;
     cout<<"\nChecking 0 -> 4: (should have c^2=0.04604, geo_time=4.6979) \n";
@@ -189,6 +190,7 @@ int main()
     C.make_all_but_links();
 
     //Compare
+    cout<<"\n\n======== TEST CAUSALITIES OF THE 9 POINTS =========\n";
     cout<<"Their Causality Matrix is (5 means unspecified): \n";
     vector<vector<double>> HRmatrix = {
                                         {0,0,0, 5,0,1, 0,5,1},
