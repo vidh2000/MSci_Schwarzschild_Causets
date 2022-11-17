@@ -10,11 +10,11 @@
                 "-fdiagnostics-color=always",
                 // COMPILE COMMAND
                 "-g", "${file}",
-                //"${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
-                //"${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
-                //"${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
-                //"${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
-                //"${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
                 // EXECUTABLE
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",

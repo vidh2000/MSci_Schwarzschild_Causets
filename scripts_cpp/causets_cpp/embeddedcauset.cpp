@@ -517,12 +517,14 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
         else
         {   
-            std::cout<<"At least one among make_matrix, " 
-                     << "make_sets and make_links must be true "
-                     << "or you need sets_type = 'all' or 'both only'."
-                     << std::endl;
-            throw std::invalid_argument("At least one among make_matrix, \
-                                    make_sets and make_links must be true");
+            // std::cout<<"At least one among make_matrix, " 
+            //          << "make_sets and make_links must be true "
+            //          << "or you need sets_type = 'all' or 'both only'."
+            //          << std::endl;
+            // throw std::invalid_argument("At least one among make_matrix, \
+            //                         make_sets and make_links must be true");
+            std::cout<<"Note: causet has no causal relations"<<std::endl;
+            return;
         }
     }
 }

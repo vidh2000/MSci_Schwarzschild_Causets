@@ -33,6 +33,10 @@ struct TermCond  {
   }
 };
 
+
+// VERY IMPORTANT NOTE: CANNOT COPY-PASTE THESE FUNCTIONS IN SPACETIME
+// BECAUSE IN SPACETIME ORDER OF SOME ARGUMENTS IS REVERSED: MASS ALWAYS LAST
+// BRINGING CHANGES IN DECLARATION AND CALLS INSIDE OTHER FUNCTIONS
 void BH_dvarphi_du (double& dpdu, double u, double M, double c2)
 {
   dpdu = std::pow(2*M*u*u*u - u*u + c2, -0.5);
@@ -263,7 +267,7 @@ int main()
     varphi2 = 0.352028;
     u1 = 1./2.;
     u2 = 1./3.;
-    cout<<"M=1; varphi2 = 0.6522; u1=1/2; u2=1/3-> W.Alfa: 0.5\n";
+    cout<<"M=1; varphi2 = 0.3522; u1=1/2; u2=1/3-> W.Alfa: 0.5\n";
     cout<<"                                     -> We say: "<<BH_c_solver
                                                            (u1, u2, varphi2, M)
         <<endl;

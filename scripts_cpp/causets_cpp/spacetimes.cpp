@@ -253,7 +253,7 @@ vector<bool> Spacetime::Flat_causal_periodic(vector<double> xvec,
  *                (default), or "Schwarzschild" or "S".
  */
 void Spacetime::BlackHoleSpacetime(int dim,// = 2,
-                                    double r_S,// = 0.5,
+                                    double mass,// = 0.5,
                                     std::string metric)// = "EF")
 {
     if (dim != 4)
@@ -263,6 +263,8 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
     }
     _dim = dim;
     _name = "black hole";
+    _mass = mass;
+    _r_S  = 2*mass;
 
     if (metric == "Eddington-Finkelstein" || metric == "EF")
         {_metricname = "Eddington-Finkelstein";}
@@ -419,10 +421,23 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
                                        std::vector<double> yvec,
                                        double mass)
 {
+    print_vector(xvec);
+    print_vector(yvec);
     double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
-    bool x_prec_y = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], mass, c) 
-                    <= yvec[0] - xvec[0];
-    return {x_prec_y, x_prec_y, false};
+    if (c<0)
+    {
+        std::cout<<"   c^2          is :"<<-1      <<std::endl;
+        return {false, false, false};
+    }
+    else
+    {
+        double geo_time = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], c, 
+                                                    mass);
+        bool x_prec_y =  geo_time <= yvec[0] - xvec[0];
+        std::cout<<"   c^2          is :"<<c*c      <<std::endl;
+        std::cout<<"geodesic's time is : "<<geo_time<<std::endl;
+        return {x_prec_y, x_prec_y, false};
+    }
 }
 
 
@@ -435,9 +450,7 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
  * @param M double : mass of BH.
  */
 void Spacetime::BH_dvarphi_du (double& dpdu, double u, double c2, double M)
-{
-  dpdu = std::pow(2*M*u*u*u - u*u + c2, -0.5);
-}
+    {dpdu = std::pow(2*M*u*u*u - u*u + c2, -0.5);}
 
 
 /**
@@ -494,9 +507,9 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
         c2min += 1e-3; //for anti-divergence purposes
     }
     //SET UPPER BOUND
-    double deltaphi_max = BH_int_dvarphi_du(u1, u2, M, c2min);
+    double deltaphi_max = BH_int_dvarphi_du(u1, u2, c2min, M);
     if (deltaphi_max <= varphi2)
-      {return std::sqrt(c2min);}
+      {return -1;}//std::sqrt(c2min);}
     else
     {
       double eta = (u2-u1)/varphi2;
@@ -508,7 +521,7 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
       // check upper bound is on other side of solution. Since deltaphi_max
       // is positive, this has to be negative. If not, double upper limit,
       // turn lower limit to previous upper and check again.
-      while (BH_int_dvarphi_du(u1, u2, M, c2max) > varphi2)
+      while (BH_int_dvarphi_du(u1, u2, c2max, M) > varphi2)
       {
         std::cout<<"No biggy, just note in c2solver had to update upper limit"
                  <<std::endl;
@@ -517,8 +530,8 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
       }
       // SOLVE WITH BISECTION
       auto BH_tosolve = [u1, u2, varphi2, M](double c2)
-                      {return BH_int_dvarphi_du(u1, u2, M, c2)-varphi2;};
-      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-3));
+                      {return BH_int_dvarphi_du(u1, u2, c2, M)-varphi2;};
+      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-5));
     }
   }
   // U2<U1 -> USE MINUS (in dvarphi_du it means switch u1 and u2)
@@ -534,9 +547,9 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
         c2min += 1e-3; //for anti-divergence purposes
     }
     //SET UPPER BOUND
-    double deltaphi_max = BH_int_dvarphi_du(u2, u1, M, c2min);
+    double deltaphi_max = BH_int_dvarphi_du(u2, u1, c2min, M);
     if (deltaphi_max <= 0)
-      {return std::sqrt(c2min);}
+      {return -1;}//std::sqrt(c2min);}
     else
     {
       double eta = (u1-u2)/varphi2;
@@ -548,7 +561,7 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
       // check upper bound is on other side of solution. Since deltaphi_max
       // is positive, this has to be negative. If not, switch limits and check
       // again.
-      while (BH_int_dvarphi_du(u2, u1, M, c2max) > varphi2)
+      while (BH_int_dvarphi_du(u2, u1, c2max, M) > varphi2)
       {
         std::cout<<"No biggy, just note in c2solver had to update upper limit"
                  <<std::endl;
@@ -557,8 +570,8 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
       }
       // SOLVE WITH BISECTION
       auto BH_tosolve = [u2, u1, varphi2, M](double c2)
-                      {return BH_int_dvarphi_du(u2, u1, M, c2)-varphi2;};
-      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-3));
+                      {return BH_int_dvarphi_du(u2, u1, c2, M)-varphi2;};
+      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-5));
     }
   }
 }

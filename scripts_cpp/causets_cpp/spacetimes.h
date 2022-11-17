@@ -96,8 +96,8 @@ class Spacetime
 
         // Constructor-like method
 
-        void BlackHoleSpacetime(int dim = 2,
-                                double r_S = 0.5,
+        void BlackHoleSpacetime(int dim = 4,
+                                double mass = 1,
                                 std::string metric = "Eddington-Finkelstein");
     
         // BH Methods

@@ -868,8 +868,10 @@ class BlackHoleSpacetime(Spacetime):
 
             def isCausal_BH2D(x: np.ndarray,
                               y: np.ndarray) -> Tuple[bool, bool]:
+                #If on opposite sides of singularity, clearly unrelated
                 if x[1] * y[1] < 0.0:
                     return (False, False)
+                
                 t_delta: float = y[0] - x[0]
                 r_x: float = abs(x[1])
                 r_y: float = abs(y[1])
