@@ -414,6 +414,50 @@ void EmbeddedCauset::discard(vector<int> labels,
 
 
 
+//////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+// SAVE 
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief Save causet attributes in file (ideally txt or csv)
+ * [0,1] -> size; 
+ * [1,1] -> spacetime dimension; 
+ * [2,1] -> spacetime name; 
+ * [4 to 4+size-1, 0 to size-1] -> Cmatrix; 
+ * [4+size+1, 0 to dim-1] -> coordinates
+ * 
+ * @param path_file_ext const char* : path/file.ext 
+ */
+void EmbeddedCauset::save_causet(const char* path_file_ext)
+{
+    std::ofstream out;
+    out.open(path_file_ext);
+    out<<"Size, "<<_size<<std::endl;
+    out<<"Dimension, "<<_spacetime._dim<<std::endl;
+    //out<<"Shape, "<<_shape._name<<std::endl;
+    out<<"Spacetime, "<<_spacetime._name<<std::endl;
+    out<<"Matrix,"<<std::endl;
+    for (auto row : _CMatrix) 
+    {
+        for (auto col : row)
+            {out << col <<',';}
+        out<<std::endl;
+    }
+    out<<"Cooridnates,"<<std::endl;
+    for (auto row : _coords) 
+    {
+        for (auto col : row)
+            {out << col <<',';}
+        out<<std::endl;
+    }
+    out.close();
+    return;
+}
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 //============================================================================

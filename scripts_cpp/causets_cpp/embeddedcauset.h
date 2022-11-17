@@ -81,6 +81,10 @@ class EmbeddedCauset: public Causet
         void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
 
+        // SAVE
+        
+        void save_causet(const char* path_file_ext);
+
 
         //MAKE ATTRIBUTES
         

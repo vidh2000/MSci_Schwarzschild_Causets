@@ -103,10 +103,14 @@ class Spacetime
         // BH Methods
 
         double BH_ds2(std::vector<double> xvec, std::vector<double> yvec);
+        double BH_ds(std::vector<double> xvec, std::vector<double> yvec); 
 
-        double BH_ds(std::vector<double> xvec, std::vector<double> yvec);  
+        static std::vector<bool> BH_causal2D (std::vector<double> xvec, 
+                                            std::vector<double> yvec,
+                                            std::vector<double> period={},
+                                            double mass = 0); 
 
-        static std::vector<bool> BH_causal (std::vector<double> xvec, 
+        static std::vector<bool> BH_causal4D (std::vector<double> xvec, 
                                             std::vector<double> yvec,
                                             std::vector<double> period={},
                                             double mass = 0);

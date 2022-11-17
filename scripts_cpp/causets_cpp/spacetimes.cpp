@@ -88,7 +88,8 @@ func Spacetime::Causality()
     }
     else //if (std::strcmp(_name, "BlackHole")==0)
     {
-        return &Spacetime::BH_causal;
+        if      (_dim == 4) return &Spacetime::BH_causal4D;
+        else if (_dim == 2) return &Spacetime::BH_causal2D;
     }
 }
 
@@ -274,6 +275,55 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
 
 
 /**
+ * @brief Causality algorithm for two events in 2D EF coordinates, from
+ * Song He and David Rideout 2009 Class. Quantum Grav. 26 125015. 
+ * 
+ * @param xvec vector<double> : EF coordinates of x.
+ * @param yvec vector<double> : EF coordinates of y.
+ * @param period vector<double> : period along SPATIAL coordinates. Currently 
+ * not implemented in BH, hence deafult is {}.
+ * @param mass : mass of Black Hole
+ * @return vector<bool> : {x-y timelike, x<=y, x>y}
+ */
+vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec, 
+                                    std::vector<double> yvec,
+                                    std::vector<double> period,
+                                    double mass)
+{
+    //IF WORKING IN EF COORDINATES
+    if (yvec[0]<xvec[0])
+        {return Spacetime::BH_causal4D(yvec, xvec, period);}
+
+    double t1     = xvec[0]; double t2     = yvec[0];
+    double r1     = xvec[1]; double r2     = yvec[1];
+    
+    // Section 2.2: Radially separated pairs and radial null geodesics
+    // as in 2D necessarily varphi2 = 0
+    if (r1>=r2)
+    {
+        // all 3 cases of the paper return same
+        if (t2 >= t1 + r1 - r2 - 1e-6)
+                {return {true, true, false};}
+        else
+            {return {false, false, false};}
+    }
+    else /*r2>r1*/
+    {
+        if (r1<=2*mass)
+            {return {false, false, false};}
+        else // if (r1>2*mass)
+        {
+            if (t2 >= t1 + r2 - r1 + 4*mass*std::log((r2-2*mass)/(r1-2*mass)))
+                {return {true, true, false};}
+            else
+                {return {false, false, false};}
+        }
+    }
+}
+
+
+
+/**
  * @brief Causality algorithm for two events in 4D EF coordinates, from
  * Song He and David Rideout 2009 Class. Quantum Grav. 26 125015. 
  * 
@@ -284,14 +334,14 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::BH_causal (std::vector<double> xvec, 
+vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec, 
                                     std::vector<double> yvec,
                                     std::vector<double> period,
                                     double mass)
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal(yvec, xvec, period);}
+        {return Spacetime::BH_causal4D(yvec, xvec, period);}
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
@@ -504,74 +554,74 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
         double D1 = u1*u1 *(1 - 2*M*u1);
         double D2 = u2*u2 *(1 - 2*M*u2);
         c2min += (D1>D2)? D1 : D2;
-        c2min += 1e-3; //for anti-divergence purposes
+        c2min += 1e-5; //for anti-divergence purposes
     }
     //SET UPPER BOUND
     double deltaphi_max = BH_int_dvarphi_du(u1, u2, c2min, M);
     if (deltaphi_max <= varphi2)
-      {return -1;}//std::sqrt(c2min);}
+        {return -1;}//std::sqrt(c2min);}
     else
     {
-      double eta = (u2-u1)/varphi2;
-      double c2max = 0;
-      if (2*M*u2 < 1)
-        {c2max += eta*eta;}
-      else
-        {c2max += (u2+eta)*(u2+eta);}
-      // check upper bound is on other side of solution. Since deltaphi_max
-      // is positive, this has to be negative. If not, double upper limit,
-      // turn lower limit to previous upper and check again.
-      while (BH_int_dvarphi_du(u1, u2, c2max, M) > varphi2)
-      {
-        std::cout<<"No biggy, just note in c2solver had to update upper limit"
-                 <<std::endl;
-        c2min = c2max*1;
-        c2max *= 2;
-      }
-      // SOLVE WITH BISECTION
-      auto BH_tosolve = [u1, u2, varphi2, M](double c2)
-                      {return BH_int_dvarphi_du(u1, u2, c2, M)-varphi2;};
-      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-5));
+        double eta = (u2-u1)/varphi2;
+        double c2max = 0;
+        if (2*M*u1 >= 1.)
+            {c2max += eta*eta;}
+        else
+            {c2max += (u2+eta)*(u2+eta);}
+        // check upper bound is on other side of solution. Since deltaphi_max
+        // is positive, this has to be negative. If not, double upper limit,
+        // turn lower limit to previous upper and check again.
+        while (BH_int_dvarphi_du(u1, u2, c2max, M) > varphi2)
+        {
+            std::cout<<"No biggy, just in c_solver had to update upper limit"
+                    <<std::endl;
+            c2min = c2max*1;
+            c2max *= 2;
+        }
+        // SOLVE WITH BISECTION
+        auto BH_tosolve = [u1, u2, varphi2, M](double c2)
+                        {return BH_int_dvarphi_du(u1, u2, c2, M)-varphi2;};
+        return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-5));
     }
   }
   // U2<U1 -> USE MINUS (in dvarphi_du it means switch u1 and u2)
   else 
   {
-    //SET MINIMUM BOUND
-    double c2min = 0;
-    if (2*M*u2<=1.)
-    {
-        double D1 = u1*u1 *(1 - 2*M*u1);
-        double D2 = u2*u2 *(1 - 2*M*u2);
-        c2min += (D1>D2)? D1 : D2;
-        c2min += 1e-3; //for anti-divergence purposes
-    }
-    //SET UPPER BOUND
-    double deltaphi_max = BH_int_dvarphi_du(u2, u1, c2min, M);
-    if (deltaphi_max <= 0)
-      {return -1;}//std::sqrt(c2min);}
-    else
-    {
-      double eta = (u1-u2)/varphi2;
-      double c2max = 0;
-      if (2*M*u1 < 1)
-        {c2max += eta*eta;}
-      else
-        {c2max += (u1+eta)*(u1+eta);}
-      // check upper bound is on other side of solution. Since deltaphi_max
-      // is positive, this has to be negative. If not, switch limits and check
-      // again.
-      while (BH_int_dvarphi_du(u2, u1, c2max, M) > varphi2)
-      {
-        std::cout<<"No biggy, just note in c2solver had to update upper limit"
-                 <<std::endl;
-        c2min = c2max*1;
-        c2max *= 2;
-      }
-      // SOLVE WITH BISECTION
-      auto BH_tosolve = [u2, u1, varphi2, M](double c2)
-                      {return BH_int_dvarphi_du(u2, u1, c2, M)-varphi2;};
-      return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-5));
+        //SET MINIMUM BOUND
+        double c2min = 0;
+        if (2*M*u2<=1.)
+        {
+            double D1 = u1*u1 *(1 - 2*M*u1);
+            double D2 = u2*u2 *(1 - 2*M*u2);
+            c2min += (D1>D2)? D1 : D2;
+            c2min += 1e-5; //for anti-divergence purposes
+        }
+        //SET UPPER BOUND
+        double deltaphi_max = BH_int_dvarphi_du(u2, u1, c2min, M);
+        if (deltaphi_max <= 0)
+        {return -1;}//std::sqrt(c2min);}
+        else
+        {
+        double eta = (u1-u2)/varphi2;
+        double c2max = 0;
+        if (2*M*u2 >= 1)
+            {c2max += eta*eta;}
+        else
+            {c2max += (u1+eta)*(u1+eta);}
+        // check upper bound is on other side of solution. Since deltaphi_max
+        // is positive, this has to be negative. If not, switch limits and check
+        // again.
+        while (BH_int_dvarphi_du(u2, u1, c2max, M) > varphi2)
+        {
+            std::cout<<"No biggy, just in c_solver had to update upper limit"
+                    <<std::endl;
+            c2min = c2max*1;
+            c2max *= 2;
+        }
+        // SOLVE WITH BISECTION
+        auto BH_tosolve = [u2, u1, varphi2, M](double c2)
+                        {return BH_int_dvarphi_du(u2, u1, c2, M)-varphi2;};
+        return std::sqrt(bisection(BH_tosolve, c2min, c2max, 1e-5));
     }
   }
 }
