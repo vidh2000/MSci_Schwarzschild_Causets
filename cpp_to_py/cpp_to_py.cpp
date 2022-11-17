@@ -19,6 +19,7 @@ Go to build folder.
 In the command line, write:
 
 cmake ..
+if not working-> set PATH="C:\Program Files\CMake\bin\";%PATH%
 cmake --build . --target ALL_BUILD --config Release
 
 */
