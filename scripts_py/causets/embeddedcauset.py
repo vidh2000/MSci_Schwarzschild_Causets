@@ -154,15 +154,16 @@ class EmbeddedCauset(Causet):
 
         """
         storage_option = str(np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[1])[1])
+                            usecols=[1])[0])
         self.size = int(np.genfromtxt(file, delimiter=',', dtype=None,
                             usecols=[1])[1])
         self.dim = int(np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[2])[1])
+                            usecols=[1])[2])
         self.shape_name = str(np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[3])[1])
+                            usecols=[1])[3])
         self.spacetime_name = str(np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[4])[1])
+                            usecols=[1])[4])
+        print(storage_option, self.size, self.dim, self.shape_name,self.spacetime_name)
         if storage_option == "cmatrix":
             self.cmatrix = np.genfromtxt(file, delimiter=',', dtype=None,
                             usecols=[6, 6+self.size-1])
