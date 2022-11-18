@@ -22,7 +22,9 @@
 #include "../scripts_cpp/causets_cpp/functions.h"
 #include "../scripts_cpp/causets_cpp/vecfunctions.h"
 
-int card = 100;
+using namespace std::chrono;
+
+int card = 50;
 int dim = 3;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
@@ -33,13 +35,16 @@ std::vector<double> edges = {1,2,3,4};
 // Parameters
 bool poisson = false;
 bool make_matrix = false;
-bool special = true;
+bool special = false;
 bool use_transitivity = true;
 bool make_sets = true;
 bool make_links = false;
 const char* sets_type = "all with links";
 
 int main(){
+
+auto start = high_resolution_clock::now();
+
 std::vector<const char*> names = {"bicone"};
 
 for (const char* name : names)
@@ -52,9 +57,14 @@ for (const char* name : names)
     SprinkledCauset C(card, S, shape, poisson,
                         make_matrix, special, use_transitivity,
                         make_sets, make_links,sets_type);
+    std::cout << "Generate the causet... Saving ->" << std::endl;
     const char* path_file = "../data/flatspace_bicone_causet.txt";
     C.save_causet(path_file);
 }
 
+auto stop = high_resolution_clock::now();
+    double duration = duration_cast<microseconds>(stop - start).count();
+    std::cout << "Time taken: "
+            << duration/pow(10,6) << " seconds" << std::endl;
 
 }

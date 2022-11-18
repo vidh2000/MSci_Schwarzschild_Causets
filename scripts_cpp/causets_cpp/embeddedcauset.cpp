@@ -568,8 +568,16 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
 {
     if (strcmp(sets_type, "all with links")==0)
     {
-        this->make_all_futures(method);
-        this->make_all_pasts(method);
+        
+        std::cout << "Making all pasts..\n";
+        this->make_cmatrix_and_allpasts(special);
+        std::cout << "Making all futures..\n";
+        this->make_cmatrix_and_allfuts(special);
+
+        // std::cout << "Making all futures..\n";
+        // this->make_all_futures(method);
+        // std::cout << "Making all pasts..\n";
+        // this->make_all_pasts(method);
     }
     
     else if (strcmp(sets_type, "all")==0)

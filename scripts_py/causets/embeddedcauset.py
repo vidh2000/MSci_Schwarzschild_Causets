@@ -163,41 +163,42 @@ class EmbeddedCauset(Causet):
                             usecols=[1])[3])
         self.spacetime_name = str(np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[1])[4])
-        print("======================================================")
-        print(storage_option, self.size, self.dim, self.shape_name,self.spacetime_name)
+
+
+        lines = [[v for v in line.split(",")] for line in open(file)]
         if storage_option == "cmatrix":
             self.cmatrix = np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[6, 6+self.size-1])
             raise ValueError("Please choose 'sets' storage_option.\
                             'cmatrix' is yet to be implemented properly...")
         elif storage_option == "sets":
-            pasts = np.genfromtxt(file, delimiter=',',
-                    dtype='unicode')[6:6+self.size-1]
-            futures = np.genfromtxt(file, delimiter=',',
-                dtype='unicode')[6+self.size+1,6+2*self.size]
-            past_links = np.genfromtxt(file, delimiter=',',
-                dtype='unicode')[6+2*self.size+2,6+3*self.size+1]
-            fut_links = np.genfromtxt(file, delimiter=',',
-            dtype='unicode')[6+3*self.size+3,6+4*self.size+2]
+            pasts = [[int(v) for v in line if v != "\n"] for line in
+                                lines[6:6+self.size]]
+            futures = [[int(v) for v in line if v != "\n"] for line in
+                                lines[6+self.size+1:6+2*self.size+1]]
+            past_links = [[int(v) for v in line if v != "\n"] for line in
+                                lines[6+2*self.size+2:6+3*self.size+2]]
+            fut_links = [[int(v) for v in line if v != "\n"] for line in
+                                lines[6+3*self.size+3:6+4*self.size+3]]
         else: 
             raise ValueError("Stored data is not in the format of 'sets' or 'cmatrix'.")
         
-        self.coords = np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[r for r in range(-self.size,0)])
+        self.coords = [[float(v) for v in line if v != "\n"] for line in
+                                            lines[-self.size:]]
         
         # Add relations (futs,pasts,links...) to Events in EventSet
         if storage_option == "sets":
-            eventSet: Set[CausetEvent] = {}
+            eventSet: List[CausetEvent] = []
             for i, coord in enumerate(self.coords):
                 e = CausetEvent(label=(1 + i), coordinates=coord)
-                eventSet.add(e)
+                eventSet.append(e)
             self._events = eventSet
             for (e,past,fut,plink,flink) in zip(self._events,
                                         pasts,futures,past_links,fut_links):
-                e._prec = {self._events[k] for k in past}
-                e._succ = {self._events[k] for k in fut}
-                e._lprec = {self._events[k] for k in plink}
-                e._lsucc = {self._events[k] for k in flink}
+                e._prec = set(self._events[k] for k in past)
+                e._succ = set(self._events[k] for k in fut)
+                e._lprec = set(self._events[k] for k in plink)
+                e._lsucc = set(self._events[k] for k in flink)
         elif storage_option == "cmatrix":
             raise ValueError("Please choose 'sets' storage_option.\
                             'cmatrix' is yet to be implemented properly...")
