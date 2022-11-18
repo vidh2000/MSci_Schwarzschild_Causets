@@ -56,7 +56,7 @@ bool special = true;
 bool use_transitivity = false;
 bool make_sets = true;
 bool make_links = false;
-const char* sets_type = "all"; // "both only", "all", "pasts", "futures"
+const char* sets_type = "all"; // "all with links", "both only", "all", "pasts", "futures"
 
 int multiply(int a, int b){
     return a*b;

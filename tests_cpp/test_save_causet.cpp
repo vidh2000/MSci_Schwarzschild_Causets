@@ -1,0 +1,60 @@
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <numeric>
+#include <random>
+#include <set>
+#include <stack>
+#include <stdio.h>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <unordered_set>
+#include <chrono>
+
+#include "../scripts_cpp/causets_cpp/sprinkledcauset.h"
+#include "../scripts_cpp/causets_cpp/shapes.h"
+#include "../scripts_cpp/causets_cpp/spacetimes.h"
+
+#include "../scripts_cpp/causets_cpp/functions.h"
+#include "../scripts_cpp/causets_cpp/vecfunctions.h"
+
+int card = 100;
+int dim = 3;
+std::vector<double> center (dim, 0.0);
+double radius = 4.0;
+double myduration = 10;
+double edge = 1.5;
+std::vector<double> edges = {1,2,3,4};
+
+// Parameters
+bool poisson = false;
+bool make_matrix = false;
+bool special = true;
+bool use_transitivity = true;
+bool make_sets = true;
+bool make_links = false;
+const char* sets_type = "all with links";
+
+int main(){
+std::vector<const char*> names = {"bicone"};
+
+for (const char* name : names)
+{
+    std::cout<<"\n\n============= USING "<<name<<" ====================\n";
+
+    CoordinateShape shape(dim,name,center,radius,edge,edges,0.0,myduration);
+    Spacetime S = Spacetime();
+    S.FlatSpacetime(dim);
+    SprinkledCauset C(card, S, shape, poisson,
+                        make_matrix, special, use_transitivity,
+                        make_sets, make_links,sets_type);
+    const char* path_file = "../data/flatspace_bicone_causet.txt";
+    C.save_causet(path_file);
+}
+
+
+}

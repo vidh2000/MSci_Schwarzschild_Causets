@@ -58,7 +58,7 @@ class SprinkledCauset: public EmbeddedCauset
                         bool use_transitivity = true,
                         bool make_sets = false,
                         bool make_links = false,
-                        const char* sets_type = "all",
+                        const char* sets_type = "all with links", // "all"
                         int seed = 0);
 
 

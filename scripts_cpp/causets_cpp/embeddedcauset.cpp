@@ -426,7 +426,16 @@ void EmbeddedCauset::discard(vector<int> labels,
  * [2,1] -> spacetime dimension;
  * [3,1] -> shape name;  
  * [4,1] -> spacetime name; 
+ * 
+ * "cmatrix" option =======>
  * [6 to 6+size-1, 0 to size-1] -> Cmatrix; 
+ * 
+ * "sets" option    =======>
+ * [6 to 6+size-1,:] pasts
+ * [6+size+1 to 6+2size,:] futures
+ * [6+2size+2 to 6+3size+1,:] past links
+ * [6+3size+3 to 6+4size+2,:] future links
+ * 
  * [-size:] -> coordinates
  * 
  * @param path_file_ext const char* : path/file.ext 
@@ -453,6 +462,23 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
     }
     else if (strcmp(storage_option, "sets")==0)
     {
+        if (!_pasts.size() || !_futures.size() ||
+            !_past_links.size() || !_future_links.size())
+            {
+                std::cout << "You don't have all sets and links.\n";
+                std::cout << "Please choose option 'all with links' \
+                              for the causet generation" << std::endl;
+                std::cout << "You're missing -> ";
+                if (!_pasts.size()){
+                    std::cout << "pasts" << std::endl;}
+                if (!_futures.size()){
+                    std::cout << "futures" << std::endl;}
+                if (!_past_links.size()){
+                    std::cout << "past links" << std::endl;}
+                if (!_future_links.size()){
+                    std::cout << "future links" << std::endl;}
+                throw std::invalid_argument("dont have all sets+links");
+            }
         out<<"Past sets, " << std::endl;
         for (auto past : _pasts)
         {
@@ -468,6 +494,23 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
                 out << e << ",";}
             out<<std::endl;
         }
+
+        out<<"Past links sets, " << std::endl;
+        for (auto past_links : _past_links)
+        {
+            for (auto e : past_links){
+                out << e << ",";}
+            out<<std::endl;
+        }
+
+        out<<"Future links sets, " << std::endl;
+        for (auto fut_links : _future_links)
+        {
+            for (auto e : fut_links){
+                out << e << ",";}
+            out<<std::endl;
+        }
+
     }
     else {
         std::cout << "Please choose 'cmatrix' or 'sets' option\n";
@@ -523,7 +566,13 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_links,// = false,
                                     const char* sets_type)// = "both only")
 {
-    if (strcmp(sets_type, "all")==0)
+    if (strcmp(sets_type, "all with links")==0)
+    {
+        this->make_all_futures(method);
+        this->make_all_pasts(method);
+    }
+    
+    else if (strcmp(sets_type, "all")==0)
     {
         this->make_all_but_links();
     }

@@ -44,7 +44,7 @@ class EmbeddedCauset: public Causet
                        bool use_transitivity = true,
                        bool make_sets = false,
                        bool make_links = false,
-                       const char* sets_type = "both only");
+                       const char* sets_type = "all with links");
         
 
         // GETTERS
@@ -84,7 +84,7 @@ class EmbeddedCauset: public Causet
         // SAVE
         
         void save_causet(const char* path_file_ext,
-                         const char* storage_option);
+                         const char* storage_option = "sets");
 
 
         //MAKE ATTRIBUTES

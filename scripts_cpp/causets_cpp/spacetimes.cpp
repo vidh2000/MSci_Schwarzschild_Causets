@@ -90,6 +90,11 @@ func Spacetime::Causality()
     {
         if      (_dim == 4) return &Spacetime::BH_causal4D;
         else if (_dim == 2) return &Spacetime::BH_causal2D;
+        else
+        {
+            std::cout << "Please use D=2 or D=4 for Schwarzschild for now\n";
+            throw std::invalid_argument("problem");
+        }
     }
 }
 
