@@ -445,11 +445,11 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
 {
     std::ofstream out;
     out.open(path_file_ext);
-    out<<"Storage option, " << storage_option << std::endl;
-    out<<"Size, "<<_size<<std::endl;
-    out<<"Dimension, "<<_spacetime._dim<<std::endl;
-    out<<"Shape, "<<_shape._name<<std::endl;
-    out<<"Spacetime, "<<_spacetime._name<<std::endl;
+    out<<"Storage option," << storage_option << std::endl;
+    out<<"Size,"<<_size<<std::endl;
+    out<<"Dimension,"<<_spacetime._dim<<std::endl;
+    out<<"Shape,"<<_shape._name<<std::endl;
+    out<<"Spacetime,"<<_spacetime._name<<std::endl;
     if (strcmp(storage_option, "cmatrix")==0)
     {
         out<<"Matrix,"<<std::endl;

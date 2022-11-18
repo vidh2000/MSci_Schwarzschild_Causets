@@ -153,37 +153,34 @@ class EmbeddedCauset(Causet):
                         vector of vectors of size (N,setsize_n)
 
         """
-        storage_option = str(np.genfromtxt(file, delimiter=',', dtype=None,
+        storage_option = str(np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[1])[0])
-        self.size = int(np.genfromtxt(file, delimiter=',', dtype=None,
+        self.size = int(np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[1])[1])
-        self.dim = int(np.genfromtxt(file, delimiter=',', dtype=None,
+        self.dim = int(np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[1])[2])
-        self.shape_name = str(np.genfromtxt(file, delimiter=',', dtype=None,
+        self.shape_name = str(np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[1])[3])
-        self.spacetime_name = str(np.genfromtxt(file, delimiter=',', dtype=None,
+        self.spacetime_name = str(np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[1])[4])
+        print("======================================================")
         print(storage_option, self.size, self.dim, self.shape_name,self.spacetime_name)
         if storage_option == "cmatrix":
-            self.cmatrix = np.genfromtxt(file, delimiter=',', dtype=None,
+            self.cmatrix = np.genfromtxt(file, delimiter=',', dtype='unicode',
                             usecols=[6, 6+self.size-1])
             raise ValueError("Please choose 'sets' storage_option.\
                             'cmatrix' is yet to be implemented properly...")
         elif storage_option == "sets":
-            pasts = np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[r for r in range(6, 6+self.size)])
-            futures = np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[r for r in range(6+  self.size+1,
-                                                      6+2*self.size+1)])
-            past_links = np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[r for r in range(6+2*self.size+2,
-                                                      6+3*self.size+2)])
-            fut_links = np.genfromtxt(file, delimiter=',', dtype=None,
-                            usecols=[r for r in range(6+3*self.size+3,
-                                                      6+4*self.size+3)])
+            pasts = np.genfromtxt(file, delimiter=',',
+                    dtype='unicode')[6:6+self.size-1]
+            futures = np.genfromtxt(file, delimiter=',',
+                dtype='unicode')[6+self.size+1,6+2*self.size]
+            past_links = np.genfromtxt(file, delimiter=',',
+                dtype='unicode')[6+2*self.size+2,6+3*self.size+1]
+            fut_links = np.genfromtxt(file, delimiter=',',
+            dtype='unicode')[6+3*self.size+3,6+4*self.size+2]
         else: 
-            raise ValueError("Stored data is not in the format of\
-                             'sets' or 'cmatrix'.")
+            raise ValueError("Stored data is not in the format of 'sets' or 'cmatrix'.")
         
         self.coords = np.genfromtxt(file, delimiter=',', dtype=None,
                             usecols=[r for r in range(-self.size,0)])
