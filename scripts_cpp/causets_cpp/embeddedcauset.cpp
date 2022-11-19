@@ -817,11 +817,11 @@ void EmbeddedCauset::make_cmatrix_and_allfuts(bool special)
     _CMatrix.resize(_size, vector<int>(_size,0));
     _futures.resize(_size);
     _future_links.resize(_size);
-    for(int i=_size-1; i>-1; i--) //can skip the very last
+    for(int i=_size-2; i>-1; i--) //can skip the very last
     {
         for(int j=i+1; j<_size; j++) //j can only follow i
         {
-            if (_CMatrix[j][i] != 0)
+            if (_CMatrix[i][j] != 0)
                 {continue;}
             if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
             {

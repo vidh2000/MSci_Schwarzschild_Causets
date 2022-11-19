@@ -172,13 +172,13 @@ class EmbeddedCauset(Causet):
             raise ValueError("Please choose 'sets' storage_option.\
                             'cmatrix' is yet to be implemented properly...")
         elif storage_option == "sets":
-            pasts = [[int(v) for v in line if v != "\n"] for line in
+            self.pasts = [[int(v) for v in line if v != "\n"] for line in
                                 lines[6:6+self.size]]
-            futures = [[int(v) for v in line if v != "\n"] for line in
+            self.futures = [[int(v) for v in line if v != "\n"] for line in
                                 lines[6+self.size+1:6+2*self.size+1]]
-            past_links = [[int(v) for v in line if v != "\n"] for line in
+            self.past_links = [[int(v) for v in line if v != "\n"] for line in
                                 lines[6+2*self.size+2:6+3*self.size+2]]
-            fut_links = [[int(v) for v in line if v != "\n"] for line in
+            self.fut_links = [[int(v) for v in line if v != "\n"] for line in
                                 lines[6+3*self.size+3:6+4*self.size+3]]
         else: 
             raise ValueError("Stored data is not in the format of 'sets' or 'cmatrix'.")
@@ -193,12 +193,13 @@ class EmbeddedCauset(Causet):
                 e = CausetEvent(label=(1 + i), coordinates=coord)
                 eventSet.append(e)
             self._events = eventSet
-            for (e,past,fut,plink,flink) in zip(self._events,
-                                        pasts,futures,past_links,fut_links):
+            for (e,past,fut,plink,flink) in zip(self._events, self.pasts,
+                            self.futures,self.past_links,self.fut_links):
                 e._prec = set(self._events[k] for k in past)
                 e._succ = set(self._events[k] for k in fut)
                 e._lprec = set(self._events[k] for k in plink)
                 e._lsucc = set(self._events[k] for k in flink)
+            self._events = set(self._events)
         elif storage_option == "cmatrix":
             raise ValueError("Please choose 'sets' storage_option.\
                             'cmatrix' is yet to be implemented properly...")

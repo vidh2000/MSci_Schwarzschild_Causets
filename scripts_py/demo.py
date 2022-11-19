@@ -18,17 +18,16 @@ from causets.causetevent import CausetEvent
 import causets.causetplotting as cplt  
 
 import matplotlib.pyplot as plt
-#%%
+
 
 # Create a sprinkle from de Sitter spacetime with cosmological horizon at
 # radius 1.0. Coordinates range over a hollow cylinder with height 3.0. 30% of
 # the cylinder interior is hollow.
 S: CoordinateShape = CoordinateShape(3, 'cylinder', duration=3.0, hollow=0.3)
 S: CoordinateShape = CoordinateShape(3,"bicone",radius=1)
-C: SprinkledCauset = SprinkledCauset(intensity=5.0,
+C: SprinkledCauset = SprinkledCauset(intensity= 50.0,
                                      spacetime=FlatSpacetime(3), shape=S)
 e: CausetEvent = C.CentralAntichain().pop()  # pick one event
-
 
 # Plotting setup:
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
@@ -39,15 +38,15 @@ S.plot(dims)  # plot the embedding shape
 # Add causet plots and show result:
 cplt.plot(C, dims=dims, events={'alpha': 0.05},
           links={'alpha': 0.1, 'linewidth': 0.5}, labels=False)
-cplt.plot(list(e.Cone), dims=dims, spacetime=C.Spacetime,
-          events={'markerfacecolor': 'cs:darkblue'},
-          links={'alpha': 0.6, 'linewidth': 1.5}, labels=False)
+#cplt.plot(list(e.Cone), dims=dims, spacetime=C.Spacetime,
+#          events={'markerfacecolor': 'cs:darkblue'},
+#          links={'alpha': 0.6, 'linewidth': 1.5}, labels=False)
 # end times for past and future light-cone:
-timeslices: Tuple[float, float] = S.Limits(0)
-cplt.plot(e, dims=dims, spacetime=C.Spacetime,
-          events={'markerfacecolor': 'cs:red'},
-          pastcones={'alpha': 1.0}, futurecones={'alpha': 1.0},
-          time=timeslices)
+#timeslices: Tuple[float, float] = S.Limits(0)
+#cplt.plot(e, dims=dims, spacetime=C.Spacetime,
+#          events={'markerfacecolor': 'cs:red'},
+#          pastcones={'alpha': 1.0}, futurecones={'alpha': 1.0},
+#          time=timeslices)
 ax: cplt.Axes = cplt.gca()
 ax.set_xlabel('space' if dims[0] > 0 else 'time')
 ax.set_ylabel('space' if dims[1] > 0 else 'time')

@@ -10,17 +10,26 @@ from causets.causetevent import CausetEvent
 import causets.causetplotting as cplt  
 
 import matplotlib.pyplot as plt
-#%%
+
 
 C: EmbeddedCauset = EmbeddedCauset()
-S: CoordinateShape = CoordinateShape(3,"bicone",radius=4)
+S: CoordinateShape = CoordinateShape(3,"cube",edge=1.5)
 C.create_EmbeddedCauset_from_file("D:\Documents/Sola/Imperial College London/Year 4/MSci project/MSci_Schwarzschild_Causets/data/flatspace_bicone_causet.txt")
 
+print("Dim:", C.dim)
+# print("Coords:\n", C.coords)
+# print("pasts:\n", C.pasts)
+# print("futures:\n", C.futures)
+# print("Fut_links:\n", C.fut_links)
+# print("Past_links:\n", C.past_links)
 
 # Plotting setup:
 cplt.setDefaultColors('UniYork')  # using University of York brand colours
 
-dims: List[int] = [1,2,0]  # choose the (order of) plot dimensions
+if C.dim==3:
+    dims: List[int] = [1,2,0]  # choose the (order of) plot dimensions
+elif C.dim == 2:
+    dims: List[int] = [1,0]
 if len(dims) > 2:
     cplt.figure(figsize=(6.0, 6.0))
 S.plot(dims)  # plot the embedding shape

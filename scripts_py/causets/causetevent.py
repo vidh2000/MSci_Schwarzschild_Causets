@@ -291,6 +291,7 @@ class CausetEvent(object):
         try:
             return other in self._lprec
         except AttributeError:
+            print("Attribute error in pastlink")
             self.link()
             return other in self._lprec
 
@@ -301,6 +302,7 @@ class CausetEvent(object):
         try:
             return other in self._lsucc
         except AttributeError:
+            print("Attribute error in futlink")
             self.link()
             return other in self._lsucc
 
@@ -331,6 +333,8 @@ class CausetEvent(object):
     ####################################################################
     @staticmethod
     def LinkCountOf(eventSet: Set['CausetEvent']) -> int:
+        print("Pastlinksum: ",sum([len(e.LinkPast & eventSet) for e in eventSet]))
+        print("Futurelinksum: ",sum([len(e.LinkFuture & eventSet) for e in eventSet]))
         return sum([len(e.LinkPast & eventSet) for e in eventSet])
 
     @property

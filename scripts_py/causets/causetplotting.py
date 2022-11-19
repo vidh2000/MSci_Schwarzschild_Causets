@@ -470,12 +470,15 @@ def Plotter(E: Union[CausetEvent, List[CausetEvent], EmbeddedCauset],
         # plot links, events, labels:
         l: int = -1
         c_a: np.ndarray
+        print("LinkCount = ", linkCount)
+        print("EventCount = ", eventCount)
         _hlnk = [None] * linkCount  # holds link artists
         _hvnt = [None] * eventCount  # holds event artists
         _hlbl = [None] * eventCount  # holds label artists
         if 'timedepth' in plotting:
             # ====================
             # dynamic plots only
+            print("in line 481... not what we want? ")
             for i, a in enumerate(events):
                 c_a = np.array(getattr(a, coordattr))  # plot coordinates of a
                 i_t_dist = c_a[0] - time[0]  # distance from a to time
@@ -558,6 +561,7 @@ def Plotter(E: Union[CausetEvent, List[CausetEvent], EmbeddedCauset],
             # static plots only
             if plotting_links:
                 eps: float = 0.0000001
+                print("len(events) = ", len(events))
                 for i, a in enumerate(events):
                     c_a = np.array(getattr(a, coordattr))
                     for j in range(i + 1, eventCount):
