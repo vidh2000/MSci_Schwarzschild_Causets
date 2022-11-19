@@ -567,17 +567,11 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     const char* sets_type)// = "both only")
 {
     if (strcmp(sets_type, "all with links")==0)
-    {
-        
+    {  
         std::cout << "Making all pasts..\n";
         this->make_cmatrix_and_allpasts(special);
         std::cout << "Making all futures..\n";
         this->make_cmatrix_and_allfuts(special);
-
-        // std::cout << "Making all futures..\n";
-        // this->make_all_futures(method);
-        // std::cout << "Making all pasts..\n";
-        // this->make_all_pasts(method);
     }
     
     else if (strcmp(sets_type, "all")==0)
@@ -933,11 +927,11 @@ void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
             {
                 for(int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[j][i] != 0)
+                    if (_CMatrix[i][j] != 0)
                         {continue;}
                     else if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                     {
-                        _CMatrix[j][i] = special_factor;
+                        _CMatrix[i][j] = special_factor;
                         _futures[i].insert(j);
                         _futures[i].insert(_futures[j].begin(), 
                                             _futures[j].end());
@@ -958,7 +952,7 @@ void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
                 {
                     if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                     {
-                        _CMatrix[j][i] = 1;
+                        _CMatrix[i][j] = 1;
                         _futures[i].insert(j);
                     }
                 }
@@ -1046,7 +1040,7 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
         {
             for(int j=i+1; j<_size; j++) //j can only follow i
             {
-                if (_CMatrix[j][i] != 0)
+                if (_CMatrix[i][j] != 0)
                     {continue;}
                 else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
                 {

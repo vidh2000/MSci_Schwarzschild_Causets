@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 C: EmbeddedCauset = EmbeddedCauset()
 S: CoordinateShape = CoordinateShape(3,"cube",edge=1.5)
-C.create_EmbeddedCauset_from_file("D:\Documents/Sola/Imperial College London/Year 4/MSci project/MSci_Schwarzschild_Causets/data/flatspace_bicone_causet.txt")
+C.create_EmbeddedCauset_from_file("../data/flatspace_bicone_causet.txt")
 
 print("Dim:", C.dim)
 # print("Coords:\n", C.coords)

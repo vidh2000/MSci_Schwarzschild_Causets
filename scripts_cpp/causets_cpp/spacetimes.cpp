@@ -192,13 +192,12 @@ vector<bool> Spacetime::Flat_causal(vector<double> xvec, vector<double> yvec,
     double t_delta2 = t_delta*t_delta;
     double space_delta2 = 0;
     for (int i = 1; i<yvec.size(); i++){
-        double space_delta_i = (yvec[i]-xvec[i]);
+        double space_delta_i = yvec[i]-xvec[i];
         space_delta2 += space_delta_i*space_delta_i;}
     bool isCausal = t_delta2 >= space_delta2;
     return {isCausal,
             (t_delta >= 0.0) && isCausal,
-            (t_delta < 0.0) && isCausal
-           };
+            (t_delta < 0.0) && isCausal};
 }
 
 /**
