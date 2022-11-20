@@ -47,11 +47,13 @@ using std::unordered_set;
  * @param make_matrix: bool, if true make matrix.
  * @param make_sets: bool, if true make set (see sets_type)
  * @param make_links: bool, if true make links (see sets_type)
- * @param sets_type: const char* specifying the type of set:
- * - "past": make _past_links
- * - "future": make _future_links
+ * @param generation_mode: const char* specifying the generation method:
+ * - "all with links" : make EVERYTHING overwriting make_matrix, make_sets,
+ * make_links.
  * - "both only": makes both past and future, OVERWRITES make_matrix and
  * make_links, making them false. 
+ * - "past": make _past_links
+ * - "future": make _future_links
  * @param use_transitivity: bool, if true use also transitivity to establish
  * causality relations. 
  */
@@ -64,7 +66,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
                                 bool use_transitivity,// = true,
                                 bool make_sets,// = false,
                                 bool make_links,// = false,
-                                const char* sets_type)// = "both only"
+                                const char* generation_mode)// = "both only"
 {
     _size = coordinates.size();
     _coords = coordinates;
@@ -72,7 +74,7 @@ EmbeddedCauset::EmbeddedCauset(Spacetime spacetime,
     _shape = shape;
 
     this->make_attrs("coordinates", make_matrix, special, use_transitivity,
-                     make_sets, make_links, sets_type);
+                     make_sets, make_links, generation_mode);
 }
 
 
@@ -550,13 +552,15 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
  * make_links is true, it is compulsorily true.
  * @param make_sets: bool, if true (non-default) make set (see sets_type)
  * @param make_links: bool, if true (non-default) make links (see sets_type)
- * @param sets_type: const char* specifying the type of set:
- * - "all" : OVERWRITE make_matrix and make_links -> 
+ * @param generation_mode: const char* specifying the generation method:
+ * - "all with links" : make EVERYTHING overwriting make_matrix, make_sets,
+ * make_links.
+  * - "all" : Overwrite make_matrix and make_links and 
  * make CMatrix, _past and _futures. NOT LINKS. NOT SPECIAL. 
- * - "both only" : OVERWRITE make_matrix and make_links 
- * -> only do pasts and futures.
- * - "past": (default) make past related sets. 
- * - "future": make future related sets.  
+ * - "both only": makes both past and future, OVERWRITES make_matrix and
+ * make_links, making them false. 
+ * - "past": make _past_links
+ * - "future": make _future_links
  */
 void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_matrix,

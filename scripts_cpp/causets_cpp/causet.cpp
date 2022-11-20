@@ -83,7 +83,7 @@ void Causet::make_sets_fromC()
             {
                 // Add i and its past to the past of j
                 _pasts[j].insert(i);
-                _pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
+                //_pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
                 // Insert j into i's future and into
                 // the future of elements in i's past
                 _futures[i].insert(j);
@@ -95,6 +95,7 @@ void Causet::make_sets_fromC()
         }
     }
 }
+
 void Causet::make_cmatrix(){}
 void Causet::make_pasts(){}
 void Causet::make_futures(){}
@@ -520,7 +521,7 @@ void Causet::saveC(const char* path_file_ext)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-//\\ INTERVALS   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+// INTERVALS   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 /**

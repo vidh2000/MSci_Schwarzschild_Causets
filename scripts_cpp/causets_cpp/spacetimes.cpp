@@ -727,33 +727,33 @@ bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
     {return Spacetime::BH_int_dt_du (u1, u2, M, c) + t1<= t2;}
 
 
-
+///////////////////////////////////////
 // BH Coordinate Transformations
-
+///////////////////////////////////////
 
 /**
  * @brief Turn ingoing Eddington Finkelstein coordinates into Schwarzschild.
  * 
- * @param xvec std::vector<double>& : coordinates which get changed
+ * @param xvec std::vector<double>& : vector which gets changed
  * @param mass double : mass of BH
- * @param method const char* :
+ * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
  * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
  */
-void Spacetime::inEFtoS (std::vector<double> &xvec, double mass,
-                        const char* method)
+void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
+                        const char* EFtype)
 {
-    if (strcmp(method, "original")==0)
+    if (strcmp(EFtype, "original")==0)
     {
         double arg = xvec[1]/(2*mass) - 1;
         if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
         else        xvec[0] -= 2*mass*std::log(-arg);
     }
-    else if (strcmp(method, "tortoise")==0)
+    else if (strcmp(EFtype, "tortoise")==0)
     {
         double arg = xvec[1]/(2*mass) - 1;
-        if (arg>=0) xvec[0] -= xvec[0] + 2*mass*std::log(arg);
-        else        xvec[0] -= xvec[0] + 2*mass*std::log(-arg);
+        if (arg>=0) xvec[0] -= xvec[1] + 2*mass*std::log(arg);
+        else        xvec[0] -= xvec[1] + 2*mass*std::log(-arg);
     }
     else
     {
@@ -763,29 +763,46 @@ void Spacetime::inEFtoS (std::vector<double> &xvec, double mass,
 }
 
 /**
+ * @brief Turn ingoing Eddington Finkelstein coordinates into Schwarzschild.
+ * 
+ * @param coords std::vector<vector<double>>& : list of coordinates getting
+ *  changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ */
+void Spacetime::InEFtoS (std::vector<std::vector<double>> &coords, double mass,
+                        const char* EFtype)
+{
+    for (std::vector<double> xvec : coords)
+        {Spacetime::InEFtoS(xvec, mass, EFtype);}
+}
+
+
+/**
  * @brief Turn Schwarzschild coordinates into ingoing Eddington Finkelstein.
  * 
- * @param xvec std::vector<double>& : coordinates getting changed
+ * @param xvec std::vector<double>& : vector getting changed
  * @param mass double : mass of BH
- * @param method const char* :
+ * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M*ln|r/2M - 1| (as in He, Ridoeut)
  * - "tortoise" : t_EF = ts + r + 2M*ln|r/2M - 1| (as tortoise in Wikipedia's EF)
- * @return std::vector<double> : nw coordinates
  */
-void Spacetime::StoinEF (std::vector<double> &xvec, double mass,
-                        const char* method)
+void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
+                        const char* EFtype)
 {
-    if (strcmp(method, "original")==0)
+    if (strcmp(EFtype, "original")==0)
     {
         double arg = xvec[1]/(2*mass) - 1;
         if (arg>=0) xvec[0] += 2*mass*std::log(arg);
         else        xvec[0] += 2*mass*std::log(-arg);
     }
-    else if (strcmp(method, "tortoise")==0)
+    else if (strcmp(EFtype, "tortoise")==0)
     {
         double arg = xvec[1]/(2*mass) - 1;
-        if (arg>=0) xvec[0] += xvec[0] + 2*mass*std::log(arg);
-        else        xvec[0] += xvec[0] + 2*mass*std::log(-arg);
+        if (arg>=0) xvec[0] += xvec[1] + 2*mass*std::log(arg);
+        else        xvec[0] += xvec[1] + 2*mass*std::log(-arg);
     }
     else
     {
@@ -793,6 +810,190 @@ void Spacetime::StoinEF (std::vector<double> &xvec, double mass,
         throw std::invalid_argument("Wrong method");
     }
 }
+
+
+/**
+ * @brief Turn Schwarzschild coordinates into ingoing Eddington Finkelstein.
+ * 
+ * @param coords vector<vector<double>>& : list of coordinates getting changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M*ln|r/2M - 1| (as in He, Ridoeut)
+ * - "tortoise" : t_EF = ts + r + 2M*ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ */
+void Spacetime::StoInEF (std::vector<std::vector<double>> &coords, double mass,
+                        const char* EFtype)
+{
+    for (std::vector<double> xvec : coords)
+        {Spacetime::StoInEF(xvec, mass, EFtype);}
+}
+
+
+/**
+ * @brief Turn Gullstrand–Painlevé into Schwarzschild coordinates.
+ * 
+ * @param coords vector<double>& : vector getting changed
+ * @param mass double : mass of BH
+ */
+void Spacetime::GPtoS (std::vector<double>& xvec,  double mass = 1)
+{
+    double y = std::sqrt(xvec[1]/(2*mass));
+    xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
+}
+
+
+/**
+ * @brief Turn Gullstrand–Painlevé into Schwarzschild coordinates.
+ * 
+ * @param coords vector<vector<double>>& : list of coordinates getting changed
+ * @param mass double : mass of BH
+ */
+void Spacetime::GPtoS (std::vector<std::vector<double>>& coords, 
+                       double mass = 1)
+{
+    for (std::vector<double> xvec : coords)
+        {Spacetime::GPtoS(xvec, mass);}
+}
+
+
+/**
+ * @brief Turn Schwarzschild coordinates into Gullstrand–Painlevé.
+ * 
+ * @param coords vector<double>& : vector getting changed
+ * @param mass double : mass of BH
+ */
+void Spacetime::StoGP (std::vector<double>& xvec, double mass = 1)
+{
+    double y = std::sqrt(xvec[1]/(2*mass));
+    xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
+}
+
+
+/**
+ * @brief Turn Schwarzschild coordinates into Gullstrand–Painlevé.
+ * 
+ * @param coords vector<vector<double>>& : list of coordinates getting changed
+ * @param mass double : mass of BH
+ */
+void Spacetime::StoGP (std::vector<std::vector<double>>& coords, 
+                       double mass = 1)
+{
+    for (std::vector<double> xvec : coords)
+        {Spacetime::StoGP(xvec, mass);}
+}
+
+
+/**
+ * @brief Turn ingoing Eddington Finkelstein coordinates into 
+ * Gullstrand–Painlevé.
+ * 
+ * @param xvec std::vector<double>& : vector which gets changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ */
+void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass = 1,
+                          const char* EFtype = "original")
+{
+    if (strcmp(EFtype, "original")==0)
+    {
+        double y = std::sqrt(xvec[1]/(2*mass));
+        xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
+        double arg = xvec[1]/(2*mass) - 1;
+        if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
+        else        xvec[0] -= 2*mass*std::log(-arg);
+    }
+    else if (strcmp(EFtype, "tortoise")==0)
+    {
+        double y = std::sqrt(xvec[1]/(2*mass));
+        xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
+        double arg = xvec[1]/(2*mass) - 1;
+        if (arg>=0) xvec[0] -= xvec[1] + 2*mass*std::log(arg);
+        else        xvec[0] -= xvec[1] + 2*mass*std::log(-arg);
+    }
+    else
+    {
+        std::cout<<"method in StoinEF must be 'original' or 'tortoise'\n";
+        throw std::invalid_argument("Wrong method");
+    }
+}
+
+
+/**
+ * @brief Turn ingoing Eddington Finkelstein coordinates into 
+ * Gullstrand–Painlevé.
+ * 
+ * @param xvec std::vector<vector<double>>& : list of vectors geting changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ */
+void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords, 
+                          double mass = 1,
+                          const char* EFtype = "original")
+{
+    for (std::vector<double> xvec : coords)
+        {InEFtoGP(xvec, mass, EFtype);}
+}
+
+
+/**
+ * @brief Turn Gullstrand–Painlevé into ingoing Eddington Finkelstein 
+ * coordinates.
+ * 
+ * @param xvec std::vector<double>& : vector which gets changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ */
+void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass = 1,
+                          const char* EFtype = "original")
+{
+    if (strcmp(EFtype, "original")==0)
+    {
+        double y = std::sqrt(xvec[1]/(2*mass));
+        xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
+        double arg = xvec[1]/(2*mass) - 1;
+        if (arg>=0) xvec[0] += 2*mass*std::log(arg);
+        else        xvec[0] += 2*mass*std::log(-arg);
+    }
+    else if (strcmp(EFtype, "tortoise")==0)
+    {
+        double y = std::sqrt(xvec[1]/(2*mass));
+        xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
+        double arg = xvec[1]/(2*mass) - 1;
+        if (arg>=0) xvec[0] += xvec[1] + 2*mass*std::log(arg);
+        else        xvec[0] += xvec[1] + 2*mass*std::log(-arg);
+    }
+    else
+    {
+        std::cout<<"method in StoinEF must be 'original' or 'tortoise'\n";
+        throw std::invalid_argument("Wrong method");
+    }
+}
+
+
+/**
+ * @brief Turn Gullstrand–Painlevé into ingoing Eddington Finkelstein 
+ * coordinates.
+ * 
+ * @param xvec std::vector<vector<double>>& : list of vectors geting changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ */
+void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
+                          double mass = 1,
+                          const char* EFtype = "original")
+{
+    for (std::vector<double> xvec : coords)
+        {GPtoInEF(xvec, mass, EFtype);}
+}
+
 
 
 
@@ -800,18 +1001,6 @@ void Spacetime::StoinEF (std::vector<double> &xvec, double mass,
 
 
 
-
-
 // int main(){
 // std::cout << "spacetimes.cpp WORKS! :)";
 // }
-
-// //BlackHoleSpacetime::~BlackHoleSpacetime(){}
-
-
-
-
-
-// // int main(){
-// // std::cout << "spacetimes.cpp WORKS! :)";
-// // }

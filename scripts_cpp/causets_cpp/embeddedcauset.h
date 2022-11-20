@@ -44,7 +44,7 @@ class EmbeddedCauset: public Causet
                        bool use_transitivity = true,
                        bool make_sets = false,
                        bool make_links = false,
-                       const char* sets_type = "all with links");
+                       const char* generation_mode = "all with links");
         
 
         // GETTERS

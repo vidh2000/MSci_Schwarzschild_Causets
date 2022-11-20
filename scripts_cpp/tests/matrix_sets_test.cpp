@@ -79,7 +79,7 @@ int main(){
               0
     */
    vector<vector<double>> coords = { { 0., 0.},
-                                     { 2. -1.},
+                                     { 2.,-1.},
                                      { 2., 1.},
 
                                      { 4., 0.},
@@ -116,10 +116,10 @@ int main(){
 
                                     {0,1,2,3,4,5},
                                     {0,1,2,3,4},
-                                    {0,1,2,3,4,5,6,7},
+                                    {0,1,2,3,4,5,7},
                                     
-                                    {0,1,2,3,4,5,6,7},
-                                    {0,1,2,3,4,5,6,7}};
+                                    {0,1,2,3,4,7},
+                                    {0,1,2,3,4,7}};
     
     vector<vector<int>> mypast_links = {{ },
                                         {0},
@@ -131,7 +131,7 @@ int main(){
 
                                         {5},
                                         {4},
-                                        {7},
+                                        {5, 7},
                                         
                                         {7},
                                         {7}};
@@ -157,7 +157,7 @@ int main(){
 
                                         {4},
                                         {5,7},
-                                        {6},
+                                        {6, 8},
 
                                         { },
                                         {8,9,10},
@@ -172,8 +172,11 @@ int main(){
                                        true, true, "past");
     EmbeddedCauset Cf = EmbeddedCauset(Fst, S, coords, true, false, true,
                                        true, true, "future");
+    EmbeddedCauset C_all = EmbeddedCauset(Fst, S, coords, true, false, true,
+                                       true, true, "all with links");
+    
     //A closer look to the messy ones
-    cout<<"Following Causalities should all return 0\n";
+    cout<<"Testing some Causalities, the following should all return 0\n";
     cout<<Fst.Flat_causal(coords[1], coords[2])[0]<<endl;
     cout<<Fst.Flat_causal(coords[5], coords[7])[0]<<endl;
     cout<<Fst.Flat_causal(coords[6], coords[7])[0]<<endl;
@@ -181,10 +184,12 @@ int main(){
     cout<<Fst.Flat_causal(coords[6], coords[9])[0]<<endl;
     cout<<Fst.Flat_causal(coords[6], coords[10])[0]<<endl;
 
+
     cout<<"\n ----- CMATRIX ------\n";
     cout<<"Should have the following CMatrix\n";
     print_vector(myC);
-    cout<<"Our CMatrix minus One done with the past\n";
+    cout<<"Our CMatrix minus One done with the past (hope all 0s)\n";
+    cout<<"{";
     for (int i = 0; i<myC.size(); i++)
     {
         cout<<"{";
@@ -192,7 +197,9 @@ int main(){
             {cout<<myC[i][j]-Cp._CMatrix[i][j]<<", ";}
         cout<<"}\n";
     }
-    cout<<"Our CMatrix minus One done with the future\n";
+    cout<<"}\n";
+    cout<<"Our CMatrix minus One done with the future (hope all 0s)\n";
+    cout<<"{";
     for (int i = 0; i<myC.size(); i++)
     {
         cout<<"{";
@@ -200,12 +207,24 @@ int main(){
             {cout<<myC[i][j]-Cf._CMatrix[i][j]<<", ";}
         cout<<"}\n";
     }
+    cout<<"}\n";
+    cout<<"Our CMatrix minus One done with all (hope all 0s)\n";
+    cout<<"{";
+    for (int i = 0; i<myC.size(); i++)
+    {
+        cout<<"{";
+        for (int j = 0; j<myC.size(); j++)
+            {cout<<myC[i][j]-C_all._CMatrix[i][j]<<", ";}
+        cout<<"}\n";
+    }
+    cout<<"}\n";
 
 
     cout<<"\n ----- PASTS ------\n";
     cout<<"Should have the following Past Sets\n";
     print_vector(mypasts);
-    cout<<"We got\n";
+    cout<<"We got with past\n";
+    cout<<"{";
     for (auto past_i : Cp._pasts)
     {
         cout<<"{";
@@ -213,9 +232,21 @@ int main(){
             {cout<<e_i<<", ";}
         cout<<"}\n";
     }
+    cout<<"}\n";
+    cout<<"We got with all with links\n";
+    cout<<"{";
+    for (auto past_i : C_all._pasts)
+    {
+        cout<<"{";
+        for (int e_i : past_i)
+            {cout<<e_i<<", ";}
+        cout<<"}\n";
+    }
+    cout<<"}\n";
     cout<<"Should have the following Past Links\n";
     print_vector(mypast_links);
-    cout<<"We got\n";
+    cout<<"We got with pasts\n";
+    cout<<"{";
     for (auto past_i : Cp._past_links)
     {
         cout<<"{";
@@ -223,11 +254,24 @@ int main(){
             {cout<<e_i<<", ";}
         cout<<"}\n";
     }
+    cout<<"}\n";
+    cout<<"We got with all with links\n";
+    cout<<"{";
+    for (auto past_i : C_all._past_links)
+    {
+        cout<<"{";
+        for (int e_i : past_i)
+            {cout<<e_i<<", ";}
+        cout<<"}\n";
+    }
+    cout<<"}\n";
+
 
     cout<<"\n ----- FUTURES ------\n";
     cout<<"Should have the following Future Sets\n";
     print_vector(myfuts);
-    cout<<"We got\n";
+    cout<<"We got from future\n";
+    cout<<"{";
     for (auto fut_i : Cf._futures)
     {
         cout<<"{";
@@ -235,9 +279,21 @@ int main(){
             {cout<<e_i<<", ";}
         cout<<"}\n";
     }
+    cout<<"}\n";
+    cout<<"We got from all with links\n";
+    cout<<"{";
+    for (auto fut_i : C_all._futures)
+    {
+        cout<<"{";
+        for (int e_i : fut_i)
+            {cout<<e_i<<", ";}
+        cout<<"}\n";
+    }
+    cout<<"}\n";
     cout<<"Should have the following Future Links\n";
     print_vector(myfut_links);
-    cout<<"We got\n";
+    cout<<"We got from future\n";
+    cout<<"{";
     for (auto fut_i : Cf._future_links)
     {
         cout<<"{";
@@ -245,6 +301,19 @@ int main(){
             {cout<<e_i<<", ";}
         cout<<"}\n";
     }
+    cout<<"}\n";
+    cout<<"We got from all with links\n";
+    cout<<"{";
+    for (auto fut_i : C_all._future_links)
+    {
+        cout<<"{";
+        for (int e_i : fut_i)
+            {cout<<e_i<<", ";}
+        cout<<"}\n";
+    }
+    cout<<"}\n";
+    
+    
     return 0;
 
 
