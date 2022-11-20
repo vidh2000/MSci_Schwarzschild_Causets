@@ -835,7 +835,7 @@ void Spacetime::StoInEF (std::vector<std::vector<double>> &coords, double mass,
  * @param coords vector<double>& : vector getting changed
  * @param mass double : mass of BH
  */
-void Spacetime::GPtoS (std::vector<double>& xvec,  double mass = 1)
+void Spacetime::GPtoS (std::vector<double>& xvec,  double mass)
 {
     double y = std::sqrt(xvec[1]/(2*mass));
     xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
@@ -849,7 +849,7 @@ void Spacetime::GPtoS (std::vector<double>& xvec,  double mass = 1)
  * @param mass double : mass of BH
  */
 void Spacetime::GPtoS (std::vector<std::vector<double>>& coords, 
-                       double mass = 1)
+                       double mass)
 {
     for (std::vector<double> xvec : coords)
         {Spacetime::GPtoS(xvec, mass);}
@@ -862,7 +862,7 @@ void Spacetime::GPtoS (std::vector<std::vector<double>>& coords,
  * @param coords vector<double>& : vector getting changed
  * @param mass double : mass of BH
  */
-void Spacetime::StoGP (std::vector<double>& xvec, double mass = 1)
+void Spacetime::StoGP (std::vector<double>& xvec, double mass)
 {
     double y = std::sqrt(xvec[1]/(2*mass));
     xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
@@ -876,7 +876,7 @@ void Spacetime::StoGP (std::vector<double>& xvec, double mass = 1)
  * @param mass double : mass of BH
  */
 void Spacetime::StoGP (std::vector<std::vector<double>>& coords, 
-                       double mass = 1)
+                       double mass)
 {
     for (std::vector<double> xvec : coords)
         {Spacetime::StoGP(xvec, mass);}
@@ -893,8 +893,8 @@ void Spacetime::StoGP (std::vector<std::vector<double>>& coords,
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
  * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
  */
-void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass = 1,
-                          const char* EFtype = "original")
+void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
+                          const char* EFtype)
 {
     if (strcmp(EFtype, "original")==0)
     {
@@ -931,8 +931,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass = 1,
  * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
  */
 void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords, 
-                          double mass = 1,
-                          const char* EFtype = "original")
+                          double mass, const char* EFtype)
 {
     for (std::vector<double> xvec : coords)
         {InEFtoGP(xvec, mass, EFtype);}
@@ -949,8 +948,8 @@ void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords,
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
  * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
  */
-void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass = 1,
-                          const char* EFtype = "original")
+void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
+                          const char* EFtype)
 {
     if (strcmp(EFtype, "original")==0)
     {
@@ -987,8 +986,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass = 1,
  * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
  */
 void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
-                          double mass = 1,
-                          const char* EFtype = "original")
+                          double mass, const char* EFtype)
 {
     for (std::vector<double> xvec : coords)
         {GPtoInEF(xvec, mass, EFtype);}

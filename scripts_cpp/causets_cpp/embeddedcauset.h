@@ -71,7 +71,7 @@ class EmbeddedCauset: public Causet
         bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
 
-        // MODIFIERS
+        // MODIFIERS (NONE TESTED)
 
         void sort_coords(int dim = 0, bool reverse = false);
         void relabel(const char* method = "0", bool reverse = false);   

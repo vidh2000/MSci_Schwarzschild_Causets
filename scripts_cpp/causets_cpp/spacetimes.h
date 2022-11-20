@@ -137,36 +137,30 @@ class Spacetime
 
         // BH Coordinate Transformations
 
-        static void InEFtoS (std::vector<double>& xvec, 
-                             double mass = 1,
+        static void InEFtoS (std::vector<double>& xvec, double mass = 1,
                              const char* EFtype = "original");
         static void InEFtoS (std::vector<std::vector<double>>& coords, 
                              double mass = 1,
                              const char* EFtype = "original");
-        static void StoInEF (std::vector<double>& xvec,
-                             double mass = 1,
+        static void StoInEF (std::vector<double>& xvec, double mass = 1,
                              const char* EFtype = "original");
         static void StoInEF (std::vector<std::vector<double>>& coords,
                              double mass = 1,
                              const char* EFtype = "original");
 
-        static void GPtoS (std::vector<double>& xvec, 
-                             double mass = 1);
+        static void GPtoS (std::vector<double>& xvec, double mass = 1);
         static void GPtoS (std::vector<std::vector<double>>& coords, 
                              double mass = 1);
-        static void StoGP (std::vector<double>& xvec, 
-                             double mass = 1);
+        static void StoGP (std::vector<double>& xvec, double mass = 1);
         static void StoGP (std::vector<std::vector<double>>& coords, 
                              double mass = 1);
         
-        static void InEFtoGP (std::vector<double>& xvec, 
-                             double mass = 1,
+        static void InEFtoGP (std::vector<double>& xvec, double mass = 1,
                              const char* EFtype = "original");
         static void InEFtoGP (std::vector<std::vector<double>>& coords, 
                              double mass = 1,
                              const char* EFtype = "original");
-        static void GPtoInEF (std::vector<double>& xvec,
-                             double mass = 1,
+        static void GPtoInEF (std::vector<double>& xvec, double mass = 1,
                              const char* EFtype = "original");
         static void GPtoInEF (std::vector<std::vector<double>>& coords,
                              double mass = 1,

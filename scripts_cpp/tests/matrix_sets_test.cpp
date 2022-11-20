@@ -195,7 +195,7 @@ int main(){
         cout<<"{";
         for (int j = 0; j<myC.size(); j++)
             {cout<<myC[i][j]-Cp._CMatrix[i][j]<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
     cout<<"Our CMatrix minus One done with the future (hope all 0s)\n";
@@ -205,7 +205,7 @@ int main(){
         cout<<"{";
         for (int j = 0; j<myC.size(); j++)
             {cout<<myC[i][j]-Cf._CMatrix[i][j]<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
     cout<<"Our CMatrix minus One done with all (hope all 0s)\n";
@@ -215,7 +215,7 @@ int main(){
         cout<<"{";
         for (int j = 0; j<myC.size(); j++)
             {cout<<myC[i][j]-C_all._CMatrix[i][j]<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
 
@@ -230,7 +230,7 @@ int main(){
         cout<<"{";
         for (int e_i : past_i)
             {cout<<e_i<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
     cout<<"We got with all with links\n";
@@ -240,7 +240,7 @@ int main(){
         cout<<"{";
         for (int e_i : past_i)
             {cout<<e_i<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
     cout<<"Should have the following Past Links\n";
@@ -252,7 +252,7 @@ int main(){
         cout<<"{";
         for (int e_i : past_i)
             {cout<<e_i<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
     cout<<"We got with all with links\n";
@@ -262,7 +262,7 @@ int main(){
         cout<<"{";
         for (int e_i : past_i)
             {cout<<e_i<<", ";}
-        cout<<"}\n";
+        cout<<"}";
     }
     cout<<"}\n";
 

@@ -45,6 +45,9 @@ using std::unordered_set;
  * @param coordinates: vector<vector<double>>: ith entry is coordinates of 
  * event i.
  * @param make_matrix: bool, if true make matrix.
+ * @param special bool : if true, -1 if links.
+ * @param use_transitivity: bool, if true use also transitivity to establish
+ * causality relations. 
  * @param make_sets: bool, if true make set (see sets_type)
  * @param make_links: bool, if true make links (see sets_type)
  * @param generation_mode: const char* specifying the generation method:
@@ -54,8 +57,6 @@ using std::unordered_set;
  * make_links, making them false. 
  * - "past": make _past_links
  * - "future": make _future_links
- * @param use_transitivity: bool, if true use also transitivity to establish
- * causality relations. 
  */
 EmbeddedCauset::EmbeddedCauset(){}
 EmbeddedCauset::EmbeddedCauset(Spacetime spacetime, 
@@ -572,10 +573,8 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
 {
     if (strcmp(sets_type, "all with links")==0)
     {  
-        std::cout << "Making all pasts..\n";
         this->make_cmatrix_and_allpasts(special);
-        std::cout << "Making all futures..\n";
-        this->make_cmatrix_and_allfuts(special);
+        this->make_all_futures("coordinates");
     }
     
     else if (strcmp(sets_type, "all")==0)
@@ -590,7 +589,6 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
 
     else if (make_matrix)
     {
-        std::cout << "in make_matrix...\n";
         _special_matrix = special && use_transitivity;
         if (make_links == false && make_sets == false)
         {
@@ -803,7 +801,7 @@ void EmbeddedCauset::make_cmatrix_and_allpasts(bool special)
 
 /**
  * @brief Creates _CMatrix, _futures and fut_links. Can only be from coords.
- * Transitivity is mandatory as links are bieng made.  
+ * Transitivity is mandatory as links are being made.  
  */
 void EmbeddedCauset::make_cmatrix_and_allfuts(bool special)
 {
@@ -812,6 +810,7 @@ void EmbeddedCauset::make_cmatrix_and_allfuts(bool special)
     double mass = _spacetime._mass;
 
     int special_factor = (special)? -1 : 1;
+    if (_CMatrix.size()!=0) _CMatrix.clear();
     _CMatrix.resize(_size, vector<int>(_size,0));
     _futures.resize(_size);
     _future_links.resize(_size);
@@ -1146,15 +1145,12 @@ void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
             // Check if j^th element is in pasts[i]
             if (set_contains(j, _pasts[i]))
                 {continue;}
-            else
-            {
-                if (strcmp(method, "coordinates")==0 &&
+            else if (strcmp(method, "coordinates")==0 &&
                     areTimelike(_coords[i], _coords[j]))
-                {
-                    _past_links[i].insert(j);
-                    _pasts[i].insert(j);
-                    _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
-                }
+            {
+                _past_links[i].insert(j);
+                _pasts[i].insert(j);
+                _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
             }
         }
     }
@@ -1173,30 +1169,38 @@ void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
  * - "pasts": create from already existing futures
  */
 void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
-{   
-    _futures.resize(_size);
-    _future_links.resize(_size);
-    // Loop through coordinates t_min -> t_max
-    for (int i =_size-1; i>-1; i--)
+{
+    if (strcmp(method, "coordinates")==0)
     {
-        //std::cout << "Event #"<< i+1 << std::endl;
-        for(int j=i+1; j<_size; j++)
+        auto xycausality = this->_spacetime.Causality();
+        std::vector<double> st_period = _spacetime._period;
+        double mass = _spacetime._mass;
+
+        _futures.resize(_size);
+        _future_links.resize(_size);
+        for(int i=_size-2; i>-1; i--) //can skip the very last
         {
-            if (set_contains(j, _futures[i]))
-                {continue;}
-            else
+            for(int j=i+1; j<_size; j++) //j can only follow i
             {
-                if (strcmp(method, "coordinates")==0 &&
-                    areTimelike(_coords[i], _coords[j]))
+                // Check if j^th element is in pasts[i]
+                if (set_contains(j, _futures[i]))
+                    {continue;}
+                else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
                 {
                     _future_links[i].insert(j);
                     _futures[i].insert(j);
-                    _futures[i].insert(_futures[j].begin(), _futures[j].end());
+                    _futures[i].insert(_futures[j].begin(), 
+                                        _futures[j].end());
                 }
             }
         }
     }
-    //std::cout <<"Finished sprinkling..." << std::endl;
+    else
+    {
+        std::cout<<"method must be 'coordinates' or 'cmatrix', but, you know,"
+                 <<" we have not implemented 'cmatrix'."<<std::endl;
+        throw std::invalid_argument("wrong method");
+    }
 }
 
 
