@@ -105,14 +105,19 @@ class Spacetime
         double BH_ds(std::vector<double> xvec, std::vector<double> yvec); 
 
         static std::vector<bool> BH_causal2D (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
-                                            std::vector<double> period={},
-                                            double mass = 0); 
+                                              std::vector<double> yvec,
+                                              std::vector<double> period={},
+                                              double mass = 0);
+
+        static std::vector<bool> BH_causal3D (std::vector<double> xvec, 
+                                              std::vector<double> yvec,
+                                              std::vector<double> period={},
+                                              double mass = 0); 
 
         static std::vector<bool> BH_causal4D (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
-                                            std::vector<double> period={},
-                                            double mass = 0);
+                                              std::vector<double> yvec,
+                                              std::vector<double> period={},
+                                              double mass = 0);
         
         static std::vector<bool> BH_last_resort(std::vector<double> xvec, 
                                                 std::vector<double> yvec,
