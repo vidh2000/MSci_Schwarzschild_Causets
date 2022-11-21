@@ -261,10 +261,11 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
                                     double mass,// = 0.5,
                                     std::string metric)// = "EF")
 {
-    if (dim != 4)
+
+    if (dim != 4 && dim != 2)
     {
-        std::cout<<"Dimension has to be 4."<<std::endl;
-        throw std::invalid_argument("Dimension has to be 4.");
+        std::cout<<"Dimension has to be 2 or 4."<<std::endl;
+        throw std::invalid_argument("Dimension has to be 2 or 4.");
     }
     _dim = dim;
     _name = "black hole";
@@ -296,7 +297,7 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal4D(yvec, xvec, period);}
+        {return Spacetime::BH_causal2D(yvec, xvec, period);}
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
