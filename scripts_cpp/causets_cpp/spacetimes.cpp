@@ -326,6 +326,140 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
 }
 
 
+/**
+ * @brief Causality algorithm for two events in 4D EF coordinates, from
+ * Song He and David Rideout 2009 Class. Quantum Grav. 26 125015. 
+ * 
+ * @param xvec vector<double> : EF coordinates of x.
+ * @param yvec vector<double> : EF coordinates of y.
+ * @param period vector<double> : period along SPATIAL coordinates. Currently 
+ * not implemented in BH, hence deafult is {}.
+ * @param mass : mass of Black Hole
+ * @return vector<bool> : {x-y timelike, x<=y, x>y}
+ */
+vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec, 
+                                    std::vector<double> yvec,
+                                    std::vector<double> period,
+                                    double mass)
+{
+    //IF WORKING IN EF COORDINATES
+    if (yvec[0]<xvec[0])
+        {return Spacetime::BH_causal4D(yvec, xvec, period);}
+
+    double t1     = xvec[0]; double t2     = yvec[0];
+    double r1     = xvec[1]; double r2     = yvec[1];
+    double phi1   = xvec[2]; double phi2   = yvec[2];
+
+    double vartheta1 = M_PI / 2;
+    double vartheta2 = M_PI / 2; 
+    double varphi1 = 0;
+    double varphi2 = phi1-phi2;
+    
+    vector<double> transf_xvec = {t1, r1, vartheta1, varphi1};
+    vector<double> transf_yvec = {t2, r2, vartheta2, varphi2};
+    
+    // Section 2.2: Radially separated pairs and radial null geodesics
+    if (varphi2<1e-6) //should be ==zero, but leave room for some error
+    {
+        if (r1>=r2)
+        {
+            // all 3 cases of the paper return same
+            if (t2 >= t1 + r1 - r2 - 1e-6)
+                    {return {true, true, false};}
+            else
+                {return {false, false, false};}
+        }
+        else
+        {
+            if (r1<=2*mass)
+                {return {false, false, false};}
+            else // if (r1>2*mass)
+            {
+                if (t2 >= t1 + r2 - r1 + 
+                            4*mass*std::log((r2-2*mass)/(r1-2*mass)))
+                    {return {true, true, false};}
+                else
+                    {return {false, false, false};}
+            }
+        }
+
+    }
+
+    // Section 2.3: Sufficient Conditions for c. related and unrelated
+    //// 2.3.1 Spacelike Bounds
+    else if (r1 >= r2)
+    {
+        //spacelike
+        if (t2-t1 < r1-r2)
+            {return {false, false, false};}
+        //spacelike
+        else if (t2-t1 < r2*varphi2) 
+            {return {false, false, false};}
+        //timelike
+        else if (r1 > 2*mass)
+        {
+            //First find r0
+            double r0;
+            if (r2 >= 3*mass){r0 = r2;}
+            else if (r1 >= 3*mass && 3*mass > r2) {r0 = 3*mass;}
+            else {r0 = r1;} //if (3*mass > r1 && r1 > 2*mass) 
+            //then
+            if (t2 >= t1 + r1 - r2 + (r0/std::sqrt(1-2*mass/r0))*varphi2)
+                {return {true, true, false};}
+            else
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+        }
+        else
+            {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    }
+
+    else if (r2 > r1 && r1 > 2*mass)
+    {
+        //spacelike
+        if (t2-t1 < r2-r1 + 4*std::log((r2-2*mass)/(r1-2*mass)))
+            {return {false, false, false};}
+        else if (r1 > 3*mass)
+        {
+            //spacelike
+            double r0 = r1;
+            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+                {return {false, false, false};}
+            //timelike
+            else if (t2>= t1 +r2 -r1 
+                    + 4*mass * std::log((r2-2*mass)/(r1-2*mass))
+                    + (r0/std::sqrt(1-2*mass/r0))*varphi2)
+                {return {true, true, false};}
+            else
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+
+        }
+        else if(r1 < 3*mass && 3*mass < r2)
+        {
+            //spacelike
+            double r0 = 3*mass;
+            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+                {return {false, false, false};}
+            else
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+        }
+        else if(r2 <= 3*mass)
+        {
+            //spacelike
+            double r0 = r2;
+            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+                {return {false, false, false};}
+            else
+                {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+        }
+        else
+            {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    }
+
+    else //r2>2*mass>r1
+        {return {false, false, false};}
+}
+
+
 
 /**
  * @brief Causality algorithm for two events in 4D EF coordinates, from
@@ -738,7 +872,7 @@ bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
                         const char* EFtype)
@@ -749,7 +883,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
         if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
         else        xvec[0] -= 2*mass*std::log(-arg);
     }
-    else if (strcmp(EFtype, "tortoise")==0)
+    else if (strcmp(EFtype, "uv")==0)
     {
         double arg = xvec[1]/(2*mass) - 1;
         if (arg>=0) xvec[0] -= xvec[1] + 2*mass*std::log(arg);
@@ -757,7 +891,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'tortoise'\n";
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -770,7 +904,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::InEFtoS (std::vector<std::vector<double>> &coords, double mass,
                         const char* EFtype)
@@ -787,7 +921,7 @@ void Spacetime::InEFtoS (std::vector<std::vector<double>> &coords, double mass,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M*ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M*ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M*ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
                         const char* EFtype)
@@ -798,7 +932,7 @@ void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
         if (arg>=0) xvec[0] += 2*mass*std::log(arg);
         else        xvec[0] += 2*mass*std::log(-arg);
     }
-    else if (strcmp(EFtype, "tortoise")==0)
+    else if (strcmp(EFtype, "uv")==0)
     {
         double arg = xvec[1]/(2*mass) - 1;
         if (arg>=0) xvec[0] += xvec[1] + 2*mass*std::log(arg);
@@ -806,7 +940,7 @@ void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'tortoise'\n";
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -819,7 +953,7 @@ void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M*ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M*ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M*ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::StoInEF (std::vector<std::vector<double>> &coords, double mass,
                         const char* EFtype)
@@ -891,7 +1025,7 @@ void Spacetime::StoGP (std::vector<std::vector<double>>& coords,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
                           const char* EFtype)
@@ -904,7 +1038,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
         if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
         else        xvec[0] -= 2*mass*std::log(-arg);
     }
-    else if (strcmp(EFtype, "tortoise")==0)
+    else if (strcmp(EFtype, "uv")==0)
     {
         double y = std::sqrt(xvec[1]/(2*mass));
         xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
@@ -914,7 +1048,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'tortoise'\n";
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -928,7 +1062,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords, 
                           double mass, const char* EFtype)
@@ -946,7 +1080,7 @@ void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
                           const char* EFtype)
@@ -959,7 +1093,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
         if (arg>=0) xvec[0] += 2*mass*std::log(arg);
         else        xvec[0] += 2*mass*std::log(-arg);
     }
-    else if (strcmp(EFtype, "tortoise")==0)
+    else if (strcmp(EFtype, "uv")==0)
     {
         double y = std::sqrt(xvec[1]/(2*mass));
         xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
@@ -969,7 +1103,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'tortoise'\n";
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -983,7 +1117,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
- * - "tortoise" : t_EF = ts + r + 2M ln|r/2M - 1| (as tortoise in Wikipedia's EF)
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
                           double mass, const char* EFtype)
