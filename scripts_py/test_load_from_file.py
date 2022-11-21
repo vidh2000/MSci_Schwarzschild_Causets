@@ -13,13 +13,13 @@ import matplotlib.pyplot as plt
 
 
 C: EmbeddedCauset = EmbeddedCauset()
-S: CoordinateShape = CoordinateShape(2,"cube",center=[1,1],edge=2)
+S: CoordinateShape = CoordinateShape(2,"cube",center=[10,10],edge=20)
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/flatspace_bicone_causet.txt")
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/known_causet_from_matrixSetsTest.txt")
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D.txt")
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D_N200.txt")
-C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D_N200_edge20.txt")
-
+#C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D_N200_edge20.txt")
+C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D_N500_edge20.txt")
 print("Dim:", C.dim)
 # print("Coords:\n", C.coords)
 # print("pasts:\n", C.pasts)
