@@ -185,7 +185,7 @@ class EmbeddedCauset(Causet):
         
         self.coords = [[float(v) for v in line if v != "\n"] for line in
                                             lines[-self.size:]]
-        
+    
         # Add relations (futs,pasts,links...) to Events in EventSet
         if storage_option == "sets":
             eventSet: List[CausetEvent] = []

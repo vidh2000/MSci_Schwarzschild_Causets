@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 C: EmbeddedCauset = EmbeddedCauset()
-S: CoordinateShape = CoordinateShape(2,"cube",center=[10,10],edge=20)
+S: CoordinateShape = CoordinateShape(2,"cube",center=[1,1],edge=2)
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/flatspace_bicone_causet.txt")
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/known_causet_from_matrixSetsTest.txt")
 #C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D.txt")
