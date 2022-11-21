@@ -174,7 +174,7 @@ int main(){
                                        true, true, "future");
     EmbeddedCauset C_all = EmbeddedCauset(Fst, S, coords, true, false, true,
                                        true, true, "all with links");
-    
+    C_all.save_causet("../../data/known_causet_from_matrixSetsTest.txt");
     //A closer look to the messy ones
     cout<<"Testing some Causalities, the following should all return 0\n";
     cout<<Fst.Flat_causal(coords[1], coords[2])[0]<<endl;

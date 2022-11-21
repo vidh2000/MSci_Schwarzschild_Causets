@@ -13,8 +13,12 @@ import matplotlib.pyplot as plt
 
 
 C: EmbeddedCauset = EmbeddedCauset()
-S: CoordinateShape = CoordinateShape(3,"cube",edge=1.5)
-C.create_EmbeddedCauset_from_file("../data/flatspace_bicone_causet.txt")
+S: CoordinateShape = CoordinateShape(2,"cube",center=[10,10],edge=20)
+#C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/flatspace_bicone_causet.txt")
+#C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/known_causet_from_matrixSetsTest.txt")
+#C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D.txt")
+#C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D_N200.txt")
+C.create_EmbeddedCauset_from_file("D:\Documents\Sola\Imperial College London\Year 4\MSci project\MSci_Schwarzschild_Causets/data/blackhole2D_N200_edge20.txt")
 
 print("Dim:", C.dim)
 # print("Coords:\n", C.coords)
@@ -43,6 +47,7 @@ ax.set_ylabel('space' if dims[1] > 0 else 'time')
 if len(dims) > 2:
     ax.set_zlabel('space' if dims[2] > 0 else 'time')
     ax.grid(False)
+ax.axvline(2,0,20,color="red", ls="--")
 cplt.show()
 
 # %%
