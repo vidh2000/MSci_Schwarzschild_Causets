@@ -346,14 +346,14 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec, 
+vector<bool> Spacetime::BH_causal3D (std::vector<double> xvec, 
                                     std::vector<double> yvec,
                                     std::vector<double> period,
                                     double mass)
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal4D(yvec, xvec, period);}
+        {return Spacetime::BH_causal3D(yvec, xvec, period);}
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
