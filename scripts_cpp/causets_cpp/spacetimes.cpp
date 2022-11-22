@@ -309,6 +309,14 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
+
+    if (r1*r2 < 0) //on opposite sides of the singularity
+    {   return {false, false, false};}
+    else
+    {
+        r1 = std::abs(r1);
+        r2 = std::abs(r2);
+    }
     
     // Section 2.2: Radially separated pairs and radial null geodesics
     // as in 2D necessarily varphi2 = 0
@@ -878,6 +886,59 @@ bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
 ///////////////////////////////////////////////////////////////////////////
 
 
+/**
+ * @brief Convert from cartesian to spherical coordinates.
+ */
+void Spacetime::CarttoS (std::vector<double>& xvec)
+{
+    if (xvec.size()==3)
+    {
+        double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+        double phi = std::atan2(xvec[2],xvec[1]);
+        xvec[1] = r;
+        xvec[2] = phi;
+    }
+    else if (xvec.size()==4)
+    {
+        double rho = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+        double r = std::sqrt(rho*rho + xvec[3]*xvec[3]);
+        double theta = std::atan2(rho, xvec[3]);
+        double phi = std::atan2(xvec[2],xvec[1]);
+        xvec[1] = r;
+        xvec[2] = phi;
+    }
+}
+
+
+/**
+ * @brief Convert from cartesian to spherical coordinates.
+ */
+void Spacetime::CarttoS (std::vector<std::vector<double>>& coords)
+{
+    if (coords[0].size()==3)
+    {
+        for (auto xvec : coords)
+        {
+            double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+            double phi = std::atan2(xvec[2],xvec[1]);
+            xvec[1] = r;
+            xvec[2] = phi;
+        }
+    }
+    else if (coords[0].size()==4)
+    {
+        for (auto xvec : coords)
+        {
+            double rho = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+            double r = std::sqrt(rho*rho + xvec[3]*xvec[3]);
+            double theta = std::atan2(rho, xvec[3]);
+            double phi = std::atan2(xvec[2],xvec[1]);
+            xvec[1] = r;
+            xvec[2] = phi;
+        }
+    }
+}
+
 
 /**
  * @brief Turn ingoing Eddington Finkelstein coordinates into Schwarzschild.
@@ -893,15 +954,15 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
 {
     if (strcmp(EFtype, "original")==0)
     {
-        double arg = xvec[1]/(2*mass) - 1;
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
         if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
         else        xvec[0] -= 2*mass*std::log(-arg);
     }
     else if (strcmp(EFtype, "uv")==0)
     {
-        double arg = xvec[1]/(2*mass) - 1;
-        if (arg>=0) xvec[0] -= xvec[1] + 2*mass*std::log(arg);
-        else        xvec[0] -= xvec[1] + 2*mass*std::log(-arg);
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
+        if (arg>=0) xvec[0] -= std::abs(xvec[1]) + 2*mass*std::log(arg);
+        else        xvec[0] -= std::abs(xvec[1]) + 2*mass*std::log(-arg);
     }
     else
     {
@@ -942,15 +1003,15 @@ void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
 {
     if (strcmp(EFtype, "original")==0)
     {
-        double arg = xvec[1]/(2*mass) - 1;
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
         if (arg>=0) xvec[0] += 2*mass*std::log(arg);
         else        xvec[0] += 2*mass*std::log(-arg);
     }
     else if (strcmp(EFtype, "uv")==0)
     {
-        double arg = xvec[1]/(2*mass) - 1;
-        if (arg>=0) xvec[0] += xvec[1] + 2*mass*std::log(arg);
-        else        xvec[0] += xvec[1] + 2*mass*std::log(-arg);
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
+        if (arg>=0) xvec[0] += std::abs(xvec[1]) + 2*mass*std::log(arg);
+        else        xvec[0] += std::abs(xvec[1]) + 2*mass*std::log(-arg);
     }
     else
     {
@@ -1048,7 +1109,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
     {
         double y = std::sqrt(xvec[1]/(2*mass));
         xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
-        double arg = xvec[1]/(2*mass) - 1;
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
         if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
         else        xvec[0] -= 2*mass*std::log(-arg);
     }
@@ -1056,9 +1117,9 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
     {
         double y = std::sqrt(xvec[1]/(2*mass));
         xvec[0] -= 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
-        double arg = xvec[1]/(2*mass) - 1;
-        if (arg>=0) xvec[0] -= xvec[1] + 2*mass*std::log(arg);
-        else        xvec[0] -= xvec[1] + 2*mass*std::log(-arg);
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
+        if (arg>=0) xvec[0] -= std::abs(xvec[1]) + 2*mass*std::log(arg);
+        else        xvec[0] -= std::abs(xvec[1]) + 2*mass*std::log(-arg);
     }
     else
     {
@@ -1103,7 +1164,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
     {
         double y = std::sqrt(xvec[1]/(2*mass));
         xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
-        double arg = xvec[1]/(2*mass) - 1;
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
         if (arg>=0) xvec[0] += 2*mass*std::log(arg);
         else        xvec[0] += 2*mass*std::log(-arg);
     }
@@ -1111,9 +1172,9 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
     {
         double y = std::sqrt(xvec[1]/(2*mass));
         xvec[0] += 2*mass*( -2*y + std::log( (y+1)/(y-1)) );
-        double arg = xvec[1]/(2*mass) - 1;
-        if (arg>=0) xvec[0] += xvec[1] + 2*mass*std::log(arg);
-        else        xvec[0] += xvec[1] + 2*mass*std::log(-arg);
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
+        if (arg>=0) xvec[0] += std::abs(xvec[1]) + 2*mass*std::log(arg);
+        else        xvec[0] += std::abs(xvec[1]) + 2*mass*std::log(-arg);
     }
     else
     {
@@ -1151,8 +1212,8 @@ void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
  */
 void switchInEF (std::vector<double>& xvec, const char* from)
 {
-    if (strcmp(from, "original")==0) xvec[0] += xvec[1];
-    else xvec[0] -= xvec[1];
+    if (strcmp(from, "original")==0) xvec[0] += std::abs(xvec[1]);
+    else xvec[0] -= std::abs(xvec[1]);
 }
 
 
@@ -1170,12 +1231,12 @@ void Spacetime::swicthInEF (std::vector<std::vector<double>>& coords,
     if (strcmp(from, "original")==0)
     {
         for (std::vector<double> xvec : coords)
-            {xvec[0] += xvec[1];}
+            {xvec[0] += std::abs(xvec[1]);}
     }
     else
     {
         for (std::vector<double> xvec : coords)
-            {xvec[0] -= xvec[1];}
+            {xvec[0] -= std::abs(xvec[1]);}
     }
 }
 

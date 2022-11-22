@@ -82,8 +82,12 @@ SprinkledCauset::SprinkledCauset(int card,
     if (strcmp(spacetime._name, "BlackHole")==0)
         {Spacetime::CarttoS(_coords);}
     
-    if (spacetime._metricname=="")
-    {}
+    if (spacetime._metricname=="EF(uv)")
+        {Spacetime::StoInEF(_coords, spacetime._mass, "uv");}
+    else if (spacetime._metricname=="EF(original)")
+        {Spacetime::StoInEF(_coords, spacetime._mass, "original");}
+    else if (spacetime._metricname=="GP")
+        {Spacetime::StoGP(_coords, spacetime._mass);}
 
     this->sort_coords(0, false);
     this->make_attrs("coordinates", make_matrix, special, use_transitivity,
