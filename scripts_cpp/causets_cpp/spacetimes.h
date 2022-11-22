@@ -27,7 +27,8 @@ class Spacetime
     public:
         int  _dim;
         const char* _name;      //"Flat", "BlackHole"
-        std::string _metricname;//"Minkowski", "Eddington-Finkelstein", etc... 
+        std::string _metricname;//"Minkowski",
+                                // "Schwarzschild","EF(original),"EF(uv)","GP" 
 
         //For BH
         double _mass = 0; 
@@ -142,6 +143,9 @@ class Spacetime
 
         // BH Coordinate Transformations
 
+        static void CarttoS (std::vector<double>& xvec);
+        static void CarttoS (std::vector<std::vector<double>>& coords);
+
         static void InEFtoS (std::vector<double>& xvec, double mass = 1,
                              const char* EFtype = "original");
         static void InEFtoS (std::vector<std::vector<double>>& coords, 
@@ -170,6 +174,11 @@ class Spacetime
         static void GPtoInEF (std::vector<std::vector<double>>& coords,
                              double mass = 1,
                              const char* EFtype = "original");
+        
+        static void switchInEF (std::vector<double>& xvec, 
+                                const char* from = "original");
+        static void swicthInEF (std::vector<std::vector<double>>& coords,
+                                const char* from = "original");
 };
 
 #endif /* SPACETIMES_H */
