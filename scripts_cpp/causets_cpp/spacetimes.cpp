@@ -272,10 +272,18 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
     _mass = mass;
     _r_S  = 2*mass;
 
-    if (metric == "Eddington-Finkelstein" || metric == "EF")
-        {_metricname = "Eddington-Finkelstein";}
+    if (metric == "Eddington-Finkelstein(original)" || metric=="EF(original)")
+        {_metricname = "EF(original)";}
+    else if (metric == "Eddington-Finkelstein(uv)" || metric == "EF(uv)")
+        {_metricname = "EF(uv)";}
     else if (metric == "Schwarzschild" || metric == "S")
         {_metricname = "Schwarzschild";}
+    else 
+    {
+        std::cout<<"Given metric for BlackHole must be 'Schwarzschild', "<<
+                 "'EF(uv)' or 'EF(original)'. "<<std::endl;
+        throw std::invalid_argument("Wrong metricname");
+    }
 }
 
 
@@ -862,9 +870,14 @@ bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
     {return Spacetime::BH_int_dt_du (u1, u2, M, c) + t1<= t2;}
 
 
-///////////////////////////////////////
+
+
+
+///////////////////////////////////////////////////////////////////////////
 // BH Coordinate Transformations
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
 
 /**
  * @brief Turn ingoing Eddington Finkelstein coordinates into Schwarzschild.
@@ -1125,6 +1138,45 @@ void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
 {
     for (std::vector<double> xvec : coords)
         {GPtoInEF(xvec, mass, EFtype);}
+}
+
+
+/**
+ * @brief Switch type of EF coordinate from/to original to/from uv
+ * 
+ * @param coords vector<vector<double>> : one vector of coordinates to change
+ * @param from const char* : from which type of coordinate to change
+ * - "original" : then goes to "uv";
+ * - "uv" : then goes to "original";
+ */
+void switchInEF (std::vector<double>& xvec, const char* from)
+{
+    if (strcmp(from, "original")==0) xvec[0] += xvec[1];
+    else xvec[0] -= xvec[1];
+}
+
+
+/**
+ * @brief Switch type of EF coordinate
+ * 
+ * @param coords vector<vector<double>> : list of coordinates to change
+ * @param from const char* : from which type of coordinate to change
+ * - "original" : then goes to "uv";
+ * - "uv" : then goes to "original";
+ */
+void Spacetime::swicthInEF (std::vector<std::vector<double>>& coords, 
+                            const char* from)
+{
+    if (strcmp(from, "original")==0)
+    {
+        for (std::vector<double> xvec : coords)
+            {xvec[0] += xvec[1];}
+    }
+    else
+    {
+        for (std::vector<double> xvec : coords)
+            {xvec[0] -= xvec[1];}
+    }
 }
 
 

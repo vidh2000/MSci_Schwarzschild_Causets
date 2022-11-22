@@ -78,6 +78,13 @@ SprinkledCauset::SprinkledCauset(int card,
 
     _size = _coords.size();
 
+
+    if (strcmp(spacetime._name, "BlackHole")==0)
+        {Spacetime::CarttoS(_coords);}
+    
+    if (spacetime._metricname=="")
+    {}
+
     this->sort_coords(0, false);
     this->make_attrs("coordinates", make_matrix, special, use_transitivity,
                      make_sets, make_links, sets_type);
