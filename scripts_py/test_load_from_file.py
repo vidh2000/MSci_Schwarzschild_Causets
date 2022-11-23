@@ -13,7 +13,8 @@ import matplotlib.pyplot as plt
 import os 
 
 C: EmbeddedCauset = EmbeddedCauset()
-S: CoordinateShape = CoordinateShape(2,"cube",center=[10,10],edge=20)
+S: CoordinateShape = CoordinateShape(3,"cylinder",radius=2,
+                                            duration=3)
 
 # Load file
 path = os.getcwd() # folder path
@@ -24,7 +25,7 @@ print(path)
 file_name = os.path.join(path, 'data/blackhole2D_N200.txt')
 #file_name = os.path.join(path, 'data/blackhole2D_N200_edge20.txt')
 #file_name = os.path.join(path, 'data/blackhole2D_N500_edge20.txt')
-
+file_name = os.path.join(path, "data/blackhole3D_N200.txt")
 C.create_EmbeddedCauset_from_file(file_name)
 
 print("Dim:", C.dim)

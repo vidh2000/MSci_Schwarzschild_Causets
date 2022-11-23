@@ -88,11 +88,14 @@ func Spacetime::Causality()
     }
     else //if (std::strcmp(_name, "BlackHole")==0)
     {
+        // Changing coordinates into EF (original)
+        // place holder //
         if      (_dim == 4) return &Spacetime::BH_causal4D;
+        else if (_dim == 3) return &Spacetime::BH_causal3D;
         else if (_dim == 2) return &Spacetime::BH_causal2D;
         else
         {
-            std::cout << "Please use D=2 or D=4 for Schwarzschild for now\n";
+            std::cout << "Please use D=2, D=3 or D=4 for Schwarzschild\n";
             throw std::invalid_argument("problem");
         }
     }
@@ -262,10 +265,10 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
                                     std::string metric)// = "EF")
 {
 
-    if (dim != 4 && dim != 2)
+    if (dim != 4 && dim != 2 && dim !=3)
     {
-        std::cout<<"Dimension has to be 2 or 4."<<std::endl;
-        throw std::invalid_argument("Dimension has to be 2 or 4.");
+        std::cout<<"Dimension has to be 2, 3 or 4."<<std::endl;
+        throw std::invalid_argument("Dimension has to be 2,3 or 4.");
     }
     _dim = dim;
     _name = "black hole";
@@ -628,6 +631,7 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
 {
     print_vector(xvec);
     print_vector(yvec);
+    
     double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
     if (c<0)
     {
@@ -636,6 +640,7 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
     }
     else
     {
+        
         double geo_time = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], c, 
                                                     mass);
         bool x_prec_y =  geo_time <= yvec[0] - xvec[0];
@@ -839,6 +844,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
                                           /D;
                                   }
                                 };
+        std::cout << "u2>=u1\n";
         boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
                                               u1, u2, (u2-u1)/20.);
     }
@@ -853,6 +859,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
                                 };
         if (0.5*M>=u1 || u2>=0.5*M) //0.5*M NOT in [u2, u1]
         {
+            std::cout << "in 0.5*M NOT in [u2, u1]\n";
             //Avoid divergence at 1-2*M*u=0
             u2 += (u2==0.5*M)? 1e-3*M : 0;
             u1 -= (u2==0.5*M)? 1e-3*M : 0;
@@ -862,11 +869,15 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
         }
         else /*0.5*M IN [u2, u1]*/
         {
+            std::cout << "in else.................................... \n";
             //Compute in 2 steps to avoid divergence
+            
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
                                             u1, (0.5+0.0001)*M, -(u1-0.5)/20.);
+            std::cout << "first integral finito..\n";
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
                                             (0.5-0.0001)*M, u2, -(0.5-u2)/20.);
+            std::cout << "second integral finito..\n";
         }
     }
     return t;

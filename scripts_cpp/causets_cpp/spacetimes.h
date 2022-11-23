@@ -98,7 +98,7 @@ class Spacetime
 
         void BlackHoleSpacetime(int dim = 4,
                                 double mass = 1,
-                                std::string metric = "Eddington-Finkelstein");
+                                std::string metric = "EF(original)");
     
         // BH Causality
 
