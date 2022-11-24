@@ -314,7 +314,7 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
     double r1     = xvec[1]; double r2     = yvec[1];
 
     if (r1*r2 < 0) //on opposite sides of the singularity
-    {   return {false, false, false};}
+        {return {false, false, false};}
     else
     {
         r1 = std::abs(r1);
@@ -327,7 +327,7 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
     {
         // all 3 cases of the paper return same
         if (t2 >= t1 + r1 - r2 - 1e-6)
-                {return {true, true, false};}
+            {return {true, true, false};}
         else
             {return {false, false, false};}
     }
@@ -374,6 +374,8 @@ vector<bool> Spacetime::BH_causal3D (std::vector<double> xvec,
     double vartheta2 = M_PI / 2; 
     double varphi1 = 0;
     double varphi2 = phi1-phi2;
+    if (varphi2 < 0)
+        {varphi2 += 2*M_PI;}
     
     vector<double> transf_xvec = {t1, r1, vartheta1, varphi1};
     vector<double> transf_yvec = {t2, r2, vartheta2, varphi2};
@@ -511,6 +513,8 @@ vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec,
     double varphi1 = 0;
     double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
                     +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
+    if (varphi2 < 0)
+        {varphi2 += 2*M_PI;}
     
     vector<double> transf_xvec = {t1, r1, vartheta1, varphi1};
     vector<double> transf_yvec = {t2, r2, vartheta2, varphi2};
@@ -526,7 +530,7 @@ vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec,
             else
                 {return {false, false, false};}
         }
-        else
+        else /*r2>r1*/
         {
             if (r1<=2*mass)
                 {return {false, false, false};}
@@ -570,7 +574,7 @@ vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec,
             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
-    else if (r2 > r1 && r1 > 2*mass)
+    else if (r2 > r1 && r1 > 2*mass) /*r2>r1 and both outside horizon*/
     {
         //spacelike
         if (t2-t1 < r2-r1 + 4*std::log((r2-2*mass)/(r1-2*mass)))
@@ -612,7 +616,8 @@ vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec,
             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
-    else //r2>2*mass>r1
+    else //r2>r1 with 2*mass>r1 
+         //(i.e. r1 inside horizon, r2 could be inside or outside)
         {return {false, false, false};}
 }
 
@@ -895,6 +900,37 @@ bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
 ///////////////////////////////////////////////////////////////////////////
 // BH Coordinate Transformations
 ///////////////////////////////////////////////////////////////////////////
+
+// typedef void (*inversefunc)
+// (std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
+// /**
+//  * @brief Turn coords from "Spacetime_object._metricname" to "EF(original)" 
+//  * 
+//  * @param coords vector<vector<double>>& : coordinates to change
+//  * @return func "void callable(vector<vector<double>> &coords)" : function that
+//  * turns coordinates back from "EF(original)" to the first type.
+//  */
+// inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
+// {
+//     if (_metricname=="EF(uv)")
+//     {
+//         Spacetime::switchInEF(coords, "original");
+//         return Spacetime::EF_from_uv_to_original;
+//     }
+//     else if (_metricname=="Schwarzschild")
+//     {
+//         Spacetime::StoInEF(coords, _mass);
+//         return Spacetime::InEFtoS;
+//     }
+//     else if (_metricname=="GP")
+//     {
+//         Spacetime::GPtoInEF(coords, _mass);
+//         return Spacetime::GPtoInEF;
+//     }
+//     else
+//         {return Spacetime::do_nothing;}
+// }
+
 
 
 /**
