@@ -182,14 +182,14 @@ class Spacetime
         
         static void switchInEF (std::vector<double>& xvec, 
                                 const char* from = "original");
-        static void swicthInEF (std::vector<std::vector<double>>& coords,
+        static void switchInEF (std::vector<std::vector<double>>& coords,
                                 const char* from = "original");
         
         template <typename whatever1, typename whatever2>
         static void EF_from_uv_to_original
                     (std::vector<std::vector<double>>& coords, 
                      whatever1 a = 0, whatever2 b = 0)
-                    {return swicthInEF(coords, "uv");}
+                    {return Spacetime::switchInEF(coords, "uv");}
         
         template <typename whatever1, typename whatever2, typename whatever3>
         static void do_nothing(whatever1 a=0, whatever2 b=0, whatever3 c=0)
