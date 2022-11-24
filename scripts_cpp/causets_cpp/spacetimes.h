@@ -143,6 +143,11 @@ class Spacetime
 
         // BH Coordinate Transformations
 
+        typedef void (*inversefunc)
+        (std::vector<std::vector<double>>& coords, double mass, 
+         const char* EFtype);
+        inversefunc ToInEF_original(std::vector<std::vector<double>> &coords);
+
         static void CarttoS (std::vector<double>& xvec);
         static void CarttoS (std::vector<std::vector<double>>& coords);
 
@@ -179,6 +184,16 @@ class Spacetime
                                 const char* from = "original");
         static void swicthInEF (std::vector<std::vector<double>>& coords,
                                 const char* from = "original");
+        
+        template <typename whatever1, typename whatever2>
+        static void EF_from_uv_to_original
+                    (std::vector<std::vector<double>>& coords, 
+                     whatever1 a = 0, whatever2 b = 0)
+                    {return swicthInEF(coords, "uv");}
+        
+        template <typename whatever1, typename whatever2, typename whatever3>
+        static void do_nothing(whatever1 a=0, whatever2 b=0, whatever3 c=0)
+        {return;}
 };
 
 #endif /* SPACETIMES_H */
