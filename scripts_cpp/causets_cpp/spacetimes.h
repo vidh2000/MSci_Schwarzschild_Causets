@@ -141,7 +141,7 @@ class Spacetime
                                        double c, double M);
 
 
-        // BH Coordinate Transformations
+        // BH Coordinate Transformations (GP NOT TESTED)
 
         typedef void (*inversefunc)
         (std::vector<std::vector<double>>& coords, double mass, 

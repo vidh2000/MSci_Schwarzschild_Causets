@@ -271,7 +271,7 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
         throw std::invalid_argument("Dimension has to be 2,3 or 4.");
     }
     _dim = dim;
-    _name = "black hole";
+    _name = "BlackHole";
     _mass = mass;
     _r_S  = 2*mass;
 
@@ -308,7 +308,16 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal2D(yvec, xvec, period);}
+    {
+        std::vector<bool> result = Spacetime::BH_causal2D
+                                    (yvec, xvec, period);
+        if (result[0])
+        {
+            bool a = result[1]*1;
+            result[1] = result[2]*1;
+            result[2] = a*1;
+        }
+    }
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
@@ -362,9 +371,18 @@ vector<bool> Spacetime::BH_causal3D (std::vector<double> xvec,
                                     std::vector<double> period,
                                     double mass)
 {
-    //IF WORKING IN EF COORDINATES
+    //WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal3D(yvec, xvec, period);}
+    {
+        std::vector<bool> result = Spacetime::BH_causal3D
+                                    (yvec, xvec, period);
+        if (result[0])
+        {
+            bool a = result[1]*1;
+            result[1] = result[2]*1;
+            result[2] = a*1;
+        }
+    }
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
@@ -483,6 +501,11 @@ vector<bool> Spacetime::BH_causal3D (std::vector<double> xvec,
 
 
 
+///////////////////////////////////////////////////////////////////////////
+// BH CAUSALITY
+///////////////////////////////////////////////////////////////////////////
+
+
 /**
  * @brief Causality algorithm for two events in 4D EF coordinates, from
  * Song He and David Rideout 2009 Class. Quantum Grav. 26 125015. 
@@ -499,9 +522,18 @@ vector<bool> Spacetime::BH_causal4D (std::vector<double> xvec,
                                     std::vector<double> period,
                                     double mass)
 {
-    //IF WORKING IN EF COORDINATES
+    //WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal4D(yvec, xvec, period);}
+    {
+        std::vector<bool> result = Spacetime::BH_causal4D
+                                    (yvec, xvec, period);
+        if (result[0])
+        {
+            bool a = result[1]*1;
+            result[1] = result[2]*1;
+            result[2] = a*1;
+        }
+    }
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
@@ -634,8 +666,9 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
                                        std::vector<double> yvec,
                                        double mass)
 {
+    if (xvec[1]<0 || yvec[1]<0){
     print_vector(xvec);
-    print_vector(yvec);
+    print_vector(yvec);}
     
     double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
     if (c<0)
@@ -645,7 +678,6 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
     }
     else
     {
-        
         double geo_time = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], c, 
                                                     mass);
         bool x_prec_y =  geo_time <= yvec[0] - xvec[0];
@@ -874,7 +906,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
         }
         else /*0.5*M IN [u2, u1]*/
         {
-            std::cout << "in else.................................... \n";
+            std::cout << "in else......................................... \n";
             //Compute in 2 steps to avoid divergence
             
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
@@ -944,7 +976,7 @@ void Spacetime::CarttoS (std::vector<double>& xvec)
         double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
         double phi = std::atan2(xvec[2],xvec[1]);
         xvec[1] = r;
-        xvec[2] = phi;
+        xvec[2] = (phi>0)? phi : phi+2*M_PI;
     }
     else if (xvec.size()==4)
     {
@@ -953,7 +985,8 @@ void Spacetime::CarttoS (std::vector<double>& xvec)
         double theta = std::atan2(rho, xvec[3]);
         double phi = std::atan2(xvec[2],xvec[1]);
         xvec[1] = r;
-        xvec[2] = phi;
+        xvec[2] = theta;
+        xvec[3] = (phi>0)? phi : phi+2*M_PI;
     }
 }
 
@@ -965,24 +998,25 @@ void Spacetime::CarttoS (std::vector<std::vector<double>>& coords)
 {
     if (coords[0].size()==3)
     {
-        for (auto & xvec : coords)
+        for (std::vector<double> & xvec : coords)
         {
             double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
             double phi = std::atan2(xvec[2],xvec[1]);
             xvec[1] = r;
-            xvec[2] = phi;
+            xvec[2] = (phi>0)? phi : phi+2*M_PI;
         }
     }
     else if (coords[0].size()==4)
     {
-        for (auto & xvec : coords)
+        for (std::vector<double> & xvec : coords)
         {
             double rho = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
             double r = std::sqrt(rho*rho + xvec[3]*xvec[3]);
             double theta = std::atan2(rho, xvec[3]);
             double phi = std::atan2(xvec[2],xvec[1]);
             xvec[1] = r;
-            xvec[2] = phi;
+            xvec[2] = theta;
+            xvec[3] = (phi>0)? phi : phi+2*M_PI;
         }
     }
 }

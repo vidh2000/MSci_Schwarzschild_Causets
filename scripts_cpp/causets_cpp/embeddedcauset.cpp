@@ -578,7 +578,10 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
     inversefunc inverse_transf = Spacetime::do_nothing;
     if (strcmp(_spacetime._name, "BlackHole")==0 && 
         _spacetime._metricname!="EF(original)")
-        {inverse_transf = _spacetime.ToInEF_original(_coords);}
+    {
+        inverse_transf = _spacetime.ToInEF_original(_coords);
+        this->sort_coords(0, false);
+    }
 
     //Perform Causality
 

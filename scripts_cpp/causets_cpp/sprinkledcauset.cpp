@@ -81,7 +81,8 @@ SprinkledCauset::SprinkledCauset(int card,
 
     if (strcmp(spacetime._name, "BlackHole")==0)
         {Spacetime::CarttoS(_coords);}
-    
+        
+
     if (spacetime._metricname=="EF(uv)")
         {Spacetime::StoInEF(_coords, spacetime._mass, "uv");}
     else if (spacetime._metricname=="EF(original)")
