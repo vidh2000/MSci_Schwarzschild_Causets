@@ -286,5 +286,15 @@ void discard_from_set(std::unordered_set<m> &myset, std::vector<int> labels)
     myset = buffer;
 }
 
+template<typename T>
+std::vector<T> arange(T start, T stop, T step = 1) {
+    std::vector<T> values;
+    for (T value = start; value < stop; value += step)
+        values.push_back(value);
+    return values;
+}
+
+
+
 
 #endif /* FUNCTIONS_H */

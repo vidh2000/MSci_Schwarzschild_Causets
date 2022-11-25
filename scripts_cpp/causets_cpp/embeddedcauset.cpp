@@ -16,7 +16,7 @@
 #include <vector>
 #include <chrono>
 #include <unordered_set>
-
+#include <iterator>
 
 #include "functions.h"
 #include "vecfunctions.h"
@@ -366,9 +366,9 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
 
 
 void EmbeddedCauset::discard(vector<int> labels,
-                                    bool make_matrix, // = true, 
-                                    bool make_sets, // = false,
-                                    bool make_links) // = true)
+                             bool make_matrix, // = true, 
+                             bool make_sets, // = false,
+                             bool make_links) // = true)
 {
     remove_indices(_coords, labels);
 
@@ -1355,7 +1355,82 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
     //std::cout <<"Finished sprinkling..." << std::endl;
 }
 
+/**
+ * @brief   Finds number of links in the causet connecting maximal elements 
+ *          below t_f with maximal-but-one elements above t_i,
+ *          where the links span over the horizon.
+ *          Currently works only for spacetime "Schwarzschild", but
+ *          could be expanded in needed in the future. 
+ * 
+ * @param t_f Highest boundary for time
+ * @param r_S   Schwarzschild radius
+ * @param spacetime Schwarzschild. Allows possibility to do other horizons
+ *                  in other spacetimes if needed
+ * @return int Number of links
+ */
+int EmbeddedCauset::count_links(double t_f, double r_S,
+                    const char* spacetime)
+{
+    if (!strcmp(spacetime, "Schwarzschild")==0)
+    {
+        std::cout<<"Please choose 'Schwarzschild' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
 
+
+    // Find indices of events lying between t_i,t_f
+    int i_min = 0;
+    int i_max = 0; 
+    for (int i=0; i<_size; i++)
+    {
+        if (_coords[i][0]<=t_i)
+        {
+            i_min++;
+        }
+        if (_coords[i][0]<=t_f)
+        {
+            i_max++;
+        }
+        else {
+            break;
+        }
+    }
+
+    // Get rid of elements above the const. time (spacelike) hypersurface
+    this->discard(arange(i_max,_size-1));
+
+
+    // Set of already used elements i.e can't upper event in the link
+    std::unordered_set<int> used = {};
+    // Number of links
+    int N = 0;
+    for (int i = _size-2; i>-1; i--)
+    {
+        // Method 1: Go down element by element and check if it's contained
+        //           in any past_links of higher elements.
+        //           If link has been formed to higher element already, skip
+        
+        for (int j=i+1; j<i_max; j++)
+        {
+            if (_coords[j][1]>r_S && _coords[i][1]<r_S) // t_j>t_i always
+                {
+                    if (_future_links[j].sizeof()==0) // if j==maximal
+                    {    
+                        // If linked over horizon
+                        if (set_contains(i,_past_links[j])){
+                            // Add to used elements -> NOT MAXIMAL
+                            j.
+                            N++;
+                        }
+                    }
+                }
+
+        }
+         
+    }
+
+}
 
 
 

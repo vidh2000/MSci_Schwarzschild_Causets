@@ -13,19 +13,17 @@ import matplotlib.pyplot as plt
 import os 
 
 C: EmbeddedCauset = EmbeddedCauset()
-S: CoordinateShape = CoordinateShape(3,"cylinder",radius=2,
-                                            duration=3)
+#S: CoordinateShape = CoordinateShape(3,"cylinder",radius=2,duration=3)
 
 # Load file
+dim = 3
+card = 100
+
 path = os.getcwd() # folder path
-print(path)
 #file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')
 #file_name = os.path.join(path, 'data/known_causet_from_matrixSetsTest.txt')
-#file_name = os.path.join(path, 'data/blackhole2D.txt')
-file_name = os.path.join(path, 'data/blackhole2D_N200.txt')
-#file_name = os.path.join(path, 'data/blackhole2D_N200_edge20.txt')
-#file_name = os.path.join(path, 'data/blackhole2D_N500_edge20.txt')
-file_name = os.path.join(path, "data/blackhole3D_N200.txt")
+file_name = f"data/blackhole{dim}D_N{card}.txt"
+file_name = os.path.join(path, file_name)
 C.create_EmbeddedCauset_from_file(file_name)
 
 print("Dim:", C.dim)
@@ -44,7 +42,7 @@ elif C.dim == 2:
     dims: List[int] = [1,0]
 if len(dims) > 2:
     cplt.figure(figsize=(6.0, 6.0))
-S.plot(dims)  # plot the embedding shape
+#S.plot(dims)  # plot the embedding shape
 # Add causet plots and show result:
 cplt.plot(C, dims=dims, events={'alpha': 1},
           links={'alpha': 0.4, 'linewidth': 0.5}, labels=False)
