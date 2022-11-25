@@ -24,6 +24,8 @@
 
 using namespace std::chrono;
 
+
+
 int card = 100;
 int dim = 3;
 std::vector<double> center (dim, 0);
@@ -31,6 +33,7 @@ double radius = 3.0;
 double myduration = 3;
 double edge = 20;
 std::vector<double> edges = {1,2,3,4};
+
 
 // Parameters
 bool poisson = false;
@@ -40,6 +43,8 @@ bool use_transitivity = true;
 bool make_sets = true;
 bool make_links = false;
 const char* sets_type = "all with links";
+
+
 
 int main(){
 
@@ -67,5 +72,4 @@ auto stop = high_resolution_clock::now();
     double duration = duration_cast<microseconds>(stop - start).count();
     std::cout << "Time taken: "
             << duration/pow(10,6) << " seconds" << std::endl;
-
 }
