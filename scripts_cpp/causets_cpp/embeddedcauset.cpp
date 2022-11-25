@@ -411,7 +411,8 @@ void EmbeddedCauset::discard(vector<int> labels,
                 {discard_from_set(flinks_i, labels);}
         }   
     }
-    _size--;
+
+    _size -= labels.size();
     _dim = 0;
 }
 
@@ -1379,15 +1380,10 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
     }
 
 
-    // Find indices of events lying between t_i,t_f
-    int i_min = 0;
+    // Find indices of events before t_i,t_f
     int i_max = 0; 
     for (int i=0; i<_size; i++)
     {
-        if (_coords[i][0]<=t_i)
-        {
-            i_min++;
-        }
         if (_coords[i][0]<=t_f)
         {
             i_max++;
@@ -1400,9 +1396,6 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
     // Get rid of elements above the const. time (spacelike) hypersurface
     this->discard(arange(i_max,_size-1));
 
-
-    // Set of already used elements i.e can't upper event in the link
-    std::unordered_set<int> used = {};
     // Number of links
     int N = 0;
     for (int i = _size-2; i>-1; i--)
@@ -1413,21 +1406,20 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
         
         for (int j=i+1; j<i_max; j++)
         {
-            if (_coords[j][1]>r_S && _coords[i][1]<r_S) // t_j>t_i always
+            if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i always
+            {
+                if (_future_links[j].size()==0 &&  // if j==maximal
+                    _future_links[i].size()==1)  // if i links only to j  
                 {
-                    if (_future_links[j].sizeof()==0) // if j==maximal
-                    {    
-                        // If linked over horizon
-                        if (set_contains(i,_past_links[j])){
-                            // Add to used elements -> NOT MAXIMAL
-                            j.
-                            N++;
-                        }
+                    // check if j-i is the link
+                    if (set_contains(j,_future_links[i])) //faster if here
+                    {
+                        N++;
                     }
-                }
 
+                }
+            }
         }
-         
     }
 
 }
