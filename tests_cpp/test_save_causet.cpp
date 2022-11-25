@@ -24,9 +24,7 @@
 
 using namespace std::chrono;
 
-
-
-int card = 100;
+int card = 50;
 int dim = 3;
 std::vector<double> center (dim, 0);
 double radius = 3.0;
@@ -64,7 +62,9 @@ for (const char* name : names)
                         make_matrix, special, use_transitivity,
                         make_sets, make_links,sets_type);
     std::cout << "Generate the causet... Saving ->" << std::endl;
-    const char* path_file = "../data/blackhole3D_N50.txt";
+    std::string path_file_str = "../data/blackhole"+std::to_string(dim)
+                               +"D_N"+std::to_string(card)+".txt";
+    const char* path_file = path_file_str.c_str();
     C.save_causet(path_file);
 }
 

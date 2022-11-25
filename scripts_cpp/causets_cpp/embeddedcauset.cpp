@@ -571,6 +571,20 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_links,// = false,
                                     const char* sets_type)// = "both only")
 {
+    //Fix coordinates to EF(orginal) if it is BlackHole
+    typedef void (*inversefunc)
+        (std::vector<std::vector<double>>& coords, double mass, 
+         const char* EFtype);
+    inversefunc inverse_transf = Spacetime::do_nothing;
+    if (strcmp(_spacetime._name, "BlackHole")==0 && 
+        _spacetime._metricname!="EF(original)")
+    {
+        inverse_transf = _spacetime.ToInEF_original(_coords);
+        this->sort_coords(0, false);
+    }
+
+    //Perform Causality
+
     if (strcmp(sets_type, "all with links")==0)
     {  
         this->make_cmatrix_and_allpasts(special);
@@ -642,16 +656,14 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
         else
         {   
-            // std::cout<<"At least one among make_matrix, " 
-            //          << "make_sets and make_links must be true "
-            //          << "or you need sets_type = 'all' or 'both only'."
-            //          << std::endl;
-            // throw std::invalid_argument("At least one among make_matrix, \
-            //                         make_sets and make_links must be true");
             std::cout<<"Note: causet has no causal relations"<<std::endl;
-            return;
         }
     }
+
+    //Coords back to initial ones (does nothing if were already EF(original))
+    inverse_transf(_coords, _spacetime._mass, "uv");
+
+    return;
 }
 
 

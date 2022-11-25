@@ -113,7 +113,8 @@
         "string_view": "cpp",
         "rope": "cpp",
         "slist": "cpp",
-        "cuchar": "cpp"
+        "cuchar": "cpp",
+        "bh_test_coord_transf": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "cmake.configureOnOpen": false
