@@ -308,7 +308,15 @@ vector<bool> Spacetime::BH_causal2D (std::vector<double> xvec,
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal2D(yvec, xvec, period);}
+        {std:vector<bool> result = Spacetime::BH_causal2D(yvec, xvec, period);
+        if (result[0])
+        {
+            bool a = result[1]*1;
+            result[1] = result[2]*1;
+            result[2] = result[1]*1;
+        }
+        return result;
+        }
 
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
@@ -936,7 +944,7 @@ inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
 /**
  * @brief Convert from cartesian to spherical coordinates.
  */
-void Spacetime::CarttoS (std::vector<double>& xvec)
+void Spacetime::CarttoSpherical (std::vector<double>& xvec)
 {
     if (xvec.size()==3)
     {
@@ -960,7 +968,7 @@ void Spacetime::CarttoS (std::vector<double>& xvec)
 /**
  * @brief Convert from cartesian to spherical coordinates.
  */
-void Spacetime::CarttoS (std::vector<std::vector<double>>& coords)
+void Spacetime::CarttoSpherical (std::vector<std::vector<double>>& coords)
 {
     if (coords[0].size()==3)
     {
@@ -983,6 +991,38 @@ void Spacetime::CarttoS (std::vector<std::vector<double>>& coords)
             xvec[1] = r;
             xvec[2] = theta;
             xvec[3] = (phi>0)? phi : phi + 2*M_PI;
+        }
+    }
+}
+
+/**
+ * @brief Convert spherical to cartesian coordinates
+ * 
+ * @param coords coordinates in spherical coord.syst (t,r,theta,phi) 
+ */
+void Spacetime::SphericaltoCart(std::vector<std::vector<double>>& coords)
+{
+    if (coords[0].size()==3)
+    {
+        for (auto & xvec : coords)
+        {
+            double x = xvec[1]*std::cos(xvec[2]);
+            double y = xvec[1]*std::sin(xvec[2]);
+            xvec[1] = x;
+            xvec[2] = y;
+            xvec[2] = (phi>0)? phi : phi + 2*M_PI;
+        }
+    }
+    else if (coords[0].size()==4)
+    {
+        for (auto & xvec : coords)
+        {
+            double x = xvec[1]*std::sin(xvec[2])*std::cos(xvec[3]);
+            double y = xvec[1]*std::sin(xvec[2])*std::sin(xvec[3]);
+            double z = xvec[1]*std::cos(xvec[2]);
+            xvec[1] = x;
+            xvec[2] = y;
+            xvec[3] = z;
         }
     }
 }

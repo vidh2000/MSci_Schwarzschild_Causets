@@ -16,8 +16,8 @@ C: EmbeddedCauset = EmbeddedCauset()
 #S: CoordinateShape = CoordinateShape(3,"cylinder",radius=2,duration=3)
 
 # Load file
-dim = 2
-card = 200
+dim = 3
+card = 50
 
 path = os.getcwd() # folder path
 #file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')
@@ -53,7 +53,10 @@ ax.set_ylabel('space' if dims[1] > 0 else 'time')
 if len(dims) > 2:
     ax.set_zlabel('space' if dims[2] > 0 else 'time')
     ax.grid(False)
+
+# Plot horizon in 2D
 ax.axvline(2,0,20,color="red", ls="--")
+ax.axvline(-2,0,20,color="red", ls="--")
 cplt.show()
 
 # %%

@@ -24,7 +24,7 @@
 
 using namespace std::chrono;
 
-int card = 20;
+int card = 50;
 int dim = 3;
 std::vector<double> center (dim, 0);
 double radius = 3.0;
@@ -48,7 +48,7 @@ int main(){
 
 auto start = high_resolution_clock::now();
 
-std::vector<const char*> names = {"cylinder"};
+std::vector<const char*> names = {"cube"};
 
 for (const char* name : names)
 {
