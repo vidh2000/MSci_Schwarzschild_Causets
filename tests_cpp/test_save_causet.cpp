@@ -24,12 +24,12 @@
 
 using namespace std::chrono;
 
-int card = 50;
-int dim = 3;
-std::vector<double> center (dim, 0);
+int card = 20;
+int dim = 2;
 double radius = 3.0;
 double myduration = 3;
-double edge = 20;
+double edge = 4;
+std::vector<double> center (dim, edge/2);
 std::vector<double> edges = {1,2,3,4};
 
 

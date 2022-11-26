@@ -124,7 +124,7 @@ class EmbeddedCauset: public Causet
         void make_fut_links     (const char* method = "coordinates");
         
         // Methods for counting links -> entropy
-        int count_links(double t_f, double r_S, 
+        int count_links(double t_f, double r_S = 2, 
                         const char* spacetime = "Schwarzschild");
 
         //Destructor

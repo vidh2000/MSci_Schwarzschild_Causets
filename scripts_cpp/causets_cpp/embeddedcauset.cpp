@@ -1369,57 +1369,85 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
  *                  in other spacetimes if needed
  * @return int Number of links
  */
-// int EmbeddedCauset::count_links(double t_f, double r_S,
-//                     const char* spacetime)
-// {
-//     if (!strcmp(spacetime, "Schwarzschild")==0)
-//     {
-//         std::cout<<"Please choose 'Schwarzschild' for spacetime." <<
-//         "Other spacetimes might be available in the future" << std::endl;
-//         throw std::invalid_argument("Wrong spacetime");
-//     }
+int EmbeddedCauset::count_links(double t_f, double r_S,
+                    const char* spacetime)
+{
+    if (!strcmp(spacetime, "Schwarzschild")==0)
+    {
+        std::cout<<"Please choose 'Schwarzschild' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
 
-//     // Find indices of events before t_i,t_f
-//     int i_max = 0; 
-//     for (int i=0; i<_size; i++)
-//     {
-//         if (_coords[i][0]<=t_f)
-//         {
-//             i_max++;
-//         }
-//         else {
-//             break;
-//         }
-//     }
+    // // Find indices of events before t_i,t_f
+    // int i_max = 0; 
+    // for (int i=0; i<_size; i++)
+    // {
+    //     if (_coords[i][0]<=t_f)
+    //     {
+    //         i_max++;
+    //     }
+    //     else {
+    //         break;
+    //     }
+    // }
+    // // Get rid of elements above the const. time (spacelike) hypersurface
+    // this->discard(arange(i_max,_size-1));
 
-//     // Get rid of elements above the const. time (spacelike) hypersurface
-//     this->discard(arange(i_max,_size-1));
-
-//     // Number of links
-//     int N = 0;
-//     for (int i = _size-2; i>-1; i--)
-//     {
-//         // Method 1: Go down element by element and check if it's contained
-//         //           in any past_links of higher elements.
-//         //           If link has been formed to higher element already, skip
+    // Number of links
+    int N = 0;
+    //std::cout << "Coordinates:\n";
+    //print_vector(_coords);
+    //std::cout << "Size= " << _size << std::endl;
+    for (int i = _size-2; i>-1; i--)
+    {
+        // Method 1: Go down element by element and check if it's contained
+        //           in any past_links of higher elements.
         
-//         for (int j=i+1; j<i_max; j++)
-//         {
-//             if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i always
-//             {
-//                 if (_future_links[j].size()==0 &&  // if j==maximal
-//                     _future_links[i].size()==1)  // if i links only to j  
-//                 {
-//                     // check if j-i is the link
-//                     if (set_contains(j,_future_links[i])) //faster if here
-//                     {
-//                         N++;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
+        for (int j=i+1; j<_size; j++)
+        {
+            if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+            {
+                //std::cout << "The pair [j,i] for r_S = " << r_S << std::endl;
+                //print_vector(_coords[j]);
+                //print_vector(_coords[i]);
+                if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i
+                {
+                    //std::cout << "====================================================\n";
+                    //std::cout << "r_j<R and r_i>R" << std::endl;
+                    //std::cout << "Future links of j and i:\n";
+                    //print_set(_future_links[j]);
+                    //print_set(_future_links[i]);
+                    if (_future_links[j].size()==0 &&  // if j==maximal
+                        _future_links[i].size()==1)  // if i links only to j  
+                    {
+                        // check if j-i is the link
+                        if (set_contains(j,_future_links[i])) //faster if here
+                        {
+                            //std::cout << "FOUND LINK!!!!!!!!!!!!!!!!!!!\n";
+                            N++;}
+                    }
+                }
+            }
+            else // t_j<t_i //
+            {
+                std::cout << "t_j<t_i\n";
+                if (_coords[i][1]<r_S && _coords[j][1]>r_S) // t_j<t_i
+                {
+                    if (_future_links[i].size()==0 &&  // if i==maximal
+                        _future_links[j].size()==1)  // if j links only to i  
+                    {
+                        // check if j-i is the link
+                        if (set_contains(i,_future_links[j])) //faster if here
+                        {
+                            N++;}
+                    }
+                }
+            }
+        }
+    }
+    return N;
+}
 
 
 

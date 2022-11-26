@@ -648,7 +648,7 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
     double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
     if (c<0)
     {
-        std::cout<<"   c^2          is :"<<-1      <<std::endl;
+        //std::cout<<"   c^2          is :"<<-1      <<std::endl;
         return {false, false, false};
     }
     else
@@ -657,8 +657,8 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
         double geo_time = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], c, 
                                                     mass);
         bool x_prec_y =  geo_time <= yvec[0] - xvec[0];
-        std::cout<<"   c^2          is :"<<c*c      <<std::endl;
-        std::cout<<"geodesic's time is : "<<geo_time<<std::endl;
+        //std::cout<<"   c^2          is :"<<c*c      <<std::endl;
+        //std::cout<<"geodesic's time is : "<<geo_time<<std::endl;
         return {x_prec_y, x_prec_y, false};
     }
 }
@@ -746,8 +746,8 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
         // turn lower limit to previous upper and check again.
         while (BH_int_dvarphi_du(u1, u2, c2max, M) > varphi2)
         {
-            std::cout<<"No biggy, just in c_solver had to update upper limit"
-                    <<std::endl;
+            //std::cout<<"No biggy, just in c_solver had to update upper limit"
+            //        <<std::endl;
             c2min = c2max*1;
             c2max *= 2;
         }
@@ -786,8 +786,8 @@ double Spacetime::BH_c_solver (double u1, double u2, double varphi2, double M)
         // again.
         while (BH_int_dvarphi_du(u2, u1, c2max, M) > varphi2)
         {
-            std::cout<<"No biggy, just in c_solver had to update upper limit"
-                    <<std::endl;
+            //std::cout<<"No biggy, just in c_solver had to update upper limit"
+             //       <<std::endl;
             c2min = c2max*1;
             c2max *= 2;
         }
@@ -857,7 +857,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
                                           /D;
                                   }
                                 };
-        std::cout << "u2>=u1\n";
+        //std::cout << "u2>=u1\n";
         boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
                                               u1, u2, (u2-u1)/20.);
     }
@@ -872,7 +872,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
                                 };
         if (0.5*M>=u1 || u2>=0.5*M) //0.5*M NOT in [u2, u1]
         {
-            std::cout << "in 0.5*M NOT in [u2, u1]\n";
+            //std::cout << "in 0.5*M NOT in [u2, u1]\n";
             //Avoid divergence at 1-2*M*u=0
             u2 += (u2==0.5*M)? 1e-3*M : 0;
             u1 -= (u2==0.5*M)? 1e-3*M : 0;
@@ -882,15 +882,15 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
         }
         else /*0.5*M IN [u2, u1]*/
         {
-            std::cout << "in else.................................... \n";
+            //std::cout << "in else.................................... \n";
             //Compute in 2 steps to avoid divergence
             
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
                                             u1, (0.5+0.0001)*M, -(u1-0.5)/20.);
-            std::cout << "first integral finito..\n";
+            //std::cout << "first integral finito..\n";
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
                                             (0.5-0.0001)*M, u2, -(0.5-u2)/20.);
-            std::cout << "second integral finito..\n";
+            //std::cout << "second integral finito..\n";
         }
     }
     return t;
@@ -1053,7 +1053,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        //std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -1102,7 +1102,7 @@ void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        //std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -1210,7 +1210,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        //std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
@@ -1265,7 +1265,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
     }
     else
     {
-        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        //std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
