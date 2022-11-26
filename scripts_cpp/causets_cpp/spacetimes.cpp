@@ -260,9 +260,9 @@ vector<bool> Spacetime::Flat_causal_periodic(vector<double> xvec,
  * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
  *                (default), or "Schwarzschild" or "S".
  */
-void Spacetime::BlackHoleSpacetime(int dim,// = 2,
-                                    double mass,// = 0.5,
-                                    std::string metric)// = "EF")
+void Spacetime::BlackHoleSpacetime(int dim,// = 4
+                                    double mass,// = 1
+                                    std::string metric)// = "EF(original)"
 {
 
     if (dim != 4 && dim != 2 && dim !=3)
@@ -271,7 +271,7 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 2,
         throw std::invalid_argument("Dimension has to be 2,3 or 4.");
     }
     _dim = dim;
-    _name = "black hole";
+    _name = "BlackHole";
     _mass = mass;
     _r_S  = 2*mass;
 
@@ -901,35 +901,35 @@ bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
 // BH Coordinate Transformations
 ///////////////////////////////////////////////////////////////////////////
 
-// typedef void (*inversefunc)
-// (std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
-// /**
-//  * @brief Turn coords from "Spacetime_object._metricname" to "EF(original)" 
-//  * 
-//  * @param coords vector<vector<double>>& : coordinates to change
-//  * @return func "void callable(vector<vector<double>> &coords)" : function that
-//  * turns coordinates back from "EF(original)" to the first type.
-//  */
-// inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
-// {
-//     if (_metricname=="EF(uv)")
-//     {
-//         Spacetime::switchInEF(coords, "original");
-//         return Spacetime::EF_from_uv_to_original;
-//     }
-//     else if (_metricname=="Schwarzschild")
-//     {
-//         Spacetime::StoInEF(coords, _mass);
-//         return Spacetime::InEFtoS;
-//     }
-//     else if (_metricname=="GP")
-//     {
-//         Spacetime::GPtoInEF(coords, _mass);
-//         return Spacetime::GPtoInEF;
-//     }
-//     else
-//         {return Spacetime::do_nothing;}
-// }
+typedef void (*inversefunc)
+(std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
+/**
+ * @brief Turn coords from "Spacetime_object._metricname" to "EF(original)" 
+ * 
+ * @param coords vector<vector<double>>& : coordinates to change
+ * @return func "void callable(vector<vector<double>> &coords)" : function that
+ * turns coordinates back from "EF(original)" to the first type.
+ */
+inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
+{
+    if (_metricname=="EF(uv)")
+    {
+        Spacetime::switchInEF(coords, "original");
+        return Spacetime::EF_from_uv_to_original;
+    }
+    else if (_metricname=="Schwarzschild")
+    {
+        Spacetime::StoInEF(coords, _mass);
+        return Spacetime::InEFtoS;
+    }
+    else if (_metricname=="GP")
+    {
+        Spacetime::GPtoInEF(coords, _mass);
+        return Spacetime::GPtoInEF;
+    }
+    else
+        {return Spacetime::do_nothing;}
+}
 
 
 
@@ -964,24 +964,25 @@ void Spacetime::CarttoS (std::vector<std::vector<double>>& coords)
 {
     if (coords[0].size()==3)
     {
-        for (auto xvec : coords)
+        for (auto & xvec : coords)
         {
             double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
             double phi = std::atan2(xvec[2],xvec[1]);
             xvec[1] = r;
-            xvec[2] = phi;
+            xvec[2] = (phi>0)? phi : phi + 2*M_PI;
         }
     }
     else if (coords[0].size()==4)
     {
-        for (auto xvec : coords)
+        for (auto & xvec : coords)
         {
             double rho = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
             double r = std::sqrt(rho*rho + xvec[3]*xvec[3]);
             double theta = std::atan2(rho, xvec[3]);
             double phi = std::atan2(xvec[2],xvec[1]);
             xvec[1] = r;
-            xvec[2] = phi;
+            xvec[2] = theta;
+            xvec[3] = (phi>0)? phi : phi + 2*M_PI;
         }
     }
 }
@@ -1031,7 +1032,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
 void Spacetime::InEFtoS (std::vector<std::vector<double>> &coords, double mass,
                         const char* EFtype)
 {
-    for (std::vector<double> xvec : coords)
+    for (std::vector<double> & xvec : coords)
         {Spacetime::InEFtoS(xvec, mass, EFtype);}
 }
 
@@ -1080,7 +1081,7 @@ void Spacetime::StoInEF (std::vector<double> &xvec, double mass,
 void Spacetime::StoInEF (std::vector<std::vector<double>> &coords, double mass,
                         const char* EFtype)
 {
-    for (std::vector<double> xvec : coords)
+    for (std::vector<double> & xvec : coords)
         {Spacetime::StoInEF(xvec, mass, EFtype);}
 }
 
@@ -1107,7 +1108,7 @@ void Spacetime::GPtoS (std::vector<double>& xvec,  double mass)
 void Spacetime::GPtoS (std::vector<std::vector<double>>& coords, 
                        double mass)
 {
-    for (std::vector<double> xvec : coords)
+    for (std::vector<double> & xvec : coords)
         {Spacetime::GPtoS(xvec, mass);}
 }
 
@@ -1134,7 +1135,7 @@ void Spacetime::StoGP (std::vector<double>& xvec, double mass)
 void Spacetime::StoGP (std::vector<std::vector<double>>& coords, 
                        double mass)
 {
-    for (std::vector<double> xvec : coords)
+    for (std::vector<double> & xvec : coords)
         {Spacetime::StoGP(xvec, mass);}
 }
 
@@ -1189,7 +1190,7 @@ void Spacetime::InEFtoGP (std::vector<double>& xvec, double mass,
 void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords, 
                           double mass, const char* EFtype)
 {
-    for (std::vector<double> xvec : coords)
+    for (std::vector<double> & xvec : coords)
         {InEFtoGP(xvec, mass, EFtype);}
 }
 
@@ -1244,7 +1245,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
 void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
                           double mass, const char* EFtype)
 {
-    for (std::vector<double> xvec : coords)
+    for (std::vector<double> & xvec : coords)
         {GPtoInEF(xvec, mass, EFtype);}
 }
 
@@ -1277,12 +1278,12 @@ void Spacetime::switchInEF (std::vector<std::vector<double>>& coords,
 {
     if (strcmp(from, "original")==0)
     {
-        for (std::vector<double> xvec : coords)
+        for (std::vector<double> & xvec : coords)
             {xvec[0] += std::abs(xvec[1]);}
     }
     else
     {
-        for (std::vector<double> xvec : coords)
+        for (std::vector<double> & xvec : coords)
             {xvec[0] -= std::abs(xvec[1]);}
     }
 }

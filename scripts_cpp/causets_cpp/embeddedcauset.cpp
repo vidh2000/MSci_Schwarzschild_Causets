@@ -1369,60 +1369,57 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
  *                  in other spacetimes if needed
  * @return int Number of links
  */
-int EmbeddedCauset::count_links(double t_f, double r_S,
-                    const char* spacetime)
-{
-    if (!strcmp(spacetime, "Schwarzschild")==0)
-    {
-        std::cout<<"Please choose 'Schwarzschild' for spacetime." <<
-        "Other spacetimes might be available in the future" << std::endl;
-        throw std::invalid_argument("Wrong spacetime");
-    }
+// int EmbeddedCauset::count_links(double t_f, double r_S,
+//                     const char* spacetime)
+// {
+//     if (!strcmp(spacetime, "Schwarzschild")==0)
+//     {
+//         std::cout<<"Please choose 'Schwarzschild' for spacetime." <<
+//         "Other spacetimes might be available in the future" << std::endl;
+//         throw std::invalid_argument("Wrong spacetime");
+//     }
 
+//     // Find indices of events before t_i,t_f
+//     int i_max = 0; 
+//     for (int i=0; i<_size; i++)
+//     {
+//         if (_coords[i][0]<=t_f)
+//         {
+//             i_max++;
+//         }
+//         else {
+//             break;
+//         }
+//     }
 
-    // Find indices of events before t_i,t_f
-    int i_max = 0; 
-    for (int i=0; i<_size; i++)
-    {
-        if (_coords[i][0]<=t_f)
-        {
-            i_max++;
-        }
-        else {
-            break;
-        }
-    }
+//     // Get rid of elements above the const. time (spacelike) hypersurface
+//     this->discard(arange(i_max,_size-1));
 
-    // Get rid of elements above the const. time (spacelike) hypersurface
-    this->discard(arange(i_max,_size-1));
-
-    // Number of links
-    int N = 0;
-    for (int i = _size-2; i>-1; i--)
-    {
-        // Method 1: Go down element by element and check if it's contained
-        //           in any past_links of higher elements.
-        //           If link has been formed to higher element already, skip
+//     // Number of links
+//     int N = 0;
+//     for (int i = _size-2; i>-1; i--)
+//     {
+//         // Method 1: Go down element by element and check if it's contained
+//         //           in any past_links of higher elements.
+//         //           If link has been formed to higher element already, skip
         
-        for (int j=i+1; j<i_max; j++)
-        {
-            if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i always
-            {
-                if (_future_links[j].size()==0 &&  // if j==maximal
-                    _future_links[i].size()==1)  // if i links only to j  
-                {
-                    // check if j-i is the link
-                    if (set_contains(j,_future_links[i])) //faster if here
-                    {
-                        N++;
-                    }
-
-                }
-            }
-        }
-    }
-
-}
+//         for (int j=i+1; j<i_max; j++)
+//         {
+//             if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i always
+//             {
+//                 if (_future_links[j].size()==0 &&  // if j==maximal
+//                     _future_links[i].size()==1)  // if i links only to j  
+//                 {
+//                     // check if j-i is the link
+//                     if (set_contains(j,_future_links[i])) //faster if here
+//                     {
+//                         N++;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 

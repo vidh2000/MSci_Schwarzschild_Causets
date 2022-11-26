@@ -78,9 +78,11 @@ SprinkledCauset::SprinkledCauset(int card,
 
     _size = _coords.size();
 
-
-    if (strcmp(spacetime._name, "BlackHole")==0)
-        {Spacetime::CarttoS(_coords);}
+    std::cout << "Name = " << spacetime._name  << std::endl;
+    if (strcmp(spacetime._name, "BlackHole")==0){
+        Spacetime::CarttoS(_coords);
+        std::cout<< "Blackhole in..\n";
+    }
         
 
     if (spacetime._metricname=="EF(uv)")

@@ -16,8 +16,8 @@ C: EmbeddedCauset = EmbeddedCauset()
 #S: CoordinateShape = CoordinateShape(3,"cylinder",radius=2,duration=3)
 
 # Load file
-dim = 3
-card = 100
+dim = 2
+card = 200
 
 path = os.getcwd() # folder path
 #file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')

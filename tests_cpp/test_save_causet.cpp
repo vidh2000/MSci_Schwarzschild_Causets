@@ -24,7 +24,7 @@
 
 using namespace std::chrono;
 
-int card = 100;
+int card = 20;
 int dim = 3;
 std::vector<double> center (dim, 0);
 double radius = 3.0;
