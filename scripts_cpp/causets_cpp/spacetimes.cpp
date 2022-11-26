@@ -1010,7 +1010,6 @@ void Spacetime::SphericaltoCart(std::vector<std::vector<double>>& coords)
             double y = xvec[1]*std::sin(xvec[2]);
             xvec[1] = x;
             xvec[2] = y;
-            xvec[2] = (phi>0)? phi : phi + 2*M_PI;
         }
     }
     else if (coords[0].size()==4)
