@@ -1035,7 +1035,8 @@ void EmbeddedCauset::make_cmatrix_and_pastlinks(const char* method,
 
 
 /**
- * @brief Make _CMatrix and _future_links. Transitivity is mandatory.
+ * @brief Make _CMatrix and _future_links.
+ *        Transitivity is automatically applied, regardless of use_transitivity
  * 
  * @param method const char* : either "coordinates" or "pasts"
  * @param special bool : if true, C_ij = -1 if ij link
@@ -1069,7 +1070,7 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
                             {_CMatrix[i][k] = 1;}
                     }
                 }
-            }
+            }           
         }
     }
     else

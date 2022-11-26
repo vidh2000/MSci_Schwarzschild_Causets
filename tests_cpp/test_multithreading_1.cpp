@@ -1,7 +1,22 @@
 #include<iostream>
 #include<thread>
 #include <string>
-
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <numeric>
+#include <random>
+#include <set>
+#include <stack>
+#include <stdio.h>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <unordered_set>
+#include <chrono>
 
 void myFunc()
 {
@@ -23,8 +38,8 @@ int main()
 {
     // Oversubsubscription
     
-    std::thread::hardware_concurrency();
-    std::cout << "Number of threads = " << std::endl;
+    unsigned nb_threads = std::thread::hardware_concurrency();
+    std::cout << "Number of threads = " << nb_threads << std::endl;
     //myFunc();
     F functor;
 
