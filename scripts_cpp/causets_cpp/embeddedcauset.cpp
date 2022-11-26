@@ -1408,24 +1408,14 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
         {
             if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
             {
-                //std::cout << "The pair [j,i] for r_S = " << r_S << std::endl;
-                //print_vector(_coords[j]);
-                //print_vector(_coords[i]);
                 if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i
                 {
-                    //std::cout << "====================================================\n";
-                    //std::cout << "r_j<R and r_i>R" << std::endl;
-                    //std::cout << "Future links of j and i:\n";
-                    //print_set(_future_links[j]);
-                    //print_set(_future_links[i]);
                     if (_future_links[j].size()==0 &&  // if j==maximal
                         _future_links[i].size()==1)  // if i links only to j  
                     {
                         // check if j-i is the link
                         if (set_contains(j,_future_links[i])) //faster if here
-                        {
-                            //std::cout << "FOUND LINK!!!!!!!!!!!!!!!!!!!\n";
-                            N++;}
+                            {N++;}
                     }
                 }
             }

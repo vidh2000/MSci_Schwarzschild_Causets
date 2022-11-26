@@ -642,8 +642,8 @@ vector<bool> Spacetime::BH_last_resort(std::vector<double> xvec,
                                        std::vector<double> yvec,
                                        double mass)
 {
-    print_vector(xvec);
-    print_vector(yvec);
+    //print_vector(xvec);
+    //print_vector(yvec);
     
     double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
     if (c<0)

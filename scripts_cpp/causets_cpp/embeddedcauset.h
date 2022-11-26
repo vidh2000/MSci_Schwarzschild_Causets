@@ -43,8 +43,8 @@ class EmbeddedCauset: public Causet
                        bool special = false,
                        bool use_transitivity = true,
                        bool make_sets = false,
-                       bool make_links = false,
-                       const char* generation_mode = "all with links");
+                       bool make_links = true,
+                       const char* generation_mode = "future");
         
 
         // GETTERS
@@ -91,11 +91,11 @@ class EmbeddedCauset: public Causet
         
         void make_attrs(const char* method = "coordinates",
                             bool make_matrix = true,
-                            bool special = true,
+                            bool special = false,
                             bool use_transitivity = true,
                             bool make_sets = false,
-                            bool make_links = false,
-                            const char* sets_type = "both only");
+                            bool make_links = true,
+                            const char* sets_type = "future");
 
         // Behind the scenes
 

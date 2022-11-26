@@ -3,9 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Program Files\\boost\\boost_1_80_0",
-                //"${workspaceFolder}\\cpp_to_py\\pybind11\\include",
-                //"C:\\Users\\Vid\\AppData\\Local\\Programs\\Python\\Python310\\include",
+                //"C:\\Program Files\\boost\\boost_1_80_0",
+                //NO///"${workspaceFolder}\\cpp_to_py\\pybind11\\include",
+                //NO///"C:\\Users\\Vid\\AppData\\Local\\Programs\\Python\\Python310\\include",
                 "${workspaceFolder}/**"
             ],
             "defines": [
