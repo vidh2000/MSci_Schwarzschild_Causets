@@ -4,25 +4,25 @@
             "type": "cppbuild",
             "label": "C/C++: g++.exe build active file",
             "command": "C:\\Program Files\\MinGW-w64\\bin\\g++.exe",
-                    //  "C:\\Program Files\\MinGw-w64-posix\\bin\\g++.exe",
-                    //  "C:\\cygwin64\\bin\\g++.exe",
+                    //NO  "C:\\Program Files\\MinGw-w64-posix\\bin\\g++.exe",
+                    //NO  "C:\\cygwin64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 // COMPILE COMMAND
                 "-g", "${file}",
-                // "${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
-                // "${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
-                // "${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
-                // "${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
-                // "${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/causet.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/embeddedcauset.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
+                "${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
                 // EXECUTABLE
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 // OPTIMISATION FLAG
                 "-O2", 
                 //INCLUDE PATHS
-                // "-I",
-                // "C:\\Program Files\\boost\\boost_1_80_0",
+                "-I",
+                "C:\\Program Files\\boost\\boost_1_80_0",
                 
                 //NO///"-I",
                 //NO///"${workspaceFolder}\\cpp_to_py\\pybind11\\include",
