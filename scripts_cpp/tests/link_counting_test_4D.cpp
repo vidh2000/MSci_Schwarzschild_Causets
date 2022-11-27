@@ -105,7 +105,7 @@ for (auto && tup : boost::combine(cards, radii, masses))
         //std::cout << "M = " << mass << ", N_links = " << N_links_avg
         //        << " +- " << N_links_std  << std::endl;
         std::cout << "Average time taken for generating, N = " << card
-                << ", (r,h) = " << "("<<radius<<","<< myduration
+                << ", (r,h) = " << "("<<radius<<","
                 <<"):\n" << duration/pow(10,6)/repetitions << " seconds" << std::endl;
         
 }
