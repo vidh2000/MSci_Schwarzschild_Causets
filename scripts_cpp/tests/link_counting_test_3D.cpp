@@ -32,8 +32,8 @@ using namespace std::chrono;
 
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1,1.5,2,2.5};
-int N_multiplier = 300;
+std::vector<double> masses = {1,2,3,4};
+int N_multiplier = 500;
 int repetitions = 5;
 
 
@@ -61,7 +61,7 @@ for (auto mass : masses)
 bool poisson = false;
 bool make_matrix = true;
 bool special = false;
-bool use_transitivity = false;
+bool use_transitivity = true;
 bool make_sets = false;
 bool make_links = true; //making links with parallel inside <- doesn't break transitivity
 const char* sets_type = "future"; 
@@ -74,10 +74,12 @@ std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
 std::vector<double> N_links_avgs = {};
 std::vector<double> N_links_stds = {};
 
+int iteration = 0;
 for (auto && tup : boost::combine(cards, radii, masses, durations))
 {
+        iteration++;
         auto start = high_resolution_clock::now();
-        
+
         // Store N_links for each repetition
         std::vector<int> N_links_arr = {};
         // Define params for causet generation
@@ -85,11 +87,12 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration) = tup;
         std::cout << "N = " << card << ", dim = " << dim << std::endl;
+        
         // Repeat over many initialisations
+        #pragma omp parallel for
         for (int rep=0; rep<repetitions; rep++)
         {
-                auto repstart = high_resolution_clock::now();
-                std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+                //auto repstart = high_resolution_clock::now();
                 CoordinateShape shape(dim,name,center,radius,myduration);
                 Spacetime S = Spacetime();
                 S.BlackHoleSpacetime(dim,mass);
@@ -98,14 +101,15 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
                                 make_sets, make_links,sets_type);
                 // Count links and store it
                 double t_f = radius;
-                int N_links = C.count_links(t_f);
+                double N_links = C.count_links(t_f)*1.0;
                 N_links_arr.push_back(N_links);
 
                 //Timing
-                auto repend = high_resolution_clock::now();
-                double duration = duration_cast<microseconds>(repend - repstart).count();
-                std::cout << "Time taken N = " << card
-                << ": " << duration/pow(10,6) << " seconds" << std::endl;
+                //auto repend = high_resolution_clock::now();
+                //double duration = duration_cast<microseconds>(repend - repstart).count();
+                //std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+                //std::cout << "Time taken N = " << card
+                //<< ": " << duration/pow(10,6) << " seconds" << std::endl;
         }
         double N_links_avg = mymean(N_links_arr);
         double accum = 0.0;
@@ -119,11 +123,13 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         auto mid = high_resolution_clock::now();
         double duration = duration_cast<microseconds>(mid - start).count();
         
-        std::cout << "M = " << mass << ", N_links = " << N_links_avg
+        std::cout << (iteration)<<"/"<< masses.size() << "M = " << mass
+                << ", N_links = " << N_links_avg
                 << " +- " << N_links_std  << std::endl;
-        std::cout << "Average time taken for generating, N = " << card
-                << ", (r,h) = " << "("<<radius<<","<< myduration
-                <<"): " << duration/pow(10,6)/repetitions << " seconds" << std::endl;
+        std::cout << "Average time taken for generating, N = " << card << ": "
+                //<< ", (r,h) = " << "("<<radius<<","<< myduration <<"): "
+                << duration/pow(10,6)/repetitions
+                << " seconds" << std::endl;
         
 }
 

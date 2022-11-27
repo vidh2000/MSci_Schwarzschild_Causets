@@ -1056,7 +1056,7 @@ void EmbeddedCauset::make_cmatrix_and_pastlinks(const char* method,
 void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
                                                bool special)
 {
-    std::cout << "Making cmatrix + futlinks, with parallel inside\n";
+    //std::cout << "Making cmatrix + futlinks, with parallel inside\n";
     if (strcmp(method, "coordinates")==0)
     {
         auto xycausality = this->_spacetime.Causality();
