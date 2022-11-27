@@ -69,10 +69,10 @@ using std::vector;
 CoordinateShape::CoordinateShape(int dim, const char* name, 
                                 vector<double> center,
                                 double radius,
+                                double duration,
                                 double edge,
                                 vector<double> edges,
-                                double hollow,
-                                double duration)
+                                double hollow)
 {
     // Set Dimension
     if (dim < 1)

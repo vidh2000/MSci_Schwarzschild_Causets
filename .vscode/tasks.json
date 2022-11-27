@@ -21,7 +21,8 @@
                 // OPTIMISATION FLAG
                 "-O2", 
                 //INCLUDE PATHS
-                "-I C:\\Program Files\\boost\\boost_1_80_0",
+                "-I",
+                "C:\\Program Files\\boost\\boost_1_80_0",
                 
                 //NO///"-I",
                 //NO///"${workspaceFolder}\\cpp_to_py\\pybind11\\include",

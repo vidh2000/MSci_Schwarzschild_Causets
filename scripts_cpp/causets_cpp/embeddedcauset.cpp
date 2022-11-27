@@ -1053,8 +1053,11 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
         int special_factor = (special)? -1 : 1;
         _CMatrix.resize(_size, vector<int>(_size,0));
         _future_links.resize(_size);
+
+        
         for(int i=_size-1; i>-1; i--) //can skip the very last
         {
+            
             for(int j=i+1; j<_size; j++) //j can only follow i
             {
                 if (_CMatrix[i][j] != 0)

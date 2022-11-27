@@ -74,10 +74,10 @@ class CoordinateShape
                         const char* name = "bicone", 
                         std::vector<double> center = {},//{0}
                         double radius   = 1,
+                        double duration = 2,
                         double edge     = 1,
                         std::vector<double> edges = {},//{1}
-                        double hollow   = 0,
-                        double duration = 2);
+                        double hollow   = 0);
         
         void param_rangecheck(std::string name, 
                                 double maxValue = std::nan(""),
