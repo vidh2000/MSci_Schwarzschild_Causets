@@ -28,9 +28,9 @@ using namespace std::chrono;
 
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1,2,3,4};
-int N_multiplier = 300;
-int repetitions = 5;
+std::vector<double> masses = {1};
+int N_multiplier = 1000;
+int repetitions = 1;
 
 
 int main(){

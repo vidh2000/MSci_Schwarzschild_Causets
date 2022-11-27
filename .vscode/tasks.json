@@ -15,6 +15,8 @@
                 "${workspaceFolder}/scripts_cpp/causets_cpp/sprinkledcauset.cpp",
                 "${workspaceFolder}/scripts_cpp/causets_cpp/shapes.cpp",
                 "${workspaceFolder}/scripts_cpp/causets_cpp/spacetimes.cpp",
+                // Enable OpenMP
+                "-fopenmp",
                 // EXECUTABLE
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",

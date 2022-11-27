@@ -17,6 +17,7 @@
 #include <chrono>
 #include <unordered_set>
 #include <iterator>
+#include <omp.h>
 
 #include "functions.h"
 #include "vecfunctions.h"
@@ -1003,8 +1004,11 @@ void EmbeddedCauset::make_cmatrix_and_pastlinks(const char* method,
         int special_factor = (special)? -1 : 1;
         _CMatrix.resize(_size, vector<int>(_size,0));
         _past_links.resize(_size);
+
+       
         for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
         {
+            
             for(int i=j-1; i>-1; i--) //i can only preceed j
             {
                 if (_CMatrix[i][j] != 0)
@@ -1054,10 +1058,10 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
         _CMatrix.resize(_size, vector<int>(_size,0));
         _future_links.resize(_size);
 
-        
+        //#pragma omp parallel for schedule(dynamic,8)
         for(int i=_size-1; i>-1; i--) //can skip the very last
         {
-            
+            //std::cout << "i="<<i<<"\n";
             for(int j=i+1; j<_size; j++) //j can only follow i
             {
                 if (_CMatrix[i][j] != 0)

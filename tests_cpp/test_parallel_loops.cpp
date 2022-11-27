@@ -14,20 +14,31 @@
 #include <chrono>
 #include <unordered_set>
 #include <chrono>
+using namespace std::chrono;
 
 #include "../scripts_cpp/causets_cpp/functions.h"
 #include "../scripts_cpp/causets_cpp/vecfunctions.h"
 
-using namespace std::chrono;
+#include <omp.h>
 
-int repeat = 100;
-int n = 5000;
-int in =1000;
+
+
+int repeat = 1000;
+int n = 1000;
+
+
+int N_cores;
 
 
 int main(){
 
-// enable/disable OpenMP
+// enable/disable OpenMP via include in tasks.json
+#pragma omp parallel
+N_cores = omp_get_thread_num()+1;
+
+
+std::cout << "Number of CPU cores= " << N_cores << std::endl;
+
 
 // No parallelism
 std::vector<std::vector<double>> a = generate_2Dvector(n,n,0,n);
@@ -39,8 +50,6 @@ for (int r=0; r<repeat; r++)
 {
     for(int i=0; i<n; i++) {
         for(int j=0; j<n; j++) {
-            for (int o=0; o<in; o++){
-                int p=1;}
             a[i][j] += j+i;
         }
     }
@@ -58,11 +67,9 @@ auto start1 = high_resolution_clock::now();
 
 for (int r=0; r<repeat; r++)
 {
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic,N_cores)
     for(int i=0; i<n; i++) {
         for(int j=0; j<n; j++) {
-            for (int o=0; o<in; o++){
-                int p=1;}
             a[i][j] += j+i;
         }
     }
@@ -78,11 +85,9 @@ auto start2 = high_resolution_clock::now();
 
 for (int r=0; r<repeat; r++)
 {
+    #pragma omp for nowait
     for(int i=0; i<n; i++) {
-        #pragma omp parallel for
         for(int j=0; j<n; j++) {
-            for (int o=0; o<in; o++){
-                int p=1;}
             a[i][j] += j+i;
         }
     }
@@ -98,12 +103,9 @@ auto start3 = high_resolution_clock::now();
 
 for (int r=0; r<repeat; r++)
 {
-    #pragma omp parallel for 
+    #pragma omp parallel for schedule(dynamic,N_cores)
     for(int i=0; i<n; i++) {
-        #pragma omp parallel for
         for(int j=0; j<n; j++) {
-            for (int o=0; o<in; o++){
-                int p=1;}
             a[i][j] += j+i;
         }
     }
@@ -120,12 +122,9 @@ auto start4 = high_resolution_clock::now();
 
 for (int r=0; r<repeat; r++)
 {
-    #pragma omp parallel for
+    
     for(int i=0; i<n; i++) {
-        #pragma omp parallel for nowait
         for(int j=0; j<n; j++) {
-            for (int o=0; o<in; o++){
-                int p=1;}
             a[i][j] += j+i;
         }
     }
