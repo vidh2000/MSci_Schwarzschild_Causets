@@ -23,6 +23,7 @@
 #include "../causets_cpp/vecfunctions.h"
 
 #include <boost/range/combine.hpp>
+#include <omp.h>
 
 using namespace std::chrono;
 

@@ -23,6 +23,7 @@
 #include "../causets_cpp/vecfunctions.h"
 
 #include <boost/range/combine.hpp>
+#include <omp.h>
 
 using namespace std::chrono;
 
@@ -32,9 +33,9 @@ using namespace std::chrono;
 
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1,1.5,2,2.5,3};
-int N_multiplier = 300;
-std::vector<int> repetitions_arr = {8,8,8,8,8};
+std::vector<double> masses = {1};
+int N_multiplier = 4000;
+std::vector<int> repetitions_arr = {8};
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,6 +69,7 @@ const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
+std::cout << "Doing CMatrix and inferring future links from it\n\n";
 
 // Variables for storage of information from each causet realisation
 std::vector<double> N_links_avgs = {};
@@ -96,7 +98,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
         {
                 //auto repstart = high_resolution_clock::now();
                 // Set up shape
-                std::vector<double> center = {-myduration/2,0.0,0.0};
+                std::vector<double> center = {-myduration/2,0.0,0.0,0.0};
                 CoordinateShape shape(dim,name,center,radius,myduration);
                 // Set up spacetime
                 Spacetime S = Spacetime();
