@@ -26,35 +26,44 @@
 
 using namespace std::chrono;
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1,2,3,4};
+std::vector<double> masses = {1,1.5,2,2.5,3};
 int N_multiplier = 300;
-int repetitions = 5;
+std::vector<int> repetitions_arr = {8,8,8,8,8};
 
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 int main(){
 
 int dim = 4; //want it to be "hard coded = 4"
-std::vector<double> center (dim, 0.0);
 std::vector<int> cards = {};
 std::vector<double> radii = {};
+std::vector<double> durations = {};
 for (auto mass : masses)
 {
         // Make a "square" cylinder with r,h=4M, since r_S=2M
         radii.push_back(4*mass);
+        durations.push_back(4*mass);
         // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass);
+        cards.push_back(N_multiplier*mass*mass*mass);
 }
 
 // Sprinkling Parameters
 bool poisson = false;
 bool make_matrix = true;
 bool special = false;
-bool use_transitivity = true;
+bool use_transitivity = false;
 bool make_sets = false;
-bool make_links = true;
-const char* sets_type = "future";
+bool make_links = false; 
+const char* sets_type = "future"; 
 const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
@@ -64,31 +73,59 @@ std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
 std::vector<double> N_links_avgs = {};
 std::vector<double> N_links_stds = {};
 
-for (auto && tup : boost::combine(cards, radii, masses))
+int iteration = 0;
+for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_arr))
 {
+        iteration++;
         auto start = high_resolution_clock::now();
-        
+
         // Store N_links for each repetition
         std::vector<int> N_links_arr = {};
         // Define params for causet generation
-        int card;
-        double radius, mass;
-        boost::tie(card, radius, mass) = tup;
-        std::cout << "N = " << card << ", dim = " << dim << std::endl;
+        int card,repetitions;
+        double radius, myduration, mass;
+        boost::tie(card, radius, mass, myduration, repetitions) = tup;
+        std::cout << "Iter: " << (iteration)<<"/"<< masses.size() <<
+        "\nN = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
+        ". Dimension = " << dim << ". Height = " << myduration <<
+        ". Centered at t = " << -myduration/2 << ".\n";
+        
         // Repeat over many initialisations
+        #pragma omp parallel for// schedule(dynamic,8)
         for (int rep=0; rep<repetitions; rep++)
         {
-                std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
-                CoordinateShape shape(dim,name,center,radius);
+                //auto repstart = high_resolution_clock::now();
+                // Set up shape
+                std::vector<double> center = {-myduration/2,0.0,0.0};
+                CoordinateShape shape(dim,name,center,radius,myduration);
+                // Set up spacetime
                 Spacetime S = Spacetime();
                 S.BlackHoleSpacetime(dim,mass);
+                // Sprinkle the causet
                 SprinkledCauset C(card, S, shape, poisson,
                                 make_matrix, special, use_transitivity,
                                 make_sets, make_links,sets_type);
+
+                // //Timing generation
+                // auto repend = high_resolution_clock::now();
+                // double duration = duration_cast<microseconds>(repend - repstart).count();
+                // std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+                // std::cout << "Time taken generating for N = " << card
+                // << ": " << duration/pow(10,6) << " seconds" << std::endl;
+
                 // Count links and store it
-                double t_f = radius;
-                int N_links = C.count_links(t_f);
+                auto linkcountstart = high_resolution_clock::now();
+                double t_f = 0;
+                double N_links = C.count_links_fromCMatrix(t_f,2*mass)*1.0;
                 N_links_arr.push_back(N_links);
+
+                // //Timing link counting
+                // auto linkcountend = high_resolution_clock::now();
+                // double durationlinks = duration_cast<microseconds>(linkcountend - linkcountstart).count();
+                // std::cout << "Time taken in count_links_fromCMatrix for N = " << card
+                // << ": " << durationlinks/pow(10,6) << " seconds" << std::endl;
+
+                
         }
         double N_links_avg = mymean(N_links_arr);
         double accum = 0.0;
@@ -102,11 +139,12 @@ for (auto && tup : boost::combine(cards, radii, masses))
         auto mid = high_resolution_clock::now();
         double duration = duration_cast<microseconds>(mid - start).count();
         
-        //std::cout << "M = " << mass << ", N_links = " << N_links_avg
-        //        << " +- " << N_links_std  << std::endl;
-        std::cout << "Average time taken for generating, N = " << card
-                << ", (r,h) = " << "("<<radius<<","
-                <<"):\n" << duration/pow(10,6)/repetitions << " seconds" << std::endl;
+        std::cout <<"Number of links over the horizon = " << N_links_avg
+                << " +- " << N_links_std  << std::endl;
+        std::cout << "Average time taken for generating "<< repetitions
+                << " causets with N = " << card << ":\n"  
+                << duration/pow(10,6)/repetitions
+                << " seconds\n" << std::endl;
         
 }
 

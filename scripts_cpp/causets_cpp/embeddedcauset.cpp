@@ -1389,10 +1389,9 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
  * @brief Makes future matrix from causal matrix _CMatrix
  * 
  */
-int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S,
-                    const char* spacetime)
+int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S)
 {
-    if (!strcmp(spacetime, "BlackHole")==0)
+    if (strcmp(_spacetime._name, "BlackHole")==0)
     {
         if (_CMatrix.size()==0)
         {
@@ -1423,7 +1422,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S,
                 }
             }
         }
-        int N = this->count_links_BH(t_f,r_S,spacetime);
+        int N = this->count_links_BH(t_f,r_S);
         return N;
     }
     else
@@ -1452,10 +1451,9 @@ int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S,
  *                  in other spacetimes if needed
  * @return int Number of links
  */
-int EmbeddedCauset::count_links_BH(double t_f, double r_S,
-                    const char* spacetime)
+int EmbeddedCauset::count_links_BH(double t_f, double r_S)
 {
-    if (!strcmp(spacetime, "BlackHole")==0)
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
     {
         std::cout<<"Please choose 'BlackHole' for spacetime." <<
         "Other spacetimes might be available in the future" << std::endl;
