@@ -34,16 +34,13 @@ using namespace std::chrono;
 
 // SIMULATIONS PARAMETERS (adjust only these)
 
-int cardinality = 2000;
+int cardinality = 1000;
 int dim = 3;
-int repetitions = 5;
+int repetitions = 8;
 
 // Specify the type of causet generation
-bool special = false;
-bool use_transitivity = true;
-bool make_links = true;
+bool make_links = false; //would create future links
 // Line below applies only when (make_sets||make_links)==true
-const char* sets_type = "future"; //past 
 const char* spacetime =  "BlackHole"; //"flat" or "BlackHole"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,6 +54,9 @@ int main(){
 
 // Must be like that for good performance -> checked alrady
 bool make_matrix = true;
+const char* sets_type = "future"; //past 
+bool special = false;
+bool use_transitivity = false;
 bool make_sets = false;
 std::vector<double> center (dim, 0.0);
 std::vector<int> cards = {};
@@ -90,7 +90,9 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration) = tup;
         std::cout << "N = " << card << ", dim = " << dim << std::endl;
+        
         // Repeat over many initialisations
+        #pragma omp parallel for
         for (int rep=0; rep<repetitions; rep++)
         {
                 auto repstart = high_resolution_clock::now();

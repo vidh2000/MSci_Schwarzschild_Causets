@@ -759,9 +759,10 @@ void EmbeddedCauset::make_cmatrix(const char* method,
         }
         else 
         {
-            std::cout << "Making cmatrix only without transitivity, with parallel\n";
-
-            #pragma omp parallel for schedule(dynamic,8)
+            //std::cout << "Making cmatrix only without transitivity, with parallel\n";
+            //#pragma omp parallel for// schedule(dynamic,8)
+            //#pragma omp parallel for collapse(2)
+            #pragma omp parallel for
             for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
                 for(int i=j-1; i>-1; i--) //i can only preceed j
@@ -1079,7 +1080,7 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
                     _CMatrix[i][j] = special_factor;
                     _future_links[i].insert(j);
                     // transitivity is mandatory if links are being made
-                    #pragma omp parallel for 
+                    #pragma omp parallel for// schedule(dynamic,8)
                     for (int k = j+1; k<_size; k++)
                     {
                         if(_CMatrix[j][k] != 0) //i<j<k -> i<k
@@ -1268,7 +1269,6 @@ void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
             }
         }
     }
-    //std::cout <<"Finished sprinkling..." << std::endl;
 }
 
 
@@ -1304,7 +1304,6 @@ void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
             }
         }
     }
-    //std::cout <<"Finished sprinkling..." << std::endl;
 }
 
 
@@ -1379,6 +1378,67 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
     //std::cout <<"Finished sprinkling..." << std::endl;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Methods for counting links --> entropy
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+/**
+ * @brief Makes future matrix from causal matrix _CMatrix
+ * 
+ */
+int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S,
+                    const char* spacetime)
+{
+    if (!strcmp(spacetime, "BlackHole")==0)
+    {
+        if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
+
+        _future_links.resize(_size);
+        
+        #pragma omp parallel for
+        for (int i=0; i<_size; i++)
+        {
+            for (int j=i+1; j<_size; j++)
+            {
+                if (_CMatrix[i][j] == 0) {
+                    continue;
+                }
+                else
+                {
+                    bool has_broken = false;
+                    for (int k=i+1; k<j;k++)
+                    {
+                        if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                            has_broken = true;
+                            break;}
+                    }
+                    if (!has_broken){
+                        _future_links[i].insert(j);}
+                }
+            }
+        }
+        int N = this->count_links_BH(t_f,r_S,spacetime);
+        return N;
+    }
+    else
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future."
+        << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+}
+
+
+
+
 /**
  * @brief   Finds number of links in the causet connecting maximal elements 
  *          below t_f with maximal-but-one elements above t_i,
@@ -1392,12 +1452,12 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
  *                  in other spacetimes if needed
  * @return int Number of links
  */
-int EmbeddedCauset::count_links(double t_f, double r_S,
+int EmbeddedCauset::count_links_BH(double t_f, double r_S,
                     const char* spacetime)
 {
-    if (!strcmp(spacetime, "Schwarzschild")==0)
+    if (!strcmp(spacetime, "BlackHole")==0)
     {
-        std::cout<<"Please choose 'Schwarzschild' for spacetime." <<
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
         "Other spacetimes might be available in the future" << std::endl;
         throw std::invalid_argument("Wrong spacetime");
     }
