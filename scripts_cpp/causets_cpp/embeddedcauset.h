@@ -125,9 +125,9 @@ class EmbeddedCauset: public Causet
         
         // Methods for counting links -> entropy
         int count_links_fromCMatrix(double t_f, double r_S = 2,
-                    const char* spacetime = "Schwarzschild");
+                    const char* spacetime);
         int count_links_BH(double t_f, double r_S = 2, 
-                        const char* spacetime = "Schwarzschild");
+                        const char* spacetime);
 
         //Destructor
         ~EmbeddedCauset();       
