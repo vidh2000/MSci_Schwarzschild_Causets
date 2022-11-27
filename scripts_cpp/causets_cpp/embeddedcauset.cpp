@@ -732,7 +732,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
     {
         if (use_transitivity)
         {
-            std::cout << "Making cmatrix only with transitivity, with parallel  inside\n";
+            std::cout << "Making cmatrix only with transitivity, no parallel inside\n";
             int special_factor = (special)? -1 : 1;
             for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
@@ -746,7 +746,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                         {
                             _CMatrix[i][j] = special_factor;
                             // Obtain transitive relations
-                            #pragma omp parallel for schedule(dynamic,8)
+                            //#pragma omp parallel for schedule(dynamic,8)
                             for (int k = i-1; k>-1; k--)
                             {
                                 if(_CMatrix[k][i] != 0) //k<i<j -> k<j
@@ -1079,7 +1079,7 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
                     _CMatrix[i][j] = special_factor;
                     _future_links[i].insert(j);
                     // transitivity is mandatory if links are being made
-                    #pragma omp parallel for schedule(dynamic,8)
+                    #pragma omp parallel for 
                     for (int k = j+1; k<_size; k++)
                     {
                         if(_CMatrix[j][k] != 0) //i<j<k -> i<k

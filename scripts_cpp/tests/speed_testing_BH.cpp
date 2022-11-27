@@ -34,7 +34,7 @@ using namespace std::chrono;
 
 // SIMULATIONS PARAMETERS (adjust only these)
 
-int cardinality = 1000;
+int cardinality = 2000;
 int dim = 3;
 int repetitions = 5;
 
@@ -44,11 +44,14 @@ bool use_transitivity = true;
 bool make_links = true;
 // Line below applies only when (make_sets||make_links)==true
 const char* sets_type = "future"; //past 
+const char* spacetime =  "BlackHole"; //"flat" or "BlackHole"
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+
 
 int main(){
 
@@ -92,7 +95,10 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
                 auto repstart = high_resolution_clock::now();
                 CoordinateShape shape(dim,name,center,radius,myduration);
                 Spacetime S = Spacetime();
-                S.BlackHoleSpacetime(dim,mass);
+                if (strcmp(spacetime, "flat")==0){
+                        S.FlatSpacetime(dim);}
+                else if (strcmp(spacetime, "BlackHole")==0){
+                        S.BlackHoleSpacetime(dim,mass);}
                 SprinkledCauset C(card, S, shape, poisson,
                                 make_matrix, special, use_transitivity,
                                 make_sets, make_links,sets_type);
