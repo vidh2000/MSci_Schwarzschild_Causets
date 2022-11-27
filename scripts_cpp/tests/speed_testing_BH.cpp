@@ -78,6 +78,7 @@ const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
+std::cout << std::endl;
 
 
 for (auto && tup : boost::combine(cards, radii, masses, durations))

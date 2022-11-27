@@ -1402,26 +1402,10 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
         throw std::invalid_argument("Wrong spacetime");
     }
 
-    // // Find indices of events before t_i,t_f
-    // int i_max = 0; 
-    // for (int i=0; i<_size; i++)
-    // {
-    //     if (_coords[i][0]<=t_f)
-    //     {
-    //         i_max++;
-    //     }
-    //     else {
-    //         break;
-    //     }
-    // }
-    // // Get rid of elements above the const. time (spacelike) hypersurface
-    // this->discard(arange(i_max,_size-1));
-
     // Number of links
     int N = 0;
-    //std::cout << "Coordinates:\n";
-    //print_vector(_coords);
-    //std::cout << "Size= " << _size << std::endl;
+    // To find point with lowest time component. Hypersurface set at t=0 btw.
+    std::vector<double> min_times;
     for (int i = _size-2; i>-1; i--)
     {
         // Method 1: Go down element by element and check if it's contained
@@ -1437,8 +1421,11 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
                         _future_links[i].size()==1)  // if i links only to j  
                     {
                         // check if j-i is the link
-                        if (set_contains(j,_future_links[i])) //faster if here
-                            {N++;}
+                        if (set_contains(j,_future_links[i])) {
+                            N++;
+                            std::vector<double> timesvec = {_coords[i][0],_coords[j][0]};
+                            min_times.push_back(vecmin(timesvec));
+                        }
                     }
                 }
             }
@@ -1459,6 +1446,8 @@ int EmbeddedCauset::count_links(double t_f, double r_S,
             }
         }
     }
+    double mintime = vecmin(min_times);
+    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
     return N;
 }
 
