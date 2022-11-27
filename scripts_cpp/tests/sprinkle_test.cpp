@@ -38,51 +38,39 @@ using namespace std::chrono;
  */
 
 // Sprinkled causet parameters
-int card = 10;
-int dim = 4;
+int card = 1000;
+int dim = 3;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
 double myduration = 10;
 double edge = 1.5;
 std::vector<double> edges = {1,2,3,4};
 
-//Analysis Parameters
+// Causet generation
+bool poisson = false;
+bool make_matrix = true;
+bool special = false;
+bool use_transitivity = false;
+bool make_sets = false;
+bool make_links = false;
+const char* sets_type = "future"; // "all with links", "both only", "all", "past", "future"
+
+
+//Analysis Parameters (printing related)
 bool want_matrix = false;
 bool want_coords = false;
 
-bool poisson = false;
-bool make_matrix = false;
-bool special = true;
-bool use_transitivity = false;
-bool make_sets = true;
-bool make_links = false;
-const char* sets_type = "all"; // "all with links", "both only", "all", "pasts", "futures"
-
-int multiply(int a, int b){
-    return a*b;
-}
-
-// double get_coords(){
-//     CoordinateShape shape(dim,"bicone",center,radius,edge,edges,0.0,myduration);
-//     Spacetime S = Spacetime();
-//     S.FlatSpacetime(dim);
-//     SprinkledCauset C(card, S, shape, poisson,
-//                         make_matrix, special, use_transitivity,
-//                         make_sets, make_links,sets_type);
-//     return C._coords[0][0];
-// }
-
 int main(){
-    /*
+    
     auto start = high_resolution_clock::now();
     //std::cout << "Starting building shape..." << std::endl;
-    std::vector<const char*> names = {"bicone"};// "ball", "cylinder", "cube", "cuboid"};
+    std::vector<const char*> names = {"cylinder"};// "ball", "cylinder", "cube", "cuboid"};
     edges.resize(dim);
     card = (want_coords || want_matrix)? 10 : card;
     for (const char* name : names)
     {
 
-        CoordinateShape shape(dim,name,center,radius,edge,edges,0.0,myduration);
+        CoordinateShape shape(dim,name,center,radius);
         std::cout<<"\n\n============= USING "<<name<<" ====================\n";
         // std::cout << "What are the just-Shape's parameters?\n";
         // for (auto const& p : shape._params)
@@ -99,10 +87,10 @@ int main(){
         //std::cout << "\nWhat are the Causet's Shape's parameters at the end?\n";
         //for (auto const& p : C._shape._params){
         //    std::cout << "-- " << p.first << '=' << p.second << '\n';}
-        if ((strcmp(shape._name, "ball")==0)      ||
-             (strcmp(shape._name, "cylinder")==0) ||
-             (strcmp(shape._name, "diamond")==0)  ||
-             (strcmp(shape._name, "bicone")==0))
+        // if ((strcmp(shape._name, "ball")==0)      ||
+        //      (strcmp(shape._name, "cylinder")==0) ||
+        //      (strcmp(shape._name, "diamond")==0)  ||
+        //      (strcmp(shape._name, "bicone")==0))
         // {
         //     std::cout<<"Radius obtained from Parameter: "
         //          <<C._shape.Parameter("radius")<<std::endl;
@@ -214,12 +202,12 @@ int main(){
         //     print_set(fut);
         // }
 
-        std::cout << "\nDoing MMd....." << std::endl;
-        // MMd estimation
-        std::vector<double> MMd_result = C.MMdim_est("big",20,
-                                    vecmin(std::vector<int> {1000,C._size/2}));
-        std::cout << "MMd (mean,std) = ";
-        print_vector(MMd_result);
+        // std::cout << "\nDoing MMd....." << std::endl;
+        // // MMd estimation
+        // std::vector<double> MMd_result = C.MMdim_est("big",20,
+        //                             vecmin(std::vector<int> {1000,C._size/2}));
+        // std::cout << "MMd (mean,std) = ";
+        // print_vector(MMd_result);
     }
 
 
@@ -228,8 +216,8 @@ int main(){
 
     auto stop = high_resolution_clock::now();
     double duration = duration_cast<microseconds>(stop - start).count();
-    std::cout << "Time taken: "
+    std::cout << "Time taken for N= " << card << ", dim = "<< dim << ": "
             << duration/pow(10,6) << " seconds" << std::endl;
-    */
+    
     return 0;
 };

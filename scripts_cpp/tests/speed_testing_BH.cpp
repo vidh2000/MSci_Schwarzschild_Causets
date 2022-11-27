@@ -1,0 +1,117 @@
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <numeric>
+#include <random>
+#include <set>
+#include <stack>
+#include <stdio.h>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <unordered_set>
+#include <chrono>
+
+#include "../causets_cpp/sprinkledcauset.h"
+#include "../causets_cpp/shapes.h"
+#include "../causets_cpp/spacetimes.h"
+
+#include "../causets_cpp/functions.h"
+#include "../causets_cpp/vecfunctions.h"
+
+#include <boost/range/combine.hpp>
+
+using namespace std::chrono;
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
+// SIMULATIONS PARAMETERS (adjust only these)
+
+int cardinality = 1000;
+int dim = 3;
+int repetitions = 5;
+
+// Specify the type of causet generation
+bool make_matrix = true;
+bool special = false;
+bool use_transitivity = true;
+bool make_sets = false;
+bool make_links = true;
+// Line below applies only when (make_sets||make_links)==true
+const char* sets_type = "future"; //past 
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+int main(){
+
+std::vector<double> center (dim, 0.0);
+std::vector<int> cards = {};
+std::vector<double> radii = {};
+std::vector<double> durations = {};
+std::vector<double> masses = {1};
+for (auto mass : masses)
+{
+        // Make a "square" cylinder with r,h=4M, since r_S=2M
+        radii.push_back(4*mass);
+        durations.push_back(4*mass);
+        // Keep the same density of points
+        cards.push_back(cardinality*mass*mass*mass);
+}
+
+// Sprinkling Parameters
+bool poisson = false;
+const char* name = "cylinder";
+auto beginning = high_resolution_clock::now();
+
+std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
+
+
+for (auto && tup : boost::combine(cards, radii, masses, durations))
+{
+        auto start = high_resolution_clock::now();
+        
+        // Define params for causet generation
+        int card;
+        double radius, myduration, mass;
+        boost::tie(card, radius, mass, myduration) = tup;
+        std::cout << "N = " << card << ", dim = " << dim << std::endl;
+        // Repeat over many initialisations
+        for (int rep=0; rep<repetitions; rep++)
+        {
+                auto repstart = high_resolution_clock::now();
+                CoordinateShape shape(dim,name,center,radius,myduration);
+                Spacetime S = Spacetime();
+                S.BlackHoleSpacetime(dim,mass);
+                SprinkledCauset C(card, S, shape, poisson,
+                                make_matrix, special, use_transitivity,
+                                make_sets, make_links,sets_type);
+
+                //Timing
+                auto repend = high_resolution_clock::now();
+                double duration = duration_cast<microseconds>(repend - repstart).count();
+                std::cout << "Time taken N = " << card
+                << ", "<<(rep+1)<<"/"<<repetitions<<": " << duration/pow(10,6)
+                << " seconds" << std::endl;
+        }
+
+    
+        auto mid = high_resolution_clock::now();
+        double duration = duration_cast<microseconds>(mid - start).count();
+        
+        std::cout << "Average time taken for generating, N = " << card
+          << ": " << duration/pow(10,6)/repetitions << " seconds" << std::endl;
+        
+}
+
+std::cout<<std::endl;
+}

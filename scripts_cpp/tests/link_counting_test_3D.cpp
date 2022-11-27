@@ -28,9 +28,9 @@ using namespace std::chrono;
 
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1};
-int N_multiplier = 1000;
-int repetitions = 1;
+std::vector<double> masses = {1,1.5,2,2.5};
+int N_multiplier = 300;
+int repetitions = 5;
 
 
 int main(){
@@ -46,7 +46,7 @@ for (auto mass : masses)
         radii.push_back(4*mass);
         durations.push_back(4*mass);
         // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass);
+        cards.push_back(N_multiplier*mass*mass*mass);
 }
 
 // Sprinkling Parameters
@@ -80,6 +80,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         // Repeat over many initialisations
         for (int rep=0; rep<repetitions; rep++)
         {
+                auto repstart = high_resolution_clock::now();
                 std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
                 CoordinateShape shape(dim,name,center,radius,myduration);
                 Spacetime S = Spacetime();
@@ -91,6 +92,12 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
                 double t_f = radius;
                 int N_links = C.count_links(t_f);
                 N_links_arr.push_back(N_links);
+
+                //Timing
+                auto repend = high_resolution_clock::now();
+                double duration = duration_cast<microseconds>(repend - repstart).count();
+                std::cout << "Time taken N = " << card
+                << ": " << duration/pow(10,6) << " seconds" << std::endl;
         }
         double N_links_avg = mymean(N_links_arr);
         double accum = 0.0;
@@ -104,11 +111,11 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         auto mid = high_resolution_clock::now();
         double duration = duration_cast<microseconds>(mid - start).count();
         
-        //std::cout << "M = " << mass << ", N_links = " << N_links_avg
-        //        << " +- " << N_links_std  << std::endl;
+        std::cout << "M = " << mass << ", N_links = " << N_links_avg
+                << " +- " << N_links_std  << std::endl;
         std::cout << "Average time taken for generating, N = " << card
                 << ", (r,h) = " << "("<<radius<<","<< myduration
-                <<"):\n" << duration/pow(10,6)/repetitions << " seconds" << std::endl;
+                <<"): " << duration/pow(10,6)/repetitions << " seconds" << std::endl;
         
 }
 
