@@ -1067,7 +1067,6 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
         _CMatrix.resize(_size, vector<int>(_size,0));
         _future_links.resize(_size);
 
-        //#pragma omp parallel for schedule(dynamic,8)
         for(int i=_size-1; i>-1; i--) //can skip the very last
         {
             //std::cout << "i="<<i<<"\n";
@@ -1203,6 +1202,7 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
 {
     if (strcmp(method, "coordinates")==0)
     {
+        std::cout << "Making all futures, no cmatrix\n";
         auto xycausality = this->_spacetime.Causality();
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
@@ -1354,20 +1354,25 @@ void EmbeddedCauset::make_past_links(const char* method)// = "coordinates")
  */
 void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
 {   
+    std::cout << "Making only futlinks, no parallel\n";
     _future_links.resize(_size);
-    // Loop through coordinates t_min -> t_max
-    for (int i =_size-1; i>-1; i--)
+    auto xycausality = this->_spacetime.Causality();
+    std::vector<double> st_period = _spacetime._period;
+    double mass = _spacetime._mass;
+    if (strcmp(method, "coordinates")==0)
     {
-        //std::cout << "Event #"<< i+1 << std::endl;
-        for(int j=i+1; j<_size; j++)
+        for (int i =_size-1; i>-1; i--) //can skip the very last
         {
-            if (set_contains(j, _futures[i]))
-                {continue;}
-            else
+            //std::cout << "Event #"<< i+1 << std::endl;
+            for(int j=i+1; j<_size; j++) //j can only follow i
             {
-                if (strcmp(method, "coordinates")==0 &&
-                    areTimelike(_coords[i], _coords[j]))
-                    {_future_links[i].insert(j);}
+                if (set_contains(j, _futures[i]))
+                    {continue;}
+                else
+                {
+                    if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                        {_future_links[i].insert(j);}
+                }
             }
         }
     }

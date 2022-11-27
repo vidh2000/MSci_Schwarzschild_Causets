@@ -39,10 +39,8 @@ int dim = 3;
 int repetitions = 5;
 
 // Specify the type of causet generation
-bool make_matrix = true;
 bool special = false;
 bool use_transitivity = true;
-bool make_sets = false;
 bool make_links = true;
 // Line below applies only when (make_sets||make_links)==true
 const char* sets_type = "future"; //past 
@@ -54,6 +52,9 @@ const char* sets_type = "future"; //past
 
 int main(){
 
+// Must be like that for good performance -> checked alrady
+bool make_matrix = true;
+bool make_sets = false;
 std::vector<double> center (dim, 0.0);
 std::vector<int> cards = {};
 std::vector<double> radii = {};
