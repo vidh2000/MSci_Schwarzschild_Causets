@@ -17,7 +17,7 @@
 #include <chrono>
 #include <unordered_set>
 #include <random>
-
+#include <stdint.h>
 #include "functions.h"
 #include "vecfunctions.h"
 #include "causet.h"

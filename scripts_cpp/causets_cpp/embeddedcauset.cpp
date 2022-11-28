@@ -18,6 +18,7 @@
 #include <unordered_set>
 #include <iterator>
 #include <omp.h>
+#include <stdint.h>
 
 #include "functions.h"
 #include "vecfunctions.h"
@@ -255,12 +256,14 @@ std::vector<bool> EmbeddedCauset::causality(vector<double> xvec,
 bool EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
                                                     double dim)
 {
-    double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
-    double dspace2 = 0;
-    for(int i=1; i<dim; i++){
-        dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
-    }
-    if (dt2-dspace2>0)
+    double dt = (xvec[0]-yvec[0]);
+    double dspacex = xvec[1]-yvec[1];
+    double dspacey = xvec[2]-yvec[2];
+    double dspacez = xvec[3]-yvec[3];
+    // for(int i=1; i<dim; i++){
+    //    dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
+    // }
+    if ((dt*dt)-(dspacex*dspacex + dspacey*dspacey + dspacez*dspacez)>0)
     {
         return true;}
     else{
@@ -750,26 +753,52 @@ void EmbeddedCauset::make_cmatrix(const char* method,
     {
         if (use_transitivity)
         {
-            std::cout << "Making cmatrix only with transitivity, without parallel inside\n";
-            int special_factor = (special)? -1 : 1;
-            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+            //std::cout << "Making cmatrix only with transitivity, without parallel inside\n";
+            // std::cout << "j before i\n";
+            // int special_factor = (special)? -1 : 1;
+            // for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+            // {
+            //     for(int i=j-1; i>-1; i--) //i can only preceed j
+            //     {
+            //         if (_CMatrix[i][j] != 0){
+            //             continue;}
+            //         else
+            //         {
+            //             //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+            //             if (areTimelike4D(_coords[i],_coords[j],4))
+            //             {
+            //                 _CMatrix[i][j] = special_factor;
+            //                 // Obtain transitive relations
+            //                 //#pragma omp parallel for //schedule(dynamic,8)
+            //                 for (int k = i-1; k>-1; k--)
+            //                 {
+            //                     if(_CMatrix[k][i] != 0) //k<i<j -> k<j
+            //                         { _CMatrix[k][j] = 1;}
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            std::cout << "i before j\n";
+            //int special_factor = (special)? -1 : 1;
+            for(int i=1; i<_size; i++) //can skip the very first, i.e 0th
             {
-                for(int i=j-1; i>-1; i--) //i can only preceed j
+                for(int j=i-1; j>-1; j--) //i can only preceed j
                 {
                     if (_CMatrix[i][j] != 0){
                         continue;}
                     else
                     {
-                        if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
-                        //if (areTimelike4D(_coords[i],_coords[j],4))
+                        //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                        if (areTimelike4D(_coords[i],_coords[j],4))
                         {
-                            _CMatrix[i][j] = special_factor;
+                            _CMatrix[i][j] = 1;//special_factor;
                             // Obtain transitive relations
                             //#pragma omp parallel for //schedule(dynamic,8)
-                            for (int k = i-1; k>-1; k--)
+                            for (int k = j-1; k>-1; k--)
                             {
-                                if(_CMatrix[k][i] != 0) //k<i<j -> k<j
-                                    { _CMatrix[k][j] = 1;}
+                                if(_CMatrix[j][k] != 0) //k<i<j -> k<j
+                                    { _CMatrix[i][k] = 1;}
                             }
                         }
                     }
@@ -778,20 +807,21 @@ void EmbeddedCauset::make_cmatrix(const char* method,
         }
         else 
         {
-            std::cout << "Making cmatrix only without transitivity, with parallel\n";
+            //std::cout << "Making cmatrix only without transitivity, without parallel\n";
+            //std::cout << "j then i..\n";
             //#pragma omp parallel for// schedule(dynamic,8)
             //#pragma omp parallel for collapse(2)
             //#pragma omp parallel for
-            for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
+            for(int i=0; i<_size; i++) //can skip the very first, i.e 0th
             {
-                for(int i=j-1; i>-1; i--) //i can only preceed j
+                for(int j=0; j<i; j++) //i can only preceed j
                 {
                     if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
-                    if (areTimelike4D(_coords[i],_coords[j],4))
+                    //if (areTimelike4D(_coords[i],_coords[j],4))
                     {
-                        _CMatrix[i][j] = 1;
+                        _CMatrix[j][i] = 1;
                     }    
                 }
             }
