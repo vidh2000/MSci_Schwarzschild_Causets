@@ -33,7 +33,14 @@ using std::vector;
 * ============================================================================
 ============================================================================*/
 
+/**
+ * @brief Construct a new Spacetime:: Spacetime object. It does nothing 
+ * but initialise a Spacetime onject. Then call:
+ * - FlatSpacetime(dim, period)
+ * - BlackHoleSpacetime(dim)
+ */
 Spacetime::Spacetime(){}
+
 
 /**
  * @brief Internal function for the time sampling array for a cone from 
@@ -86,7 +93,7 @@ func Spacetime::Causality()
         if (_isPeriodic) return &Spacetime::Flat_causal_periodic;
         else return &Spacetime::Flat_causal;
     }
-    else //if (std::strcmp(_name, "BlackHole")==0)
+    else /*(std::strcmp(_name, "BlackHole")==0)*/
     {
         // Changing coordinates into EF (original)
         // place holder //
