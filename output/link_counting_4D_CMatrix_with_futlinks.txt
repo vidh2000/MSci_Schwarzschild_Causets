@@ -1,0 +1,47 @@
+============ Sprinkling into cylinder ===================
+Inserting future links along CMatrix generation
+
+Iter: 1/4
+N = 400. r_S = 2. Radius = 4. Dimension = 4. Height = 4. Centered at t = -2.
+t_min for elements in these links = -2.63922
+t_min for elements in these links = -2.52319
+t_min for elements in these links = -2.83204
+t_min for elements in these links = -2.83194
+t_min for elements in these links = -2.77563
+t_min for elements in these links = -2.91537
+t_min for elements in these links = -2.70326
+t_min for elements in these links = -2.22492
+Number of links over the horizon = 7 +- 2.91548
+Average time taken for generating 8 causets with N = 400:
+0.547616 seconds
+
+Iter: 2/4
+N = 2025. r_S = 3. Radius = 6. Dimension = 4. Height = 6. Centered at t = -3.
+t_min for elements in these links = -2.82753
+t_min for elements in these links = -3.01299
+t_min for elements in these links = -2.74885
+t_min for elements in these links = -3.17067
+t_min for elements in these links = -2.41808
+t_min for elements in these links = -2.42848
+t_min for elements in these links = -2.71291
+t_min for elements in these links = -2.83445
+Number of links over the horizon = 16.875 +- 3.05931
+Average time taken for generating 8 causets with N = 2025:
+14.7592 seconds
+
+Iter: 3/4
+N = 6400. r_S = 4. Radius = 8. Dimension = 4. Height = 8. Centered at t = -4.
+t_min for elements in these links = -2.43993
+t_min for elements in these links = -2.76249
+t_min for elements in these links = -2.59359
+t_min for elements in these links = -2.78656
+t_min for elements in these links = -2.88302
+t_min for elements in these links = -3.04044
+t_min for elements in these links = -3.10088
+t_min for elements in these links = -2.52097
+Number of links over the horizon = 29 +- 6.55744
+Average time taken for generating 8 causets with N = 6400:
+352.268 seconds
+
+Iter: 4/4
+N = 15625. r_S = 5. Radius = 10. Dimension = 4. Height = 10. Centered at t = -5.
