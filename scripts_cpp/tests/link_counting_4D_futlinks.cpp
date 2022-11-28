@@ -54,7 +54,7 @@ for (auto mass : masses)
         radii.push_back(4*mass);
         durations.push_back(4*mass);
         // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass*mass);
+        cards.push_back(N_multiplier*mass*mass*mass*mass);
 }
 
 // Sprinkling Parameters

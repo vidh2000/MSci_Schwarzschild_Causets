@@ -39,7 +39,7 @@ std::vector<std::vector<double>> generate_2Dvector(int rows, int cols,
     // Random generator stuff
     std::random_device rd;  
     std::mt19937 gen(rd()); 
-    std::uniform_real_distribution<> dis(0,1.0);
+    std::uniform_real_distribution<> dis(min,max);
 
     for(int i=0; i<rows; i++)
     {
@@ -51,28 +51,26 @@ std::vector<std::vector<double>> generate_2Dvector(int rows, int cols,
     return matrix;
 }
 
-// inline
-// std::vector<std::vector<int>> generate_2Dvector(int rows, int cols, 
-//                                          int min, int max)
-// {
-//     srand(time(0)); // to generate pseudo random numbers each time
-//     std::vector<std::vector<int>> matrix;
-//     matrix.resize(rows);
-    
-//     // Random generator stuff
-//     std::random_device rd;  
-//     std::mt19937 gen(rd()); 
-//     std::uniform_real_distribution<> dis(0,1.0);
+inline
+std::vector<std::vector<int>> generate_2Dvector_of_ints(int rows, int cols, 
+                                         int min, int max)
+{
 
-//     for(int i=0; i<rows; i++)
-//     {
-//         matrix[i].resize(cols);
-//         for (int j=0; j<cols; j++){
-//             matrix[i][j] = (int)dis(gen);
-//         }
-//     }
-//     return matrix;
-// }
+    
+    std::vector<std::vector<int>> matrix;
+    matrix.resize(rows);
+    
+    std::srand(time(0)); //Randomise seed initialisation
+    
+    for(int i=0; i<rows; i++)
+    {
+        matrix[i].resize(cols);
+        for (int j=0; j<cols; j++){
+            matrix[i][j] = rand() % 2;
+        }
+    }
+    return matrix;
+}
 
 
 /**
