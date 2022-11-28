@@ -252,7 +252,7 @@ std::vector<bool> EmbeddedCauset::causality(vector<double> xvec,
  * @exception: returned if size of xvec and yvec difefrent than dimension of
  * spacetime.
  */
-std::vector<bool> EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
+bool EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
                                                     double dim)
 {
     double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
@@ -262,9 +262,9 @@ std::vector<bool> EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<doub
     }
     if (dt2-dspace2>0)
     {
-        return {true,true};}
+        return true;}
     else{
-        return {false,true};}
+        return false;}
 };
 
 
@@ -760,8 +760,8 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                         continue;}
                     else
                     {
-                        //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
-                        if (areTimelike4D(_coords[i],_coords[j],4)[0])
+                        if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                        //if (areTimelike4D(_coords[i],_coords[j],4))
                         {
                             _CMatrix[i][j] = special_factor;
                             // Obtain transitive relations
@@ -778,7 +778,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
         }
         else 
         {
-            std::cout << "Making cmatrix only without transitivity, without parallel\n";
+            std::cout << "Making cmatrix only without transitivity, with parallel\n";
             //#pragma omp parallel for// schedule(dynamic,8)
             //#pragma omp parallel for collapse(2)
             //#pragma omp parallel for
@@ -786,10 +786,10 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             {
                 for(int i=j-1; i>-1; i--) //i can only preceed j
                 {
-                    //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
-                    if (areTimelike4D(_coords[i],_coords[j],4)[0])
+                    if (areTimelike4D(_coords[i],_coords[j],4))
                     {
                         _CMatrix[i][j] = 1;
                     }    
