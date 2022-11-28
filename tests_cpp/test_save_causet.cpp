@@ -54,7 +54,7 @@ for (const char* name : names)
 {
     std::cout<<"\n\n============= USING "<<name<<" ====================\n";
 
-    CoordinateShape shape(dim,name,center,radius,edge,edges,0.0,myduration);
+    CoordinateShape shape(dim,name,center,radius,myduration,edge,edges,0.0);
     Spacetime S = Spacetime();
     //S.FlatSpacetime(dim);
     S.BlackHoleSpacetime(dim);
