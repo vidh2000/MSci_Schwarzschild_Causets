@@ -67,7 +67,8 @@ class EmbeddedCauset: public Causet
 
         std::vector<bool> causality(std::vector<double> xvec, 
                                     std::vector<double> yvec);
-        bool areTimelike(std::vector<double> xvec, std::vector<double> yvec);
+        bool areTimelike4D(std::vector<double> xvec, std::vector<double> yvec,
+                        double dim);
         bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
 

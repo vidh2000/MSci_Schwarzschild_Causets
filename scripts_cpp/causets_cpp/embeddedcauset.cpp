@@ -252,12 +252,19 @@ std::vector<bool> EmbeddedCauset::causality(vector<double> xvec,
  * @exception: returned if size of xvec and yvec difefrent than dimension of
  * spacetime.
  */
-bool EmbeddedCauset::areTimelike(vector<double> xvec, vector<double> yvec)
+bool EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
+                                                    double dim)
 {
-    //std::cout << "In areTimelike\n";
-    auto atimelikeb = this->_spacetime.Causality();
-    //std::cout << "After checking causality...\n";
-    return atimelikeb(xvec, yvec, _spacetime._period, _spacetime._mass)[0];
+    double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
+    double dspace2 = 0;  
+    for(int i=0; i<dim; i++){
+        dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
+    }
+    if (dt2-dspace2>0)
+    {
+        return true;}
+    else{
+        return false;}
 };
 
 
