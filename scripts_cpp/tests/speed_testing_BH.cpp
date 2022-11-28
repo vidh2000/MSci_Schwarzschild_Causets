@@ -41,7 +41,7 @@ int repetitions = 1;
 // Specify the type of causet generation
 bool make_links = false; //would create future links
 // Line below applies only when (make_sets||make_links)==true
-const char* spacetime =  "BlackHole"; //"flat" or "BlackHole"
+const char* spacetime =  "flat"; //"flat" or "BlackHole"
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

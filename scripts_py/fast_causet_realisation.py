@@ -19,8 +19,7 @@ def make_coords(N,dim,min=0,max=1,sorted=True):
 def areTimelike(x,y,dim):
     dt2 = (x[0]-y[0])*(x[0]-y[0])
     dspace2 = sum([(x[i]-y[i])*(x[i]-y[i]) for i in range(1,dim)])
-    ds2 = dt2-dspace2 
-    if ds2>0:
+    if (dt2-dspace2)>0:
         return True
     else:
         return False
@@ -132,7 +131,6 @@ if __name__=="__main__":
     duration = round(time()-start,3)
     print(f"Time taken for 'pasts' for N={N} in D={dim}\nt = {duration}s")
 
-    print(c.pasts[100])
 
     ## 'cmatrix'
     #start =  time()

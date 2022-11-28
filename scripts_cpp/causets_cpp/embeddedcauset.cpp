@@ -252,19 +252,19 @@ std::vector<bool> EmbeddedCauset::causality(vector<double> xvec,
  * @exception: returned if size of xvec and yvec difefrent than dimension of
  * spacetime.
  */
-bool EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
+std::vector<bool> EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
                                                     double dim)
 {
     double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
-    double dspace2 = 0;  
-    for(int i=0; i<dim; i++){
+    double dspace2 = 0;
+    for(int i=1; i<dim; i++){
         dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
     }
     if (dt2-dspace2>0)
     {
-        return true;}
+        return {true,true};}
     else{
-        return false;}
+        return {false,true};}
 };
 
 
@@ -620,23 +620,28 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         else if (make_links == true && make_sets == false)
         {
             if (strcmp(sets_type, "past")==0){
-                this->make_cmatrix_and_pastlinks(method, special);}
+                std::cout<<"commented out\n";}
+                //this->make_cmatrix_and_pastlinks(method, special);}
             else if (strcmp(sets_type, "future")==0){
                 this->make_cmatrix_and_futlinks(method, special);}
         }
         else if (make_links == false && make_sets == true)
         {
             if (strcmp(sets_type, "past")==0){
-                this->make_cmatrix_and_pasts(method, special, use_transitivity);}
+                std::cout<<"commented out\n";}
+                //this->make_cmatrix_and_pasts(method, special, use_transitivity);}
             else if (strcmp(sets_type, "future")==0){
-                this->make_cmatrix_and_futs(method, special, use_transitivity);}
+                std::cout<<"commented out\n";}
+                //this->make_cmatrix_and_futs(method, special, use_transitivity);}
         }
         else /*both make_sets and links*/
         {
             if (strcmp(sets_type, "past")==0){
-                this->make_cmatrix_and_allpasts(special);}
+                std::cout<<"commented out\n";}
+                //this->make_cmatrix_and_allpasts(special);}
             else if (strcmp(sets_type, "future")==0){
-                this->make_cmatrix_and_allfuts(special);}
+                std::cout<<"commented out\n";}
+                //this->make_cmatrix_and_allfuts(special);}
         }
     }
 
@@ -645,23 +650,29 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         if (make_links == true && make_sets == false)
         {
             if (strcmp(sets_type, "past")==0){
-                this->make_past_links(method);}
+                std::cout<<"commented out\n";}
+                //this->make_past_links(method);}
             else if (strcmp(sets_type, "future")==0){
-                this->make_fut_links(method);}
+                std::cout<<"commented out\n";}
+                //this->make_fut_links(method);}
         }
         else if (make_links == false && make_sets == true)
         {
             if (strcmp(sets_type, "past")==0){
-                this->make_pasts(method);}
+                std::cout<<"commented out\n";}
+                //this->make_pasts(method);}
             else if (strcmp(sets_type, "future")==0){
-                this->make_futures(method);}
+                std::cout<<"commented out\n";}
+                //this->make_futures(method);}
         }
         else if (make_links == true && make_sets == true)
         {
             if (strcmp(sets_type, "past")==0){
-                this->make_all_pasts(method);}
+                std::cout<<"commented out\n";}
+                //this->make_all_pasts(method);}
             else if (strcmp(sets_type, "future")==0){
-                this->make_all_futures(method);}
+                std::cout<<"commented out\n";}
+                //this->make_all_futures(method);}
         }
         else
         {   
@@ -739,7 +750,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
     {
         if (use_transitivity)
         {
-            std::cout << "Making cmatrix only with transitivity, with parallel inside\n";
+            std::cout << "Making cmatrix only with transitivity, without parallel inside\n";
             int special_factor = (special)? -1 : 1;
             for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
@@ -749,11 +760,12 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                         continue;}
                     else
                     {
-                        if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                        //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                        if (areTimelike4D(_coords[i],_coords[j],4)[0])
                         {
                             _CMatrix[i][j] = special_factor;
                             // Obtain transitive relations
-                            #pragma omp parallel for //schedule(dynamic,8)
+                            //#pragma omp parallel for //schedule(dynamic,8)
                             for (int k = i-1; k>-1; k--)
                             {
                                 if(_CMatrix[k][i] != 0) //k<i<j -> k<j
@@ -766,15 +778,19 @@ void EmbeddedCauset::make_cmatrix(const char* method,
         }
         else 
         {
-            std::cout << "Making cmatrix only without transitivity, with parallel\n";
+            std::cout << "Making cmatrix only without transitivity, without parallel\n";
             //#pragma omp parallel for// schedule(dynamic,8)
             //#pragma omp parallel for collapse(2)
-            #pragma omp parallel for
+            //#pragma omp parallel for
             for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
             {
                 for(int i=j-1; i>-1; i--) //i can only preceed j
                 {
-                    if(xycausality(_coords[i],_coords[j],st_period,mass)[0]){
+                    //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
+                    //Returning a vector of boleans vs just boolean gives 33% boost in time
+                    if (areTimelike4D(_coords[i],_coords[j],4)[0])
+                    {
                         _CMatrix[i][j] = 1;
                     }    
                 }
@@ -1170,30 +1186,30 @@ void EmbeddedCauset::make_sets(const char* method)
  * - "cmatrix": create from already existing _CMatrix
  * - "futures": create from already existing futures
  */
-void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
-{   
-    _pasts.resize(_size);
-    _past_links.resize(_size);
-    // Loop through coordinates t_min -> t_max
-    for (int i=1; i<_size; i++)
-    {
-        //std::cout << "Event #"<< i+1 << std::endl;
-        for(int j=i-1; j>-1; j--)
-        {
-            // Check if j^th element is in pasts[i]
-            if (set_contains(j, _pasts[i]))
-                {continue;}
-            else if (strcmp(method, "coordinates")==0 &&
-                    areTimelike(_coords[i], _coords[j]))
-            {
-                _past_links[i].insert(j);
-                _pasts[i].insert(j);
-                _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
-            }
-        }
-    }
-    //std::cout <<"Finished sprinkling..." << std::endl;
-}
+// void EmbeddedCauset::make_all_pasts(const char* method)// = "coordinates")
+// {   
+//     _pasts.resize(_size);
+//     _past_links.resize(_size);
+//     // Loop through coordinates t_min -> t_max
+//     for (int i=1; i<_size; i++)
+//     {
+//         //std::cout << "Event #"<< i+1 << std::endl;
+//         for(int j=i-1; j>-1; j--)
+//         {
+//             // Check if j^th element is in pasts[i]
+//             if (set_contains(j, _pasts[i]))
+//                 {continue;}
+//             else if (strcmp(method, "coordinates")==0 &&
+//                     areTimelike(_coords[i], _coords[j]))
+//             {
+//                 _past_links[i].insert(j);
+//                 _pasts[i].insert(j);
+//                 _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
+//             }
+//         }
+//     }
+//     //std::cout <<"Finished sprinkling..." << std::endl;
+// }
 
 
 /**
@@ -1253,30 +1269,30 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
  * - "futures": create from already existing futures (not yet implemented)
  */
-void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
-{   
-    _pasts.resize(_size);
-    // Loop through coordinates t_min -> t_max
-    for (int i=1; i<_size; i++)
-    {
-        //std::cout << "Event #"<< i+1 << std::endl;
-        for(int j=i-1; j>-1; j--)
-        {
-            // Check if j^th element is in pasts[i]
-            if (set_contains(j, _pasts[i]))
-                {continue;}
-            else
-            {
-                if (strcmp(method, "coordinates")==0 &&
-                    areTimelike(_coords[i], _coords[j]))
-                {
-                    _pasts[i].insert(j);
-                    _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
-                }
-            }
-        }
-    }
-}
+// void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
+// {   
+//     _pasts.resize(_size);
+//     // Loop through coordinates t_min -> t_max
+//     for (int i=1; i<_size; i++)
+//     {
+//         //std::cout << "Event #"<< i+1 << std::endl;
+//         for(int j=i-1; j>-1; j--)
+//         {
+//             // Check if j^th element is in pasts[i]
+//             if (set_contains(j, _pasts[i]))
+//                 {continue;}
+//             else
+//             {
+//                 if (strcmp(method, "coordinates")==0 &&
+//                     areTimelike(_coords[i], _coords[j]))
+//                 {
+//                     _pasts[i].insert(j);
+//                     _pasts[i].insert(_pasts[j].begin(), _pasts[j].end());
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 /**
@@ -1289,29 +1305,29 @@ void EmbeddedCauset::make_pasts(const char* method)// = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
  * - "pasts": create from already existing pasts (not yet implemented)
  */
-void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
-{   
-    _futures.resize(_size);
-    // Loop through coordinates t_min -> t_max
-    for (int i =_size-1; i>-1; i--)
-    {
-        //std::cout << "Event #"<< i+1 << std::endl;
-        for(int j=i+1; j<_size; j++)
-        {
-            if (set_contains(j, _futures[i]))
-                {continue;}
-            else
-            {
-                if (strcmp(method, "coordinates")==0 &&
-                    areTimelike(_coords[i], _coords[j]))
-                {
-                    _futures[i].insert(j);
-                    _futures[i].insert(_futures[j].begin(), _futures[j].end());
-                }
-            }
-        }
-    }
-}
+// void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
+// {   
+//     _futures.resize(_size);
+//     // Loop through coordinates t_min -> t_max
+//     for (int i =_size-1; i>-1; i--)
+//     {
+//         //std::cout << "Event #"<< i+1 << std::endl;
+//         for(int j=i+1; j<_size; j++)
+//         {
+//             if (set_contains(j, _futures[i]))
+//                 {continue;}
+//             else
+//             {
+//                 if (strcmp(method, "coordinates")==0 &&
+//                     areTimelike(_coords[i], _coords[j]))
+//                 {
+//                     _futures[i].insert(j);
+//                     _futures[i].insert(_futures[j].begin(), _futures[j].end());
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 /**
@@ -1324,28 +1340,28 @@ void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix
  * - "futures": create from already existing futures
  */
-void EmbeddedCauset::make_past_links(const char* method)// = "coordinates")
-{   
-    _past_links.resize(_size);
-    // Loop through coordinates t_min -> t_max
-    for (int i=1; i<_size; i++)
-    {
-        //std::cout << "Event #"<< i+1 << std::endl;
-        for(int j=i-1; j>-1; j--)
-        {
-            // Check if j^th element is in pasts[i]
-            if (set_contains(j, _pasts[i]))
-                {continue;}
-            else
-            {
-                if (strcmp(method, "coordinates")==0 &&
-                    areTimelike(_coords[i], _coords[j]))
-                    {_past_links[i].insert(j);}
-            }
-        }
-    }
-    //std::cout <<"Finished sprinkling..." << std::endl;
-}
+// void EmbeddedCauset::make_past_links(const char* method)// = "coordinates")
+// {   
+//     _past_links.resize(_size);
+//     // Loop through coordinates t_min -> t_max
+//     for (int i=1; i<_size; i++)
+//     {
+//         //std::cout << "Event #"<< i+1 << std::endl;
+//         for(int j=i-1; j>-1; j--)
+//         {
+//             // Check if j^th element is in pasts[i]
+//             if (set_contains(j, _pasts[i]))
+//                 {continue;}
+//             else
+//             {
+//                 if (strcmp(method, "coordinates")==0 &&
+//                     areTimelike(_coords[i], _coords[j]))
+//                     {_past_links[i].insert(j);}
+//             }
+//         }
+//     }
+//     //std::cout <<"Finished sprinkling..." << std::endl;
+// }
 
 
 /**

@@ -197,17 +197,27 @@ double Spacetime::Flat_ds(vector<double> xvec, vector<double> yvec)
 vector<bool> Spacetime::Flat_causal(vector<double> xvec, vector<double> yvec,
                                     vector<double>period, double mass)
 {
-    //std::cout<<"For debuggin: calling Flat_causal\n";
-    double t_delta = (yvec[0] - xvec[0]);
-    double t_delta2 = t_delta*t_delta;
-    double space_delta2 = 0;
-    for (int i = 1; i<yvec.size(); i++){
-        double space_delta_i = yvec[i]-xvec[i];
-        space_delta2 += space_delta_i*space_delta_i;}
-    bool isCausal = t_delta2 >= space_delta2;
-    return {isCausal,
-            (t_delta >= 0.0) && isCausal,
-            (t_delta < 0.0) && isCausal};
+    double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
+    double dspace2 = 0;
+    for(int i=1; i<4; i++){
+        dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
+    }
+    if (dt2-dspace2>0)
+    {
+        return {true,true};}
+    else{
+        return {false,true};}
+    // //std::cout<<"For debuggin: calling Flat_causal\n";
+    // double t_delta = (yvec[0] - xvec[0]);
+    // double t_delta2 = t_delta*t_delta;
+    // double space_delta2 = 0;
+    // for (int i = 1; i<yvec.size(); i++){
+    //     double space_delta_i = yvec[i]-xvec[i];
+    //     space_delta2 += space_delta_i*space_delta_i;}
+    // bool isCausal = t_delta2 >= space_delta2;
+    // return {isCausal,
+    //         (t_delta >= 0.0) && isCausal,
+    //         (t_delta < 0.0) && isCausal};
 }
 
 /**
