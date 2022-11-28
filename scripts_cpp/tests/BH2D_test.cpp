@@ -16,6 +16,7 @@
 #include <chrono>
 
 #include "../causets_cpp/embeddedcauset.h"
+#include "../causets_cpp/sprinkledcauset.h"
 #include "../causets_cpp/shapes.h"
 #include "../causets_cpp/spacetimes.h"
 #include "../causets_cpp/functions.h"
@@ -29,6 +30,10 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+
+////////////////////////////////
+int card = 50;
+
 int main()
 { 
     cout<<"\n\n============= TESTING POINTS CAUSALITY IN BH ==============\n";
@@ -36,25 +41,12 @@ int main()
 
     //Prepare 4D Spacetime(BlackHole) & Shape(whatever)
     Spacetime St = Spacetime();
-    St.BlackHoleSpacetime(4, 1);
-    CoordinateShape Sh = CoordinateShape(4);
-
-
-    //Take  EF coords from "He, Rideout. Causal Sets Black Hole. Page 10."
-    vector<vector<double>> coords = {
-                                {0.410895, 2.36161,  1.80295, 0.57951},//out
-                                {1.109415, 2.89891,  1.04335, 4.25531},//out
-                                {1.133105, 1.36083,  1.89919, 1.06482},//in
-                                {2.743428, 2.74093,  2.97906, 4.22204},//out
-                                {3.235970, 0.65462,  0.11664, 5.06884},//in
-                                {3.972871, 0.96354,  2.33727, 1.38169},//in
-                                {5.230757, 2.34476,  1.11855, 3.47242},//out
-                                {6.014261, 0.664739, 2.82235, 0.95459}, //in
-                                {6.193089, 0.429636, 2.20122, 1.99644}}; //in
+    St.BlackHoleSpacetime(2, 1, "EFuv");
+    CoordinateShape Sh = CoordinateShape(2);
     
     //Define Embedded Causet (just the causet, no causal relations)
-    EmbeddedCauset C = EmbeddedCauset(St, Sh, coords, false, false, false,
-                                      false, false, "past");
+    SprinkledCauset C = SprinkledCauset(card, St, Sh, true, false, false,
+                                        false, false, "past");
     
 
     //Compare
