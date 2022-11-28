@@ -58,13 +58,14 @@ using std::vector;
 
     @param radius: float > 0 for "ball", "bicone", "cylinder". Default 1.
 
+    @param duration: time extension of cylinder. Default 2.
+
     @param edge: float > 0 for "cube". Default 1.
 
     @param edges: vector of floats > 0 for "cuboid". Default {1}.
 
     @param hollow: fraction [0,1) of interior which is hollow. Default 0.
 
-    @param duration: time extension of cylinder. Default 2.
  */
 CoordinateShape::CoordinateShape(int dim, const char* name, 
                                 vector<double> center,
