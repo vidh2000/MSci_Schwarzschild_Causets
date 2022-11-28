@@ -34,9 +34,9 @@ using namespace std::chrono;
 
 // SIMULATIONS PARAMETERS (adjust only these)
 
-int cardinality = 1000;
-int dim = 3;
-int repetitions = 8;
+int cardinality = 5000;
+int dim = 4;
+int repetitions = 1;
 
 // Specify the type of causet generation
 bool make_links = false; //would create future links
@@ -78,6 +78,7 @@ const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
+
 std::cout << std::endl;
 
 
@@ -89,10 +90,10 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         int card;
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration) = tup;
+        std::cout << "Spacetime: " << spacetime << std::endl;
         std::cout << "N = " << card << ", dim = " << dim << std::endl;
-        
         // Repeat over many initialisations
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int rep=0; rep<repetitions; rep++)
         {
                 auto repstart = high_resolution_clock::now();
