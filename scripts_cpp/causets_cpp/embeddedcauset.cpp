@@ -798,7 +798,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             //         }
             //     }
             // }
-            std::cout << "i before j\n";
+            //std::cout << "i before j\n";
             //int special_factor = (special)? -1 : 1;
             for(int i=1; i<_size; i++) //can skip the very first, i.e 0th
             {
@@ -808,8 +808,9 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                         continue;}
                     else
                     {
-                        //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
-                        if (areTimelike4D(_coords[i],_coords[j],4))
+                        // note in flatspacetime funct, I set dim=4 hardcoded in spacetimes.cpp
+                        if(xycausality(_coords[i],_coords[j],st_period,mass))
+                        //if (areTimelike4D(_coords[i],_coords[j],4))
                         {
                             _CMatrix[i][j] = 1;//special_factor;
                             // Obtain transitive relations
@@ -830,17 +831,17 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             //std::cout << "j then i..\n";
             //#pragma omp parallel for// schedule(dynamic,8)
             //#pragma omp parallel for collapse(2)
-            //#pragma omp parallel for
-            for(int i=0; i<_size; i++) //can skip the very first, i.e 0th
+            #pragma omp parallel for
+            for(int i=0; i<_size-1; i++) //can skip the very last, i.e Nth
             {
-                for(int j=0; j<i; j++) //i can only preceed j
+                for(int j=i+1; j<_size; j++) //i can only preceed j
                 {
                     if(xycausality(_coords[i],_coords[j],st_period,mass))
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
                     //if (areTimelike4D(_coords[i],_coords[j],4))
                     {
-                        _CMatrix[j][i] = 1;
+                        _CMatrix[i][j] = 1;
                     }    
                 }
             }

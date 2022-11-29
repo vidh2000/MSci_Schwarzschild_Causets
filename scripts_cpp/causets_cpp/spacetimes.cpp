@@ -244,12 +244,15 @@ double Spacetime::Flat_ds(vector<double> xvec, vector<double> yvec)
 bool Spacetime::Flat_causal(vector<double> xvec, vector<double> yvec,
                                     vector<double>period, double mass)
 {
-    double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
-    double dspace2 = 0;
-    for(int i=1; i<4; i++){
-        dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
-    }
-    if (dt2-dspace2>0){
+    double dt = (xvec[0]-yvec[0]);
+    double dspacex = xvec[1]-yvec[1];
+    double dspacey = xvec[2]-yvec[2];
+    double dspacez = xvec[3]-yvec[3];
+    // for(int i=1; i<dim; i++){
+    //    dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
+    // }
+    if ((dt*dt)-(dspacex*dspacex + dspacey*dspacey + dspacez*dspacez)>0)
+    {
         return true;}
     else{
         return false;}
@@ -481,15 +484,15 @@ bool Spacetime::BH_causal3D (std::vector<double> xvec,
     double r1     = xvec[1]; double r2     = yvec[1];
     double phi1   = xvec[2]; double phi2   = yvec[2];
 
-    double vartheta1 = M_PI / 2;
-    double vartheta2 = M_PI / 2; 
-    double varphi1 = 0;
+    //double vartheta1 = M_PI / 2;
+    //double vartheta2 = M_PI / 2; 
+    //double varphi1 = 0;
     double varphi2 = phi1-phi2;
     if (varphi2 < 0)
         {varphi2 += 2*M_PI;}
     
-    vector<double> transf_xvec = {t1, r1, vartheta1, varphi1};
-    vector<double> transf_yvec = {t2, r2, vartheta2, varphi2};
+    vector<double> transf_xvec = {t1, r1, M_PI / 2, 0}; //{t1, r1, vartheta1, varphi1};
+    vector<double> transf_yvec = {t2, r2, M_PI / 2, varphi2}; //{t2, r2, vartheta2, varphi2};
     
     // Section 2.2: Radially separated pairs and radial null geodesics
     if (varphi2<1e-6) //should be ==zero, but leave room for some error
@@ -610,45 +613,151 @@ bool Spacetime::BH_causal4D (std::vector<double> xvec,
                                     std::vector<double> period,
                                     double mass)
 {
-    //IF WORKING IN EF COORDINATES
-    if (yvec[0]<xvec[0])
-        {return Spacetime::BH_causal4D(yvec, xvec, period);}
 
-    double t1     = xvec[0]; double t2     = yvec[0];
-    double r1     = xvec[1]; double r2     = yvec[1];
-    double theta1 = xvec[2]; double theta2 = yvec[2];
-    double phi1   = xvec[3]; double phi2   = yvec[3];
+    // double t1     = xvec[0]; double t2     = yvec[0];
+    // double r1     = xvec[1]; double r2     = yvec[1];
+    // //double theta1 = xvec[2]; double theta2 = yvec[2];
+    // //double phi1   = xvec[3]; double phi2   = yvec[3];
 
-    double vartheta1 = M_PI / 2;
-    double vartheta2 = M_PI / 2; 
-    double varphi1 = 0;
-    double varphi2 = std::acos(std::cos(theta1)*std::cos(theta2) 
-                    +std::sin(theta1)*std::sin(theta2)*std::cos(phi1-phi2));
+    // double varphi2 = std::acos(std::cos(xvec[2])*std::cos(yvec[2]) 
+    //         +std::sin(xvec[2])*std::sin(yvec[2])*std::cos(xvec[3]-yvec[3]));
+    // if (varphi2 < 0)
+    //     {varphi2 += 2*M_PI;}
+    
+    // vector<double> transf_xvec = {t1, r1, M_PI / 2, 0};
+    // vector<double> transf_yvec = {t2, r2, M_PI / 2, varphi2};
+    
+    // // Section 2.2: Radially separated pairs and radial null geodesics
+    // if (varphi2<1e-6) //should be ==zero, but leave room for some error
+    // {
+    //     if (r1>=r2)
+    //     {
+    //         // all 3 cases of the paper return same
+    //         if (t2 >= t1 + r1 - r2 - 1e-6)
+    //                 {return true;}
+    //         else
+    //             {return false;}
+    //     }
+    //     else
+    //     {
+    //         if (r1<=2*mass)
+    //             {return false;}
+    //         else // if (r1>2*mass)
+    //         {
+    //             if (t2 >= t1 + r2 - r1 + 
+    //                         4*mass*std::log((r2-2*mass)/(r1-2*mass)))
+    //                 {return true;}
+    //             else
+    //                 {return false;}
+    //         }
+    //     }
+
+    // }
+
+    // // Section 2.3: Sufficient Conditions for c. related and unrelated
+    // //// 2.3.1 Spacelike Bounds
+    // else if (r1 >= r2)
+    // {
+    //     //spacelike
+    //     if (t2-t1 < r1-r2)
+    //         {return false;}
+    //     //spacelike
+    //     else if (t2-t1 < r2*varphi2) 
+    //         {return false;}
+    //     //timelike
+    //     else if (r1 > 2*mass)
+    //     {
+    //         //First find r0
+    //         double r0;
+    //         if (r2 >= 3*mass){r0 = r2;}
+    //         else if (r1 >= 3*mass && 3*mass > r2) {r0 = 3*mass;}
+    //         else {r0 = r1;} //if (3*mass > r1 && r1 > 2*mass) 
+    //         //then
+    //         if (t2 >= t1 + r1 - r2 + (r0/std::sqrt(1-2*mass/r0))*varphi2)
+    //             {return true;}
+    //         else
+    //             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    //     }
+    //     else
+    //         {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    // }
+
+    // else if (r2 > r1 && r1 > 2*mass)
+    // {
+    //     //spacelike
+    //     if (t2-t1 < r2-r1 + 4*std::log((r2-2*mass)/(r1-2*mass)))
+    //         {return false;}
+    //     else if (r1 > 3*mass)
+    //     {
+    //         //spacelike
+    //         double r0 = r1;
+    //         if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+    //             {return false;}
+    //         //timelike
+    //         else if (t2>= t1 +r2 -r1 
+    //                 + 4*mass * std::log((r2-2*mass)/(r1-2*mass))
+    //                 + (r0/std::sqrt(1-2*mass/r0))*varphi2)
+    //             {return true;}
+    //         else
+    //             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+
+    //     }
+    //     else if(r1 < 3*mass && 3*mass < r2)
+    //     {
+    //         //spacelike
+    //         double r0 = 3*mass;
+    //         if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+    //             {return false;}
+    //         else
+    //             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    //     }
+    //     else if(r2 <= 3*mass)
+    //     {
+    //         //spacelike
+    //         double r0 = r2;
+    //         if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+    //             {return false;}
+    //         else
+    //             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    //     }
+    //     else
+    //         {return BH_last_resort(transf_xvec, transf_yvec, mass);}
+    // }
+
+    // else //r2>2*mass>r1
+    //     {return false;}
+//////// no declarations etc etc etc
+
+    double t2_min_t1 = yvec[0] - xvec[0];
+    double r2_min_r1 = yvec[1] - xvec[1];
+    double varphi2 = std::acos(std::cos(xvec[2])*std::cos(yvec[2]) 
+            +std::sin(xvec[2])*std::sin(yvec[2])*std::cos(xvec[3]-yvec[3]));
     if (varphi2 < 0)
         {varphi2 += 2*M_PI;}
     
-    vector<double> transf_xvec = {t1, r1, vartheta1, varphi1};
-    vector<double> transf_yvec = {t2, r2, vartheta2, varphi2};
+    vector<double> transf_xvec = {xvec[0], xvec[1], M_PI / 2, 0};
+    vector<double> transf_yvec = {yvec[0], yvec[1], M_PI / 2, varphi2};
     
     // Section 2.2: Radially separated pairs and radial null geodesics
     if (varphi2<1e-6) //should be ==zero, but leave room for some error
     {
-        if (r1>=r2)
+        if (r2_min_r1<=0)//  xvec[1]>=yvec[1])
         {
             // all 3 cases of the paper return same
-            if (t2 >= t1 + r1 - r2 - 1e-6)
+            // could write t2-t1 >= .... right?
+            if (t2_min_t1 + r2_min_r1 + 1e-6 >= 0)
                     {return true;}
             else
                 {return false;}
         }
         else
         {
-            if (r1<=2*mass)
+            if (xvec[1] - 2*mass<=0)
                 {return false;}
             else // if (r1>2*mass)
             {
-                if (t2 >= t1 + r2 - r1 + 
-                            4*mass*std::log((r2-2*mass)/(r1-2*mass)))
+                if (t2_min_t1 - r2_min_r1 - 
+                    4*mass*std::log((yvec[1]-2*mass)/(xvec[1]-2*mass)) >= 0)
                     {return true;}
                 else
                     {return false;}
@@ -659,24 +768,24 @@ bool Spacetime::BH_causal4D (std::vector<double> xvec,
 
     // Section 2.3: Sufficient Conditions for c. related and unrelated
     //// 2.3.1 Spacelike Bounds
-    else if (r1 >= r2)
+    else if (r2_min_r1 <= 0)// xvec[1] >= yvec[1])
     {
         //spacelike
-        if (t2-t1 < r1-r2)
+        if (t2_min_t1 + r2_min_r1 < 0)
             {return false;}
         //spacelike
-        else if (t2-t1 < r2*varphi2) 
+        else if (t2_min_t1 - yvec[1]*varphi2 < 0) 
             {return false;}
         //timelike
-        else if (r1 > 2*mass)
+        else if (xvec[1] - 2*mass> 0)
         {
             //First find r0
             double r0;
-            if (r2 >= 3*mass){r0 = r2;}
-            else if (r1 >= 3*mass && 3*mass > r2) {r0 = 3*mass;}
-            else {r0 = r1;} //if (3*mass > r1 && r1 > 2*mass) 
+            if (yvec[1] - 3*mass>= 0){r0 = yvec[1];}
+            else if (xvec[1] >= 3*mass && 3*mass > yvec[1]) {r0 = 3*mass;}
+            else {r0 = xvec[1];} //if (3*mass > r1 && r1 > 2*mass) 
             //then
-            if (t2 >= t1 + r1 - r2 + (r0/std::sqrt(1-2*mass/r0))*varphi2)
+            if (t2_min_t1 + r2_min_r1 >= (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return true;}
             else
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}
@@ -685,40 +794,40 @@ bool Spacetime::BH_causal4D (std::vector<double> xvec,
             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
-    else if (r2 > r1 && r1 > 2*mass)
+    else if (r2_min_r1>0 && xvec[1] - 2*mass> 0)
     {
         //spacelike
-        if (t2-t1 < r2-r1 + 4*std::log((r2-2*mass)/(r1-2*mass)))
+        if (t2_min_t1-r2_min_r1-4*std::log((yvec[1]-2*mass)/(xvec[1]-2*mass)) < 0)
             {return false;}
-        else if (r1 > 3*mass)
+        else if (xvec[1] - 3*mass> 0)
         {
             //spacelike
-            double r0 = r1;
-            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+            double r0 = xvec[1];
+            if (t2_min_t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return false;}
             //timelike
-            else if (t2>= t1 +r2 -r1 
-                    + 4*mass * std::log((r2-2*mass)/(r1-2*mass))
+            else if (t2_min_t1>= r2_min_r1 
+                    + 4*mass * std::log((yvec[1]-2*mass)/(xvec[1]-2*mass))
                     + (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return true;}
             else
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}
 
         }
-        else if(r1 < 3*mass && 3*mass < r2)
+        else if(xvec[1] - 3*mass< 0 && 3*mass - yvec[1] < 0)
         {
             //spacelike
             double r0 = 3*mass;
-            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+            if (t2_min_t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return false;}
             else
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}
         }
-        else if(r2 <= 3*mass)
+        else if(yvec[1] - 3*mass<= 0)
         {
             //spacelike
-            double r0 = r2;
-            if (t2-t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
+            double r0 = yvec[1];
+            if (t2_min_t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return false;}
             else
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}

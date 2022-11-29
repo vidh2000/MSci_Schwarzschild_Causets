@@ -36,12 +36,12 @@ using namespace std::chrono;
 
 int cardinality = 5000;
 int dim = 4;
-int repetitions = 1;
+std::vector<int> repetitions_arr = {1};//8,7,6,5,4,3,2,
 
 // Specify the type of causet generation
 bool make_links = false; //would create future links
 // Line below applies only when (make_sets||make_links)==true
-const char* spacetime =  "flat"; //"flat" or "BlackHole"
+const char* spacetime =  "BlackHole"; //"flat" or "BlackHole"
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,44 +84,47 @@ std::cout << std::endl;
 
 for (auto && tup : boost::combine(cards, radii, masses, durations))
 {
-        auto start = high_resolution_clock::now();
+        
         
         // Define params for causet generation
         int card;
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration) = tup;
-        std::cout << "Spacetime: " << spacetime << std::endl;
+        std::cout << "\nSpacetime: " << spacetime << std::endl;
         std::cout << "N = " << card << ", dim = " << dim << std::endl;
-        // Repeat over many initialisations
-        //#pragma omp parallel for
-        for (int rep=0; rep<repetitions; rep++)
+
+        for (auto repetitions: repetitions_arr)
         {
-                auto repstart = high_resolution_clock::now();
-                CoordinateShape shape(dim,name,center,radius,myduration);
-                Spacetime S = Spacetime();
-                if (strcmp(spacetime, "flat")==0){
-                        S.FlatSpacetime(dim);}
-                else if (strcmp(spacetime, "BlackHole")==0){
-                        S.BlackHoleSpacetime(dim,mass);}
-                SprinkledCauset C(card, S, shape, poisson,
-                                make_matrix, special, use_transitivity,
-                                make_sets, make_links,sets_type);
+                auto start = high_resolution_clock::now();
+                // Repeat over many initialisations
+                //#pragma omp parallel for
+                for (int rep=0; rep<repetitions; rep++)
+                {
+                        //auto repstart = high_resolution_clock::now();
+                        CoordinateShape shape(dim,name,center,radius,myduration);
+                        Spacetime S = Spacetime();
+                        if (strcmp(spacetime, "flat")==0){
+                                S.FlatSpacetime(dim);}
+                        else if (strcmp(spacetime, "BlackHole")==0){
+                                S.BlackHoleSpacetime(dim,mass);}
+                        SprinkledCauset C(card, S, shape, poisson,
+                                        make_matrix, special, use_transitivity,
+                                        make_sets, make_links,sets_type);
 
-                //Timing
-                auto repend = high_resolution_clock::now();
-                double duration = duration_cast<microseconds>(repend - repstart).count();
-                std::cout << "Time taken N = " << card
-                << ", "<<(rep+1)<<"/"<<repetitions<<": " << duration/pow(10,6)
-                << " seconds" << std::endl;
+                        //Timing
+                        // auto repend = high_resolution_clock::now();
+                        // double duration = duration_cast<microseconds>(repend - repstart).count();
+                        // std::cout << "Time taken N = " << card
+                        // << ", "<<(rep+1)<<"/"<<repetitions<<": " << duration/pow(10,6)
+                        // << " seconds" << std::endl;
+                }
+                auto mid = high_resolution_clock::now();
+                double duration = duration_cast<microseconds>(mid - start).count();
+                
+                std::cout << "Average time taken for generating "<< repetitions <<
+                        " repetitions with N = " << card << ": "
+                        << duration/pow(10,6)/repetitions << " seconds" << std::endl;
         }
-
-    
-        auto mid = high_resolution_clock::now();
-        double duration = duration_cast<microseconds>(mid - start).count();
-        
-        std::cout << "Average time taken for generating, N = " << card
-          << ": " << duration/pow(10,6)/repetitions << " seconds" << std::endl;
-        
 }
 
 std::cout<<std::endl;
