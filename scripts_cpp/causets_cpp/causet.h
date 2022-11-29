@@ -40,7 +40,7 @@ class Causet
 
 
         // CONSTRUCTOR
-        //Causet();
+
         Causet(std::vector<std::vector<int>> Cmatrix = {});
         
         template <typename num>
@@ -48,15 +48,17 @@ class Causet
         
 
         //SETTERS/GETTERS
+
         std::vector<std::vector<int>> get_CMatrix();
         
         // MAKERS
+
         void make_sets_fromC();
         virtual void make_cmatrix();
         virtual void make_pasts();
         virtual void make_futures();
         virtual void make_past_links();
-        virtual void make_future_links();
+        virtual void make_future_links_fromC();
 
         std::vector<std::vector<int>> CMatrix(std::vector<int> labels = {});
         int size();

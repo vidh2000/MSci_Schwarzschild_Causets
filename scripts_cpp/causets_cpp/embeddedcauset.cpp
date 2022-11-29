@@ -236,12 +236,32 @@ double EmbeddedCauset::min_along(int dim)
  * @exception: returned if size of xvec and yvec diffrent than dimension of
  * spacetime.
  */
-std::vector<bool> EmbeddedCauset::causality(vector<double> xvec, 
+bool EmbeddedCauset::causality(vector<double> xvec, 
                                             vector<double> yvec)
 {
     auto xycausality = this->_spacetime.Causality();
     return xycausality(xvec, yvec, _spacetime._period, _spacetime._mass);
 };
+
+
+/**
+ * @brief Causal relation according to the spacetime.
+ * 
+ * @param xvec: vector<double>, coordinates of x
+ * @param yvec: vector<double>, coordinates of y
+ * 
+ * @return : vector<bool> {x-y timelike, x<=y, x>y}.
+ * @exception: returned if size of xvec and yvec diffrent than dimension of
+ * spacetime.
+ */
+std::vector<bool> EmbeddedCauset::general_causality(vector<double> xvec, 
+                                                    vector<double> yvec)
+{
+    auto xycausality = this->_spacetime.General_Causality();
+    return xycausality(xvec, yvec, _spacetime._period, _spacetime._mass);
+};
+
+
 
 /**
  * @brief Causal relation according to the spacetime.
@@ -283,7 +303,7 @@ bool EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
  */
 bool EmbeddedCauset::AprecB(vector<double> xvec, vector<double> yvec)
 {
-    auto atimelikeb = _spacetime.Causality();
+    auto atimelikeb = _spacetime.General_Causality();
     return atimelikeb(xvec, yvec, _spacetime._period, _spacetime._mass)[1];
 };
 
@@ -552,7 +572,7 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
 //============================================================================
 /**
  * @brief Creates chosen attribues.Requires _size to have already be defined,
- *  and events sorted by a possible natural labelling.
+ *  and EVENTS ALREADY SORTED BY NATURAL LABELLING.
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
@@ -711,9 +731,9 @@ void EmbeddedCauset::make_all_but_links()
     {
         for(int i=j-1; i>-1; i--) 
         {
-            std::vector<bool> causalities = xycausality(
-                                _coords[i],_coords[j],st_period,mass);
-            if (causalities[1]) //i in past of j, j in future of i
+            bool causalities = xycausality(_coords[i],_coords[j],
+                                           st_period,mass);
+            if (causalities) //i in past of j, j in future of i
             {
                 _CMatrix[i][j] = 1;
                 _pasts[j].insert(i);
@@ -764,8 +784,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             //             continue;}
             //         else
             //         {
-            //             //if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
-            //             if (areTimelike4D(_coords[i],_coords[j],4))
+            //             //if(xycausality(_coords[i],_coords[j],st_period,mass))
             //             {
             //                 _CMatrix[i][j] = special_factor;
             //                 // Obtain transitive relations
@@ -816,7 +835,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             {
                 for(int j=0; j<i; j++) //i can only preceed j
                 {
-                    if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    if(xycausality(_coords[i],_coords[j],st_period,mass))
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
                     //if (areTimelike4D(_coords[i],_coords[j],4))
@@ -857,7 +876,7 @@ void EmbeddedCauset::make_cmatrix_and_allpasts(bool special)
         {
             if (_CMatrix[i][j] != 0)
                 {continue;}
-            if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+            if (xycausality(_coords[i],_coords[j],st_period,mass))
             {
                 _CMatrix[i][j] = special_factor;
                 _past_links[j].insert(i);
@@ -896,7 +915,7 @@ void EmbeddedCauset::make_cmatrix_and_allfuts(bool special)
         {
             if (_CMatrix[i][j] != 0)
                 {continue;}
-            if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+            if (xycausality(_coords[i],_coords[j],st_period,mass))
             {
                 _CMatrix[i][j] = special_factor;
                 _future_links[i].insert(j);
@@ -943,7 +962,7 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
                 {
                     if (_CMatrix[i][j] != 0){
                         continue;}
-                    else if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    else if(xycausality(_coords[i],_coords[j],st_period,mass))
                     {
                         _CMatrix[i][j] = special_factor;
                         _pasts[j].insert(i);
@@ -962,7 +981,7 @@ void EmbeddedCauset::make_cmatrix_and_pasts(const char* method,
         {
             for(int i=j-1; i>-1; i--) //i can only preceed j
             {
-                if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                if(xycausality(_coords[i],_coords[j],st_period,mass))
                 {
                     _CMatrix[i][j] = 1;
                     _pasts[j].insert(i);
@@ -1008,7 +1027,7 @@ void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
                 {
                     if (_CMatrix[i][j] != 0)
                         {continue;}
-                    else if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    else if(xycausality(_coords[i],_coords[j],st_period,mass))
                     {
                         _CMatrix[i][j] = special_factor;
                         _futures[i].insert(j);
@@ -1029,7 +1048,7 @@ void EmbeddedCauset::make_cmatrix_and_futs(const char* method,
             {
                 for(int j=i+1; j<_size; j++)
                 {
-                    if(xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    if(xycausality(_coords[i],_coords[j],st_period,mass))
                     {
                         _CMatrix[i][j] = 1;
                         _futures[i].insert(j);
@@ -1075,7 +1094,7 @@ void EmbeddedCauset::make_cmatrix_and_pastlinks(const char* method,
             {
                 if (_CMatrix[i][j] != 0)
                     {continue;}
-                else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                else if (xycausality(_coords[i],_coords[j],st_period,mass))
                 {
                     _CMatrix[i][j] = special_factor;
                     _past_links[j].insert(i);
@@ -1128,7 +1147,7 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
             {
                 if (_CMatrix[i][j] != 0)
                     {continue;}
-                else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                else if (xycausality(_coords[i],_coords[j],st_period,mass))
                 {
                     _CMatrix[i][j] = special_factor;
                     _future_links[i].insert(j);
@@ -1178,9 +1197,7 @@ void EmbeddedCauset::make_sets(const char* method)
             {
 
                 // Does i precede j? == Is i<j?
-                std::vector<bool> causalities = xycausality(
-                                    _coords[i],_coords[j],st_period,mass);
-                if (causalities[1]) 
+                if (xycausality(_coords[i],_coords[j],st_period,mass)) 
                 {
                     // Add i and its past to the past of j
                     _pasts[j].insert(i);
@@ -1270,7 +1287,7 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
                 // Check if j^th element is in pasts[i]
                 if (set_contains(j, _futures[i]))
                     {continue;}
-                else if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                else if (xycausality(_coords[i],_coords[j],st_period,mass))
                 {
                     _future_links[i].insert(j);
                     _futures[i].insert(j);
@@ -1422,7 +1439,7 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
                     {continue;}
                 else
                 {
-                    if (xycausality(_coords[i],_coords[j],st_period,mass)[0])
+                    if (xycausality(_coords[i],_coords[j],st_period,mass))
                         {_future_links[i].insert(j);}
                 }
             }

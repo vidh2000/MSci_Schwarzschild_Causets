@@ -52,15 +52,25 @@ class Spacetime
 
 
         // CAUSALITY
-        typedef std::vector<bool> (*func)
+        typedef bool (*func)
         (std::vector<double> xvec, std::vector<double> yvec, 
          std::vector<double> period, double mass);
-        func Causality();  
+        func Causality();
+
+        typedef std::vector<bool> (*general_func)
+        (std::vector<double> xvec, std::vector<double> yvec, 
+         std::vector<double> period, double mass);
+        general_func General_Causality();  
         
-        static std::vector<bool> causal1d(std::vector<double> xvec, 
+        static bool              causal1d(std::vector<double> xvec, 
                                           std::vector<double> yvec,
                                           std::vector<double> period,
                                           double mass);
+        
+        static std::vector<bool> general_causal1d(std::vector<double> xvec, 
+                                                  std::vector<double> yvec,
+                                                  std::vector<double> period,
+                                                  double mass);
 
 
     /*==============================================================
@@ -78,11 +88,20 @@ class Spacetime
         double Flat_ds2    (std::vector<double> xvec, std::vector<double> yvec);
         double Flat_ds     (std::vector<double> xvec, std::vector<double> yvec);  
 
-        static std::vector<bool> Flat_causal (std::vector<double> xvec, 
+        static bool Flat_causal (std::vector<double> xvec, 
                                          std::vector<double> yvec,
                                          std::vector<double> period = {},
                                          double mass = 0);
-        static std::vector<bool> Flat_causal_periodic (std::vector<double> xvec, 
+        static bool Flat_causal_periodic (std::vector<double> xvec, 
+                                            std::vector<double> yvec,
+                                            std::vector<double>period,
+                                            double mass = 0);
+        
+        static std::vector<bool> Flat_general_causal (std::vector<double> xvec, 
+                                         std::vector<double> yvec,
+                                         std::vector<double> period = {},
+                                         double mass = 0);
+        static std::vector<bool> Flat_general_causal_periodic (std::vector<double> xvec, 
                                             std::vector<double> yvec,
                                             std::vector<double>period,
                                             double mass = 0);
@@ -105,22 +124,22 @@ class Spacetime
         double BH_ds2(std::vector<double> xvec, std::vector<double> yvec);
         double BH_ds(std::vector<double> xvec, std::vector<double> yvec); 
 
-        static std::vector<bool> BH_causal2D (std::vector<double> xvec, 
+        static bool BH_causal2D (std::vector<double> xvec, 
                                               std::vector<double> yvec,
                                               std::vector<double> period={},
                                               double mass = 1);
 
-        static std::vector<bool> BH_causal3D (std::vector<double> xvec, 
+        static bool BH_causal3D (std::vector<double> xvec, 
                                               std::vector<double> yvec,
                                               std::vector<double> period={},
                                               double mass = 1); 
 
-        static std::vector<bool> BH_causal4D (std::vector<double> xvec, 
+        static bool BH_causal4D (std::vector<double> xvec, 
                                               std::vector<double> yvec,
                                               std::vector<double> period={},
                                               double mass = 1);
         
-        static std::vector<bool> BH_last_resort(std::vector<double> xvec, 
+        static bool BH_last_resort(std::vector<double> xvec, 
                                                 std::vector<double> yvec,
                                                 double mass = 1);
         
@@ -195,6 +214,27 @@ class Spacetime
         template <typename whatever1, typename whatever2, typename whatever3>
         static void do_nothing(whatever1 a=0, whatever2 b=0, whatever3 c=0)
         {return;}
+
+        // The General Causalities
+
+        static std::vector<bool> BH_general_causal2D (std::vector<double> xvec, 
+                                                std::vector<double> yvec,
+                                                std::vector<double> period={},
+                                                double mass = 1);
+
+        static std::vector<bool> BH_general_causal3D (std::vector<double> xvec, 
+                                                std::vector<double> yvec,
+                                                std::vector<double> period={},
+                                                double mass = 1); 
+
+        static std::vector<bool> BH_general_causal4D (std::vector<double> xvec, 
+                                                std::vector<double> yvec,
+                                                std::vector<double> period={},
+                                                double mass = 1);
+        
+        static std::vector<bool> BH_general_last_resort(std::vector<double> xvec, 
+                                                std::vector<double> yvec,
+                                                double mass = 1);
 };
 
 #endif /* SPACETIMES_H */

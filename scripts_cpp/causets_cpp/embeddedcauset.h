@@ -63,12 +63,14 @@ class EmbeddedCauset: public Causet
         double min_along(int ndim = 0);
 
 
-        // RELATIONS
+        // CAUSAL RELATIONS
 
-        std::vector<bool> causality(std::vector<double> xvec, 
-                                    std::vector<double> yvec);
+        bool causality(std::vector<double> xvec, 
+                       std::vector<double> yvec);
+        std::vector<bool> general_causality(std::vector<double> xvec, 
+                                            std::vector<double> yvec);
         bool areTimelike4D(std::vector<double> xvec, std::vector<double> yvec,
-                        double dim);
+                           double dim);
         bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
 

@@ -100,7 +100,40 @@ void Causet::make_cmatrix(){}
 void Causet::make_pasts(){}
 void Causet::make_futures(){}
 void Causet::make_past_links(){}
-void Causet::make_future_links(){}
+
+void Causet::make_future_links_fromC()
+{
+    if (_CMatrix.size()==0)
+    {
+        std::cout << "To create future link matrix, CMatrix must exist";
+        throw std::invalid_argument("No CMatrix");}
+
+    _future_links.resize(_size);
+    
+    #pragma omp parallel for
+    for (int i=0; i<_size; i++)
+    {
+        for (int j=i+1; j<_size; j++)
+        {
+            if (_CMatrix[i][j] == 0) {
+                continue;
+            }
+            else
+            {
+                bool has_broken = false;
+                for (int k=i+1; k<j;k++)
+                {
+                    if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                        has_broken = true;
+                        break;}
+                }
+                if (!has_broken){
+                    _future_links[i].insert(j);}
+            }
+        }
+    }
+}
+
 
 std::vector<std::vector<int>> Causet::CMatrix(std::vector<int> labels)
 {
@@ -109,6 +142,8 @@ std::vector<std::vector<int>> Causet::CMatrix(std::vector<int> labels)
     else
         {return {};}
 }
+
+
 int Causet::size() 
     {return _size;}
 bool Causet::is_CMatrix_special()
