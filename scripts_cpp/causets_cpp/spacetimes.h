@@ -53,7 +53,7 @@ class Spacetime
 
         // CAUSALITY
         typedef bool (*func)
-        (std::vector<double> xvec, std::vector<double> yvec, 
+        (std::vector<double> &xvec, std::vector<double> &yvec, 
          std::vector<double> period, double mass);
         func Causality();
 
@@ -62,8 +62,8 @@ class Spacetime
          std::vector<double> period, double mass);
         general_func General_Causality();  
         
-        static bool              causal1d(std::vector<double> xvec, 
-                                          std::vector<double> yvec,
+        static bool              causal1d(std::vector<double> &xvec, 
+                                          std::vector<double> &yvec,
                                           std::vector<double> period,
                                           double mass);
         
@@ -88,12 +88,12 @@ class Spacetime
         double Flat_ds2    (std::vector<double> xvec, std::vector<double> yvec);
         double Flat_ds     (std::vector<double> xvec, std::vector<double> yvec);  
 
-        static bool Flat_causal (std::vector<double> xvec, 
-                                         std::vector<double> yvec,
+        static bool Flat_causal (std::vector<double> &xvec, 
+                                         std::vector<double> &yvec,
                                          std::vector<double> period = {},
                                          double mass = 0);
-        static bool Flat_causal_periodic (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
+        static bool Flat_causal_periodic (std::vector<double> &xvec, 
+                                            std::vector<double> &yvec,
                                             std::vector<double>period,
                                             double mass = 0);
         
@@ -121,26 +121,26 @@ class Spacetime
     
         // BH Causality
 
-        double BH_ds2(std::vector<double> xvec, std::vector<double> yvec);
-        double BH_ds(std::vector<double> xvec, std::vector<double> yvec); 
+        double BH_ds2(std::vector<double> &xvec, std::vector<double> &yvec);
+        double BH_ds(std::vector<double> &xvec, std::vector<double> &yvec); 
 
-        static bool BH_causal2D (std::vector<double> xvec, 
-                                              std::vector<double> yvec,
+        static bool BH_causal2D (std::vector<double> &xvec, 
+                                              std::vector<double> &yvec,
                                               std::vector<double> period={},
                                               double mass = 1);
 
-        static bool BH_causal3D (std::vector<double> xvec, 
-                                              std::vector<double> yvec,
+        static bool BH_causal3D (std::vector<double> &xvec, 
+                                              std::vector<double> &yvec,
                                               std::vector<double> period={},
                                               double mass = 1); 
 
-        static bool BH_causal4D (std::vector<double> xvec, 
-                                              std::vector<double> yvec,
+        static bool BH_causal4D (std::vector<double> &xvec, 
+                                              std::vector<double> &yvec,
                                               std::vector<double> period={},
                                               double mass = 1);
         
-        static bool BH_last_resort(std::vector<double> xvec, 
-                                                std::vector<double> yvec,
+        static bool BH_last_resort(std::vector<double> &xvec, 
+                                                std::vector<double> &yvec,
                                                 double mass = 1);
         
         static void BH_dvarphi_du (double& dpdu, double u, double c2, 
