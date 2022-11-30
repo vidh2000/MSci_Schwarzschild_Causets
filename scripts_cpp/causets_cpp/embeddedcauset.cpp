@@ -273,8 +273,7 @@ std::vector<bool> EmbeddedCauset::general_causality(vector<double> xvec,
  * @exception: returned if size of xvec and yvec difefrent than dimension of
  * spacetime.
  */
-bool EmbeddedCauset::areTimelike4D(vector<double> xvec, vector<double> yvec,
-                                                    double dim)
+bool EmbeddedCauset::areTimelike4D(vector<double> &xvec, vector<double> &yvec)
 {
     double dt = (xvec[0]-yvec[0]);
     double dspacex = xvec[1]-yvec[1];
@@ -838,10 +837,10 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             {
                 for(int j=i+1; j<_size; j++) //i can only preceed j
                 {
-                    if(xycausality(_coords[i],_coords[j],st_period,mass))
+                    //if(xycausality(_coords[i],_coords[j],st_period,mass))
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
-                    //if (areTimelike4D(_coords[i],_coords[j],4))
+                    //if (areTimelike4D(_coords[i],_coords[j]))
                     {
                         _CMatrix[i][j] = 1;
                     }    
@@ -1155,7 +1154,7 @@ void EmbeddedCauset::make_cmatrix_and_futlinks(const char* method,
                     _CMatrix[i][j] = special_factor;
                     _future_links[i].insert(j);
                     // transitivity is mandatory if links are being made
-                    #pragma omp parallel for// schedule(dynamic,8)
+                    //#pragma omp parallel for// schedule(dynamic,8)
                     for (int k = j+1; k<_size; k++)
                     {
                         if(_CMatrix[j][k] != 0) //i<j<k -> i<k

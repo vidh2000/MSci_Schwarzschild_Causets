@@ -34,14 +34,14 @@ using namespace std::chrono;
 
 // SIMULATIONS PARAMETERS (adjust only these)
 
-int cardinality = 5000;
+int cardinality = 10000;
 int dim = 4;
-std::vector<int> repetitions_arr = {5};
+std::vector<int> repetitions_arr = {1};
 
 // Specify the type of causet generation
 bool make_links = false; //would create future links
 // Line below applies only when (make_sets||make_links)==true
-const char* spacetime =  "BlackHole"; //"flat" or "BlackHole"
+const char* spacetime =  "flat"; //"flat" or "BlackHole"
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
         {
                 auto start = high_resolution_clock::now();
                 // Repeat over many initialisations
-                #pragma omp parallel for
+                //#pragma omp parallel for
                 for (int rep=0; rep<repetitions; rep++)
                 {
                         //auto repstart = high_resolution_clock::now();
