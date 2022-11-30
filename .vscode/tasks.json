@@ -19,12 +19,15 @@
                 // EXECUTABLE
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                
                 // OPTIMISATION FLAG
                 "-Ofast", 
                 //"-march=native",
                 //"-ffast-math",
+                
                 // Enable OpenMP
                 "-fopenmp",
+                
                 //INCLUDE PATHS
                 "-I",
                 "C:\\Program Files\\boost\\boost_1_80_0",

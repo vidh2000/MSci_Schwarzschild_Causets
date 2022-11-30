@@ -126,8 +126,12 @@ class EmbeddedCauset: public Causet
         void make_fut_links     (const char* method = "coordinates");
         
         // Methods for counting links -> entropy
-        int count_links_fromCMatrix(double t_f, double r_S = 2);
-        int count_links_BH(double t_f, double r_S = 2);
+        
+        int count_links_fromCMatrix(double& t_f, double r_S = 2);
+        int count_links_BH(double& t_f, double r_S = 2);
+
+        std::map<int,int> count_lambdas_fromCMatrix(double& t_f, double r_S = 2);
+        std::map<int,int> count_lambdas_BH(double& t_f, double r_S = 2);
 
         //Destructor
         ~EmbeddedCauset();       

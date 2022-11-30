@@ -60,10 +60,11 @@ vector<double> Spacetime::T_slice_sampling(double t,
 
 
 typedef bool (*func)
-(vector<double> &xvec, vector<double> &yvec, vector<double> period, double mass);
+(const vector<double>& xvec, const vector<double>& yvec, 
+ vector<double> period, double mass);
 /**
- * @brief Return callable "bool callable (vector<double> xvec, 
- * vector<double> yvec, vector<double> period, double mass", i.e.
+ * @brief Return callable "bool callable (const vector<double>& xvec, 
+ * const vector<double>& yvec, vector<double> period, double mass", i.e.
  * returns a function that returns the bool saying if x-y is timelike
  * based on spacetime features.
  */
@@ -93,10 +94,10 @@ func Spacetime::Causality()
 
 
 typedef vector<bool> (*general_func)
-(vector<double> xvec, vector<double> yvec, vector<double> period, double mass);
+(const vector<double>& xvec, const vector<double>& yvec, vector<double> period, double mass);
 /**
- * @brief Return callable "vector<bool> callable (vector<double> xvec, 
- * vector<double> yvec, vector<double> period, double mass", i.e.
+ * @brief Return callable "vector<bool> callable (const vector<double>& xvec, 
+ * const vector<double>& yvec, vector<double> period, double mass", i.e.
  * returns a function that returns a vector of bools {x-y timelike, x<=y, x>y},
  * based on spacetime features.
  */
@@ -133,7 +134,7 @@ general_func Spacetime::General_Causality()
  * @param period : needed for consistency with Causality, not used
  * @return bool : 1
  */
-bool Spacetime::causal1d(vector<double> &xvec, vector<double> &yvec,
+bool Spacetime::causal1d(const vector<double>& xvec, const vector<double>& yvec,
                          vector<double> period, double mass)
 {
     return true;
@@ -148,8 +149,8 @@ bool Spacetime::causal1d(vector<double> &xvec, vector<double> &yvec,
  * @param period : needed for consistency with Causality, not used
  * @return vector<bool> : {1, x<=y, x>y}
  */
-vector<bool> Spacetime::general_causal1d(vector<double> xvec, 
-                                         vector<double> yvec,
+vector<bool> Spacetime::general_causal1d(const vector<double>& xvec, 
+                                         const vector<double>& yvec,
                                          vector<double> period, double mass)
 {
     //std::cout<<"For debuggin: calling Spacetime::causal1d\n";
@@ -208,7 +209,7 @@ void Spacetime::FlatSpacetime(int dim, vector<double> period)
 /**
  * @brief Spacetime Interval Squared t squared - x_i*x^i
  */
-double Spacetime::Flat_ds2(vector<double> xvec, vector<double> yvec)
+double Spacetime::Flat_ds2(const vector<double>& xvec, const vector<double>& yvec)
 {
     
     double time_delta2  = (yvec[0] - xvec[0])*(yvec[0] - xvec[0]);
@@ -222,7 +223,7 @@ double Spacetime::Flat_ds2(vector<double> xvec, vector<double> yvec)
 /**
  * @brief Spacetime Interval sqrt(t squared - x_i*x^i)
  */
-double Spacetime::Flat_ds(vector<double> xvec, vector<double> yvec)
+double Spacetime::Flat_ds(const vector<double>& xvec, const vector<double>& yvec)
 {
     
     double time_delta2  = (yvec[0] - xvec[0])*(yvec[0] - xvec[0]);
@@ -241,8 +242,8 @@ double Spacetime::Flat_ds(vector<double> xvec, vector<double> yvec)
  * @param period not used, needed for consistency with Causality
  * @return bool : x-y timelike?
  */
-bool Spacetime::Flat_causal(vector<double> &xvec, vector<double> &yvec,
-                                    vector<double>period, double mass)
+bool Spacetime::Flat_causal(const vector<double>& xvec, const vector<double>& yvec,
+                            vector<double>period, double mass)
 {
     double dt = (xvec[0]-yvec[0]);
     double dspacex = xvec[1]-yvec[1];
@@ -267,10 +268,10 @@ bool Spacetime::Flat_causal(vector<double> &xvec, vector<double> &yvec,
  * dimension (0->x, 1->y, 2-->z)
  * @return bool : x-y timelike?
  */
-bool Spacetime::Flat_causal_periodic(vector<double> &xvec, 
-                                            vector<double> &yvec,
-                                            vector<double> period,
-                                            double mass)
+bool Spacetime::Flat_causal_periodic(const vector<double>& xvec, 
+                                        const vector<double>& yvec,
+                                        vector<double> period,
+                                        double mass)
 {
     //std::cout<<"For debuggin: calling Flat_causal_periodic\n";
     double t_delta = (yvec[0] - xvec[0]);
@@ -299,8 +300,8 @@ bool Spacetime::Flat_causal_periodic(vector<double> &xvec,
  * @param period not used, needed for consistency with Causality
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::Flat_general_causal(vector<double> xvec, 
-                                            vector<double> yvec,
+vector<bool> Spacetime::Flat_general_causal(const vector<double>& xvec, 
+                                            const vector<double>& yvec,
                                             vector<double>period, double mass)
 {
     double dt2 = (xvec[0]-yvec[0])*(xvec[0]-yvec[0]);
@@ -329,8 +330,8 @@ vector<bool> Spacetime::Flat_general_causal(vector<double> xvec,
  * dimension (0->x, 1->y, 2-->z)
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::Flat_general_causal_periodic(vector<double> xvec, 
-                                                    vector<double> yvec,
+vector<bool> Spacetime::Flat_general_causal_periodic(const vector<double>& xvec, 
+                                                    const vector<double>& yvec,
                                                     vector<double> period,
                                                     double mass)
 {
@@ -417,10 +418,10 @@ void Spacetime::BlackHoleSpacetime(int dim,// = 4
  * @param mass : mass of Black Hole
  * @return bool : x-y timelike?
  */
-bool Spacetime::BH_causal2D (std::vector<double> &xvec, 
-                                    std::vector<double> &yvec,
-                                    std::vector<double> period,
-                                    double mass)
+bool Spacetime::BH_causal2D (const vector<double>& xvec, 
+                             const vector<double>& yvec,
+                             std::vector<double> period,
+                             double mass)
 {
     //IF WORKING IN EF COORDINATES
 
@@ -471,10 +472,10 @@ bool Spacetime::BH_causal2D (std::vector<double> &xvec,
  * @param mass : mass of Black Hole
  * @return bool : x-y timelike?
  */
-bool Spacetime::BH_causal3D (std::vector<double> &xvec, 
-                                    std::vector<double> &yvec,
-                                    std::vector<double> period,
-                                    double mass)
+bool Spacetime::BH_causal3D (const vector<double>& xvec, 
+                            const vector<double>& yvec,
+                            std::vector<double> period,
+                            double mass)
 {
     //IF WORKING IN EF COORDINATES
     if (yvec[0]<xvec[0])
@@ -608,10 +609,10 @@ bool Spacetime::BH_causal3D (std::vector<double> &xvec,
  * @param mass : mass of Black Hole
  * @return bool : x-y timelike?
  */
-bool Spacetime::BH_causal4D (std::vector<double> &xvec, 
-                                    std::vector<double> &yvec,
-                                    std::vector<double> period,
-                                    double mass)
+bool Spacetime::BH_causal4D (const vector<double>& xvec, 
+                            const vector<double>& yvec,
+                            std::vector<double> period,
+                            double mass)
 {
 
     // double t1     = xvec[0]; double t2     = yvec[0];
@@ -849,8 +850,8 @@ bool Spacetime::BH_causal4D (std::vector<double> &xvec,
  * @param mass double : BH mass
  * @return bool : causality booleans
  */
-bool Spacetime::BH_last_resort(std::vector<double> &xvec, 
-                                std::vector<double> &yvec,
+bool Spacetime::BH_last_resort(const vector<double>& xvec, 
+                                const vector<double>& yvec,
                                 double mass)
 {
     //print_vector(xvec);
@@ -1098,10 +1099,8 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
             
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
                                             u1, (0.5+0.0001)*M, -(u1-0.5)/20.);
-            //std::cout << "first integral finito..\n";
             boost::numeric::odeint::integrate(BH_dt_du_forint_minus, t, 
                                             (0.5-0.0001)*M, u2, -(0.5-u2)/20.);
-            //std::cout << "second integral finito..\n";
         }
     }
     return t;
@@ -1110,15 +1109,17 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double c, double M)
 
 bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
                                      double c, double M)
-    {return Spacetime::BH_int_dt_du (u1, u2, M, c) + t1<= t2;}
+    {return Spacetime::BH_int_dt_du (u1, u2, M, c) + t1 - t2 <= 0;}
 
 
 
 
-
+///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 // BH Coordinate Transformations
 ///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
 
 typedef void (*inversefunc)
 (std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
@@ -1555,8 +1556,8 @@ void Spacetime::switchInEF (std::vector<std::vector<double>>& coords,
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::BH_general_causal2D (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
+vector<bool> Spacetime::BH_general_causal2D (const vector<double>& xvec, 
+                                            const vector<double>& yvec,
                                             std::vector<double> period,
                                             double mass)
 {
@@ -1621,8 +1622,8 @@ vector<bool> Spacetime::BH_general_causal2D (std::vector<double> xvec,
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::BH_general_causal3D (std::vector<double> xvec, 
-                                    std::vector<double> yvec,
+vector<bool> Spacetime::BH_general_causal3D (const vector<double>& xvec, 
+                                    const vector<double>& yvec,
                                     std::vector<double> period,
                                     double mass)
 {
@@ -1768,8 +1769,8 @@ vector<bool> Spacetime::BH_general_causal3D (std::vector<double> xvec,
  * @param mass : mass of Black Hole
  * @return vector<bool> : {x-y timelike, x<=y, x>y}
  */
-vector<bool> Spacetime::BH_general_causal4D (std::vector<double> xvec, 
-                                            std::vector<double> yvec,
+vector<bool> Spacetime::BH_general_causal4D (const vector<double>& xvec, 
+                                            const vector<double>& yvec,
                                             std::vector<double> period,
                                             double mass)
 {
@@ -1914,8 +1915,8 @@ vector<bool> Spacetime::BH_general_causal4D (std::vector<double> xvec,
  * @param mass double : BH mass
  * @return vector<bool> : causality booleans
  */
-vector<bool> Spacetime::BH_general_last_resort(std::vector<double> xvec, 
-                                               std::vector<double> yvec,
+vector<bool> Spacetime::BH_general_last_resort(const vector<double>& xvec, 
+                                               const vector<double>& yvec,
                                                double mass)
 {    
     double c = Spacetime::BH_c_solver(1./xvec[1],1./yvec[1],yvec[3], mass);

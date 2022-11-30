@@ -237,7 +237,7 @@ double EmbeddedCauset::min_along(int dim)
  * spacetime.
  */
 bool EmbeddedCauset::causality(vector<double> xvec, 
-                                            vector<double> yvec)
+                                vector<double> yvec)
 {
     auto xycausality = this->_spacetime.Causality();
     return xycausality(xvec, yvec, _spacetime._period, _spacetime._mass);
@@ -1457,12 +1457,17 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
 /**
- * @brief Makes future matrix from causal matrix _CMatrix
- * 
+ * @brief Makes future_links from causal matrix _CMatrix and counts links 
+ * between maximal elements - below t_f and inside r_S - and maximal_but_one 
+ * elements outside r_S. 
+
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return int Number of links
  */
-int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S)
+int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -1498,14 +1503,13 @@ int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S)
         int N = this->count_links_BH(t_f,r_S);
         return N;
     }
-    else
+    else /*Spacetime name not BlackHole*/
     {
         std::cout<<"Please choose 'BlackHole' for spacetime." <<
         "Other spacetimes might be available in the future."
         << std::endl;
         throw std::invalid_argument("Wrong spacetime");
     }
-
 }
 
 
@@ -1513,18 +1517,17 @@ int EmbeddedCauset::count_links_fromCMatrix(double t_f, double r_S)
 
 /**
  * @brief   Finds number of links in the causet connecting maximal elements 
- *          below t_f with maximal-but-one elements above t_i,
- *          where the links span over the horizon.
- *          Currently works only for spacetime "Schwarzschild", but
- *          could be expanded in needed in the future. 
+ *          below t_f and inside the horizon with maximal-but-one elements
+ *          outside the horizon.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
  * 
- * @param t_f Highest boundary for time
- * @param r_S   Schwarzschild radius
- * @param spacetime Schwarzschild. Allows possibility to do other horizons
- *                  in other spacetimes if needed
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
  * @return int Number of links
  */
-int EmbeddedCauset::count_links_BH(double t_f, double r_S)
+int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
 {
     if (!strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -1535,43 +1538,47 @@ int EmbeddedCauset::count_links_BH(double t_f, double r_S)
 
     // Number of links
     int N = 0;
+    
     // To find point with lowest time component. Hypersurface set at t=0 btw.
     std::vector<double> min_times;
+ 
     for (int i = _size-2; i>-1; i--)
-    {
-        // Method 1: Go down element by element and check if it's contained
-        //           in any past_links of higher elements.
-        
-        for (int j=i+1; j<_size; j++)
+    {     
+        if (_coords[i][1]>r_S) // i outside horizon
         {
-            if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+            for (int j=i+1; j<_size; j++)
             {
-                if (_coords[j][1]<r_S && _coords[i][1]>r_S) // t_j>t_i
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i (SHOULD ALWAYS GO HERE)
                 {
-                    if (_future_links[j].size()==0 &&  // if j==maximal
-                        _future_links[i].size()==1)  // if i links only to j  
+                    if (_coords[j][1]<r_S)  // j inside horizon
                     {
-                        // check if j-i is the link
-                        if (set_contains(j,_future_links[i])) {
-                            N++;
-                            std::vector<double> timesvec = {_coords[i][0],_coords[j][0]};
-                            min_times.push_back(vecmin(timesvec));
+                        if (_future_links[j].size()==0 && // if j==maximal
+                            _future_links[i].size()==1)   // if i links only to j  
+                        {
+                            // check if j-i is the link
+                            if (set_contains(j,_future_links[i]))
+                            {
+                                N++;
+                                min_times.push_back(_coords[i][0]);
+                            }
                         }
                     }
                 }
-            }
-            else // t_j<t_i //
-            {
-                std::cout << "t_j<t_i\n";
-                if (_coords[i][1]<r_S && _coords[j][1]>r_S) // t_j<t_i
+                else // t_j<t_i //
                 {
-                    if (_future_links[i].size()==0 &&  // if i==maximal
-                        _future_links[j].size()==1)  // if j links only to i  
+                    std::cout << "t_j<t_i\n";
+                    if (_coords[i][1]<r_S && _coords[j][1]>r_S) // t_j<t_i
                     {
-                        // check if j-i is the link
-                        if (set_contains(i,_future_links[j])) //faster if here
+                        if (_future_links[i].size()==0 &&  // if i==maximal
+                            _future_links[j].size()==1)  // if j links only to i  
                         {
-                            N++;}
+                            // check if j-i is the link
+                            if (set_contains(i,_future_links[j])) //faster if here
+                            {
+                                N++;
+                                min_times.push_back(_coords[j][0]);
+                            }
+                        }
                     }
                 }
             }
@@ -1580,6 +1587,126 @@ int EmbeddedCauset::count_links_BH(double t_f, double r_S)
     double mintime = vecmin(min_times);
     std::cout << "t_min for elements in these links = " << mintime << std::endl; 
     return N;
+}
+
+
+
+/**
+ * @brief   Makes future_links from causal matrix _CMatrix and counts lambdas
+ * between maximal elements - below t_f and inside r_S - and maximal_but_one 
+ * elements outside r_S. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, int> : key is label of maximal element, value is number of
+           maximal but one elements associated with it.
+ */
+std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f, 
+                                                            double r_S)
+{
+    if (strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
+
+        _future_links.resize(_size);
+        
+        #pragma omp parallel for
+        for (int i=0; i<_size; i++)
+        {
+            for (int j=i+1; j<_size; j++)
+            {
+                if (_CMatrix[i][j] == 0) {
+                    continue;
+                }
+                else
+                {
+                    bool has_broken = false;
+                    for (int k=i+1; k<j;k++)
+                    {
+                        if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                            has_broken = true;
+                            break;}
+                    }
+                    if (!has_broken){
+                        _future_links[i].insert(j);}
+                }
+            }
+        }
+        return this->count_lambdas_BH(t_f,r_S);;
+    }
+    else /*Spacetime name not BlackHole*/
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future."
+        << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+}
+
+
+/**
+ * @brief   Finds lambdas in the causet connecting maximal elements 
+ *          below t_f and inside the horizon with maximal-but-one elements
+ *          outside the horizon.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, int> : key is label of maximal element, value is number of
+           maximal but one elements associated with it.
+ */
+std::map<int,int> EmbeddedCauset::count_lambdas_BH(double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, int> lambdas;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    std::vector<double> min_times;
+ 
+    for (int j = 1; j<_size; j++)
+    {
+        // if j is maximal and inside the horizon
+        if (_future_links[j].size()==0 && _coords[j][1]<r_S) 
+        {
+            lambdas[j] = 0;
+            for (int i = j-1; i>-1; i--)
+            {
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                {
+                    // if i is maximal but one and outside the horizon
+                    if (_future_links[i].size()==1 && _coords[i][1]>r_S)
+                    {
+                        if (set_contains(j,_future_links[i])) //i-j is link
+                        {
+                            lambdas[j] += 1;
+                            min_times.push_back(_coords[i][0]);
+                        }
+                    }
+                }
+                else /* t_j<t_i */
+                {
+                    std::cout << "ERROR: t_j < t_i\n";
+                }
+            }
+        }
+    }
+
+    double mintime = vecmin(min_times);
+    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
+    return lambdas;
 }
 
 
