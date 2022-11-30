@@ -1,0 +1,28 @@
+Spacetime: BlackHole
+N = 1000, dim = 4
+Average time taken for generating 8 repetitions with N = 1000: 1.38038 seconds
+Average time taken for generating 7 repetitions with N = 1000: 1.68118 seconds
+Average time taken for generating 6 repetitions with N = 1000: 1.30525 seconds
+Average time taken for generating 5 repetitions with N = 1000: 1.42447 seconds
+Average time taken for generating 4 repetitions with N = 1000: 1.63963 seconds
+Average time taken for generating 3 repetitions with N = 1000: 1.76673 seconds
+Average time taken for generating 2 repetitions with N = 1000: 2.86282 seconds
+Average time taken for generating 1 repetitions with N = 1000: 1.47 seconds (no parallel reps)
+
+Spacetime: BlackHole
+N = 1000, dim = 4
+Average time taken for generating 7 repetitions with N = 1000: 1.27687 seconds
+Average time taken for generating 6 repetitions with N = 1000: 1.44714 seconds
+Average time taken for generating 5 repetitions with N = 1000: 1.47395 seconds
+Average time taken for generating 4 repetitions with N = 1000: 1.541 seconds
+Average time taken for generating 3 repetitions with N = 1000: 2.18946 seconds
+Average time taken for generating 2 repetitions with N = 1000: 2.66265 seconds
+
+Spacetime: BlackHole
+N = 1000, dim = 4
+Average time taken for generating 7 repetitions with N = 1000: 1.69113 seconds
+Average time taken for generating 6 repetitions with N = 1000: 1.6744 seconds
+Average time taken for generating 5 repetitions with N = 1000: 1.47361 seconds
+Average time taken for generating 4 repetitions with N = 1000: 1.64105 seconds
+Average time taken for generating 3 repetitions with N = 1000: 1.85633 seconds
+Average time taken for generating 2 repetitions with N = 1000: 2.40037 seconds

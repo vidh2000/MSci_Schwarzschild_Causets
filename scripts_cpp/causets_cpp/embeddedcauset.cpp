@@ -832,7 +832,8 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             //#pragma omp parallel for collapse(2)
             
             //std::cout << "with parallelisation\n";
-            #pragma omp parallel for
+            //#pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic)
             for(int i=0; i<_size-1; i++) //can skip the very last, i.e Nth
             {
                 for(int j=i+1; j<_size; j++) //i can only preceed j

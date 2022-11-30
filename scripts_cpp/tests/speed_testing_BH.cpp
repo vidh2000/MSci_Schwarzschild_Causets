@@ -34,7 +34,7 @@ using namespace std::chrono;
 
 // SIMULATIONS PARAMETERS (adjust only these)
 
-int cardinality = 10000;
+int cardinality = 20000;
 int dim = 4;
 std::vector<int> repetitions_arr = {5};
 
@@ -95,28 +95,31 @@ for (auto && tup : boost::combine(cards, radii, masses, durations))
 
         for (auto repetitions: repetitions_arr)
         {
+                // Set up sprinkling
+                CoordinateShape shape(dim,name,center,radius,myduration);
+                Spacetime S = Spacetime();
+                if (strcmp(spacetime, "flat")==0){
+                        S.FlatSpacetime(dim);}
+                else if (strcmp(spacetime, "BlackHole")==0){
+                        S.BlackHoleSpacetime(dim,mass);}
                 auto start = high_resolution_clock::now();
                 // Repeat over many initialisations
-                #pragma omp parallel for
+                //#pragma omp parallel for //schedule(dynamic)
                 for (int rep=0; rep<repetitions; rep++)
                 {
-                        //auto repstart = high_resolution_clock::now();
-                        CoordinateShape shape(dim,name,center,radius,myduration);
-                        Spacetime S = Spacetime();
-                        if (strcmp(spacetime, "flat")==0){
-                                S.FlatSpacetime(dim);}
-                        else if (strcmp(spacetime, "BlackHole")==0){
-                                S.BlackHoleSpacetime(dim,mass);}
+                        auto repstart = high_resolution_clock::now();
+                        
+                        // Generate causets
                         SprinkledCauset C(card, S, shape, poisson,
                                         make_matrix, special, use_transitivity,
                                         make_sets, make_links,sets_type);
 
                         //Timing
-                        // auto repend = high_resolution_clock::now();
-                        // double duration = duration_cast<microseconds>(repend - repstart).count();
-                        // std::cout << "Time taken N = " << card
-                        // << ", "<<(rep+1)<<"/"<<repetitions<<": " << duration/pow(10,6)
-                        // << " seconds" << std::endl;
+                        auto repend = high_resolution_clock::now();
+                        double duration = duration_cast<microseconds>(repend - repstart).count();
+                        std::cout << "Time taken N = " << card
+                        << ", "<<(rep+1)<<"/"<<repetitions<<": " << duration/pow(10,6)
+                        << " seconds" << std::endl;
                 }
                 auto mid = high_resolution_clock::now();
                 double duration = duration_cast<microseconds>(mid - start).count();

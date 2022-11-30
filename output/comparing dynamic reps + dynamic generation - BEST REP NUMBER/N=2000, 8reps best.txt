@@ -1,0 +1,29 @@
+Spacetime: BlackHole
+N = 2000, dim = 4
+Average time taken for generating 8 repetitions with N = 2000: 5.18461 seconds
+Average time taken for generating 7 repetitions with N = 2000: 5.30537 seconds
+Average time taken for generating 6 repetitions with N = 2000: 5.39115 seconds
+Average time taken for generating 5 repetitions with N = 2000: 6.04841 seconds
+Average time taken for generating 4 repetitions with N = 2000: 5.90009 seconds
+Average time taken for generating 3 repetitions with N = 2000: 7.22004 seconds
+Average time taken for generating 2 repetitions with N = 2000: 10.8019 seconds
+Average time taken for generating 1 repetitions with N = 2000: 5.9 seconds (with no parallel reps)
+
+Spacetime: BlackHole
+N = 2000, dim = 4
+Average time taken for generating 8 repetitions with N = 2000: 5.25274 seconds
+Average time taken for generating 7 repetitions with N = 2000: 5.44282 seconds
+Average time taken for generating 6 repetitions with N = 2000: 5.50063 seconds
+Average time taken for generating 5 repetitions with N = 2000: 6.91677 seconds
+Average time taken for generating 4 repetitions with N = 2000: 6.26893 seconds
+Average time taken for generating 3 repetitions with N = 2000: 6.98815 seconds
+Average time taken for generating 2 repetitions with N = 2000: 9.83798 seconds
+
+Spacetime: BlackHole
+N = 2000, dim = 4
+Average time taken for generating 7 repetitions with N = 2000: 5.30537 seconds
+Average time taken for generating 6 repetitions with N = 2000: 5.39115 seconds
+Average time taken for generating 5 repetitions with N = 2000: 6.04841 seconds
+Average time taken for generating 4 repetitions with N = 2000: 5.90009 seconds
+Average time taken for generating 3 repetitions with N = 2000: 7.22004 seconds
+Average time taken for generating 2 repetitions with N = 2000: 10.8019 seconds
