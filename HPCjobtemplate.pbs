@@ -1,0 +1,8 @@
+#PBS -lwalltime=HH:MM:00
+#PBS -lselect=1:ncpus=N:mem=Mgb
+ 
+module load anaconda3/personal
+python $HOME/myprog.py $PBS_O_WORKDIR/path/to/input.txt
+ 
+mkdir $WORK/$PBS_JOBID
+cp * $WORK/$PBS_JOBID
