@@ -1,0 +1,8 @@
+#PBS -lwalltime=01:00:00
+#PBS -lselect=1:ncpus=256:mem=16gb
+
+module load mpi
+mpiexec a.out
+
+bash /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh
+ 

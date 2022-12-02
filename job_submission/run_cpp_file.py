@@ -1,4 +1,5 @@
 import os
+import sys
 
 cwd = os.getcwd()
 
@@ -6,12 +7,12 @@ cwd = os.getcwd()
 file_dir = os.path.dirname(os.path.realpath(__file__))
 main_dir = os.path.dirname(file_dir)+"/"
 
+# Specify which file you want to run
+runfileDir = sys.argv[1] #f"{main_dir}scripts_cpp/tests/"
+runfilename = sys.argv[2] #"test_hello_world.cpp"
+
 # Directory path of causets_cpp
 causets_cpp = main_dir + "scripts_cpp/causets_cpp/"
-
-# Specify which file you want to run
-runfileDir = f"{main_dir}scripts_cpp/tests/"
-runfilename = "test_hello_world.cpp"
 
 # Compile commands
 compiler_stuff = [
@@ -50,15 +51,11 @@ includes = [" ",
 to_render = " ".join(compiler_stuff) + " ".join(exec) + \
             " ".join(optimisations) + " ".join(includes)
 
-print("To render:")
+print("\nC++ files to compile, flags used, executable produced:")
 print(to_render)
 os.system(to_render)
-print("\nRendered!\n")
-# Run the compiled executable
+print(".............................Compiled............................!\n")
 
-print("\nRun!\n")
-os.system(f"cd '{runfileDir}'")
-os.system(f"./{runfilename[:-4]}")
 
 
 

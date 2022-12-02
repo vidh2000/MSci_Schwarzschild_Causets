@@ -34,7 +34,7 @@ using namespace std::chrono;
 
 // SIMULATIONS PARAMETERS (adjust only these)
 
-int cardinality = 20000;
+int cardinality = 2000;
 int dim = 4;
 std::vector<int> repetitions_arr = {5};
 
