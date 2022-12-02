@@ -1,0 +1,16 @@
+#PBS -lselect=1:ncpus=1:mem=1gb
+#PBS -lwalltime=24:0:0
+
+# Load modules for any applications
+
+module load my-first-job
+
+# Change to the submission directory
+
+cd $PBS_O_WORKDIR
+
+# Run program
+
+a.out
+
+

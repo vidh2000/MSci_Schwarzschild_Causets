@@ -1,0 +1,19 @@
+#PBS -lselect=1:ncpus=32:mpiprocs=32:mem=60gb
+#PBS -lwalltime=24:0:0
+
+# Load modules for any applications
+
+module load my-first-job
+module load mpi
+
+# Change to the directory the job was submitted from
+
+cd $PBS_O_WORKDIR
+
+# Run program, using 'mpiexec' to start the job
+# mpiexec automatically picks up the # of cores
+# assigned to the job. No other flags are required
+#  - note: don't use 'mpirun'
+
+mpiexec a.out
+
