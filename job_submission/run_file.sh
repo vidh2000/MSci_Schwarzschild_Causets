@@ -3,14 +3,27 @@
 echo "=====================================================" 
 echo
 
+########################################################################
+#### TO CHANGE ###
+########################################################################
 
-fileDir=$(pwd)"/"
-mainDir="$(dirname "$fileDir")/"
+# Files you want to run in 
+#runfilename="speed_testing_BH.cpp"
+runfilename="test_hello_world.cpp"
 
 # Specify relative path from MSci_Schwarzschild_Causets
 # to the .cpp file you want to compile/execute
-runfilename="speed_testing_BH.cpp"
 runfileRelativeDir="scripts_cpp/tests/"
+
+########################################################################
+########################################################################
+########################################################################
+
+# Get useful directories
+fileDir=$(pwd)"/"
+mainDir="$(dirname "$fileDir")/"
+
+
 
 #echo $fileDir
 #echo $mainDir
