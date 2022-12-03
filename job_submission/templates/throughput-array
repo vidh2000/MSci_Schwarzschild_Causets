@@ -1,0 +1,24 @@
+#PBS -lselect=1:ncpus=1:mem=1gb
+#PBS -lwalltime=24:0:0
+#PBS -J 1-10
+
+## Run 10 copies of this job (-J 1-10)
+## The environment variable $PBS_ARRAY_INDEX gives each
+## subjob's index within the array
+
+## All subjobs run independently of one another
+
+
+# Load modules for any applications
+
+module load my-first-job
+
+# Change to the submission directory
+
+cd $PBS_O_WORKDIR
+
+# Run program, passing the index of this subjob within the array
+
+a.out $PBS_ARRAY_INDEX
+
+
