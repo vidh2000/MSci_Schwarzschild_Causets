@@ -610,13 +610,12 @@ bool Spacetime::BH_causal3D (const vector<double>& xvec,
  * @return bool : x-y timelike?
  */
 bool Spacetime::BH_causal4D (const vector<double>& xvec, 
-                            const vector<double>& yvec,
-                            std::vector<double> period,
-                            double mass)
+                             const vector<double>& yvec,
+                             std::vector<double> period,
+                             double mass)
 {
-
-    // double t1     = xvec[0]; double t2     = yvec[0];
-    // double r1     = xvec[1]; double r2     = yvec[1];
+    // const double* t1 = &xvec[0]; const double* t2 = &yvec[0];
+    // const double* r1 = &xvec[1]; const double* r2 = &yvec[1];
     // //double theta1 = xvec[2]; double theta2 = yvec[2];
     // //double phi1   = xvec[3]; double phi2   = yvec[3];
 
