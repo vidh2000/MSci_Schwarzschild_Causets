@@ -35,7 +35,7 @@ int dim = 2;
 const char* name = "cube";
 double radius = 3.0;
 double myduration = 3;
-double edge = 4;
+double edge = 10;
 std::vector<double> center (dim, edge/2);
 std::vector<double> edges = {1,2,3,4};
 
@@ -64,7 +64,7 @@ int main()
                         make_matrix, special, use_transitivity,
                         make_sets, make_links,sets_type);
     std::cout << "Generated the causet... Saving ->" << std::endl;
-    std::string path_file_str = "../data/blackhole_EFv_"+std::to_string(dim)
+    std::string path_file_str = "../../data/blackhole_EFv_"+std::to_string(dim)
                                 +"D_N"+std::to_string(card)+".txt";
     const char* path_file = path_file_str.c_str();
     C.save_causet(path_file);
