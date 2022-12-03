@@ -87,16 +87,16 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
         int card,repetitions;
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration, repetitions) = tup;
-        std::cout << "Iter: " << (iteration)<<"/"<< masses.size() <<
+        std::cout << "======================================================\n";
+        std::cout << "Main interation count: " << (iteration)<<"/"<< masses.size() <<
         "\nN = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
         ". Dimension = " << dim << ". Height = " << myduration <<
         ". Centered at t = " << -myduration/2 << ".\n";
         
         // Repeat over many initialisations
-        #pragma omp parallel for// schedule(dynamic,8)
         for (int rep=0; rep<repetitions; rep++)
         {
-                //auto repstart = high_resolution_clock::now();
+                auto repstart = high_resolution_clock::now();
                 // Set up shape
                 std::vector<double> center = {-myduration/2,0.0,0.0,0.0};
                 CoordinateShape shape(dim,name,center,radius,myduration);
@@ -108,12 +108,12 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                                 make_matrix, special, use_transitivity,
                                 make_sets, make_links,sets_type);
 
-                // //Timing generation
-                // auto repend = high_resolution_clock::now();
-                // double duration = duration_cast<microseconds>(repend - repstart).count();
-                // std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
-                // std::cout << "Time taken generating for N = " << card
-                // << ": " << duration/pow(10,6) << " seconds" << std::endl;
+                //Timing generation
+                auto repend = high_resolution_clock::now();
+                double duration = duration_cast<microseconds>(repend - repstart).count();
+                std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+                std::cout << "Time taken generating for N = " << card
+                << ": " << duration/pow(10,6) << " seconds" << std::endl;
 
                 // Count links and store it
                 auto linkcountstart = high_resolution_clock::now();
@@ -121,11 +121,13 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 double N_links = C.count_links_fromCMatrix(t_f,2*mass)*1.0;
                 N_links_arr.push_back(N_links);
 
-                // //Timing link counting
-                // auto linkcountend = high_resolution_clock::now();
-                // double durationlinks = duration_cast<microseconds>(linkcountend - linkcountstart).count();
-                // std::cout << "Time taken in count_links_fromCMatrix for N = " << card
-                // << ": " << durationlinks/pow(10,6) << " seconds" << std::endl;
+                //Timing link counting
+                auto linkcountend = high_resolution_clock::now();
+                double durationlinks = duration_cast<microseconds>(
+                        linkcountend - linkcountstart).count();
+                std::cout << "Time taken in count_links_fromCMatrix for N = "
+                << card << ": " << durationlinks/pow(10,6) << " seconds"
+                << std::endl;
 
                 
         }
