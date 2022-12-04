@@ -28,8 +28,10 @@ using std::vector;
 using namespace std::chrono;
 
 ////////////////////////////////
-int card = 50;
+std::vector<int> cards = {500};
 int dim = 2;
+double mass = 1;
+std::string metric = "EF(uv)";
 
 // Shape Parameters
 const char* name = "cube";
@@ -52,22 +54,22 @@ int main()
 {
     auto start = high_resolution_clock::now();
 
-    std::vector<const char*> names = {"cube"};
-
     std::cout<<"\n\n============= USING "<<name<<" ====================\n";
-
-    CoordinateShape shape (dim,name,center,radius,myduration,edge,edges,0.0);
-    Spacetime S;
-    //S.FlatSpacetime(dim);
-    S.BlackHoleSpacetime(dim, 1);
-    SprinkledCauset C(card, S, shape, poisson,
-                        make_matrix, special, use_transitivity,
-                        make_sets, make_links,sets_type);
-    std::cout << "Generated the causet... Saving ->" << std::endl;
-    std::string path_file_str = "../../data/blackhole_EFv_"+std::to_string(dim)
-                                +"D_N"+std::to_string(card)+".txt";
-    const char* path_file = path_file_str.c_str();
-    C.save_causet(path_file);
+    for (int card : cards)
+    {
+        CoordinateShape shape (dim,name,center,radius,myduration,edge,edges,0.0);
+        Spacetime S;
+        //S.FlatSpacetime(dim);
+        S.BlackHoleSpacetime(dim, mass, metric);
+        SprinkledCauset C(card, S, shape, poisson,
+                            make_matrix, special, use_transitivity,
+                            make_sets, make_links,sets_type);
+        std::cout << "Generated the causet... Saving ->" << std::endl;
+        std::string path_file_str = "../../data/blackhole_EFv_"+std::to_string(dim)
+                                    +"D_N"+std::to_string(card)+".txt";
+        const char* path_file = path_file_str.c_str();
+        C.save_causet(path_file);
+    }
 
     auto stop = high_resolution_clock::now();
     double duration = duration_cast<microseconds>(stop - start).count();

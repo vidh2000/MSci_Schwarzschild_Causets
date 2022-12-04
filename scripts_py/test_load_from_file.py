@@ -15,7 +15,7 @@ import os
 ########################################################
 # Load file
 dim = 2
-card = 50
+card = 100
 isBH = True
 isEFv = True
 
@@ -26,18 +26,20 @@ C: EmbeddedCauset = EmbeddedCauset()
 
 path = os.getcwd() # folder path
 print(path)
-path = os.chdir("../")
+# os.chdir("../")
+# path = os.getcwd()
+# print(path)
 #file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')
 #file_name = os.path.join(path, 'data/known_causet_from_matrixSetsTest.txt')
 try:
     if isBH:
         if isEFv:
-            file_name = f"data/blackhole_EFv{dim}D_N{card}.txt"
+            file_name = f"data/blackhole_EFv_{dim}D_N{card}.txt"
         else:
             file_name = f"data/blackhole{dim}D_N{card}.txt"
     else:
         file_name = f"data/flat{dim}D_N{card}.txt"
-    file_name = os.path.join(path, file_name)
+    file_name = path + "/"+file_name
     path = os.chdir("scripts_py")
 except OSError:
     path = os.chdir("scripts_py")
@@ -59,8 +61,9 @@ if C.dim==3:
     dims: List[int] = [1,2,0]  # choose the (order of) plot dimensions
 elif C.dim == 2:
     dims: List[int] = [1,0]
+cplt.figure(figsize=(15.0, 12.0))
 if len(dims) > 2:
-    cplt.figure(figsize=(6.0, 6.0))
+    cplt.figure(figsize=(15.0, 12.0))
 #S.plot(dims)  # plot the embedding shape
 # Add causet plots and show result:
 cplt.plot(C, dims=dims, events={'alpha': 1},
