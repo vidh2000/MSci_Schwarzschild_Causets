@@ -1453,6 +1453,7 @@ void Spacetime::InEFtoGP (std::vector<std::vector<double>>& coords,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ *-----------------------------------------------------------------------------
  * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
@@ -1490,6 +1491,7 @@ void Spacetime::GPtoInEF (std::vector<double>& xvec, double mass,
  * @param mass double : mass of BH
  * @param EFtype const char* :
  * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ *-----------------------------------------------------------------------------
  * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
  */
 void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
@@ -1501,11 +1503,135 @@ void Spacetime::GPtoInEF (std::vector<std::vector<double>>& coords,
 
 
 /**
+ * @brief Turn ingoing Eddington Finkelstein coordinates into KS.
+ * 
+ * @param xvec std::vector<double>& : vector which gets changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ *-----------------------------------------------------------------------------
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
+ */
+void Spacetime::InEFtoKS (std::vector<double>& xvec, double mass,
+                          const char* EFtype)
+{
+    // Define this for later
+    double arg = std::abs(xvec[1])/(2*mass) - 1;
+
+    // First turn into S
+    if (strcmp(EFtype, "original")==0)
+    {
+        if (arg>=0) xvec[0] -= 2*mass*std::log(arg);
+        else        xvec[0] -= 2*mass*std::log(-arg);
+    }
+    else if (strcmp(EFtype, "uv")==0)
+    {
+        if (arg>=0) xvec[0] -= std::abs(xvec[1]) + 2*mass*std::log(arg);
+        else        xvec[0] -= std::abs(xvec[1]) + 2*mass*std::log(-arg);
+    }
+    else
+    {
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        throw std::invalid_argument("Wrong method");
+    }
+
+    // Then turn into X and T
+    double T = std::sqrt(arg) * std::exp(xvec[1]/(4*mass))
+            *std::sinh(xvec[0]/(4*mass));
+    double X = std::sqrt(arg) * std::exp(xvec[1]/(4*mass))
+            *std::cosh(xvec[0]/(4*mass));
+    xvec[0] = T;
+    xvec[1] = X;
+}
+
+
+/**
+ * @brief Turn ingoing Eddington Finkelstein coordinates into KS.
+ * 
+ * @param xvec std::vector<vector<double>>& : list of vectors geting changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * --- "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut
+ *-----------------------------------------------------------------------------)
+ * --- "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
+ */
+void Spacetime::InEFtoKS (std::vector<std::vector<double>>& coords, 
+                          double mass, const char* EFtype)
+{
+    for (std::vector<double> & xvec : coords)
+        {InEFtoKS(xvec, mass, EFtype);}
+}
+
+
+/**
+ * @brief Turn KS into ingoing Eddington Finkelstein coordinates.
+ * 
+ * @param xvec std::vector<double>& : vector which gets changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * - "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ *-----------------------------------------------------------------------------
+ * - "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
+ */
+void Spacetime::KStoInEF (std::vector<double>& xvec, double mass,
+                          const char* EFtype)
+{
+    //Turn from KS to S
+    double t = 0;
+    double r = 0;
+    double delta2 = std::pow(xvec[0],2) - std::pow(xvec[1],2);
+    if (delta2 < 0 && xvec[1] > 0)
+    {}
+    else if (1 > delta2 && delta2 > 0 && xvec[0] > 0)
+    {}
+
+    // Turn from S to inEF
+    if (strcmp(EFtype, "original")==0)
+    {
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
+        if (arg>=0) xvec[0] += 2*mass*std::log(arg);
+        else        xvec[0] += 2*mass*std::log(-arg);
+    }
+    else if (strcmp(EFtype, "uv")==0)
+    {
+        double arg = std::abs(xvec[1])/(2*mass) - 1;
+        if (arg>=0) xvec[0] += std::abs(xvec[1]) + 2*mass*std::log(arg);
+        else        xvec[0] += std::abs(xvec[1]) + 2*mass*std::log(-arg);
+    }
+    else
+    {
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        throw std::invalid_argument("Wrong method");
+    }
+}
+
+
+/**
+ * @brief Turn KS into ingoing Eddington Finkelstein coordinates.
+ * 
+ * @param xvec std::vector<vector<double>>& : list of vectors geting changed
+ * @param mass double : mass of BH
+ * @param EFtype const char* :
+ * --- "original" : t_EF = ts + 2M ln|r/2M - 1| (as in He, Ridoeut)
+ * ---------------------------------------------------------------------------
+ * --- "uv" : t_EF = ts + r + 2M ln|r/2M - 1| (as uv in Wikipedia's EF)
+ */
+void Spacetime::KStoInEF (std::vector<std::vector<double>>& coords,
+                          double mass, const char* EFtype)
+{
+    for (std::vector<double> & xvec : coords)
+        {KStoInEF(xvec, mass, EFtype);}
+}
+
+
+
+/**
  * @brief Switch type of EF coordinate from/to original to/from uv
  * 
  * @param coords vector<vector<double>> : one vector of coordinates to change
  * @param from const char* : from which type of coordinate to change
  * - "original" : then goes to "uv";
+ *-----------------------------------------------------------------------------
  * - "uv" : then goes to "original";
  */
 void switchInEF (std::vector<double>& xvec, const char* from)
@@ -1521,6 +1647,7 @@ void switchInEF (std::vector<double>& xvec, const char* from)
  * @param coords vector<vector<double>> : list of coordinates to change
  * @param from const char* : from which type of coordinate to change
  * - "original" : then goes to "uv";
+ *-----------------------------------------------------------------------------
  * - "uv" : then goes to "original";
  */
 void Spacetime::switchInEF (std::vector<std::vector<double>>& coords, 

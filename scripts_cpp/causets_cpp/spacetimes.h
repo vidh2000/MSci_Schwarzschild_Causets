@@ -204,6 +204,17 @@ class Spacetime
                              double mass = 1,
                              const char* EFtype = "original");
         
+        static void InEFtoKS (std::vector<double>& xvec, double mass = 1,
+                             const char* EFtype = "original");
+        static void InEFtoKS (std::vector<std::vector<double>>& coords, 
+                             double mass = 1,
+                             const char* EFtype = "original");
+        static void KStoInEF (std::vector<double>& xvec, double mass = 1,
+                             const char* EFtype = "original");
+        static void KStoInEF (std::vector<std::vector<double>>& coords,
+                             double mass = 1,
+                             const char* EFtype = "original");
+        
         static void switchInEF (std::vector<double>& xvec, 
                                 const char* from = "original");
         static void switchInEF (std::vector<std::vector<double>>& coords,

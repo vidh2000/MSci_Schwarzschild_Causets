@@ -15,11 +15,13 @@ import os
 ########################################################
 # Load file
 dim = 2
-card = 100
+card = 500
+use_redge_in_name_file = True
+edge = 5.000000
 
 isBH = True
 isEFv = False
-isS = True
+isS = False
 
 
 
@@ -33,22 +35,23 @@ print(path)
 # print(path)
 #file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')
 #file_name = os.path.join(path, 'data/known_causet_from_matrixSetsTest.txt')
-try:
-    if isBH:
-        if isEFv and isS:
-            file_name = f"data/blackhole_EFvToS_{dim}D_N{card}.txt"
-        elif isEFv:
-            file_name = f"data/blackhole_EFv_{dim}D_N{card}.txt"
-        elif isS:
-            file_name = f"data/blackhole_S_{dim}D_N{card}.txt"
-        else:
-            file_name = f"data/blackhole{dim}D_N{card}.txt"
+
+if isBH:
+    if isEFv and isS:
+        file_name = f"data/blackhole_EFvToS_{dim}D_N{card}"
+    elif isEFv:
+        file_name = f"data/blackhole_EFv_{dim}D_N{card}"
+    elif isS:
+        file_name = f"data/blackhole_S_{dim}D_N{card}"
     else:
-        file_name = f"data/flat{dim}D_N{card}.txt"
-    file_name = path + "/"+ file_name
-    path = os.chdir("scripts_py")
-except OSError:
-    path = os.chdir("scripts_py")
+        file_name = f"data/blackhole{dim}D_N{card}"
+else:
+    file_name = f"data/flat{dim}D_N{card}"
+file_name = path + "/"+ file_name
+#path = os.chdir("scripts_py")
+if use_redge_in_name_file:
+    file_name += "_redge_"+ str(edge)
+file_name += ".txt"
 
 print(file_name)
 C.create_EmbeddedCauset_from_file(file_name)
