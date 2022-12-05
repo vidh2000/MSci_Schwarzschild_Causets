@@ -31,7 +31,6 @@ using namespace std::chrono;
 std::vector<int> cards = {25, 50, 75, 100, 150, 200, 500};
 int dim = 2;
 double mass = 1;
-std::string metric = "EF(uv)";
 
 // Shape Parameters
 const char* name = "cube";
@@ -61,26 +60,24 @@ int main()
         CoordinateShape shape (dim,name,center,radius,myduration,edge,edges,0.0);
         Spacetime S;
         //S.FlatSpacetime(dim);
-        S.BlackHoleSpacetime(dim, mass, metric);
+        S.BlackHoleSpacetime(dim, mass, "EF(uv)");
         SprinkledCauset C(card, S, shape, poisson,
                             make_matrix, special, use_transitivity,
                             make_sets, make_links,sets_type);
-        std::cout << "Generated the causet... Saving ->" << std::endl;
-        if (metric == "EF(uv)"){
-        std::string path_file_str = "../../data/blackhole_EFv_"+std::to_string(dim)
+        //Save in EFv coordinates
+        std::string path_file_EFv_str = "../../data/blackhole_EFv_"
+                                    +std::to_string(dim)
+                                    +"D_N"+std::to_string(card)+".txt";
+        const char* path_file_EFv = path_file_EFv_str.c_str();
+        C.save_causet(path_file_EFv);
+
+        //Save in S coordinates
+        std::string path_file_str = "../../data/blackhole_EFvtoS_"
+                                    +std::to_string(dim)
                                     +"D_N"+std::to_string(card)+".txt";
         const char* path_file = path_file_str.c_str();
-        C.save_causet(path_file);}
-        else if (metric == "S"){
-        std::string path_file_str = "../../data/blackhole_S_"+std::to_string(dim)
-                                    +"D_N"+std::to_string(card)+".txt";
-        const char* path_file = path_file_str.c_str();
-        C.save_causet(path_file);}
-        else{
-        std::string path_file_str = "../../data/blackhole"+std::to_string(dim)
-                                    +"D_N"+std::to_string(card)+".txt";
-        const char* path_file = path_file_str.c_str();
-        C.save_causet(path_file);}
+        Spacetime::InEFtoS(C._coords, mass, "uv");
+        C.save_causet(path_file);
     }
 
     auto stop = high_resolution_clock::now();

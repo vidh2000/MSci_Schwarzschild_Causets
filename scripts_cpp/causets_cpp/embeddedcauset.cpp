@@ -604,12 +604,12 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
 {
     //Fix coordinates to EF(orginal) if it is BlackHole
     typedef void (*inversefunc)
-        (std::vector<std::vector<double>>& coords, double mass, 
-         const char* EFtype);
+    (std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
     inversefunc inverse_transf = Spacetime::do_nothing;
-    if (strcmp(_spacetime._name, "BlackHole")==0 && 
-               _spacetime._metricname!="EF(original)")
+    if (strcmp(_spacetime._name, "BlackHole")==0 
+        && _spacetime._metricname!="EF(original)")
     {
+        //change coordinates to EForig and save inverse function to go back
         inverse_transf = _spacetime.ToInEF_original(_coords);
         this->sort_coords(0, false);
     }
@@ -703,7 +703,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
     }
 
     //Coords back to initial ones (does nothing if were already EF(original))
-    inverse_transf(_coords, _spacetime._mass, "uv");
+    inverse_transf(_coords, _spacetime._mass, "original");
 
     return;
 }

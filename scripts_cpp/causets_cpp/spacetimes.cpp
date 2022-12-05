@@ -1133,18 +1133,18 @@ inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
 {
     if (_metricname=="EF(uv)")
     {
-        Spacetime::switchInEF(coords, "original");
-        return Spacetime::EF_from_uv_to_original;
+        Spacetime::switchInEF(coords, "uv");
+        return Spacetime::EF_from_original_to_uv;
     }
     else if (_metricname=="Schwarzschild")
     {
-        Spacetime::StoInEF(coords, _mass);
+        Spacetime::StoInEF(coords, _mass, "original");
         return Spacetime::InEFtoS;
     }
     else if (_metricname=="GP")
     {
         Spacetime::GPtoInEF(coords, _mass);
-        return Spacetime::GPtoInEF;
+        return Spacetime::InEFtoGP;
     }
     else
         {return Spacetime::do_nothing;}
@@ -1264,7 +1264,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
     }
     else
     {
-        //std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }

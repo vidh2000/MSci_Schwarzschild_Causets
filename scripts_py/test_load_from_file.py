@@ -16,8 +16,10 @@ import os
 # Load file
 dim = 2
 card = 100
+
 isBH = True
-isEFv = True
+isEFv = False
+isS = True
 
 
 
@@ -33,17 +35,22 @@ print(path)
 #file_name = os.path.join(path, 'data/known_causet_from_matrixSetsTest.txt')
 try:
     if isBH:
-        if isEFv:
+        if isEFv and isS:
+            file_name = f"data/blackhole_EFvToS_{dim}D_N{card}.txt"
+        elif isEFv:
             file_name = f"data/blackhole_EFv_{dim}D_N{card}.txt"
+        elif isS:
+            file_name = f"data/blackhole_S_{dim}D_N{card}.txt"
         else:
             file_name = f"data/blackhole{dim}D_N{card}.txt"
     else:
         file_name = f"data/flat{dim}D_N{card}.txt"
-    file_name = path + "/"+file_name
+    file_name = path + "/"+ file_name
     path = os.chdir("scripts_py")
 except OSError:
     path = os.chdir("scripts_py")
 
+print(file_name)
 C.create_EmbeddedCauset_from_file(file_name)
 
 

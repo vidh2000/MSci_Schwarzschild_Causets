@@ -82,7 +82,6 @@ SprinkledCauset::SprinkledCauset(int card,
         Spacetime::CarttoSpherical(_coords);
     }
 
-
     // if (spacetime._metricname=="EF(uv)")
     //     {Spacetime::StoInEF(_coords, spacetime._mass, "uv");}
     // else if (spacetime._metricname=="EF(original)")
