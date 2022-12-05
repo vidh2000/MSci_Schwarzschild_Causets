@@ -215,6 +215,12 @@ class Spacetime
                      whatever1 a = 0, whatever2 b = 0)
                     {return Spacetime::switchInEF(coords, "uv");}
         
+        template <typename whatever1, typename whatever2>
+        static void EF_from_original_to_uv
+                    (std::vector<std::vector<double>>& coords, 
+                     whatever1 a = 0, whatever2 b = 0)
+                    {return Spacetime::switchInEF(coords, "original");}
+        
         template <typename whatever1, typename whatever2, typename whatever3>
         static void do_nothing(whatever1 a=0, whatever2 b=0, whatever3 c=0)
         {return;}

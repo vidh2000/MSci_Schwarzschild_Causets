@@ -374,8 +374,8 @@ vector<bool> Spacetime::Flat_general_causal_periodic(const vector<double>& xvec,
  *
  * @param dim: dimension of spacetime. Default 2.
  * @param r_S: Schwarzschild radius. Default 0.5
- * @param metric: Specify metric: either "Eddington-Finkelstein" or "EF"
- *                (default), or "Schwarzschild" or "S".
+ * @param metric: Specify metric: either "EF(original)" (default), or "EF(uv)",
+ *                or "Schwarzschild" or "S".
  */
 void Spacetime::BlackHoleSpacetime(int dim,// = 4
                                     double mass,// = 1
@@ -610,13 +610,12 @@ bool Spacetime::BH_causal3D (const vector<double>& xvec,
  * @return bool : x-y timelike?
  */
 bool Spacetime::BH_causal4D (const vector<double>& xvec, 
-                            const vector<double>& yvec,
-                            std::vector<double> period,
-                            double mass)
+                             const vector<double>& yvec,
+                             std::vector<double> period,
+                             double mass)
 {
-
-    // double t1     = xvec[0]; double t2     = yvec[0];
-    // double r1     = xvec[1]; double r2     = yvec[1];
+    // const double* t1 = &xvec[0]; const double* t2 = &yvec[0];
+    // const double* r1 = &xvec[1]; const double* r2 = &yvec[1];
     // //double theta1 = xvec[2]; double theta2 = yvec[2];
     // //double phi1   = xvec[3]; double phi2   = yvec[3];
 
@@ -1134,18 +1133,18 @@ inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
 {
     if (_metricname=="EF(uv)")
     {
-        Spacetime::switchInEF(coords, "original");
-        return Spacetime::EF_from_uv_to_original;
+        Spacetime::switchInEF(coords, "uv");
+        return Spacetime::EF_from_original_to_uv;
     }
     else if (_metricname=="Schwarzschild")
     {
-        Spacetime::StoInEF(coords, _mass);
+        Spacetime::StoInEF(coords, _mass, "original");
         return Spacetime::InEFtoS;
     }
     else if (_metricname=="GP")
     {
         Spacetime::GPtoInEF(coords, _mass);
-        return Spacetime::GPtoInEF;
+        return Spacetime::InEFtoGP;
     }
     else
         {return Spacetime::do_nothing;}
@@ -1265,7 +1264,7 @@ void Spacetime::InEFtoS (std::vector<double> &xvec, double mass,
     }
     else
     {
-        //std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
+        std::cout<<"method in StoinEF must be 'original' or 'uv'\n";
         throw std::invalid_argument("Wrong method");
     }
 }
