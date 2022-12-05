@@ -1478,7 +1478,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
 
         _future_links.resize(_size);
         
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic)
         for (int i=0; i<_size; i++)
         {
             for (int j=i+1; j<_size; j++)
