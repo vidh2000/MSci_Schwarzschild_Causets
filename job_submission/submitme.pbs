@@ -1,20 +1,18 @@
 #!/bin/sh
 
-#PBS -lselect=1:ncpus=256:mem=16gb
+#PBS -lselect=1:ncpus=256:mem=32gb
 #PBS -lwalltime=01:00:00
-
-module load my-first-job
-module load mpi/intel-2018
 
 # Change to the submission directory
 
 cd $PBS_O_WORKDIR
 
-load module /rds/general/user/vh119/home/miniconda3/etc/profile.d/conda.sh
-
+#load module /rds/general/user/vh119/home/miniconda3/etc/profile.d/conda.sh
+export OMP_NUM_THREADS=256
 sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh
 
 mkdir $WORK/$PBS_JOBID
 cp * $WORK/$PBS_JOBID
+
 
 
