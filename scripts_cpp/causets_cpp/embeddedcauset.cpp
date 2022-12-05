@@ -1481,6 +1481,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
         #pragma omp parallel for
         for (int i=0; i<_size; i++)
         {
+            int n_links_of_i = 0; 
             for (int j=i+1; j<_size; j++)
             {
                 if (_CMatrix[i][j] == 0) {
@@ -1496,7 +1497,11 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
                             break;}
                     }
                     if (!has_broken){
-                        _future_links[i].insert(j);}
+                        _future_links[i].insert(j);
+                        n_links_of_i += 1;
+                        if (n_links_of_i - 1 > 0)
+                            {break;} /*breaks j loop, hence goes to next i*/
+                    }
                 }
             }
         }
@@ -1617,6 +1622,7 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
         #pragma omp parallel for
         for (int i=0; i<_size; i++)
         {
+            int n_links_of_i = 0;
             for (int j=i+1; j<_size; j++)
             {
                 if (_CMatrix[i][j] == 0) {
@@ -1632,7 +1638,11 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
                             break;}
                     }
                     if (!has_broken){
-                        _future_links[i].insert(j);}
+                        _future_links[i].insert(j);
+                        n_links_of_i += 1;
+                        if (n_links_of_i - 1 > 0)
+                            {break;} /*breaks j loop, hence goes to next i*/
+                    }
                 }
             }
         }
