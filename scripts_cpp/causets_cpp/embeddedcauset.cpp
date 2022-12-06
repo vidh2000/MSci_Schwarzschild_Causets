@@ -1499,7 +1499,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
                     if (!has_broken){
                         _future_links[i].insert(j);
                         n_links_of_i += 1;
-                        if (n_links_of_i - 1 > 0)
+                        if (n_links_of_i > 1)
                             {break;} /*breaks j loop, hence goes to next i*/
                     }
                 }
