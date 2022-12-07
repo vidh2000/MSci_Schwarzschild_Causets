@@ -1,0 +1,26 @@
+Using 256 cores...
+=============================================================
+=====================================================
+
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/tests/speed_testing_BH.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/tests/speed_testing_BH.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+
+
+============ Sprinkling into cylinder ===================
+
+
+Spacetime: flat
+N = 100000, dim = 4
+Time taken N = 100000, 1/8: 9.23433 seconds
+Time taken N = 100000, 2/8: 8.27397 seconds
+Time taken N = 100000, 3/8: 8.5489 seconds
+Time taken N = 100000, 4/8: 8.20462 seconds
+Time taken N = 100000, 5/8: 8.2215 seconds
+Time taken N = 100000, 6/8: 8.39371 seconds
+Time taken N = 100000, 7/8: 8.23659 seconds
+Time taken N = 100000, 8/8: 8.38921 seconds
+Average time taken for generating 8 repetitions with N = 100000: 9.56216 seconds
+
