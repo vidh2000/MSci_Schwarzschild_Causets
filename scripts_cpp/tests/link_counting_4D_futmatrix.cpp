@@ -36,7 +36,7 @@ using namespace std::chrono;
 std::vector<double> masses = {1,1.5,2,2.5,3,3.5,4};
 int N_multiplier = 400;
 //int N_reps = 20;
-std::vector<int> repetitions_arr = {100,100,100,100,50,20,20};
+std::vector<int> repetitions_arr = {100,100,100,100,100,100,100};
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,9 +54,9 @@ for (auto mass : masses)
 {
         // Make a "square" cylinder with r,h=4M, since r_S=2M
         radii.push_back(4*mass);
-        durations.push_back(4*mass);
+        durations.push_back(4); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass*mass*mass);
+        cards.push_back(N_multiplier*mass*mass*mass);
         // Add # of repetitions for each mass
         //repetitions_arr.push_back(N_reps);
 }
@@ -157,6 +157,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 << " seconds\n" << std::endl;
         
 }
+
 
 auto finish = high_resolution_clock::now();
 double duration = duration_cast<microseconds>(finish - beginning).count();
