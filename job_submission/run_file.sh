@@ -8,9 +8,9 @@ echo
 ########################################################################
 
 # Files you want to run in 
-#runfilename="speed_testing_BH.cpp"
+runfilename="speed_testing_BH.cpp"
 #runfilename="test_hello_world.cpp"
-runfilename="link_counting_4D_futmatrix.cpp"
+#runfilename="link_counting_4D_futmatrix.cpp"
 
 # Specify relative path from MSci_Schwarzschild_Causets
 # to the .cpp file you want to compile/execute
