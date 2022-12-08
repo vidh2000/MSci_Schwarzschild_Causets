@@ -10,6 +10,7 @@ from causets.causetevent import CausetEvent
 import causets.causetplotting as cplt  
 
 import matplotlib.pyplot as plt
+import numpy as np
 import os 
 
 ########################################################
@@ -89,7 +90,22 @@ if len(dims) > 2:
     ax.grid(False)
 
 # Plot horizon in 2D
-ax.axvline(2,0,20,color="red", ls="--")
+ax.axvline(2,0,20,color="red", ls="--", label = "Horizon")
+
+# Plot cones inside horizon crossing a point (t0, r0)
+if len(dims) == 2:
+    r0 = 1.173
+    t0 = 0.188
+    def upper_null(r, t0, r0, mass=1):
+        return t0 + r - r0 + 4*mass*np.log( (2*mass-r)/(2*mass-r0) )
+    def lower_null(r, t0, r0):
+        return t0 + r0 - r
+    rs = np.linspace(0, r0, 1000)
+    ax.plot(rs, upper_null(rs, t0, r0), ls = "--", c = "green", alpha = 0.4)
+    ax.plot(rs, lower_null(rs, t0, r0), ls = "--", c = "green", alpha = 0.4,
+            label = "Light Cone")
+ax.legend()
+
 #ax.axvline(-2,0,20,color="red", ls="--")
 cplt.show()
 
