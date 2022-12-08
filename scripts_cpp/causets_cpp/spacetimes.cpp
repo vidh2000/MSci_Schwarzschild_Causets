@@ -1581,9 +1581,15 @@ void Spacetime::KStoInEF (std::vector<double>& xvec, double mass,
     double r = 0;
     double delta2 = std::pow(xvec[0],2) - std::pow(xvec[1],2);
     if (delta2 < 0 && xvec[1] > 0)
-    {}
+    {
+        std::cout<<"I am sorry, currently not implemented";
+        throw std::invalid_argument("Not impplemented");
+    }
     else if (1 > delta2 && delta2 > 0 && xvec[0] > 0)
-    {}
+    {
+        std::cout<<"I am sorry, currently not implemented";
+        throw std::invalid_argument("Not impplemented");
+    }
 
     // Turn from S to inEF
     if (strcmp(EFtype, "original")==0)
