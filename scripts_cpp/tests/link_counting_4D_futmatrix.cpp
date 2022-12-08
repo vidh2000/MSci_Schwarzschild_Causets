@@ -33,10 +33,10 @@ using namespace std::chrono;
 
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1,1.5,2,2.5,3};
+std::vector<double> masses = {1,1.5,2,2.5,3,3.5,4};
 int N_multiplier = 400;
-std::vector<int> repetitions_arr = {5,5,5,5,5};
-
+//int N_reps = 20;
+std::vector<int> repetitions_arr = {100,100,100,100,100,100,100};
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,13 +48,17 @@ int dim = 4; //want it to be "hard coded = 4"
 std::vector<int> cards = {};
 std::vector<double> radii = {};
 std::vector<double> durations = {};
+//std::vector<int> repetitions_arr = {};
+
 for (auto mass : masses)
 {
         // Make a "square" cylinder with r,h=4M, since r_S=2M
         radii.push_back(4*mass);
-        durations.push_back(4*mass);
+        durations.push_back(4); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass*mass*mass);
+        cards.push_back(N_multiplier*mass*mass*mass);
+        // Add # of repetitions for each mass
+        //repetitions_arr.push_back(N_reps);
 }
 
 // Sprinkling Parameters
@@ -69,7 +73,8 @@ const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
-std::cout << "Doing CMatrix and inferring future links from it\n\n";
+std::cout << "Doing CMatrix and inferring future links from it\n \n";
+std::cout << "N_multiplier = " << N_multiplier << "\n \n";
 
 // Variables for storage of information from each causet realisation
 std::vector<double> N_links_avgs = {};
@@ -125,6 +130,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 auto linkcountend = high_resolution_clock::now();
                 double durationlinks = duration_cast<microseconds>(
                         linkcountend - linkcountstart).count();
+                std::cout << "N_links counted = " << N_links << std::endl;
                 std::cout << "Time taken in count_links_fromCMatrix for N = "
                 << card << ": " << durationlinks/pow(10,6) << " seconds"
                 << std::endl;
@@ -151,6 +157,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 << " seconds\n" << std::endl;
         
 }
+
 
 auto finish = high_resolution_clock::now();
 double duration = duration_cast<microseconds>(finish - beginning).count();

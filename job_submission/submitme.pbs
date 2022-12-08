@@ -1,18 +1,26 @@
 #!/bin/sh
 
-#PBS -lselect=1:ncpus=48:mem=16gb
-#PBS -lwalltime=01:00:00
+#PBS -lselect=1:ncpus=256:mem=64gb
+#PBS -lwalltime=08:00:00
 
 # Change to the submission directory
 
 cd $PBS_O_WORKDIR
 
 #load module /rds/general/user/vh119/home/miniconda3/etc/profile.d/conda.sh
-export OMP_NUM_THREADS=48
+export OMP_NUM_THREADS=256
+echo Using $OMP_NUM_THREADS cores...
+echo Ran link_counting_4D_futmatrix with M=1 to M=4 and N_multiplier=400
+echo ==========================================================================
 sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh
+
+echo ==========================================================================
+echo Ran link_counting_4D_futmatrix with M=1 to M=4 and N_multiplier=400
+echo ==========================================================================
 
 mkdir $WORK/$PBS_JOBID
 cp * $WORK/$PBS_JOBID
+
 
 
 

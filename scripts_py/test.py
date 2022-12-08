@@ -15,9 +15,14 @@ import matplotlib.pyplot as plt
 #stds2 = [2.92,3.35,3.79]
 
 # 4D data with futmatrix...
-masses = np.array([1,1.5,2,2.5,3])
-means= [7.8,15.6,23,41.2,51.2]
-stds = [1.7,3.72,5.83,2.04,8.9]
+# masses = np.array([1,1.5,2,2.5,3])
+# means= [7.8,15.6,23,41.2,51.2]
+# stds = [1.7,3.72,5.83,2.04,8.9]
+
+#4D data from cluster runs
+masses = np.array([1,1.5,2,2.5,3,3.5,4])
+means= [7.06,15.33,26.63,38.93,54.26,71.75,93.25]
+stds = [2.89,4.47,6.24,6,7.2,9.6,11.1]
 
 
 

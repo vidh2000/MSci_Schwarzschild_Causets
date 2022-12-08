@@ -838,10 +838,10 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                 for(int j=i+1; j<_size; j++) //i can only preceed j
                 {
                     //if(xycausality(_coords[i],_coords[j],st_period,mass))
-                    if(_spacetime.BH_causal4D(_coords[i],_coords[j],st_period,mass))
+                    //if(_spacetime.BH_causal4D(_coords[i],_coords[j],st_period,mass))
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
-                    //if (areTimelike4D(_coords[i],_coords[j]))
+                    if (areTimelike4D(_coords[i],_coords[j]))
                     {
                         _CMatrix[i][j] = 1;
                     }    
@@ -1478,7 +1478,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
 
         _future_links.resize(_size);
         
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic)
         for (int i=0; i<_size; i++)
         {
             int n_links_of_i = 0; 
@@ -1499,7 +1499,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
                     if (!has_broken){
                         _future_links[i].insert(j);
                         n_links_of_i += 1;
-                        if (n_links_of_i - 1 > 0)
+                        if (n_links_of_i > 1)
                             {break;} /*breaks j loop, hence goes to next i*/
                     }
                 }
