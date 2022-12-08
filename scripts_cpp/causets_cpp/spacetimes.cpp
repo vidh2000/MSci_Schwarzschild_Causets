@@ -518,26 +518,27 @@ bool Spacetime::BH_causal3D (const vector<double>& xvec,
     {
         if (r1>=r2)
         {
-            // all 3 cases of the paper return same
-            if (t2 >= t1 + r1 - r2 - 1e-6)
+            // all 3 cases of the paper require this condition
+            if (t2 >= t1 + r1 - r2)
+            {
+                //the further is outside
+                if (r1> 2*mass)
                     {return true;}
+            
+                //both inside
+                else
+                    {
+                        if (t2 <= t1 + r2 - r1
+                                + 4*mass*std::log( (2*mass-r1)/(2*mass-r2) )
+                            )
+                            return true; 
+                        else 
+                            return false;
+                    }
+            }
             else
                 {return false;}
         }
-        else
-        {
-            if (r1<=2*mass)
-                {return false;}
-            else // if (r1>2*mass)
-            {
-                if (t2 >= t1 + r2 - r1 + 
-                            4*mass*std::log((r2-2*mass)/(r1-2*mass)))
-                    {return true;}
-                else
-                    {return false;}
-            }
-        }
-
     }
 
     // Section 2.3: Sufficient Conditions for c. related and unrelated
@@ -759,12 +760,26 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
     // Section 2.2: Radially separated pairs and radial null geodesics
     if (varphi2<1e-6) //should be ==zero, but leave room for some error
     {
-        if (r2_min_r1<=0)//  xvec[1]>=yvec[1])
+        if (r2_min_r1<=0) /*r1>=r2*/
         {
-            // all 3 cases of the paper return same
-            // could write t2-t1 >= .... right?
-            if (t2_min_t1 + r2_min_r1 + 1e-6 >= 0)
+            // all 3 cases of the paper require this condition
+            if (t2_min_t1 + r2_min_r1 >= 0) /*t2 >= t1 + r1 - r2*/
+            {
+                //the further is outside
+                if (xvec[1] > 2*mass) /*r1 > 2M*/
                     {return true;}
+            
+                //both inside
+                else
+                    {
+                        if (t2_min_t1 <= r2_min_r1
+                                + 4*mass*std::log( (2*mass-xvec[1])
+                                                 / (2*mass-xvec[1]) ))
+                            return true; 
+                        else 
+                            return false;
+                    }
+            }
             else
                 {return false;}
         }
