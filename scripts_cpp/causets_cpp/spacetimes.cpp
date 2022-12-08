@@ -425,6 +425,9 @@ bool Spacetime::BH_causal2D (const vector<double>& xvec,
 {
     //IF WORKING IN EF COORDINATES
 
+    if (yvec[0]<xvec[0])
+        {return Spacetime::BH_causal3D(yvec, xvec, period);}
+
     double t1     = xvec[0]; double t2     = yvec[0];
     double r1     = xvec[1]; double r2     = yvec[1];
 
@@ -440,9 +443,24 @@ bool Spacetime::BH_causal2D (const vector<double>& xvec,
     // as in 2D necessarily varphi2 = 0
     if (r1>=r2)
     {
-        // all 3 cases of the paper return same
-        if (t2 >= t1 + r1 - r2 - 1e-6)
-            {return true;}
+        // all 3 cases of the paper require this condition
+        if (t2 >= t1 + r1 - r2)
+        {
+            //the further is outside
+            if (r1> 2*mass)
+                {return true;}
+           
+            //both inside
+            else
+                {
+                    if (t2 <= t1 + r2 - r1
+                              + 4*mass*std::log( (2*mass-r1)/(2*mass-r2) )
+                        )
+                        return true; 
+                    else 
+                        return false;
+                }
+        }
         else
             {return false;}
     }

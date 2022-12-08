@@ -15,9 +15,9 @@ import os
 ########################################################
 # Load file
 dim = 2
-card = 500
+card = 50
 use_redge_in_name_file = True
-edge = 5.000000
+edge = 2.00
 
 isBH = True
 isEFv = False
@@ -50,7 +50,9 @@ else:
 file_name = path + "/"+ file_name
 #path = os.chdir("scripts_py")
 if use_redge_in_name_file:
-    file_name += "_redge_"+ str(edge)
+    edge_string = str(edge)
+    if len(edge_string) == 3: edge_string += "0"
+    file_name += "_redge_"+ edge_string
 file_name += ".txt"
 
 print(file_name)
