@@ -60,7 +60,7 @@ double BH_int_dvarphi_du(double u1, double u2, double M, double c2)
     return varphi;
 };
 
-double BH_c_solver (double u1, double u2, double varphi2, double M)
+double BH_eta_solver (double u1, double u2, double varphi2, double M)
 {
   // U2>=U1 -> USE PLUS
   if (u2>=u1) 
@@ -250,7 +250,7 @@ int main()
     u1 = 1.;
     u2 = 2.;
     cout<<"M=1; vphi=0.5002; u1=1; u2=2  -> W.Alfa: 0.5\n";
-    cout<<"                              -> We say: "<<BH_c_solver
+    cout<<"                              -> We say: "<<BH_eta_solver
                                                         (u1, u2, varphi2, M)
         <<endl;
     
@@ -259,7 +259,7 @@ int main()
     u1 = 1./3.;
     u2 = 2.;
     cout<<"M=1; vphi=0.5002; u1=1/3; u2=2-> W.Alfa: 1.25\n";
-    cout<<"                              -> We say: "<<BH_c_solver
+    cout<<"                              -> We say: "<<BH_eta_solver
                                                        (u1, u2, varphi2, M)
         <<endl;
 
@@ -268,7 +268,7 @@ int main()
     u1 = 1./2.;
     u2 = 1./3.;
     cout<<"M=1; varphi2 = 0.3522; u1=1/2; u2=1/3-> W.Alfa: 0.5\n";
-    cout<<"                                     -> We say: "<<BH_c_solver
+    cout<<"                                     -> We say: "<<BH_eta_solver
                                                            (u1, u2, varphi2, M)
         <<endl;
 

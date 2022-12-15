@@ -71,7 +71,7 @@ int main()
     u2 = 2.;
     cout<<"M=1; vphi=0.5002; u1=1; u2=2  -> W.Alfa: 0.5\n";
     cout<<"                              -> We say: "
-        <<Spacetime::BH_c_solver(u1, u2, varphi2, M)<<endl;
+        <<Spacetime::BH_eta_solver(u1, u2, varphi2, M)<<endl;
     
     cout<<"Test 2.2\n";
     varphi2 = 0.919415;
@@ -79,7 +79,7 @@ int main()
     u2 = 2.;
     cout<<"M=1; vphi=0.5002; u1=1/3; u2=2-> W.Alfa: 1.25\n";
     cout<<"                              -> We say: "
-        <<Spacetime::BH_c_solver(u1, u2, varphi2, M)<<endl;
+        <<Spacetime::BH_eta_solver(u1, u2, varphi2, M)<<endl;
 
     cout<<"Test 2.3\n";
     varphi2 = 0.352;
@@ -87,7 +87,7 @@ int main()
     u2 = 1./3.;
     cout<<"M=1; varphi2 = 0.352; u1=1/2; u2=1/3-> W.Alfa: 0.5\n";
     cout<<"                                     -> We say: "
-        <<Spacetime::BH_c_solver(u1, u2, varphi2, M)<<endl;
+        <<Spacetime::BH_eta_solver(u1, u2, varphi2, M)<<endl;
 
 
     cout<<"\n\n======= 3. Testing the integral of dt/du =======\n";

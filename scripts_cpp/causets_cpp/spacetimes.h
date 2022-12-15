@@ -151,7 +151,7 @@ class Spacetime
                                    double M);
         static double BH_int_dvarphi_du(double u1, double u2, double c2,
                                         double M);
-        static double BH_c_solver (double u1, double u2, double varphi2, 
+        static double BH_eta_solver (double u1, double u2, double varphi2, 
                                    double M);
 
         static void BH_dt_du_plus  (double&dtdu, double u, double c,
