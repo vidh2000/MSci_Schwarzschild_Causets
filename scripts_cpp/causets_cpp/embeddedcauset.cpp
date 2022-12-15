@@ -837,11 +837,11 @@ void EmbeddedCauset::make_cmatrix(const char* method,
             {
                 for(int j=i+1; j<_size; j++) //i can only preceed j
                 {
-                    //if(xycausality(_coords[i],_coords[j],st_period,mass))
+                    if(xycausality(_coords[i],_coords[j],st_period,mass))
                     //if(_spacetime.BH_causal4D(_coords[i],_coords[j],st_period,mass))
                     //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
                     //Returning a vector of boleans vs just boolean gives 33% boost in time
-                    if (areTimelike4D(_coords[i],_coords[j]))
+                    //if (areTimelike4D(_coords[i],_coords[j]))
                     {
                         _CMatrix[i][j] = 1;
                     }    
