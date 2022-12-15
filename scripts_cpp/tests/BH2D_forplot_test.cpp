@@ -37,7 +37,7 @@ vector<std::string> metrics = {"EF(original)"};//, "EF(uv)", "S"} ;
 const char* name = "cube";
 double radius = 3.0;
 double myduration = 3;
-vector<double> loop_edges = {2, 4}; //if cube, loop over these
+vector<double> loop_edges = {1}; //if cube, loop over these
 std::vector<double> edges = {1,2,3,4};
 
 // Sprinkle Parameters

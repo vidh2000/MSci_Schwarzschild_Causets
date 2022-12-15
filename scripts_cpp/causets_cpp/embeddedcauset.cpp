@@ -456,15 +456,16 @@ void EmbeddedCauset::discard(vector<int> labels,
 
 /**
  * @brief Save causet attributes in file (ideally txt or csv)
+ * =================================================================================
  * [1,1] -> size; 
  * [2,1] -> spacetime dimension;
  * [3,1] -> shape name;  
  * [4,1] -> spacetime name; 
  * 
- * "cmatrix" option =======>
+ * ===================================== "cmatrix" option =======>
  * [6 to 6+size-1, 0 to size-1] -> Cmatrix; 
  * 
- * "sets" option    =======>
+ * == "sets" option    =======>
  * [6 to 6+size-1,:] pasts
  * [6+size+1 to 6+2size,:] futures
  * [6+2size+2 to 6+3size+1,:] past links
