@@ -79,11 +79,7 @@ int main()
                 S.BlackHoleSpacetime(dim, mass, metric);
                 SprinkledCauset C(card, S, shape, poisson,
                                     make_matrix, special, use_transitivity,
-<<<<<<< HEAD
-                                    make_sets, make_links,sets_type, 93);
-=======
-                                    make_sets, make_links,sets_type, 1);
->>>>>>> 0c180ec067a53175dcacdb97f9ae7272c1df7e5d
+                                    make_sets, make_links,sets_type);
                 std::cout << "Generated the causet... Saving ->" << std::endl;
 
                 if (metric == "EF(uv)"){
