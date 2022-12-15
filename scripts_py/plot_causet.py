@@ -54,7 +54,7 @@ file_name = path + "/"+ file_name
 if use_redge_in_name_file:
     edge_string = str(edge)
     if len(edge_string) == 3: edge_string += "0"
-    file_name += "_redge_"+ edge_string
+    file_name += "_redge"+ edge_string
 file_name += ".txt"
 
 print(file_name)

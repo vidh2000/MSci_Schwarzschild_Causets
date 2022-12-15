@@ -479,11 +479,13 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
 {
     std::ofstream out;
     out.open(path_file_ext);
+    //if (!out.is_open()) std::cout<<"It is not open"<<std::endl;
     out<<"Storage option," << storage_option << std::endl;
     out<<"Size,"<<_size<<std::endl;
     out<<"Dimension,"<<_spacetime._dim<<std::endl;
     out<<"Shape,"<<_shape._name<<std::endl;
     out<<"Spacetime,"<<_spacetime._name<<std::endl;
+
     if (strcmp(storage_option, "cmatrix")==0)
     {
         out<<"Matrix,"<<std::endl;
@@ -494,6 +496,7 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
             out<<std::endl;
         }
     }
+
     else if (strcmp(storage_option, "sets")==0)
     {
         if (!_pasts.size() || !_futures.size() ||
@@ -544,12 +547,13 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
                 out << e << ",";}
             out<<std::endl;
         }
-
     }
+
     else {
         std::cout << "Please choose 'cmatrix' or 'sets' option\n";
         throw std::invalid_argument("Choose right parameter");
     }
+    
     out<<"Coordinates,"<<std::endl;
     for (auto row : _coords) 
     {
