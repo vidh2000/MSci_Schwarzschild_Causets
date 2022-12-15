@@ -454,7 +454,7 @@ bool Spacetime::BH_causal2D (const vector<double>& xvec,
             else
                 {
                     if (t2 <= t1 + r2 - r1
-                              + 4*mass*std::log( (2*mass-r1)/(2*mass-r2) )
+                              + 4*mass*std::log( (2*mass-r2)/(2*mass-r1) )
                         )
                         return true; 
                     else 
@@ -529,7 +529,7 @@ bool Spacetime::BH_causal3D (const vector<double>& xvec,
                 else
                     {
                         if (t2 <= t1 + r2 - r1
-                                + 4*mass*std::log( (2*mass-r1)/(2*mass-r2) )
+                                + 4*mass*std::log( (2*mass-r2)/(2*mass-r1) )
                             )
                             return true; 
                         else 
@@ -773,7 +773,7 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
                 else
                     {
                         if (t2_min_t1 <= r2_min_r1
-                                + 4*mass*std::log( (2*mass-xvec[1])
+                                + 4*mass*std::log( (2*mass-yvec[1])
                                                  / (2*mass-xvec[1]) ))
                             return true; 
                         else 
