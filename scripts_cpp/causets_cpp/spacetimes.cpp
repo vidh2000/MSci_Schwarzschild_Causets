@@ -488,6 +488,7 @@ bool Spacetime::BH_causal2D (const vector<double>& xvec,
  * @param period vector<double> : period along SPATIAL coordinates. Currently 
  * not implemented in BH, hence deafult is {}.
  * @param mass : mass of Black Hole
+ * 
  * @return bool : x-y timelike?
  */
 bool Spacetime::BH_causal3D (const vector<double>& xvec, 
@@ -613,6 +614,8 @@ bool Spacetime::BH_causal3D (const vector<double>& xvec,
 
     else //r2>2*mass>r1
         {return false;}
+
+    return false;
 }
 
 
@@ -898,7 +901,7 @@ bool Spacetime::BH_last_resort(const vector<double>& xvec,
         double geo_time2 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], -eta, 
                                                     mass);
         bool x_prec_y =  geo_time1 <= yvec[0] - xvec[0]
-                       & yvec[0] - xvec[0] <= geo_time2;
+                       && yvec[0] - xvec[0] <= geo_time2;
         //std::cout<<"   eta^2          is :"<<eta*eta      <<std::endl;
         //std::cout<<"geodesic's time is : "<<geo_time<<std::endl;
         return x_prec_y;
