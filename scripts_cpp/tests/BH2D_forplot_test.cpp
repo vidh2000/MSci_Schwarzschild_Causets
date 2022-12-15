@@ -28,10 +28,10 @@ using std::vector;
 using namespace std::chrono;
 
 ////////////////////////////////
-std::vector<int> cards = {25, 50, 75, 100, 150, 250, 500};//, 150, 200, 500};
+std::vector<int> cards = {25};//, 50, 75, 100, 150, 250, 500};//, 150, 200, 500};
 int dim = 2;
 double mass = 1;
-vector<std::string> metrics = {"EF(original)", "EF(uv)", "S"} ;
+vector<std::string> metrics = {"EF(original)"};//, "EF(uv)", "S"} ;
 
 // Shape Parameters
 const char* name = "cube";
@@ -79,7 +79,7 @@ int main()
                 S.BlackHoleSpacetime(dim, mass, metric);
                 SprinkledCauset C(card, S, shape, poisson,
                                     make_matrix, special, use_transitivity,
-                                    make_sets, make_links,sets_type, 93);
+                                    make_sets, make_links,sets_type, 1);
                 std::cout << "Generated the causet... Saving ->" << std::endl;
 
                 if (metric == "EF(uv)"){
