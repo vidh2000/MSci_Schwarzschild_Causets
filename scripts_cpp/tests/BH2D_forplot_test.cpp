@@ -28,10 +28,10 @@ using std::vector;
 using namespace std::chrono;
 
 ////////////////////////////////
-std::vector<int> cards = {25};//, 50, 75, 100, 150, 250, 500};//, 150, 200, 500};
+std::vector<int> cards = {25, 50, 75, 100, 150, 250, 500};//, 150, 200, 500};
 int dim = 2;
 double mass = 1;
-vector<std::string> metrics = {"EF(original)"};//, "EF(uv)", "S"} ;
+vector<std::string> metrics = {"EF(original)", "EF(uv)", "S"} ;
 
 // Shape Parameters
 const char* name = "cube";
@@ -57,10 +57,10 @@ int main()
     std::cout<<"\n\n============= USING "<<name<<" ====================\n";
     for (std::string metric : metrics)
     {
-        std::cout<<"\n METRIC "<<metric<<" \n";
+        std::cout<<"\nMETRIC "<<metric<<" \n";
         for (double edge : loop_edges)
         {
-            std::cout<<"\n EDGE "<<edge<<" \n";
+            std::cout<<"\nEDGE "<<edge<<" \n";
             std::vector<double> center (dim, edge/2);
             // Set string version of edge and radius to 2 precision for saving names
             std::stringstream estream;
@@ -72,22 +72,21 @@ int main()
             
             for (int card : cards)
             {
-                std::cout<<"\n CARD "<<card<<" \n";
-                cout<<"Cardinality = "<<card<<endl;
+                std::cout<<"\nCARD "<<card<<" \n";
                 CoordinateShape shape (dim,name,center,radius,myduration,
                                     edge,edges,0.0);
                 Spacetime S;
                 S.BlackHoleSpacetime(dim, mass, metric);
                 SprinkledCauset C(card, S, shape, poisson,
                                     make_matrix, special, use_transitivity,
-                                    make_sets, make_links,sets_type);
+                                    make_sets, make_links,sets_type, 93);
                 std::cout << "Generated the causet... Saving ->" << std::endl;
 
                 if (metric == "EF(uv)"){
                 std::string path_file_str = "../../data/blackhole_EFv_"
                                             + std::to_string(dim)
                                             + "D_N" + std::to_string(card)
-                                            + "_redge_";
+                                            + "_redge";
                 path_file_str += (std::strcmp(name, "cube")==0)? edge_s : radius_s;
                 path_file_str += ".txt";
                 const char* path_file = path_file_str.c_str();
@@ -97,7 +96,7 @@ int main()
                 std::string path_file_str = "../../data/blackhole_S_"
                                             + std::to_string(dim)
                                             + "D_N"+std::to_string(card)
-                                            + "_redge_";
+                                            + "_redge";
                 path_file_str += (std::strcmp(name, "cube")==0)? edge_s : radius_s;
                 path_file_str += ".txt";
                 const char* path_file = path_file_str.c_str();
@@ -107,10 +106,11 @@ int main()
                 std::string path_file_str = "../../data/blackhole"
                                             + std::to_string(dim)
                                             + "D_N" + std::to_string(card)
-                                            + "_redge_";
+                                            + "_redge";
                 path_file_str += (std::strcmp(name, "cube")==0)? edge_s : radius_s;
                 path_file_str += ".txt";
                 const char* path_file = path_file_str.c_str();
+                cout<<path_file<<endl;
                 C.save_causet(path_file);}
             }
         }
