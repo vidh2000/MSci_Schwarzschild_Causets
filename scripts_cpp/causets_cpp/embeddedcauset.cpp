@@ -554,8 +554,7 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
         std::cout << "Please choose 'cmatrix' or 'sets' option\n";
         throw std::invalid_argument("Choose right parameter");
     }
-
-    out<<"Coordinates,"<<std::endl;
+    std::cout<<"Coordinates,"<<std::endl;
     for (auto row : _coords) 
     {
         for (auto col : row)
