@@ -882,6 +882,7 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
  * @param xvec vector<double> : EF coordinates of x 
  * @param yvec vector<double> : EF coordinates of y
  * @param mass double : BH mass
+ * 
  * @return bool : causality booleans
  */
 bool Spacetime::BH_last_resort(const vector<double>& xvec, 
@@ -898,10 +899,18 @@ bool Spacetime::BH_last_resort(const vector<double>& xvec,
     {
         double geo_time1 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], eta, 
                                                     mass);
-        double geo_time2 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], -eta, 
+        bool x_prec_y;
+        if (xvec[1] < 2*mass && yvec[1] < 2*mass) /*both inside*/
+        {
+            double geo_time2 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], -eta, 
                                                     mass);
-        bool x_prec_y =  geo_time1 <= yvec[0] - xvec[0]
+            x_prec_y =  geo_time1 <= yvec[0] - xvec[0]
                        && yvec[0] - xvec[0] <= geo_time2;
+        }
+        else
+        {
+            x_prec_y =  geo_time1 <= yvec[0] - xvec[0];
+        }
         //std::cout<<"   eta^2          is :"<<eta*eta      <<std::endl;
         //std::cout<<"geodesic's time is : "<<geo_time<<std::endl;
         return x_prec_y;
@@ -958,6 +967,7 @@ double Spacetime::BH_int_dvarphi_du(double u1, double u2, double eta2, double M)
  * @param u2 double : 1/r_2
  * @param varphi2 double : the value we want the integral to be.
  * @param M double : mass of BH.
+ * 
  * @return double : the best fit for eta=E/L, up to uncertainty 1e-3.
  */
 double Spacetime::BH_eta_solver (double u1, double u2, double varphi2, double M)
@@ -991,8 +1001,8 @@ double Spacetime::BH_eta_solver (double u1, double u2, double varphi2, double M)
         // turn lower limit to previous upper and check again.
         while (BH_int_dvarphi_du(u1, u2, eta2max, M) > varphi2)
         {
-            //std::cout<<"No biggy, just in c_solver had to update upper limit"
-            //        <<std::endl;
+            std::cout<<"No biggy, just in c_solver had to update upper limit"
+                    <<std::endl;
             eta2min = eta2max*1;
             eta2max *= 2;
         }
@@ -1032,7 +1042,7 @@ double Spacetime::BH_eta_solver (double u1, double u2, double varphi2, double M)
         while (BH_int_dvarphi_du(u2, u1, eta2max, M) > varphi2)
         {
             //std::cout<<"No biggy, just in c_solver had to update upper limit"
-             //       <<std::endl;
+                //       <<std::endl;
             eta2min = eta2max*1;
             eta2max *= 2;
         }
@@ -1142,7 +1152,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double eta, double M)
 
 bool Spacetime::BH_time_caus_check(double u1, double u2, double t1, double t2,
                                      double eta, double M)
-    {return Spacetime::BH_int_dt_du (u1, u2, M, eta) + t1 - t2 <= 0;}
+    {return Spacetime::BH_int_dt_du (u1, u2, eta, M) + t1 - t2 <= 0;}
 
 
 
