@@ -1462,9 +1462,12 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
 
 
 /**
- * @brief Makes future_links from causal matrix _CMatrix and counts links 
- * between maximal elements - below t_f and inside r_S - and maximal_but_one 
- * elements outside r_S. 
+ * @brief First, creates from causal matrix _CMatrix kind of a set of 
+ * future_links vectors such that if an element has one or more future links, 
+ * then TWO ONLY, THE FIRST TWO, will be added to the vectors 
+ * (as that is enough to see if an element is maximal).
+ * Then counts links between maximal elements - below t_f and inside r_S - and 
+ * maximal_but_one elements outside r_S. 
 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
@@ -1498,7 +1501,7 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
                     {
                         if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
                             has_broken = true;
-                            break;}
+                            break;} //breaks k loop
                     }
                     if (!has_broken){
                         _future_links[i].insert(j);
@@ -1599,17 +1602,148 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
 }
 
 
-
 /**
- * @brief   Makes future_links from causal matrix _CMatrix and counts lambdas
- * between maximal elements - below t_f and inside r_S - and maximal_but_one 
- * elements outside r_S. 
+ * @brief First, creates from causal matrix _CMatrix KIND OF a set of 
+ * future_links vectors such that if an element has one or more future links, 
+ * then TWO ONLY, THE FIRST TWO, will be added to the vectors 
+ * (as that is enough to see if an element is maximal).
+ * Then counts lambdas between maximal 
+ * elements -below t_f and inside r_S- and maximal_but_one elements outside r_S.
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
 
- * @return map<int, int> : key is label of maximal element, value is number of
-           maximal but one elements associated with it.
+ * @return map<int, std::vector<int>> : key is maximal element label, value 
+           is a vector of maximal but one connected elements' labels.
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
+                                                                    double& t_f, 
+                                                                    double r_S)
+{
+    if (strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
+        
+        _future_links.resize(_size);
+        
+        #pragma omp parallel for
+        for (int i=0; i<_size; i++)
+        {
+            int n_links_of_i = 0;
+            for (int j=i+1; j<_size; j++)
+            {
+                if (_CMatrix[i][j] == 0) {
+                    continue;
+                }
+                else
+                {
+                    bool has_broken = false;
+                    for (int k=i+1; k<j;k++)
+                    {
+                        if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                            has_broken = true;
+                            break;}
+                    }
+                    if (!has_broken)
+                    {
+                        n_links_of_i += 1;
+                        _future_links[i].insert(j);
+                        if (n_links_of_i - 1 > 0)
+                            {break;} /*breaks j loop, hence goes to next i*/
+                    }
+                }
+            }
+        }
+        return this->get_lambdas(t_f,r_S);
+    }
+    else /*Spacetime name not BlackHole*/
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future."
+        << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+}
+
+
+/**
+ * @brief   Finds lambdas in the causet connecting maximal elements 
+ *          below t_f and inside the horizon with maximal-but-one elements
+ *          outside the horizon.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of maximal element, 
+    value is vector of labels of maximal but one elements associated with it.
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> lambdas;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    double mintime;
+ 
+    #pragma omp parallel for
+    for (int j = 1; j<_size; j++)
+    {
+        // if j is maximal and inside the horizon
+        if (_future_links[j].size()==0 && _coords[j][1]<r_S) 
+        {
+            lambdas[j] = {};
+            for (int i = j-1; i>-1; i--)
+            {
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                {
+                    // if i is maximal but one and outside the horizon
+                    if (_future_links[i].size()==1 && _coords[i][1]>r_S)
+                    {
+                        if (set_contains(j,_future_links[i])) //i-j is link
+                        {
+                            lambdas[j].push_back(i);
+                            if (_coords[i][0] < mintime)
+                            mintime = _coords[i][0];
+                        }
+                    }
+                }
+                else /* t_j<t_i */
+                {
+                    std::cout << "ERROR: t_j < t_i\n";
+                }
+            }
+        }
+    }
+    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
+    return lambdas;
+}
+
+
+/**
+ * @brief First, creates from causal matrix _CMatrix kind of a set of 
+ * future_links vectors such that if an element has one or more future links, 
+ * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
+ * (as that is enough to see if an element is maximal).
+ * Then counts lambdas between maximal 
+ * elements -below t_f and inside r_S- and maximal_but_one elements outside r_S. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, int> : key is lambdas' size, value is number of
+           such lambdas.
  */
 std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f, 
                                                             double r_S)
@@ -1620,7 +1754,7 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
         {
             std::cout << "To create future link matrix, CMatrix must exist";
             throw std::invalid_argument("No CMatrix");}
-
+        
         _future_links.resize(_size);
         
         #pragma omp parallel for
@@ -1650,7 +1784,7 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
                 }
             }
         }
-        return this->count_lambdas_BH(t_f,r_S);;
+        return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
     }
     else /*Spacetime name not BlackHole*/
     {
@@ -1675,7 +1809,7 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
  * @return map<int, int> : key is label of maximal element, value is number of
            maximal but one elements associated with it.
  */
-std::map<int,int> EmbeddedCauset::count_lambdas_BH(double& t_f, double r_S)
+std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
 {
     if (!strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -1690,6 +1824,7 @@ std::map<int,int> EmbeddedCauset::count_lambdas_BH(double& t_f, double r_S)
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
     std::vector<double> min_times;
  
+    #pragma omp parallel for
     for (int j = 1; j<_size; j++)
     {
         // if j is maximal and inside the horizon
@@ -1721,6 +1856,35 @@ std::map<int,int> EmbeddedCauset::count_lambdas_BH(double& t_f, double r_S)
     double mintime = vecmin(min_times);
     std::cout << "t_min for elements in these links = " << mintime << std::endl; 
     return lambdas;
+}
+
+
+
+/**
+ * @brief   Finds DISTRIBUTION of lambdas connecting maximal elements 
+ *          below t_f and inside the horizon with maximal-but-one elements
+ *          outside the horizon.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, 
+ *          but could be expanded if needed in the future. 
+ * 
+ * @param lambdas map<int,int> : key is label of maximal element, value is 
+ *        number of maximal but one elements associated with it, i.e. size.
+
+ * @return map<int, int> : key is label of lambdas' size, value is number of
+           occurrences.
+ */
+std::map<int,int> EmbeddedCauset::get_lambdas_distr(const std::map<int, int> &
+                                                   lambdas)
+{
+    // Maps label of maximal element to size of its lambda
+    std::map<int, int> lambdas_distr;
+
+    #pragma omp parallel for
+    for (auto pair : lambdas)
+    {
+        lambdas_distr[pair.second] += 1;
+    }
+    return lambdas_distr;
 }
 
 

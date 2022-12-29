@@ -130,8 +130,13 @@ class EmbeddedCauset: public Causet
         int count_links_fromCMatrix(double& t_f, double r_S = 2);
         int count_links_BH(double& t_f, double r_S = 2);
 
+        std::map<int,std::vector<int>> get_lambdas_fromCMatrix(double& t_f, 
+                                                               double r_S = 2);
+        std::map<int,std::vector<int>> get_lambdas(double& t_f,double r_S = 2);
         std::map<int,int> count_lambdas_fromCMatrix(double& t_f, double r_S = 2);
-        std::map<int,int> count_lambdas_BH(double& t_f, double r_S = 2);
+        std::map<int,int> get_lambdas_sizes(double& t_f, double r_S = 2);
+        std::map<int,int> get_lambdas_distr(const std::map<int, int> & lambdas);
+
 
         //Destructor
         ~EmbeddedCauset();       
