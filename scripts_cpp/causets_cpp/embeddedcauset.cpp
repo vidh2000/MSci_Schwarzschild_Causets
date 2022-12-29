@@ -1627,37 +1627,44 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
             std::cout << "To create future link matrix, CMatrix must exist";
             throw std::invalid_argument("No CMatrix");}
         
-        _future_links.resize(_size);
-        
-        #pragma omp parallel for
-        for (int i=0; i<_size; i++)
+        if (_future_links.size() == _size) /*if already defined*/
         {
-            int n_links_of_i = 0;
-            for (int j=i+1; j<_size; j++)
+            return this->get_lambdas(t_f,r_S);
+        }
+        else
+        {
+            _future_links.resize(_size);
+        
+            #pragma omp parallel for
+            for (int i=0; i<_size; i++)
             {
-                if (_CMatrix[i][j] == 0) {
-                    continue;
-                }
-                else
+                int n_links_of_i = 0;
+                for (int j=i+1; j<_size; j++)
                 {
-                    bool has_broken = false;
-                    for (int k=i+1; k<j;k++)
-                    {
-                        if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                            has_broken = true;
-                            break;}
+                    if (_CMatrix[i][j] == 0) {
+                        continue;
                     }
-                    if (!has_broken)
+                    else
                     {
-                        n_links_of_i += 1;
-                        _future_links[i].insert(j);
-                        if (n_links_of_i - 1 > 0)
-                            {break;} /*breaks j loop, hence goes to next i*/
+                        bool has_broken = false;
+                        for (int k=i+1; k<j;k++)
+                        {
+                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                                has_broken = true;
+                                break;}
+                        }
+                        if (!has_broken)
+                        {
+                            n_links_of_i += 1;
+                            _future_links[i].insert(j);
+                            if (n_links_of_i - 1 > 0)
+                                {break;} /*breaks j loop, hence goes to next i*/
+                        }
                     }
                 }
             }
+            return this->get_lambdas(t_f,r_S);
         }
-        return this->get_lambdas(t_f,r_S);
     }
     else /*Spacetime name not BlackHole*/
     {
@@ -1755,36 +1762,44 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
             std::cout << "To create future link matrix, CMatrix must exist";
             throw std::invalid_argument("No CMatrix");}
         
-        _future_links.resize(_size);
-        
-        #pragma omp parallel for
-        for (int i=0; i<_size; i++)
+        if (_future_links.size() == _size) /*if already defined*/
         {
-            int n_links_of_i = 0;
-            for (int j=i+1; j<_size; j++)
+            return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
+        }
+        else
+        {
+            _future_links.resize(_size);
+        
+            #pragma omp parallel for
+            for (int i=0; i<_size; i++)
             {
-                if (_CMatrix[i][j] == 0) {
-                    continue;
-                }
-                else
+                int n_links_of_i = 0;
+                for (int j=i+1; j<_size; j++)
                 {
-                    bool has_broken = false;
-                    for (int k=i+1; k<j;k++)
-                    {
-                        if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                            has_broken = true;
-                            break;}
+                    if (_CMatrix[i][j] == 0) {
+                        continue;
                     }
-                    if (!has_broken){
-                        _future_links[i].insert(j);
-                        n_links_of_i += 1;
-                        if (n_links_of_i - 1 > 0)
-                            {break;} /*breaks j loop, hence goes to next i*/
+                    else
+                    {
+                        bool has_broken = false;
+                        for (int k=i+1; k<j;k++)
+                        {
+                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                                has_broken = true;
+                                break;}
+                        }
+                        if (!has_broken)
+                        {
+                            n_links_of_i += 1;
+                            _future_links[i].insert(j);
+                            if (n_links_of_i - 1 > 0)
+                                {break;} /*breaks j loop, hence goes to next i*/
+                        }
                     }
                 }
             }
+            return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
         }
-        return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
     }
     else /*Spacetime name not BlackHole*/
     {
