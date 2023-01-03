@@ -39,3 +39,6 @@
 /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1903:1: warning: no return statement in function returning non-void [-Wreturn-type]
  }
  ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh: line 46: unexpected EOF while looking for matching `"'
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh: line 47: syntax error: unexpected end of file
+cp: -r not specified; omitting directory 'templates'

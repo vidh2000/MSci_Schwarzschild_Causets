@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "=====================================================" 
-echo
 
 ########################################################################
 ############################  TO CHANGE ################################
@@ -31,7 +29,9 @@ mainDir="$(dirname "$fileDir")/"
 
 # Run the python file which will compile the .cpp file you want
 # (the includes,flags... can be adjusted in run_cpp_file.py)
+echo Building the executable...
 python run_cpp_file.py $mainDir$runfileRelativeDir $runfilename
+echo Finished building the executable
 
 # Go into the directory of the executable file
 cd $mainDir$runfileRelativeDir
