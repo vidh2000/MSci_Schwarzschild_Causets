@@ -1,9 +1,5 @@
-import numpy as np
-from numba import njit,jit
-from time import time
-import pandas as pd
 import matplotlib.pyplot as plt
-
+import numpy as np 
 
 # 4D data with futlinks creation...
 #masses = np.array([1,1.5,2])
@@ -25,9 +21,9 @@ import matplotlib.pyplot as plt
 # stds = [2.89,4.47,6.24,6,7.2,9.6,11.1]
 
 #4D data from cluster runs: 100 realisations per M
-masses = np.array([1,1.5,2,2.5,3,3.5,4])
-means = [7.26,15.67,26.3,39.75,54.46,71.71,94.99]
-stds = [3.4,4.64,5.57,7.6,7.16,9.02,10.3]
+masses = np.array([1,1.5,2,2.5,3,3.5,4,4.5,5])
+means = [11.4,23.83,37.57,60.55,83,111.55,144.98,184.08,221.84]
+stds = [3.7,5.8,6.5,8.3,10.5,10.5,12.9,13.7,17.6]
 
 
 
@@ -40,4 +36,5 @@ plt.legend()
 plt.ylabel(r"Number of links $N$")
 plt.xlabel(r"Area$\propto M^2$ [a.u]")
 plt.grid(alpha=0.3)
+plt.savefig("/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/figures/Schwarzschild/Nlinks_vs_Area_4D_Nmult=1000_M=1.0-5.0._100reps.png")
 plt.show()
