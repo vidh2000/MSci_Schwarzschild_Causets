@@ -33,10 +33,13 @@ using namespace std::chrono;
 
 
 // SIMULATIONS PARAMETERS (adjust only these)
-std::vector<double> masses = {1,1.5,2,2.5,3,3.5,4};
-int N_multiplier = 400;
-//int N_reps = 20;
-std::vector<int> repetitions_arr = {100,100,100,100,100,100,100};
+//___________________________________________________________________________//
+//////////////////////// N = N_multiplier*mass^3 //////////////////////////////
+//---------------------------------------------------------------------------//
+std::vector<double> masses = {1,1.5,2,2.5,3,3.5,4,4.5,5};
+int N_multiplier = 1000;
+int N_reps = 100; //equal number of repetitions per causet size
+//std::vector<int> repetitions_arr = {100,100,100,100,100,100,100};
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,7 +51,7 @@ int dim = 4; //want it to be "hard coded = 4"
 std::vector<int> cards = {};
 std::vector<double> radii = {};
 std::vector<double> durations = {};
-//std::vector<int> repetitions_arr = {};
+std::vector<int> repetitions_arr = {};
 
 for (auto mass : masses)
 {
@@ -58,7 +61,7 @@ for (auto mass : masses)
         // Keep the same density of points
         cards.push_back(N_multiplier*mass*mass*mass);
         // Add # of repetitions for each mass
-        //repetitions_arr.push_back(N_reps);
+        repetitions_arr.push_back(N_reps);
 }
 
 // Sprinkling Parameters
@@ -161,16 +164,21 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
 
 auto finish = high_resolution_clock::now();
 double duration = duration_cast<microseconds>(finish - beginning).count();
+std::cout<<"===============================================================\n";
 std::cout << "\nProgram took in total: "
         << duration/pow(10,6) << " seconds\n" << std::endl;
 
-std::cout << "We want N_links proportional to the mass.\nResults:" << std::endl;
+std::cout << "Parameters used:\n";
+std::cout << "Dim = "<< dim << ", N_multiplier = "<< N_multiplier << std::endl;
+
+std::cout << "Results:" << std::endl;
 for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
 {
         double mass, N_links_avg, N_links_std;
         boost::tie(mass, N_links_avg, N_links_std) = tup;
-        std::cout << "M = "<<mass<<", N_links = " << N_links_avg
-                << " +- " << N_links_std  << std::endl;
+        std::cout << "M = "<<mass<< ", Card = " << N_multiplier*mass*mass*mass
+        << ", N_links = " << N_links_avg << " +- " << N_links_std 
+        << std::endl;
 }
 std::cout<<std::endl;
 }

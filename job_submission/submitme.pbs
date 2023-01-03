@@ -1,7 +1,7 @@
 #!/bin/sh
 
-#PBS -lselect=1:ncpus=256:mem=64gb
-#PBS -lwalltime=00:30:00
+#PBS -lselect=1:ncpus=256:mem=128gb
+#PBS -lwalltime=08:00:00
 
 # Change to the submission directory
 
@@ -12,7 +12,9 @@ export OMP_NUM_THREADS=256
 
 echo
 echo ==========================================================================
-echo Using $OMP_NUM_THREADS cores...
+echo Using $OMP_NUM_THREADS cores
+echo Using 128GB of RAM 
+echo ==========================================================================
 
 sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh
 

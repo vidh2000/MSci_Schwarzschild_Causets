@@ -1,0 +1,41 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp: In member function ‘std::map<int, int> EmbeddedCauset::get_lambdas_distr(const std::map<int, int>&)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1898:20: error: found ‘:’ in nested-name-specifier, expected ‘::’
+     for (auto pair : lambdas)
+                    ^
+                    ::
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1898:15: error: ‘pair’ has not been declared
+     for (auto pair : lambdas)
+               ^~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1898:29: error: qualified-id in declaration before ‘)’ token
+     for (auto pair : lambdas)
+                             ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1901:6: error: expected ‘;’ before ‘return’
+     }
+      ^
+      ;
+     return lambdas_distr;
+     ~~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1902:5: error: expected primary-expression before ‘return’
+     return lambdas_distr;
+     ^~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1903:1: error: expected primary-expression before ‘}’ token
+ }
+ ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1902:26: error: expected ‘)’ before ‘}’ token
+     return lambdas_distr;
+                          ^
+                          )
+ }
+ ~                         
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1898:9: note: to match this ‘(’
+     for (auto pair : lambdas)
+         ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1903:1: error: expected primary-expression before ‘}’ token
+ }
+ ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1898:5: error: expected iteration declaration or initialization
+     for (auto pair : lambdas)
+     ^~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1903:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
