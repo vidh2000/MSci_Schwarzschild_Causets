@@ -1635,7 +1635,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1894,7 +1894,7 @@ std::map<int,int> EmbeddedCauset::get_lambdas_distr(const std::map<int, int> &
     // Maps label of maximal element to size of its lambda
     std::map<int, int> lambdas_distr;
 
-    #pragma omp parallel for
+    //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
     {
         lambdas_distr[pair.second] += 1;

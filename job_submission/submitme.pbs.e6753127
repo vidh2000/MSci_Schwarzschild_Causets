@@ -39,3 +39,4 @@
 /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1903:1: warning: no return statement in function returning non-void [-Wreturn-type]
  }
  ^
+cp: -r not specified; omitting directory 'templates'
