@@ -457,12 +457,14 @@ void EmbeddedCauset::discard(vector<int> labels,
 /**
  * @brief Save causet attributes in file (ideally txt or csv)
  * =================================================================================
+ * [0,1] -> Storage Option
  * [1,1] -> size; 
  * [2,1] -> spacetime dimension;
  * [3,1] -> shape name;  
  * [4,1] -> spacetime name; 
  * 
  * ===================================== "cmatrix" option =======>
+ * [5,0] -> "Matrix"
  * [6 to 6+size-1, 0 to size-1] -> Cmatrix; 
  * 
  * == "sets" option    =======>
@@ -474,6 +476,7 @@ void EmbeddedCauset::discard(vector<int> labels,
  * [-size:] -> coordinates
  * 
  * @param path_file_ext const char* : path/file.ext 
+ * @param storage_option const char* : cmatrix or sets
  */
 void EmbeddedCauset::save_causet(const char* path_file_ext,
                                  const char* storage_option)
@@ -1456,6 +1459,9 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
 }
 
 
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Methods for counting links --> entropy
 ///////////////////////////////////////////////////////////////////////////////
@@ -1629,7 +1635,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
         
         if (_future_links.size() == _size) /*if already defined*/
         {
-            return this->get_lambdas(t_f,r_S);
+            return this->get_lambdas_from_futlinks(t_f,r_S);
         }
         else
         {
@@ -1663,7 +1669,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
                     }
                 }
             }
-            return this->get_lambdas(t_f,r_S);
+            return this->get_lambdas_from_futlinks(t_f,r_S);
         }
     }
     else /*Spacetime name not BlackHole*/
@@ -1673,68 +1679,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
         << std::endl;
         throw std::invalid_argument("Wrong spacetime");
     }
-}
-
-
-/**
- * @brief   Finds lambdas in the causet connecting maximal elements 
- *          below t_f and inside the horizon with maximal-but-one elements
- *          outside the horizon.
- *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
- *          could be expanded if needed in the future. 
- * 
- * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
- * @param r_S Schwarzschild radius
-
- * @return map<int, vector<int>> : key is label of maximal element, 
-    value is vector of labels of maximal but one elements associated with it.
- */
-std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f, double r_S)
-{
-    if (!strcmp(_spacetime._name, "BlackHole")==0)
-    {
-        std::cout<<"Please choose 'BlackHole' for spacetime." <<
-        "Other spacetimes might be available in the future" << std::endl;
-        throw std::invalid_argument("Wrong spacetime");
-    }
-
-    // Maps label of maximal element to size of its lambda
-    std::map<int, std::vector<int>> lambdas;
-    
-    // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime;
- 
-    #pragma omp parallel for
-    for (int j = 1; j<_size; j++)
-    {
-        // if j is maximal and inside the horizon
-        if (_future_links[j].size()==0 && _coords[j][1]<r_S) 
-        {
-            lambdas[j] = {};
-            for (int i = j-1; i>-1; i--)
-            {
-                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
-                {
-                    // if i is maximal but one and outside the horizon
-                    if (_future_links[i].size()==1 && _coords[i][1]>r_S)
-                    {
-                        if (set_contains(j,_future_links[i])) //i-j is link
-                        {
-                            lambdas[j].push_back(i);
-                            if (_coords[i][0] < mintime)
-                            mintime = _coords[i][0];
-                        }
-                    }
-                }
-                else /* t_j<t_i */
-                {
-                    std::cout << "ERROR: t_j < t_i\n";
-                }
-            }
-        }
-    }
-    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
-    return lambdas;
 }
 
 
@@ -1810,6 +1754,138 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
     }
 }
 
+/**
+ * @brief Save the following information in a file:
+ * =================================================================================
+ * [0,1] -> Storage Option
+ * [1,1] -> size; 
+ * [2,1] -> spacetime dimension;
+ * [3,1] -> shape name;  
+ * [4,1] -> spacetime name; 
+ * 
+ * ===================================== "cmatrix" option =======>
+ * [5,0] -> "Matrix"
+ * [6 to 6+size-1, 0 to size-1] -> Cmatrix; 
+ * 
+ * == "sets" option    =======>
+ * [6 to 6+size-1,:] pasts
+ * [6+size+1 to 6+2size,:] futures
+ * [6+2size+2 to 6+3size+1,:] past links
+ * [6+3size+3 to 6+4size+2,:] future links
+ * 
+ * [6+size] -> "Coordinates"
+ * [6+size+1 to 6+2size,:] -> coordinates
+ * 
+ * [6+2size+1] -> r_S
+ * 
+ * From [6+2size+2]
+ * "NLambdas_Sized_1", number of lambdas with size 1 (single links)
+ * "NLambdas_Sized_2", number of lambdas with size 2 (the normal lambda)
+ * etc for all sizes up to max...
+ * 
+ * From [6+2size+3]
+ * "Lambda0" upvertex, downvertex1, downvertex2, etc... ENDL
+ * "Lambda1", upvertex, downvertex2, downvertex2, etc... ENDL
+ * etc for all lambdas...
+ * 
+ * @param path_file_ext 
+ * @param storage_option
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius.
+ */
+void EmbeddedCauset::save_lambdas(const char* path_file_ext,
+                                  const char* storage_option,
+                                  double & t_f, double & r_S)
+{
+    this->save_causet(path_file_ext, storage_option);
+
+    std::fstream out;
+    out.open(path_file_ext, std::ios::app);
+    out<<"r_S"       <<2*_spacetime._mass<<std::endl;
+
+    for (std::pair<int,int> xy : count_lambdas_fromCMatrix(t_f, r_S))
+    {
+        out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
+    }
+     
+    int i = 0;
+    for (std::pair<int,std::vector<int>> lambda_i 
+         : get_lambdas_fromCMatrix(t_f, r_S))
+    {
+        out<<"Lambda"<<i<<std::endl;
+        out<<lambda_i.first<<",";
+        for (int label : lambda_i.second)
+            out<<label<<",";
+        out<<std::endl;
+        i++;
+    }
+
+    out.close();
+}
+
+
+/**
+ * @brief   Finds lambdas in the causet connecting maximal elements 
+ *          below t_f and inside the horizon with maximal-but-one elements
+ *          outside the horizon.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of maximal element, 
+    value is vector of labels of maximal but one elements associated with it.
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> lambdas;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    double mintime = 1e6;
+ 
+    #pragma omp parallel for
+    for (int j = 1; j<_size; j++)
+    {
+        // if j is maximal and inside the horizon
+        if (_future_links[j].size()==0 && _coords[j][1]<r_S) 
+        {
+            lambdas[j] = {};
+            for (int i = j-1; i>-1; i--)
+            {
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                {
+                    // if i is maximal but one and outside the horizon
+                    if (_future_links[i].size()==1 && _coords[i][1]>r_S)
+                    {
+                        if (set_contains(j,_future_links[i])) //i-j is link
+                        {
+                            lambdas[j].push_back(i);
+                            if (_coords[i][0] < mintime)
+                            mintime = _coords[i][0];
+                        }
+                    }
+                }
+                else /* t_j<t_i */
+                {
+                    std::cout << "ERROR: t_j < t_i\n";
+                }
+            }
+        }
+    }
+    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
+    return lambdas;
+}
+
 
 /**
  * @brief   Finds lambdas in the causet connecting maximal elements 
@@ -1837,7 +1913,7 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::map<int, int> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    std::vector<double> min_times;
+    double mintime = 1e6;
  
     #pragma omp parallel for
     for (int j = 1; j<_size; j++)
@@ -1856,7 +1932,8 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                         if (set_contains(j,_future_links[i])) //i-j is link
                         {
                             lambdas[j] += 1;
-                            min_times.push_back(_coords[i][0]);
+                            if (_coords[i][0] < mintime)
+                            mintime = _coords[i][0];
                         }
                     }
                 }
@@ -1867,8 +1944,6 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
             }
         }
     }
-
-    double mintime = vecmin(min_times);
     std::cout << "t_min for elements in these links = " << mintime << std::endl; 
     return lambdas;
 }

@@ -73,7 +73,7 @@ class EmbeddedCauset: public Causet
         bool AprecB(std::vector<double> xvec, std::vector<double> yvec);
 
 
-        // MODIFIERS (NONE TESTED)
+        // MODIFIERS (BETA: NONE TESTED)
 
         void sort_coords(int dim = 0, bool reverse = false);
         void relabel(const char* method = "0", bool reverse = false);   
@@ -132,8 +132,14 @@ class EmbeddedCauset: public Causet
 
         std::map<int,std::vector<int>> get_lambdas_fromCMatrix(double& t_f, 
                                                                double r_S = 2);
-        std::map<int,std::vector<int>> get_lambdas(double& t_f,double r_S = 2);
         std::map<int,int> count_lambdas_fromCMatrix(double& t_f, double r_S = 2);
+        void save_lambdas(const char* path_file_ext, const char* storage_option, 
+                            double & t_f, double & r_S);
+        
+
+        // Counting Behind the Scenes
+
+        std::map<int,std::vector<int>> get_lambdas_from_futlinks(double& t_f,double r_S = 2);
         std::map<int,int> get_lambdas_sizes(double& t_f, double r_S = 2);
         std::map<int,int> get_lambdas_distr(const std::map<int, int> & lambdas);
 
