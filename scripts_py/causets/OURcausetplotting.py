@@ -6,11 +6,24 @@ Created on 4 Jan 2022
 '''
 import numpy as np
 import matplotlib.pyplot as plt
+import functools
 
-figsize    = (7.5, 15)
-link_alpha = 0.5
-link_lw    = 0.5
-markersize = 5
+#from from https://stackoverflow.com/questions/15301999/default-arguments-with-args-and-kwargs
+def default_kwargs(**defaultKwargs):
+    def actual_decorator(fn):
+        @functools.wraps(fn)
+        def g(*args, **kwargs):
+            defaultKwargs.update(kwargs)
+            return fn(*args, **defaultKwargs)
+        return g
+    return actual_decorator
+
+my_kwargs = {"figsize"   :(7.5, 15), 
+            "link_alpha":0.5, 
+            "link_lw"   :0.5,
+            "markersize":5,
+            "std_color" : "#002147",
+            "lambdas_colors": ["green", "gold", "darkorange", "red", "purple"]}
 
 ColorSchemes = {
     'matplotlib':            {'core':        'tab:blue',
@@ -56,9 +69,9 @@ ColorSchemes = {
                               'pink':        '#C81E78',
                               'raspberry':   '#9F004E'}
 }
-std_color = "#002147"
-lambdas_colors = ["green", "gold", "darkorange", "red", "purple"]
 
+
+@default_kwargs(**my_kwargs)
 def plot_causet(file_ext, savefile_ext = 0, **plot_kwargs):
     """
     PLot the causet. Highlight horizon if BlackHole.
@@ -77,11 +90,20 @@ def plot_causet(file_ext, savefile_ext = 0, **plot_kwargs):
     - link_alpha. Default 0.5.
     - link_lw. Default 0.5.
     - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
 
     Returns
     -------
     plt.figure
     """
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+
+
     with open(file_ext, 'r') as fl: 
         f = fl.readlines() 
 
@@ -136,7 +158,6 @@ def plot_causet(file_ext, savefile_ext = 0, **plot_kwargs):
     
 
     fig = plt.figure(figsize = figsize, tight_layout = True)
-    Ncolors = len(lambdas_colors)
     
     if dim == 2:
         plt.ylabel("t*")
@@ -203,7 +224,9 @@ def plot_causet(file_ext, savefile_ext = 0, **plot_kwargs):
 
 
 
-def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0):
+@default_kwargs(**my_kwargs)
+def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0, 
+                                    **plot_kwargs):
     """
     PLot the lambdas of a causet with Horizon and their distribution.
     Time on vertical axis. The spatial dimensions can be 2 or 3.
@@ -215,11 +238,27 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0):
 
     savefile_ext : string (default is int 0)
         Path + filename + ext to save file to
+    
+    **plot_kwargs: These include
+    - figsize. Default (7.5, 15).
+    - link_alpha. Default 0.5.
+    - link_lw. Default 0.5.
+    - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
 
     Returns
     -------
     plt.figure
     """
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+    lambdas_colors = plot_kwargs['lambdas_colors']
+
+
     with open(lambdasfile_ext, 'r') as fl: 
         f = fl.readlines() 
 
@@ -289,7 +328,6 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0):
                         markeredgecolor="black", 
                         markerfacecolor=facecolor,
                         zorder = 10)
-            print([tup,xup])
             for label in lambda_i[1:]:
                 t = coords[label][0]
                 x = coords[label][1]
@@ -370,8 +408,8 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0):
 
     return fig
 
-
-def plot_lambdas(lambdasfile_ext, savefile_ext = 0):
+@default_kwargs(**my_kwargs)
+def plot_lambdas(lambdasfile_ext, savefile_ext = 0, **plot_kwargs):
     """
     PLot the lambdas of a causet with Horizon.
     Time on vertical axis. The spatial dimensions can be 2 or 3.
@@ -384,10 +422,25 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0):
     savefile_ext : string (default is int 0)
         Path + filename + ext to save file to
 
+    **plot_kwargs: These include
+    - figsize. Default (7.5, 15).
+    - link_alpha. Default 0.5.
+    - link_lw. Default 0.5.
+    - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
+
     Returns
     -------
     plt.figure
     """
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+    lambdas_colors = plot_kwargs['lambdas_colors']
+
     with open(lambdasfile_ext, 'r') as fl: 
         f = fl.readlines() 
 
@@ -452,7 +505,6 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0):
                         markeredgecolor="black", 
                         markerfacecolor=facecolor,
                         zorder = 10)
-            print([tup,xup])
             for label in lambda_i[1:]:
                 t = coords[label][0]
                 x = coords[label][1]
@@ -524,8 +576,10 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0):
 
 
 
+@default_kwargs(**my_kwargs)
 def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext, 
-                                            savefile_ext = 0):
+                                            savefile_ext = 0,
+                                            **plot_kwargs):
     """
     PLot the whole causet highlighting the lambdas and their distribution.
     Time on vertical axis. The spatial dimensions can be 2 or 3.
@@ -538,10 +592,25 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
     savefile_ext : string (default is int 0)
         Path + filename + ext to save file to
 
+    **plot_kwargs: These include
+    - figsize. Default (7.5, 15).
+    - link_alpha. Default 0.5.
+    - link_lw. Default 0.5.
+    - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
+
     Returns
     -------
     plt.figure
     """
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+    lambdas_colors = plot_kwargs['lambdas_colors']
+
     with open(lambdasfile_ext, 'r') as fl: 
         f = fl.readlines() 
 
@@ -625,7 +694,6 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
                         markeredgecolor="black", 
                         markerfacecolor=facecolor,
                         zorder = 10)
-            print([tup,xup])
             for label in lambda_i[1:]:
                 t = coords[label][0]
                 x = coords[label][1]
@@ -743,8 +811,8 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
 
     return fig
 
-
-def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0):
+@default_kwargs(**my_kwargs)
+def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0, **plot_kwargs):
     """
     PLot the whole causet highlighting the lambdas.
     Time on vertical axis. The spatial dimensions can be 2 or 3.
@@ -757,10 +825,25 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0):
     savefile_ext : string (default is int 0)
         Path + filename + ext to save file to
 
+    **plot_kwargs: These include
+    - figsize. Default (7.5, 15).
+    - link_alpha. Default 0.5.
+    - link_lw. Default 0.5.
+    - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
+
     Returns
     -------
     plt.figure
     """
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+    lambdas_colors = plot_kwargs['lambdas_colors']
+
     with open(lambdasfile_ext, 'r') as fl: 
         f = fl.readlines() 
 
@@ -841,7 +924,6 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0):
                         markeredgecolor="black", 
                         markerfacecolor=facecolor,
                         zorder = 10)
-            print([tup,xup])
             for label in lambda_i[1:]:
                 t = coords[label][0]
                 x = coords[label][1]
@@ -952,10 +1034,9 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0):
 
 
 
-
-
-
-
+##################################################################
+# HELPERS ########################################################
+##################################################################
 
 
 # from https://stackoverflow.com/questions/26989131/add-cylinder-to-plot 
@@ -966,6 +1047,9 @@ def cylinder_along_z(center_x,center_y,center_z,radius,height_z):
     x_grid = radius*np.cos(theta_grid) + center_x
     y_grid = radius*np.sin(theta_grid) + center_y
     return x_grid,y_grid,z_grid
+
+
+
     
 
     

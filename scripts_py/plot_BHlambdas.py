@@ -26,6 +26,8 @@ isBH = True
 isEFv = False
 isS = False
 
+centre_cube_in_horizon = True
+
 
 ps = {"text.usetex": True,
       "font.size" : 16,
@@ -70,9 +72,12 @@ if use_redge_in_name_file:
     if len(edge_string) == 3: edge_string += "0"
     file_name += "_redge"+ edge_string
 
+if (centre_cube_in_horizon):
+        file_name += "_horizon_centred"
+
 file_name += ".txt"
 print(file_name)
 
-ocplt.plot_causet(file_name)
+ocplt.plot_causet_and_lambdas(file_name)
 
 # %%

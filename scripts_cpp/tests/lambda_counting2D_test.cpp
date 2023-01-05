@@ -37,12 +37,13 @@ using namespace std::chrono;
 int dim = 2;
 double t_f = 0;
 double r_S = 2;
-std::vector<int> cards = {25, 50, 75, 100, 200, 300};
+std::vector<int> cards = {25, 50, 75, 100, 150, 250, 500};
 
 // Cube Shape Parameters
 double radius = 5;
 double myduration = 5;
-vector<double> loop_edges = {2.5}; //edges of cubes to loop over
+vector<double> loop_edges = {0.5}; //edges of cubes to loop over 
+bool centre_cube_in_horizon = true;//(spatially center 2D cube on horizon)
 
 // Sprinkle Parameters
 bool poisson          = false;
@@ -71,13 +72,22 @@ int main()
             std::cout<<"EDGE "<<edge<<" \n";
 
             // Set up shape
-            vector<double> center (dim, edge/2); 
-            center[0] -= edge;
-            //center[0] -= edge/2;
             std::vector<const char*> shapes = {"cylinder", "cube"};
-            int shapeindex = 1; (dim==2)? 0 : 1;
-            CoordinateShape Shape(dim,shapes[shapeindex],center,
-                                radius, myduration, edge);
+            vector<double> centre (dim, 0);
+            int shapeindex = 0;
+            if (dim == 2)
+            {
+                shapeindex += 1; //pick cube
+                centre[0] -= edge/2;
+                if (centre_cube_in_horizon)
+                    centre[1] = r_S;
+            }
+            else
+            {
+                centre[0] -= myduration/2;
+            }
+            CoordinateShape Shape(dim,shapes[shapeindex],centre,
+                                  radius, myduration, edge);
 
             // Set up spacetime
             Spacetime S = Spacetime();
@@ -93,12 +103,15 @@ int main()
             estream << std::fixed << std::setprecision(2) << edge;
             std::stringstream rstream;
             rstream << std::fixed << std::setprecision(2) << radius;
-            std::string redge_s = (dim > 0)? estream.str() : rstream.str();
+            std::string redge_s = (shapeindex==1)?estream.str():rstream.str();
 
             std::string path_file_str = "../../data/blackhole_and_lambdas"
                                             + std::to_string(dim)
                                             + "D_N" + std::to_string(card)
-                                            + "_redge" + redge_s + ".txt";
+                                            + "_redge" + redge_s;
+            if (centre_cube_in_horizon)
+                path_file_str += "_horizon_centred";
+            path_file_str +=  ".txt";
             const char* path_file = path_file_str.c_str();
 
             C.save_lambdas(path_file, "sets", t_f, r_S);
