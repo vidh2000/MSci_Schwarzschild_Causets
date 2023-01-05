@@ -557,13 +557,21 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
         std::cout << "Please choose 'cmatrix' or 'sets' option\n";
         throw std::invalid_argument("Choose right parameter");
     }
-    std::cout<<"Coordinates,"<<std::endl;
-    for (auto row : _coords) 
+
+    out<<"Coordinates"<<std::endl;
+    for (int i = 0; i < _size; i++) 
     {
-        for (auto col : row)
-            {out << col <<',';}
-        out<<std::endl;
+        auto row = _coords[i];
+        for (int mu = 0; mu < _spacetime._dim; mu++)
+        {
+            out<<row[mu];
+            if (mu != _spacetime._dim -1)
+                out<<",";
+        }
+        if (i != _size-1) 
+            out<<std::endl;
     }
+
     out.close();
     return;
 }
@@ -1781,9 +1789,10 @@ std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f,
  * From [6+2size+2]
  * "NLambdas_Sized_1", number of lambdas with size 1 (single links)
  * "NLambdas_Sized_2", number of lambdas with size 2 (the normal lambda)
+ * "NLambdas_Sized_i", number of lambdas with size i (i-lambda)
  * etc for all sizes up to max...
  * 
- * From [6+2size+3]
+ * From after that
  * "Lambda0" upvertex, downvertex1, downvertex2, etc... ENDL
  * "Lambda1", upvertex, downvertex2, downvertex2, etc... ENDL
  * etc for all lambdas...
@@ -1801,7 +1810,7 @@ void EmbeddedCauset::save_lambdas(const char* path_file_ext,
 
     std::fstream out;
     out.open(path_file_ext, std::ios::app);
-    out<<"r_S"       <<2*_spacetime._mass<<std::endl;
+    out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
 
     for (std::pair<int,int> xy : count_lambdas_fromCMatrix(t_f, r_S))
     {
@@ -1809,14 +1818,19 @@ void EmbeddedCauset::save_lambdas(const char* path_file_ext,
     }
      
     int i = 0;
-    for (std::pair<int,std::vector<int>> lambda_i 
-         : get_lambdas_fromCMatrix(t_f, r_S))
+    auto lambdas = get_lambdas_fromCMatrix(t_f, r_S);
+    int N = lambdas.size();
+    for (std::pair<int,std::vector<int>> lambda_i : lambdas)
     {
-        out<<"Lambda"<<i<<std::endl;
+        out<<"Lambda"<<i<<",";
         out<<lambda_i.first<<",";
-        for (int label : lambda_i.second)
-            out<<label<<",";
-        out<<std::endl;
+        for (int j = 0; j < lambda_i.second.size(); j++)
+        {
+            out<<lambda_i.second[j];
+            if (j != lambda_i.second.size()-1)
+                out<<",";
+        }
+        if (i != N-1) out<<std::endl;
         i++;
     }
 
@@ -1871,7 +1885,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
                         {
                             lambdas[j].push_back(i);
                             if (_coords[i][0] < mintime)
-                            mintime = _coords[i][0];
+                            {
+                                mintime = _coords[i][0];
+                            }
                         }
                     }
                 }
@@ -1972,6 +1988,7 @@ std::map<int,int> EmbeddedCauset::get_lambdas_distr(const std::map<int, int> &
     //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
     {
+        if (pair.second != 0)
         lambdas_distr[pair.second] += 1;
     }
     return lambdas_distr;

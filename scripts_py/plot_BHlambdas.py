@@ -20,11 +20,26 @@ import os
 dim = 2
 card = 25
 use_redge_in_name_file = True
-edge = 5.00
+edge = 2.50
 
 isBH = True
 isEFv = False
 isS = False
+
+
+ps = {"text.usetex": True,
+      "font.size" : 16,
+      "font.family" : "Times New Roman",
+      "axes.labelsize": 16,
+      "legend.fontsize": 14,
+      "xtick.labelsize": 14,
+      "ytick.labelsize": 14,
+      "figure.figsize": [7.5, 6],
+      "mathtext.default": "default"
+       }
+plt.rcParams.update(ps)
+del ps
+
 
 
 path = os.getcwd() # folder path
@@ -58,6 +73,6 @@ if use_redge_in_name_file:
 file_name += ".txt"
 print(file_name)
 
-ocplt.plot_causet_and_lambdas_and_lambdasdistr(file_name)
+ocplt.plot_causet(file_name)
 
 # %%

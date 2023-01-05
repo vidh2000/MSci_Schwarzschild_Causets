@@ -31,7 +31,7 @@ using namespace std::chrono;
 std::vector<int> cards = {25, 50, 75, 100, 150, 250, 500};//, 150, 200, 500};
 int dim = 2;
 double mass = 1;
-vector<std::string> metrics = {"EF(original)", "EF(uv)", "S"} ;
+vector<std::string> metrics = {"EF(original)"};//, "EF(uv)", "S"} ;
 
 // Shape Parameters
 const char* name = "cube";

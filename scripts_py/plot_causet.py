@@ -69,7 +69,7 @@ print("Dim:", C.dim)
 # print("Past_links:\n", C.past_links)
 
 # Plotting setup:
-cplt.setDefaultColors('UniYork')  # using University of York brand colours
+cplt.setDefaultColors('ImperialLondon')  # using University of York brand colours
 
 if C.dim==3:
     dims: List[int] = [1,2,0]  # choose the (order of) plot dimensions
