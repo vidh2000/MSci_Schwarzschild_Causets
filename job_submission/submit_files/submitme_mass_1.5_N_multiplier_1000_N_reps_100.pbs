@@ -1,0 +1,10 @@
+#!/bin/sh
+#PBS -lselect=1:ncpus=48:mem=16gb
+#PBS -lwalltime=08:00:00
+#PBS -o /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/test_outfolder
+#PBS -e /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/test_errfolder
+
+export OMP_NUM_THREADS=48
+
+file=/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file_linkcounting.sh 1.5 1000 100
+sh 
