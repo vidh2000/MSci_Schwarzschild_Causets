@@ -37,9 +37,6 @@ echo Finished building the executable
 # Go into the directory of the executable file
 cd $mainDir$runfileRelativeDir
 
-# Check if inside right directory
-#echo "Currently inside -->"
-#pwd
 
 # Execute the created .exe program 
 #echo ${runfilename::-4}
