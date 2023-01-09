@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#PBS -lselect=1:ncpus=8:mem=4gb
+#PBS -lwalltime=00:10:00
+#PBS -o /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/test_outfolder
+#PBS -e /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/test_errfolder
+
+# Change to the submission directory
+
+file=/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/hello_world.sh
+
+sh $file
+
+
+
+
+
