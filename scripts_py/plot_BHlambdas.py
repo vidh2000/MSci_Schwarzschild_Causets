@@ -18,9 +18,9 @@ import os
 ########################################################
 # Load file
 dim = 2
-card = 25
+card = 500
 use_redge_in_name_file = True
-edge = 2.50
+edge = 0.50
 
 isBH = True
 isEFv = False
