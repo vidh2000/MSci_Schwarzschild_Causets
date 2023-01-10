@@ -1,0 +1,1 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh: line 28: 2227567 Segmentation fault      ./${runfilename::-4}".exe" $mass $N_multiplier $N_reps

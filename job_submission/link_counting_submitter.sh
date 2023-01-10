@@ -64,9 +64,16 @@ echo "echo Building the executable..." >> $sh_run_file
 echo "python ${job_submissionsDir}run_cpp_file.py" '$mainDir$runfileRelativeDir $runfilename' >> $sh_run_file
 echo "echo Finished building the executable" >> $sh_run_file
 echo "" >> $sh_run_file
-echo "# Go into the directory of the executable file" >> $sh_run_file
+echo "echo Go into the directory of the executable file:" >> $sh_run_file
 echo 'cd $mainDir$runfileRelativeDir' >> $sh_run_file
+echo "pwd" >> $sh_run_file
+echo "Files in the directory:"
+echo "ls" >> $sh_run_file
 echo "" >> $sh_run_file
+echo "" >> $sh_run_file
+echo "mass=${mass}" >> $sh_run_file
+echo "N_multiplier=${N_multiplier}" >> $sh_run_file
+echo "N_reps=${N_reps}" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# Execute the created .exe program" >> $sh_run_file
 echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
@@ -88,8 +95,8 @@ echo "" >> $submitfile
 echo "echo Using ${ncpus} cores" >> $submitfile
 echo "echo Using ${mem}GB of RAM" >> $submitfile
 echo "" >> $submitfile
-echo "sh ${sh_run_file}" >> $submitfile
 echo "echo Running ${sh_run_file}" >> $submitfile
+echo "sh ${sh_run_file}" >> $submitfile
 
 #__________________________________________________________________
 ##### Submit the job for this mass #####

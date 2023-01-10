@@ -18,9 +18,15 @@ echo Building the executable...
 python /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_cpp_file.py $mainDir$runfileRelativeDir $runfilename
 echo Finished building the executable
 
-# Go into the directory of the executable file
+echo Go into the directory of the executable file:
 cd $mainDir$runfileRelativeDir
+pwd
+ls
 
+
+mass=1.5
+N_multiplier=400
+N_reps=10
 
 # Execute the created .exe program
 ./${runfilename::-4}".exe" $mass $N_multiplier $N_reps

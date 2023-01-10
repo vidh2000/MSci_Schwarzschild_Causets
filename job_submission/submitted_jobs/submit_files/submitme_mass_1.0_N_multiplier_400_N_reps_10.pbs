@@ -9,5 +9,5 @@ export OMP_NUM_THREADS=48
 echo Using 48 cores
 echo Using 16GB of RAM
 
-sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh
 echo Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh
+sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh
