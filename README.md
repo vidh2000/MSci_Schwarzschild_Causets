@@ -30,6 +30,7 @@ Most of the implemented code has been tested. The test files are in scripts_cpp/
 
 # Examples
 
+The following is a plot of a 150-events Causet embedded in a cubic region of a 2D Schwarzschild spacetime, in EF-t^* coordinates. Light cones on the manifold of three points are also explicitly shown.
 ![Example plot for a sprinkle in 2D Schwarzschild spacetime](figures/Schwarzschild/N150_2D_r=4.png)
 
 # Use and License
