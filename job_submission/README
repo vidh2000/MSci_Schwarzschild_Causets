@@ -1,0 +1,8 @@
+Use _________submitter.sh files to submit files, either
+	- linkcounting
+	- lambda counting
+Other things are "old", before the proper job submission scripts were written
+which submit 1 job per mass.
+
+The results are then written into the text file with avg and std of the links/lambdas
+counted for specific causet generation configuration.

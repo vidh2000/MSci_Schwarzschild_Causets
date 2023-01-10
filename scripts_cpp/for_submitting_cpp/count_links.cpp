@@ -47,7 +47,10 @@ double mass = std::atof(argv[1]);
 int N_multiplier = std::atoi(argv[2]); //1000;
 int N_reps = std::atoi(argv[3]);
 
-
+std::cout << "PARAMETERS used in the causet generation:\n";
+std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="
+                <<N_reps<<"\n\n";
+                
 int dim = 4; //want it to be "hard coded = 4"
 std::vector<double> masses = {mass};
 std::vector<int> cards = {};
