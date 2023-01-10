@@ -5,14 +5,17 @@
 ############################  TO CHANGE ################################
 ########################################################################
 
-# Files you want to run in 
+### Files you want to run in 
+runfilename="link_counting_4D_futmatrix.cpp"
 #runfilename="speed_testing_BH.cpp"
 #runfilename="test_hello_world.cpp"
-runfilename="link_counting_4D_futmatrix.cpp"
 
-# Specify relative path from MSci_Schwarzschild_Causets
+### Specify relative path from MSci_Schwarzschild_Causets
 # to the .cpp file you want to compile/execute
 runfileRelativeDir="scripts_cpp/tests/"
+
+
+
 
 ########################################################################
 ######################## Leave below alone #############################
@@ -36,10 +39,7 @@ echo Finished building the executable
 # Go into the directory of the executable file
 cd $mainDir$runfileRelativeDir
 
-# Check if inside right directory
-#echo "Currently inside -->"
-#pwd
 
 # Execute the created .exe program 
 #echo ${runfilename::-4}
-./${runfilename::-4}".exe"
+./${runfilename::-4}".exe" 
