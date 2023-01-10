@@ -1,6 +1,6 @@
 
 #%% 
-import causetplotting as ocplt
+import CausetPlotting as ocplt
 
 import matplotlib.pyplot as plt
 import numpy as np
