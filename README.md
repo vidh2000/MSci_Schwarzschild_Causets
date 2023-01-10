@@ -26,7 +26,7 @@ The modules (classes and functions) are documented.
 
 # Testing
 
-Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name starts with 'test'. 
+Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'. 
 
 # Examples
 
@@ -39,7 +39,6 @@ stefano(dot)veroni19[at]imperial(dot)ac(dot)uk
 vid(dot)homsak19[at]imperial(dot)ac(dot)uk
 
 The source code is published under the BSD 3-Clause License, see [license file](LICENSE.md).
-
 Copyright (c) 2020-2022, Stefano Veroni, Vid Homsak
 
 # Further Information
