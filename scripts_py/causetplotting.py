@@ -935,8 +935,8 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0, **plot_kwargs):
                         color=facecolor, alpha = link_alpha, lw = link_lw,
                         zorder = 5)
 
-        #NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
-        lambdas_labels = np.array(lambdas).flatten()
+        ##NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
+        lambdas_labels = [lbl for lambda_i in lambdas for lbl in lambda_i]
         for i in range(size):
             if not (i in lambdas_labels):
                 ti = coords[i][0]
@@ -944,13 +944,21 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0, **plot_kwargs):
                 for j in [i] + fut_links[i]:
                     tj = coords[j][0]
                     xj = coords[j][1]
-                    plt.plot([xi, xj], [ti, tj], 
-                                marker = "o", markersize = markersize, 
-                                markeredgecolor = "black", 
-                                markerfacecolor = std_color,
-                                ls = "solid", color = std_color, 
-                                alpha = link_alpha, lw = link_lw,
-                                zorder = 5)
+                    if not (j in lambdas_labels):
+                        plt.plot([xi, xj], [ti, tj], 
+                                    marker = "o", markersize = markersize, 
+                                    markeredgecolor = "black", 
+                                    markerfacecolor = std_color,
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 5)
+                    else:
+                        plt.plot([xi, xj], [ti, tj], 
+                                    marker = "o", markersize = 0,
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 5)
+
         
         #FINALLY MARK THE HORIZON
         ys = plt.ylim()

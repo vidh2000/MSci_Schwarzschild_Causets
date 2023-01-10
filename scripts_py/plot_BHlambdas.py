@@ -1,15 +1,6 @@
 
 #%% 
-from __future__ import annotations
-from typing import List, Tuple  
-from causets.sprinkledcauset import SprinkledCauset
-from causets.embeddedcauset import EmbeddedCauset  
-from causets.spacetimes import FlatSpacetime, deSitterSpacetime  
-from causets.shapes import CoordinateShape  
-from causets.causetevent import CausetEvent  
-import causets.causetplotting as cplt  
-
-import causets.OURcausetplotting as ocplt
+import causetplotting as ocplt
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -78,6 +69,6 @@ if (centre_cube_in_horizon):
 file_name += ".txt"
 print(file_name)
 
-ocplt.plot_causet_and_lambdas(file_name)
+ocplt.plot_causet_and_lambas(file_name)
 
 # %%
