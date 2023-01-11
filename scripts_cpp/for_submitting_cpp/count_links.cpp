@@ -186,4 +186,14 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         << std::endl;
 }
 std::cout<<std::endl;
+
+
+/* Save the average and standard deviation of links for current settings
+        into a text file to be read afterwards*/
+const char* path_file_ext = ""
+
+std::ofstream out;
+out.open(path_file_ext) 
+
+
 }

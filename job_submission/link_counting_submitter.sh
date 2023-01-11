@@ -6,7 +6,7 @@
 ###############################################################################
 
 # DIRECTORIES
-homeDir="/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/"
+homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 
