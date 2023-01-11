@@ -1,0 +1,90 @@
+Using 48 cores
+Using 16GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+count_links.cpp
+count_links.exe
+PARAMETERS used in the causet generation:
+mass=1, N_multiplier=400, N_reps=10
+
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+N_multiplier = 400
+ 
+======================================================
+Main interation count: 1/1
+N = 400. r_S = 2. Radius = 4. Dimension = 4. Height = 4. Centered at t = -2.
+M=1, 1/10
+Time taken generating for N = 400: 0.050449 seconds
+t_min for elements in these links = -3.70062
+N_links counted = 9
+Time taken in count_links_fromCMatrix for N = 400: 0.000296 seconds
+M=1, 2/10
+Time taken generating for N = 400: 0.057091 seconds
+t_min for elements in these links = -2.56379
+N_links counted = 11
+Time taken in count_links_fromCMatrix for N = 400: 0.00029 seconds
+M=1, 3/10
+Time taken generating for N = 400: 0.107624 seconds
+t_min for elements in these links = -2.87315
+N_links counted = 10
+Time taken in count_links_fromCMatrix for N = 400: 0.000263 seconds
+M=1, 4/10
+Time taken generating for N = 400: 0.021699 seconds
+t_min for elements in these links = -2.63571
+N_links counted = 10
+Time taken in count_links_fromCMatrix for N = 400: 0.000268 seconds
+M=1, 5/10
+Time taken generating for N = 400: 0.024382 seconds
+t_min for elements in these links = -2.71484
+N_links counted = 8
+Time taken in count_links_fromCMatrix for N = 400: 0.000249 seconds
+M=1, 6/10
+Time taken generating for N = 400: 0.023919 seconds
+t_min for elements in these links = -2.94135
+N_links counted = 11
+Time taken in count_links_fromCMatrix for N = 400: 0.000277 seconds
+M=1, 7/10
+Time taken generating for N = 400: 0.018024 seconds
+t_min for elements in these links = -3.49781
+N_links counted = 9
+Time taken in count_links_fromCMatrix for N = 400: 0.000252 seconds
+M=1, 8/10
+Time taken generating for N = 400: 0.056182 seconds
+t_min for elements in these links = -2.63956
+N_links counted = 16
+Time taken in count_links_fromCMatrix for N = 400: 0.000287 seconds
+M=1, 9/10
+Time taken generating for N = 400: 0.018273 seconds
+t_min for elements in these links = -2.55636
+N_links counted = 5
+Time taken in count_links_fromCMatrix for N = 400: 0.000284 seconds
+M=1, 10/10
+Time taken generating for N = 400: 0.048886 seconds
+t_min for elements in these links = -2.66967
+N_links counted = 4
+Time taken in count_links_fromCMatrix for N = 400: 0.000277 seconds
+Number of links over the horizon = 9.3 +- 3.16386
+Average time taken for generating 10 causets with N = 400:
+0.0430521 seconds
+
+===============================================================
+
+Program took in total: 0.430542 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 400
+Results:
+M = 1, Card = 400, N_links = 9.3 +- 3.16386
+Saving to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/linkcounting_files/M=1.00_Rho=400_Card=400_r=4.0_dur=4.0.txt

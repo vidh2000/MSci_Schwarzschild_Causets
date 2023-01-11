@@ -25,6 +25,11 @@
 #include <boost/range/combine.hpp>
 #include <omp.h>
 
+// $HOME var get
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 using namespace std::chrono;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -184,6 +189,41 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         std::cout << "M = "<<mass<< ", Card = " << N_multiplier*mass*mass*mass
         << ", N_links = " << N_links_avg << " +- " << N_links_std 
         << std::endl;
+
+        /* Save the average and standard deviation of links for current settings
+        into a text file to be read afterwards*/
+        const char* homeDir = getenv("HOME");
+        std::stringstream stream1;
+        stream1 << std::fixed << std::setprecision(2) << mass;
+        std::string mass_str = stream1.str();
+        std::stringstream stream2;
+        stream2 << std::fixed << std::setprecision(1) << radii[0];
+        std::string radius_str = stream2.str();
+        std::stringstream stream3;
+        stream3 << std::fixed << std::setprecision(1) << durations[0];
+        std::string dur_str = stream3.str();
+
+        std::string filename = std::string(homeDir) 
+                + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
+                + "M=" + mass_str
+                + "_Rho=" + std::to_string(N_multiplier)
+                + "_Card=" + std::to_string(cards[0])
+                + "_r=" + radius_str
+                + "_dur=" + dur_str
+                + ".txt";
+        
+        std::cout << "Saving to the file: " << filename << std::endl;
+        
+        // Create/open the text file then write into it
+        std::ofstream out(filename);
+        out << "N_reps, N_links_avg, N_links_std,       " <<
+        N_reps << ", " << N_links_avg << ", " << N_links_std;
+        out.close();
+
 }
-std::cout<<std::endl;
+
+
+
+
+
 }

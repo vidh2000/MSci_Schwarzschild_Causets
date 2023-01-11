@@ -45,9 +45,12 @@ optimisations = [ " ",
     ]
 
 # Include paths
+from os.path import expanduser
+home = expanduser("~")
 includes = [" ",
     "-I",
-    "/rds/general/user/vh119/home/boost/boost_1_80_0",
+    f"{home}/boost/boost_1_80_0",
+    #"/rds/general/user/vh119/home/boost/boost_1_80_0"
     ]
 
 # Compile

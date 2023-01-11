@@ -6,7 +6,7 @@
 ###############################################################################
 
 # DIRECTORIES
-homeDir="/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/"
+homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 
@@ -24,7 +24,7 @@ runtime="00:30:00" #format: "hh:mm:ss"
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in 1.0 1.5 2.0
+for mass in 1.0
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
