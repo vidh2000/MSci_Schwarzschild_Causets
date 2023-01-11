@@ -72,7 +72,8 @@ ColorSchemes = {
 
 
 @default_kwargs(**my_kwargs)
-def plot_causet(file_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
+def plot_causet(file_ext, savefile_ext = 0, 
+                phi_limits = (0, 2*3.1416), projection = False,
                 **plot_kwargs):
     """
     PLot the causet. Highlight horizon if BlackHole.
@@ -88,6 +89,10 @@ def plot_causet(file_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
     
     phi_limits : tuple (default is (0, 2\pi))
         Sets limits of phi values plotted for 3D plot.
+    
+    projection : bool (default false).
+        Draw 3D plot as projection on 2D (t,r) space. Useful when phi_limits
+        are narrow.
 
     
     **plot_kwargs: These include
@@ -163,6 +168,7 @@ def plot_causet(file_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
     
 
     fig = plt.figure(figsize = figsize, tight_layout = True)
+    ax = plt.axes()
     
     if dim == 2:
         plt.ylabel("t*")
@@ -189,12 +195,12 @@ def plot_causet(file_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
         if min(np.array(coords)[:,1]) < 0:
             plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
         plt.ylim(ys)
+    
+    if dim == 3 and projection:
+        ax = fig.axes()
+        ax.set_xlabel("x")
+        ax.set_ylabel("t*")
 
-    if dim == 3:
-        plt.zlabel("t*")
-        plt.xlabel("x")
-        plt.ylabel("y")
-        
         for i in range(size):
             ti   = coords[i][0]
             ri   = coords[i][1]
@@ -207,31 +213,73 @@ def plot_causet(file_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
                     rj = coords[j][1]
                     phij = coords[j][2]
                     if phi_limits[0] < phij and phij < phi_limits[1]:
-                        xj = rj * np.cos(phij)
-                        yj = rj * np.sin(phij)
-                        plt.plot([xi, xj], [yi, yj], [ti, tj], 
+                        ax.plot([ri, rj], [ti, tj], 
                                     marker = "o", markersize = markersize, 
                                     markeredgecolor = "black", 
                                     markerfacecolor = std_color,
                                     ls = "solid", color = std_color, 
                                     alpha = link_alpha, lw = link_lw,
                                     zorder = 5)
-        
         #FINALLY MARK THE HORIZON
-        ys = plt.ylim()
+        ys = ax.set_ylim()
+        ax.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
+        if min(np.array(coords)[:,1]) < 0:
+            ax.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
+        ax.set_ylim(ys)
 
-        h = ys[1] - ys[0]
-        cz = (ys[0]+ys[1])/2
+    elif dim == 3:
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        
+        for i in range(size):
+            ti   = coords[i][0]
+            ri   = coords[i][1]
+            phii = coords[i][2]
+            if phi_limits[0] < phii and phii < phi_limits[1]:
+                xi = ri * np.cos(phii)
+                yi = ri * np.sin(phii)
+                meci = "red" if ri < r_S else "black"
+                ax.plot([xi], [yi], [ti], 
+                        marker = "o", markersize = markersize, 
+                        markeredgecolor = meci, 
+                        markerfacecolor = std_color,
+                        zorder = 5)
+                for j in [i] + fut_links[i]:
+                    tj = coords[j][0]
+                    rj = coords[j][1]
+                    phij = coords[j][2]
+                    if phi_limits[0] < phij and phij < phi_limits[1]:
+                        xj = rj * np.cos(phij)
+                        yj = rj * np.sin(phij)
+                        mecj = "red" if rj < r_S else "black"
+                        ax.plot([xj], [yj], [tj], 
+                                marker = "o", markersize = markersize, 
+                                markeredgecolor = mecj, 
+                                markerfacecolor = std_color,
+                                zorder = 5)
+                        ax.plot([xi, xj], [yi, yj], [ti, tj], markersize = 0, 
+                                ls = "solid", color = std_color, 
+                                alpha = link_alpha, lw = link_lw,
+                                zorder = 4)
+        #FINALLY MARK THE HORIZON
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
         Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
-        plt.plot_surface(Xc, Yc, Zc, alpha=0.2)
-
-        plt.ylim(ys)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
 
     if savefile_ext:
         plt.savefig(savefile_ext)
     plt.show()
 
-    return fig
+    return ax
 
 
 
@@ -362,9 +410,10 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
         plt.ylim(ys)
 
     if dim == 3:
-        plt.zlabel("t*")
-        plt.xlabel("x")
-        plt.ylabel("y")
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
 
         #START WITH LAMBDAS
         for lambda_i in lambdas:
@@ -388,7 +437,7 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
                     x = r * np.cos(phi)
                     y = r * np.sin(phi)
                     if phi_limits[0] < phi and phi < phi_limits[1]:
-                        plt.plot([xup, x], [yup, y], [tup, t], marker="o", 
+                        ax.plot([xup, x], [yup, y], [tup, t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,  
@@ -396,21 +445,23 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
                                 alpha = link_alpha, lw = link_lw,
                                 zorder = 5)
                     else:
-                        plt.plot([x], [y], [t], marker="o", 
+                        ax.plot([x], [y], [t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,
                                 zorder = 5)
         
         #FINALLY MARK THE HORIZON
-        ys = plt.ylim()
-        
-        h = ys[1] - ys[0]
-        cz = (ys[0]+ys[1])/2
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
         Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
-        plt.plot_surface(Xc, Yc, Zc, alpha=0.2)
-
-        plt.ylim(ys)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
 
     
     plt.subplot(r, c, 2)
@@ -533,19 +584,18 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
                         markerfacecolor=facecolor,ls = "solid", 
                         color=facecolor, alpha = link_alpha, lw = link_lw,
                         zorder = 5)
-        
         #FINALLY MARK THE HORIZON
         ys = plt.ylim()
         plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
-        
         if min(np.array(coords)[:,1]) < 0:
             plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
         plt.ylim(ys)
 
     if dim == 3:
-        plt.zlabel("t*")
-        plt.xlabel("x")
-        plt.ylabel("y")
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
 
         #START WITH LAMBDAS
         for lambda_i in lambdas:
@@ -569,7 +619,7 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
                     x = r * np.cos(phi)
                     y = r * np.sin(phi)
                     if phi_limits[0] < phi and phi < phi_limits[1]:
-                        plt.plot([xup, x], [yup, y], [tup, t], marker="o", 
+                        ax.plot([xup, x], [yup, y], [tup, t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,  
@@ -577,21 +627,22 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
                                 alpha = link_alpha, lw = link_lw,
                                 zorder = 5)
                     else:
-                        plt.plot([x], [y], [t], marker="o", 
+                        ax.plot([x], [y], [t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,
                                 zorder = 5)
-        
         #FINALLY MARK THE HORIZON
-        ys = plt.ylim()
-        
-        h = ys[1] - ys[0]
-        cz = (ys[0]+ys[1])/2
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
         Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
-        plt.plot_surface(Xc, Yc, Zc, alpha=0.2)
-
-        plt.ylim(ys)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
 
     if savefile_ext:
         plt.savefig(savefile_ext)
@@ -760,9 +811,10 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
         plt.ylim(ys)
 
     if dim == 3:
-        plt.zlabel("t*")
-        plt.xlabel("x")
-        plt.ylabel("y")
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
 
         #START WITH LAMBDAS
         for lambda_i in lambdas:
@@ -786,7 +838,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
                     x = r * np.cos(phi)
                     y = r * np.sin(phi)
                     if phi_limits[0] < phi and phi < phi_limits[1]:
-                        plt.plot([xup, x], [yup, y], [tup, t], marker="o", 
+                        ax.plot([xup, x], [yup, y], [tup, t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,  
@@ -794,7 +846,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
                                 alpha = link_alpha, lw = link_lw,
                                 zorder = 5)
                     else:
-                        plt.plot([x], [y], [t], marker="o", 
+                        ax.plot([x], [y], [t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,
@@ -818,7 +870,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
                             xj = rj * np.cos(phij)
                             yj = rj * np.sin(phij)
                             if not (j in lambdas_labels):
-                                plt.plot([xi, xj], [yi, yj], [ti, tj], 
+                                ax.plot([xi, xj], [yi, yj], [ti, tj], 
                                             marker = "o", markersize = markersize, 
                                             markeredgecolor = "black", 
                                             markerfacecolor = std_color,
@@ -826,21 +878,23 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
                                             alpha = link_alpha, lw = link_lw,
                                             zorder = 5)
                             else:
-                                plt.plot([xi, xj], [yi, yj], [ti, tj], 
+                                ax.plot([xi, xj], [yi, yj], [ti, tj], 
                                             marker = "o", markersize = 0,
                                             ls = "solid", color = std_color, 
                                             alpha = link_alpha, lw = link_lw,
                                             zorder = 5)
         
         #FINALLY MARK THE HORIZON
-        ys = plt.ylim()
-
-        h = ys[1] - ys[0]
-        cz = (ys[0]+ys[1])/2
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
         Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
-        plt.plot_surface(Xc, Yc, Zc, alpha=0.2)
-
-        plt.ylim(ys)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
 
     
     plt.subplot(r, c, 2)
@@ -862,7 +916,9 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
 
 @default_kwargs(**my_kwargs)
 def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0, 
-                            phi_limits = (0, 2*3.1416), **plot_kwargs):
+                            phi_limits = (0, 2*3.1416),
+                            projection = False,
+                            **plot_kwargs):
     """
     PLot the whole causet highlighting the lambdas.
     Time on vertical axis. The spatial dimensions can be 2 or 3.
@@ -877,7 +933,9 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
     
     phi_limits : tuple (default is (0, 2*\pi))
     
-    phi_limits: tuple (default is (0, 2\pi))
+    projection: bool (default is false)
+        Plot the 3D case as if it was a 2D (t,r) plot. Useful when phi_limits
+        pick a narrow interval.
 
     **plot_kwargs: These include
     - figsize. Default (7.5, 15).
@@ -954,8 +1012,10 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
             fut_links = [[int(v) for v in line if (v != "\n" and v != "")] 
                             for line in lines[6+3*size+3:6+4*size+3]]
     
-
+    ###############################################################
+    #PLOTTING
     fig = plt.figure(figsize = figsize, tight_layout = True)
+    ax = plt.axes()
     Ncolors = len(lambdas_colors)
     
     if dim == 2:
@@ -976,11 +1036,11 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
             for label in lambda_i[1:]:
                 t = coords[label][0]
                 x = coords[label][1]
-                plt.plot(x, t, marker="o", 
+                plt.plot([xup, x], [tup, t], marker="o", 
                         markersize = markersize, 
                         markeredgecolor="black", 
-                        markerfacecolor=facecolor, zorder = 2)
-                plt.plot([xup, x], [tup, t], ls = "solid", 
+                        markerfacecolor=facecolor, 
+                        ls = "solid", 
                         color=facecolor, alpha = link_alpha, lw = link_lw,
                         zorder = 5)
 
@@ -1009,8 +1069,6 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
                                     ls = "solid", color = std_color, 
                                     alpha = link_alpha, lw = link_lw,
                                     zorder = 5)
-
-        
         #FINALLY MARK THE HORIZON
         ys = plt.ylim()
         plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
@@ -1018,11 +1076,100 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
         if min(np.array(coords)[:,1]) < 0:
             plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
         plt.ylim(ys)
+    
 
-    if dim == 3:
-        plt.zlabel("t*")
-        plt.xlabel("x")
-        plt.ylabel("y")
+    # if dim == 3 and projection:
+    #     ax.set_xlabel("x")
+    #     ax.set_ylabel("y")
+
+    #     START WITH LAMBDAS
+    #     for lambda_i in lambdas:
+    #         Set Color based on Size
+    #         lambdas_size = len(lambda_i)
+    #         if lambdas_size >= Ncolors:
+    #             lambdas_size = Ncolors-1
+    #         facecolor = lambdas_colors[lambdas_size]
+    #         Plot
+    #         uplabel = lambda_i[0]
+    #         tup = coords[uplabel][0]
+    #         rup = coords[uplabel][1]
+    #         phiup = coords[uplabel][2]
+    #         xup = rup * np.cos(phiup)
+    #         yup = rup * np.sin(phiup)
+    #         if phi_limits[0] < phiup and phiup < phi_limits[1]:
+    #             ax.plot([rup], [tup], marker="o", 
+    #                     markersize = markersize, 
+    #                     markeredgecolor="black", 
+    #                     markerfacecolor=facecolor,
+    #                     zorder = 5)
+    #         for label in lambda_i[1:]:
+    #             t = coords[label][0]
+    #             r = coords[label][1]
+    #             phi = coords[label][2]
+    #             if phi_limits[0] < phi and phi < phi_limits[1]:
+    #                 x = r * np.cos(phi)
+    #                 y = r * np.sin(phi)
+    #                 if phi_limits[0] < phiup and phiup < phi_limits[1]:
+    #                     mecup = "red" if rup < r_S else "black"
+    #                     mec = "red" if r < r_S else "black"
+    #                     ax.plot([rup, r], [tup, t], marker="o", 
+    #                             markersize = markersize, 
+    #                             markeredgecolor=[mecup, mec], 
+    #                             markerfacecolor=facecolor,  
+    #                             ls = "solid", color = std_color, 
+    #                             alpha = link_alpha, lw = link_lw,
+    #                             zorder = 5)
+    #                 else:
+    #                     ax.plot([r], [t], marker="o", 
+    #                             markersize = markersize, 
+    #                             markeredgecolor=mec, 
+    #                             markerfacecolor=facecolor,
+    #                             zorder = 5)
+        
+    #     NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
+    #     lambdas_labels = [lbl for lambda_i in lambdas for lbl in lambda_i]
+    #     for i in range(size):
+    #         if not (i in lambdas_labels):
+    #             ti   = coords[i][0]
+    #             ri   = coords[i][1]
+    #             phii = coords[i][2]
+    #             if phi_limits[0] < phii and phii < phi_limits[1]:
+    #                 xi = ri * np.cos(phii)
+    #                 yi = ri * np.sin(phii)
+    #                 for j in [i] + fut_links[i]:
+    #                     tj = coords[j][0]
+    #                     rj = coords[j][1]
+    #                     phij = coords[j][2]
+    #                     if phi_limits[0] < phij and phij < phi_limits[1]:
+    #                         xj = rj * np.cos(phij)
+    #                         yj = rj * np.sin(phij)
+    #                         if not (j in lambdas_labels):
+    #                             ax.plot([ri, rj], [ti, tj], 
+    #                                         marker = "o", markersize = markersize, 
+    #                                         markeredgecolor = "black", 
+    #                                         markerfacecolor = std_color,
+    #                                         ls = "solid", color = std_color, 
+    #                                         alpha = link_alpha, lw = link_lw,
+    #                                         zorder = 5)
+    #                         else:
+    #                             ax.plot([ri, rj], [ti, tj], 
+    #                                         marker = "o", markersize = 0,
+    #                                         ls = "solid", color = std_color, 
+    #                                         alpha = link_alpha, lw = link_lw,
+    #                                         zorder = 5)
+    #     FINALLY MARK THE HORIZON
+    #     ys = plt.ylim()
+    #     plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
+    #     if min(np.array(coords)[:,1]) < 0:
+    #         plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
+    #     plt.ylim(ys)
+
+
+    elif dim == 3:
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
 
         #START WITH LAMBDAS
         for lambda_i in lambdas:
@@ -1030,7 +1177,7 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
             lambdas_size = len(lambda_i)
             if lambdas_size >= Ncolors:
                 lambdas_size = Ncolors-1
-            facecolor = lambdas_colors[lambdas_size]
+            facecolor = lambdas_colors[lambdas_size-1]
             #Plot
             uplabel = lambda_i[0]
             tup = coords[uplabel][0]
@@ -1038,6 +1185,12 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
             phiup = coords[uplabel][2]
             xup = rup * np.cos(phiup)
             yup = rup * np.sin(phiup)
+            if phi_limits[0] < phiup and phiup < phi_limits[1]:
+                plt.plot([xup], [yup], [tup], marker="o", 
+                        markersize = markersize, 
+                        markeredgecolor="red", 
+                        markerfacecolor=facecolor,
+                        zorder = 5)
             for label in lambda_i[1:]:
                 t = coords[label][0]
                 r = coords[label][1]
@@ -1045,23 +1198,21 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
                 if phi_limits[0] < phi and phi < phi_limits[1]:
                     x = r * np.cos(phi)
                     y = r * np.sin(phi)
-                    if phi_limits[0] < phi and phi < phi_limits[1]:
-                        plt.plot([xup, x], [yup, y], [tup, t], marker="o", 
-                                markersize = markersize, 
-                                markeredgecolor="black", 
-                                markerfacecolor=facecolor,  
-                                ls = "solid", color = std_color, 
-                                alpha = link_alpha, lw = link_lw,
-                                zorder = 5)
-                    else:
-                        plt.plot([x], [y], [t], marker="o", 
+                    ax.plot([x], [y], [t], marker="o", 
                                 markersize = markersize, 
                                 markeredgecolor="black", 
                                 markerfacecolor=facecolor,
                                 zorder = 5)
+                    if phi_limits[0] < phiup and phiup < phi_limits[1]:
+                        ax.plot([xup, x], [yup, y], [tup, t], 
+                                markersize = 0, 
+                                ls = "solid", color = std_color, 
+                                alpha = link_alpha, lw = link_lw,
+                                zorder = 4)
+                        
         
         #NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
-        lambdas_labels = np.array(lambdas).flatten()
+        lambdas_labels = [lbl for lambda_i in lambdas for lbl in lambda_i]
         for i in range(size):
             if not (i in lambdas_labels):
                 ti   = coords[i][0]
@@ -1073,40 +1224,39 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
                     for j in [i] + fut_links[i]:
                         tj = coords[j][0]
                         rj = coords[j][1]
-                        phij = coords[label][2]
+                        phij = coords[j][2]
                         if phi_limits[0] < phij and phij < phi_limits[1]:
                             xj = rj * np.cos(phij)
                             yj = rj * np.sin(phij)
+                            ax.plot([xi, xj], [yi, yj], [ti, tj], 
+                                    markersize = 0, 
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 4)
                             if not (j in lambdas_labels):
-                                plt.plot([xi, xj], [yi, yj], [ti, tj], 
-                                            marker = "o", markersize = markersize, 
-                                            markeredgecolor = "black", 
-                                            markerfacecolor = std_color,
-                                            ls = "solid", color = std_color, 
-                                            alpha = link_alpha, lw = link_lw,
-                                            zorder = 5)
-                            else:
-                                plt.plot([xi, xj], [yi, yj], [ti, tj], 
-                                            marker = "o", markersize = 0,
-                                            ls = "solid", color = std_color, 
-                                            alpha = link_alpha, lw = link_lw,
-                                            zorder = 5)
-        
+                                mecj = "red" if rj < r_S else "black"
+                                ax.plot([xj], [yj], [tj], 
+                                        marker = "o", markersize = markersize, 
+                                        markeredgecolor = mecj, 
+                                        markerfacecolor = std_color,
+                                        zorder = 5)
         #FINALLY MARK THE HORIZON
-        ys = plt.ylim()
-
-        h = ys[1] - ys[0]
-        cz = (ys[0]+ys[1])/2
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
         Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
-        plt.plot_surface(Xc, Yc, Zc, alpha=0.2)
-
-        plt.ylim(ys)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
 
     if savefile_ext:
         plt.savefig(savefile_ext)
     plt.show()
 
-    return fig
+    return ax
 
 
 
@@ -1120,12 +1270,22 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
 
 # from https://stackoverflow.com/questions/26989131/add-cylinder-to-plot 
 def cylinder_along_z(center_x,center_y,center_z,radius,height_z):
-    z = np.linspace(0, height_z, 50) + center_z
-    theta = np.linspace(0, 2*np.pi, 50)
+    z = np.linspace(-(height_z/2), (height_z/2), 100) + center_z
+    theta = np.linspace(0, 2*np.pi, 100)
     theta_grid, z_grid=np.meshgrid(theta, z)
     x_grid = radius*np.cos(theta_grid) + center_x
     y_grid = radius*np.sin(theta_grid) + center_y
     return x_grid,y_grid,z_grid
+
+def point_satisfies_phi_limits(coord, phi_limits):
+    phi = coord[2]
+    return phi_limits[0] < phi and phi < phi_limits[1]
+
+def take_projection(coords, futs_or_cmatrix, which_between_futs_and_matrix, 
+                    phi_limits):
+    N = len(coords)
+
+    return coords, futs_or_cmatrix, which_between_futs_and_matrix
 
 
 

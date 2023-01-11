@@ -1,5 +1,11 @@
 ## INSTRUCTIONS and USEFUL TIPS
 
+causeplotting.py/take_projection()'s definition and use in plot_causet()
+
+
+
+
+
 
 To fix:
 - Volume() method should probably not work in the shapes.cpp

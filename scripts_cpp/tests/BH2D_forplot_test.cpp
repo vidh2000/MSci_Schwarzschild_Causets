@@ -29,7 +29,7 @@ using namespace std::chrono;
 
 ////////////////////////////////
 std::vector<int> cards = {25, 50, 75, 100, 150, 250, 500};//, 150, 200, 500};
-vector<int> dims = {3};
+vector<int> dims = {2}; //ONLY DO 2 HERE
 double mass = 1;
 vector<std::string> metrics = {"EF(original)"};//, "EF(uv)", "S"} ;
 

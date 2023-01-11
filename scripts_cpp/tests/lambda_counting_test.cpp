@@ -34,19 +34,19 @@ using namespace std::chrono;
 
 
 ////////////////////////////////
-int dim = 2;
+vector<int> dims = {3};
 double t_f = 0;
 double r_S = 2;
-std::vector<int> cards = {500, 1000, 2000};
+std::vector<int> cards = {25, 50, 75, 100, 150, 200, 250, 500};
 
 // Cube Shape Parameters
-double radius = 5;
-double myduration = 5;
-vector<double> loop_edges = {0.5}; //edges of cubes to loop over 
-bool centre_cube_in_horizon = true;//(spatially center 2D cube on horizon)
+double radius = 4;
+double myduration = 4;
+vector<double> loop_edges = {5}; //edges of cubes to loop over 
+bool centre_cube_in_horizon = false;//(spatially center 2D cube on horizon)
 
 // Sprinkle Parameters
-bool poisson          = false;
+bool poisson          = true;
 bool make_matrix      = false;
 bool special          = false;
 bool use_transitivity = true;
@@ -64,13 +64,12 @@ int main()
 {
     auto beginning = high_resolution_clock::now();
 
+    for (int dim : dims)
+    { 
     for (int card : cards)
     {
-        std::cout<<"\nCARD "<<card<<" \n";
         for (double edge : loop_edges)
         {
-            std::cout<<"EDGE "<<edge<<" \n";
-
             // Set up shape
             std::vector<const char*> shapes = {"cylinder", "cube"};
             vector<double> centre (dim, 0);
@@ -81,10 +80,19 @@ int main()
                 centre[0] -= edge/2;
                 if (centre_cube_in_horizon)
                     centre[1] = r_S;
+                std::cout<<" \nDIM "<<dim
+                         <<" ;CARD "<<card
+                         <<" ;EDGE "<<edge
+                         <<"\n";
             }
             else
             {
                 centre[0] -= myduration/2;
+                std::cout<<" \nDIM "<<dim
+                         <<" ;CARD "<<card
+                         <<" ;RADIUS  "<<radius
+                         <<" ;DURATION"<<myduration
+                         <<"\n";
             }
             CoordinateShape Shape(dim,shapes[shapeindex],centre,
                                   radius, myduration, edge);
@@ -116,6 +124,7 @@ int main()
 
             C.save_lambdas(path_file, "sets", t_f, r_S);
         }
+    }
     }
 
 auto finish = high_resolution_clock::now();
