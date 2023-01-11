@@ -1,0 +1,5 @@
+Storage option,sets
+Size,500
+Dimension,2
+Shape,cube
+Spacetime,BlackHole

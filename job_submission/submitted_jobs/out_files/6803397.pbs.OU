@@ -1,0 +1,90 @@
+Using 48 cores
+Using 16GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.5_N_multiplier_400_N_reps_10.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+count_links.cpp
+count_links.exe
+PARAMETERS used in the causet generation:
+mass=1.5, N_multiplier=400, N_reps=10
+
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+N_multiplier = 400
+ 
+======================================================
+Main interation count: 1/1
+N = 1350. r_S = 3. Radius = 6. Dimension = 4. Height = 4. Centered at t = -2.
+M=1.5, 1/10
+Time taken generating for N = 1350: 0.208569 seconds
+t_min for elements in these links = -2.86803
+N_links counted = 15
+Time taken in count_links_fromCMatrix for N = 1350: 0.005698 seconds
+M=1.5, 2/10
+Time taken generating for N = 1350: 0.202003 seconds
+t_min for elements in these links = -2.41164
+N_links counted = 15
+Time taken in count_links_fromCMatrix for N = 1350: 0.005224 seconds
+M=1.5, 3/10
+Time taken generating for N = 1350: 0.145541 seconds
+t_min for elements in these links = -2.66481
+N_links counted = 15
+Time taken in count_links_fromCMatrix for N = 1350: 0.005712 seconds
+M=1.5, 4/10
+Time taken generating for N = 1350: 0.333246 seconds
+t_min for elements in these links = -2.4826
+N_links counted = 15
+Time taken in count_links_fromCMatrix for N = 1350: 0.006739 seconds
+M=1.5, 5/10
+Time taken generating for N = 1350: 0.137594 seconds
+t_min for elements in these links = -2.36635
+N_links counted = 16
+Time taken in count_links_fromCMatrix for N = 1350: 0.00562 seconds
+M=1.5, 6/10
+Time taken generating for N = 1350: 0.127964 seconds
+t_min for elements in these links = -3.25703
+N_links counted = 9
+Time taken in count_links_fromCMatrix for N = 1350: 0.047747 seconds
+M=1.5, 7/10
+Time taken generating for N = 1350: 0.167272 seconds
+t_min for elements in these links = -3.54388
+N_links counted = 16
+Time taken in count_links_fromCMatrix for N = 1350: 0.005329 seconds
+M=1.5, 8/10
+Time taken generating for N = 1350: 0.172222 seconds
+t_min for elements in these links = -2.53776
+N_links counted = 17
+Time taken in count_links_fromCMatrix for N = 1350: 0.004867 seconds
+M=1.5, 9/10
+Time taken generating for N = 1350: 0.244765 seconds
+t_min for elements in these links = -2.52969
+N_links counted = 18
+Time taken in count_links_fromCMatrix for N = 1350: 0.006149 seconds
+M=1.5, 10/10
+Time taken generating for N = 1350: 0.228156 seconds
+t_min for elements in these links = -2.27759
+N_links counted = 17
+Time taken in count_links_fromCMatrix for N = 1350: 0.006145 seconds
+Number of links over the horizon = 15.3 +- 2.32594
+Average time taken for generating 10 causets with N = 1350:
+0.207547 seconds
+
+===============================================================
+
+Program took in total: 2.07549 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 400
+Results:
+M = 1.5, Card = 1350, N_links = 15.3 +- 2.32594
+
