@@ -1,0 +1,4 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp: In function ‘int main(int, char**)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:199:1: error: expected ‘,’ or ‘;’ before ‘std’
+ std::cout << path_file_ext << std::endl;
+ ^~~

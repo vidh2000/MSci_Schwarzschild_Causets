@@ -1,0 +1,17 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp: In function ‘int main(int, char**)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:197:46: error: expected ‘;’ before ‘std’
+         std::cout << "HomeDir = " << filename std::endl;
+                                              ^~~~
+                                              ;
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:199:25: error: invalid operands of types ‘const char [53]’ and ‘const char [3]’ to binary ‘operator+’
+         filename += "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         + "M=" + std::to_string(mass)
+                         ^~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:211:20: error: expected ‘;’ before ‘}’ token
+         out.close()
+                    ^
+                    ;
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:214:1:
+ }
+ ~                   

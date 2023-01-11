@@ -1,0 +1,90 @@
+Using 48 cores
+Using 16GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+count_links.cpp
+count_links.exe
+PARAMETERS used in the causet generation:
+mass=1, N_multiplier=400, N_reps=10
+
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+N_multiplier = 400
+ 
+======================================================
+Main interation count: 1/1
+N = 400. r_S = 2. Radius = 4. Dimension = 4. Height = 4. Centered at t = -2.
+M=1, 1/10
+Time taken generating for N = 400: 0.030468 seconds
+t_min for elements in these links = -3.95303
+N_links counted = 4
+Time taken in count_links_fromCMatrix for N = 400: 0.000836 seconds
+M=1, 2/10
+Time taken generating for N = 400: 0.028712 seconds
+t_min for elements in these links = -2.39052
+N_links counted = 4
+Time taken in count_links_fromCMatrix for N = 400: 0.000416 seconds
+M=1, 3/10
+Time taken generating for N = 400: 0.02727 seconds
+t_min for elements in these links = -3.42577
+N_links counted = 14
+Time taken in count_links_fromCMatrix for N = 400: 0.00038 seconds
+M=1, 4/10
+Time taken generating for N = 400: 0.04836 seconds
+t_min for elements in these links = -2.85697
+N_links counted = 9
+Time taken in count_links_fromCMatrix for N = 400: 0.000414 seconds
+M=1, 5/10
+Time taken generating for N = 400: 0.026439 seconds
+t_min for elements in these links = -3.82595
+N_links counted = 12
+Time taken in count_links_fromCMatrix for N = 400: 0.000442 seconds
+M=1, 6/10
+Time taken generating for N = 400: 0.166309 seconds
+t_min for elements in these links = -2.66946
+N_links counted = 10
+Time taken in count_links_fromCMatrix for N = 400: 0.000414 seconds
+M=1, 7/10
+Time taken generating for N = 400: 0.027427 seconds
+t_min for elements in these links = -2.90124
+N_links counted = 10
+Time taken in count_links_fromCMatrix for N = 400: 0.000512 seconds
+M=1, 8/10
+Time taken generating for N = 400: 0.048384 seconds
+t_min for elements in these links = -2.85109
+N_links counted = 3
+Time taken in count_links_fromCMatrix for N = 400: 0.000395 seconds
+M=1, 9/10
+Time taken generating for N = 400: 0.068277 seconds
+t_min for elements in these links = -3.92262
+N_links counted = 6
+Time taken in count_links_fromCMatrix for N = 400: 0.000435 seconds
+M=1, 10/10
+Time taken generating for N = 400: 0.352618 seconds
+t_min for elements in these links = -2.68817
+N_links counted = 4
+Time taken in count_links_fromCMatrix for N = 400: 0.000625 seconds
+Number of links over the horizon = 7.6 +- 3.69324
+Average time taken for generating 10 causets with N = 400:
+0.0831992 seconds
+
+===============================================================
+
+Program took in total: 0.832007 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 400
+Results:
+M = 1, Card = 400, N_links = 7.6 +- 3.69324
+

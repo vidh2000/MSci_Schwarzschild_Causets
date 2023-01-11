@@ -24,7 +24,7 @@ runtime="00:30:00" #format: "hh:mm:ss"
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in 1.0 1.5 2.0
+for mass in 1.0
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

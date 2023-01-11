@@ -1,0 +1,8 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp: In function ‘int main(int, char**)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:203:24: error: expected ‘;’ before ‘}’ token
+ out.open(path_file_ext)
+                        ^
+                        ;
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:206:1:
+ }
+ ~                       

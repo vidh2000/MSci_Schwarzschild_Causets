@@ -1,0 +1,91 @@
+Using 48 cores
+Using 16GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.0_N_multiplier_400_N_reps_10.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+count_links.cpp
+count_links.exe
+PARAMETERS used in the causet generation:
+mass=1, N_multiplier=400, N_reps=10
+
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+N_multiplier = 400
+ 
+======================================================
+Main interation count: 1/1
+N = 400. r_S = 2. Radius = 4. Dimension = 4. Height = 4. Centered at t = -2.
+M=1, 1/10
+Time taken generating for N = 400: 0.027507 seconds
+t_min for elements in these links = -3.25915
+N_links counted = 5
+Time taken in count_links_fromCMatrix for N = 400: 0.000562 seconds
+M=1, 2/10
+Time taken generating for N = 400: 0.035528 seconds
+t_min for elements in these links = -2.85594
+N_links counted = 5
+Time taken in count_links_fromCMatrix for N = 400: 0.000482 seconds
+M=1, 3/10
+Time taken generating for N = 400: 0.024443 seconds
+t_min for elements in these links = -2.07562
+N_links counted = 2
+Time taken in count_links_fromCMatrix for N = 400: 0.00051 seconds
+M=1, 4/10
+Time taken generating for N = 400: 0.034011 seconds
+t_min for elements in these links = -3.90197
+N_links counted = 14
+Time taken in count_links_fromCMatrix for N = 400: 0.000521 seconds
+M=1, 5/10
+Time taken generating for N = 400: 0.035956 seconds
+t_min for elements in these links = -2.52675
+N_links counted = 11
+Time taken in count_links_fromCMatrix for N = 400: 0.000509 seconds
+M=1, 6/10
+Time taken generating for N = 400: 0.026449 seconds
+t_min for elements in these links = -3.55544
+N_links counted = 7
+Time taken in count_links_fromCMatrix for N = 400: 0.000471 seconds
+M=1, 7/10
+Time taken generating for N = 400: 0.077592 seconds
+t_min for elements in these links = -3.32328
+N_links counted = 6
+Time taken in count_links_fromCMatrix for N = 400: 0.000473 seconds
+M=1, 8/10
+Time taken generating for N = 400: 0.023136 seconds
+t_min for elements in these links = -2.4965
+N_links counted = 8
+Time taken in count_links_fromCMatrix for N = 400: 0.00055 seconds
+M=1, 9/10
+Time taken generating for N = 400: 0.085394 seconds
+t_min for elements in these links = -2.89035
+N_links counted = 12
+Time taken in count_links_fromCMatrix for N = 400: 0.000397 seconds
+M=1, 10/10
+Time taken generating for N = 400: 0.027257 seconds
+t_min for elements in these links = -2.38673
+N_links counted = 6
+Time taken in count_links_fromCMatrix for N = 400: 0.000498 seconds
+Number of links over the horizon = 7.6 +- 3.49857
+Average time taken for generating 10 causets with N = 400:
+0.040446 seconds
+
+===============================================================
+
+Program took in total: 0.40447 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 400
+Results:
+M = 1, Card = 400, N_links = 7.6 +- 3.49857
+Looking for home dir name
+/rds/general/user/vh119/home
