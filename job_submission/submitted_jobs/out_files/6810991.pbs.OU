@@ -492,3 +492,49 @@ N_links counted = 102
 Time taken in count_links_fromCMatrix for N = 42875: 5.15557 seconds
 M=3.5, 94/100
 Time taken generating for N = 42875: 3.68308 seconds
+t_min for elements in these links = -2.34433
+N_links counted = 106
+Time taken in count_links_fromCMatrix for N = 42875: 5.16028 seconds
+M=3.5, 95/100
+Time taken generating for N = 42875: 3.69985 seconds
+t_min for elements in these links = -2.12918
+N_links counted = 91
+Time taken in count_links_fromCMatrix for N = 42875: 5.22357 seconds
+M=3.5, 96/100
+Time taken generating for N = 42875: 3.7358 seconds
+t_min for elements in these links = -2.33367
+N_links counted = 130
+Time taken in count_links_fromCMatrix for N = 42875: 5.19042 seconds
+M=3.5, 97/100
+Time taken generating for N = 42875: 3.72891 seconds
+t_min for elements in these links = -2.24487
+N_links counted = 104
+Time taken in count_links_fromCMatrix for N = 42875: 5.30542 seconds
+M=3.5, 98/100
+Time taken generating for N = 42875: 3.68387 seconds
+t_min for elements in these links = -2.05
+N_links counted = 109
+Time taken in count_links_fromCMatrix for N = 42875: 5.24132 seconds
+M=3.5, 99/100
+Time taken generating for N = 42875: 3.73473 seconds
+t_min for elements in these links = -2.12032
+N_links counted = 76
+Time taken in count_links_fromCMatrix for N = 42875: 5.24541 seconds
+M=3.5, 100/100
+Time taken generating for N = 42875: 3.70916 seconds
+t_min for elements in these links = -2.26716
+N_links counted = 116
+Time taken in count_links_fromCMatrix for N = 42875: 5.16699 seconds
+Number of links over the horizon = 111.58 +- 12.5237
+Average time taken for generating 100 causets with N = 42875:
+9.67081 seconds
+
+===============================================================
+
+Program took in total: 967.081 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 1000
+Results:
+M = 3.5, Card = 42875, N_links = 111.58 +- 12.5237
+Saving to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/linkcounting_files/M=3.50_Rho=1000_Card=42875_r=14.0_dur=4.0.txt
