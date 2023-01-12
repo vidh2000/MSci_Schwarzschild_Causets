@@ -24,6 +24,7 @@ else:
 Nlinks_avgs     = []
 Nlinks_stds     = []
 totReps_arr     = []
+cards_arr       = []
 for i,filename in enumerate(os.listdir(dataDir)):
     
     # Select wanted files
@@ -41,7 +42,9 @@ for i,filename in enumerate(os.listdir(dataDir)):
         continue
 
     # Extract useful information and calculate avgs/stds
+    card = int(filename[filename.find("Card")+5:filename.find("_r=")])
     print(filename)
+    print(card)
     filename = dataDir +"/"+filename
     data = pd.DataFrame(pd.read_csv(filename, sep = ",",header=None))
     data = data.iloc[:,[3,4,5]].values
@@ -61,9 +64,22 @@ for i,filename in enumerate(os.listdir(dataDir)):
 
 
 plt.figure()
-plt.errorbar(np.array(masses)**2, Nlinks_avgs, yerr=Nlinks_stds,
+x = np.array(masses)**2
+y = Nlinks_avgs
+plt.errorbar(x, y, yerr=Nlinks_stds,
             capsize=4,ls="",fmt="o", color="black",
             label=r"$3+1D$ Schwarzshild spacetime")
+
+# Linear fit
+coef = np.polyfit(x,y,1)
+print(f"===============================================================\n\
+        Linear fit coefficients: {coef}\n\
+        ===============================================================")
+poly1d_fn = np.poly1d(coef) 
+x = np.linspace(min(x),max(x),100)
+plt.plot(x, poly1d_fn(x), '--', color="red",
+        label=f"Linear fit")
+
 plt.legend()
 plt.ylabel(r"Number of links $N$")
 plt.xlabel(r"Area$\propto M^2$ [a.u]")
