@@ -31,3 +31,5 @@ Time taken generating for N = 59319: 6.18926 seconds
 t_min for elements in these links = -2.41256
 N_links counted = 133
 Time taken in count_links_fromCMatrix for N = 59319: 9.3946 seconds
+M=3.9, 2/100
+Time taken generating for N = 59319: 6.26905 seconds
