@@ -37,7 +37,7 @@ using namespace std::chrono;
 vector<int> dims = {3};
 double t_f = 0;
 double r_S = 2;
-std::vector<int> cards = {25, 50, 75, 100, 150, 200, 250, 500};
+std::vector<int> cards = {1000, 2000, 3000};
 
 // Cube Shape Parameters
 double radius = 4;
@@ -91,7 +91,7 @@ int main()
                 std::cout<<" \nDIM "<<dim
                          <<" ;CARD "<<card
                          <<" ;RADIUS  "<<radius
-                         <<" ;DURATION"<<myduration
+                         <<" ;DURATION "<<myduration
                          <<"\n";
             }
             CoordinateShape Shape(dim,shapes[shapeindex],centre,
@@ -113,7 +113,7 @@ int main()
             rstream << std::fixed << std::setprecision(2) << radius;
             std::string redge_s = (shapeindex==1)?estream.str():rstream.str();
 
-            std::string path_file_str = "../../data/blackhole_and_lambdas"
+            std::string path_file_str = "../../data/data_for_plotting/blackhole_and_lambdas"
                                             + std::to_string(dim)
                                             + "D_N" + std::to_string(card)
                                             + "_redge" + redge_s;

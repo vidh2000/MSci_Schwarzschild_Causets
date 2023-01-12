@@ -8,16 +8,16 @@ import os
 
 ########################################################
 # Load file
-dim = 3
-card = 100
-edge = 4
+dim = 2
+card = 1000
+edge = 0.5
 
-phi0 = 6.29/1.
-phi_limits = (0, 6.29)
-if phi0 < 6.28:
-    phi_limits = np.array([0, phi0]) + 0*phi0
+phi0 = 6.29/4
+which_interval = 0
 projection = 0
-centre_cube_in_horizon = False
+
+
+centre_cube_in_horizon = 1
 
 use_redge_in_name_file = True
 isBH = True
@@ -38,6 +38,10 @@ ps = {"text.usetex": True,
 plt.rcParams.update(ps)
 del ps
 
+phi_limits = (0, 6.29)
+if phi0 < 6.28:
+    phi_limits = np.array([0, phi0]) + which_interval*phi0
+
 
 
 path = os.getcwd() # folder path
@@ -47,18 +51,18 @@ print(path)
 # print(path)
 #file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')
 #file_name = os.path.join(path, 'data/known_causet_from_matrixSetsTest.txt')
-
+file_name = "data/data_for_plotting/"
 if isBH:
     if isEFv and isS:
-        file_name = f"data/blackhole_EFvToS_{dim}D_N{card}"
+        file_name += f"blackhole_EFvToS_{dim}D_N{card}"
     elif isEFv:
-        file_name = f"data/blackhole_EFv_{dim}D_N{card}"
+        file_name += f"blackhole_EFv_{dim}D_N{card}"
     elif isS:
-        file_name = f"data/blackhole_S_{dim}D_N{card}"
+        file_name += f"blackhole_S_{dim}D_N{card}"
     else:
-        file_name = f"data/blackhole_and_lambdas{dim}D_N{card}"
+        file_name += f"blackhole_and_lambdas{dim}D_N{card}"
 else:
-    file_name = f"data/flat{dim}D_N{card}"
+    file_name += f"flat{dim}D_N{card}"
 
 file_name = path + "/"+ file_name
 #path = os.chdir("scripts_py")
@@ -77,8 +81,8 @@ if (centre_cube_in_horizon):
 file_name += ".txt"
 print(file_name)
 
-ocplt.plot_causet_and_lambdas(file_name, phi_limits = phi_limits, projection = projection)
-
+ax = ocplt.plot_causet_and_lambdas(file_name, phi_limits = phi_limits, projection = projection)
+plt.show()
 
 
 # #Plot cones inside horizon crossing a point (t0, r0)

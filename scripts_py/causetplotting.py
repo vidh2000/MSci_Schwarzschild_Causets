@@ -197,11 +197,11 @@ def plot_causet(file_ext, savefile_ext = 0,
         plt.ylim(ys)
     
     if dim == 3 and projection:
-        ax = fig.axes()
+        coords, fut_links = take_projection(coords, fut_links, phi_limits)
         ax.set_xlabel("x")
         ax.set_ylabel("t*")
 
-        for i in range(size):
+        for i in range(len(coords)):
             ti   = coords[i][0]
             ri   = coords[i][1]
             phii = coords[i][2]
@@ -277,7 +277,7 @@ def plot_causet(file_ext, savefile_ext = 0,
 
     if savefile_ext:
         plt.savefig(savefile_ext)
-    plt.show()
+    #plt.show()
 
     return ax
 
@@ -1277,15 +1277,39 @@ def cylinder_along_z(center_x,center_y,center_z,radius,height_z):
     y_grid = radius*np.sin(theta_grid) + center_y
     return x_grid,y_grid,z_grid
 
-def point_satisfies_phi_limits(coord, phi_limits):
-    phi = coord[2]
+def point_satisfies_phi_limits(coord_i, phi_limits):
+    phi = coord_i[2]
     return phi_limits[0] < phi and phi < phi_limits[1]
 
-def take_projection(coords, futs_or_cmatrix, which_between_futs_and_matrix, 
-                    phi_limits):
+def take_projection(coords, futlinks, phi_limits):
     N = len(coords)
-
-    return coords, futs_or_cmatrix, which_between_futs_and_matrix
+    k = 0
+    count = 0
+    while k < N:
+        #print(k, ", ",N)
+        coord_k = coords[k]
+        if point_satisfies_phi_limits(coord_k, phi_limits):
+            k += 1
+        else:
+            count += 1
+            coords = np.delete(coords, k, axis = 0)
+            #add future links of k to future links of i if i<k is link
+            for i in range(k):
+                for j in futlinks[i]:
+                    if j==k: #if k is in future of i
+                        for j_k in futlinks[k]:
+                            if j_k not in futlinks[i]:
+                                futlinks[i].append(j_k)
+                        futlinks[i].remove(k)       
+            #remove kth set of future links
+            futlinks = np.delete(futlinks, k, axis = 0)
+            #reduce of one all labels above k
+            for i in range(N-1):
+                for j_index in range(len(futlinks[i])):
+                    if futlinks[i][j_index] > k:
+                        futlinks[i][j_index] -= 1
+            N -= 1
+    return coords, futlinks
 
 
 
