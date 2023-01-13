@@ -18,13 +18,13 @@ N_reps=100
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
-mem=128
+mem=256
 runtime="08:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in $(seq 1.0 .1 3.0)
+for mass in $(seq 5.1 .1 6.0)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
@@ -75,8 +75,10 @@ echo "mass=${mass}" >> $sh_run_file
 echo "N_multiplier=${N_multiplier}" >> $sh_run_file
 echo "N_reps=${N_reps}" >> $sh_run_file
 echo "" >> $sh_run_file
-echo "# Execute the created .exe program" >> $sh_run_file
-echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
+echo "# Execute the copy of the created .exe program" >> $sh_run_file
+echo 'cp ${runfilename::-4}".exe" "executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
+#echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
+echo '"./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
 echo "" >> $sh_run_file
 
 ###############################################################################
