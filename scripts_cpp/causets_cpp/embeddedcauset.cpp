@@ -1630,7 +1630,7 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
  * @return map<int, std::vector<int>> : key is maximal element label, value 
            is a vector of maximal but one connected elements' labels.
  */
-std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(
                                                                     double& t_f, 
                                                                     double r_S)
 {
@@ -1691,12 +1691,12 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix kind of a set of 
+ * @brief First, creates from causal matrix _CMatrix a kind of a set of 
  * future_links vectors such that if an element has one or more future links, 
  * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
  * (as that is enough to see if an element is maximal).
- * Then counts lambdas between maximal 
- * elements -below t_f and inside r_S- and maximal_but_one elements outside r_S. 
+ * Then counts lambdas between maximal elements -below t_f and inside r_S- 
+ * and maximal_but_one elements outside r_S. 
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
@@ -1704,7 +1704,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_fromCMatrix(
  * @return map<int, int> : key is lambdas' size, value is number of
            such lambdas.
  */
-std::map<int,int> EmbeddedCauset::count_lambdas_fromCMatrix(double& t_f, 
+std::map<int,int> EmbeddedCauset::count_lambdas(double& t_f, 
                                                             double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
@@ -1812,13 +1812,13 @@ void EmbeddedCauset::save_lambdas(const char* path_file_ext,
     out.open(path_file_ext, std::ios::app);
     out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
 
-    for (std::pair<int,int> xy : count_lambdas_fromCMatrix(t_f, r_S))
+    for (std::pair<int,int> xy : count_lambdas(t_f, r_S))
     {
         out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
     }
      
     int i = 0;
-    auto lambdas = get_lambdas_fromCMatrix(t_f, r_S);
+    auto lambdas = get_lambdas(t_f, r_S);
     int N = lambdas.size();
     for (std::pair<int,std::vector<int>> lambda_i : lambdas)
     {

@@ -125,14 +125,14 @@ class EmbeddedCauset: public Causet
         void make_past_links    (const char* method = "coordinates");
         void make_fut_links     (const char* method = "coordinates");
         
-        // Methods for counting links -> entropy
+        // Methods for counting molecules -> entropy
         
         int count_links_fromCMatrix(double& t_f, double r_S = 2);
         int count_links_BH(double& t_f, double r_S = 2);
 
-        std::map<int,std::vector<int>> get_lambdas_fromCMatrix(double& t_f, 
+        std::map<int,std::vector<int>> get_lambdas(double& t_f, 
                                                                double r_S = 2);
-        std::map<int,int> count_lambdas_fromCMatrix(double& t_f, double r_S = 2);
+        std::map<int,int> count_lambdas(double& t_f, double r_S = 2);
         void save_lambdas(const char* path_file_ext, const char* storage_option, 
                             double & t_f, double & r_S);
         
