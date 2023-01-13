@@ -217,7 +217,7 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         
         // Create/open the text file then write into it
         std::ofstream out(filename,std::ios_base::app);
-        out << "N_reps, N_links_avg, N_links_std,       " <<
+        out << "\nN_reps, N_links_avg, N_links_std,       " <<
         N_reps << ", " << N_links_avg << ", " << N_links_std;
         out.close();
 
