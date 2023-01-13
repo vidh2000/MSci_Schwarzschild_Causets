@@ -24,7 +24,7 @@ runtime="01:00:00" #format: "hh:mm:ss"
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in $(seq 1.0 .1 1.4)
+for mass in $(seq 1.0 .1 2.0)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

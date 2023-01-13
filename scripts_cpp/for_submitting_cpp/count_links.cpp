@@ -75,7 +75,7 @@ for (auto mass : masses)
 }
 
 // Sprinkling Parameters
-bool poisson = false;
+bool poisson = true;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
@@ -205,7 +205,7 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
 
         std::string filename = std::string(homeDir) 
                 + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
-                + "Poiss=False/"
+                + "Poiss=True/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])
