@@ -1,0 +1,3 @@
+terminate called after throwing an instance of 'std::invalid_argument'
+  what():  Parameter radius is out of range. It must be a double greater than 0 and smaller than nan
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_2.7_N_multiplier_1000_N_reps_100.sh: line 33: 3327531 Aborted                 "./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps

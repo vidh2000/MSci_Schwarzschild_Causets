@@ -5,10 +5,13 @@ from os.path import expanduser
 import os
 
 
+
 # Home Directory
 home = expanduser("~")
+
+Poiss="False"
 plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
-dataDir = home + "/MSci_Schwarzschild_Causets/data/linkcounting_files"
+dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}"
 
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
@@ -46,7 +49,8 @@ for i,filename in enumerate(os.listdir(dataDir)):
     print(filename)
     print(card)
     filename = dataDir +"/"+filename
-    data = pd.DataFrame(pd.read_csv(filename, sep = ",",header=None))
+    data = pd.DataFrame(pd.read_csv(filename, sep = ",",header=None,
+                                    skiprows=0))
     data = data.iloc[:,[3,4,5]].values
     
     avg = 0
@@ -85,6 +89,6 @@ plt.ylabel(r"Number of links $N$")
 plt.xlabel(r"Area$\propto M^2$ [a.u]")
 plt.grid(alpha=0.3)
 
-figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}.png"
+figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_Poiss={Poiss}.png"
 plt.savefig(figname)
 plt.show()
