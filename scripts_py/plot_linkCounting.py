@@ -9,7 +9,7 @@ import os
 # Home Directory
 home = expanduser("~")
 
-Poiss="False"
+Poiss="True"
 plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
 dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}"
 
