@@ -6,12 +6,20 @@ import os
 
 
 
+usehome = True
+Poiss="True"
+
 # Home Directory
 home = expanduser("~")
+# Path
+path = os.getcwd()
 
-Poiss="True"
-plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
-dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}"
+if usehome:
+    plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
+    dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}"
+else:
+    plotsDir = path + "/figures/Nlinks_vs_Area/"
+    dataDir = path + f"/data/linkcounting_files/Poiss={Poiss}"
 
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
@@ -86,7 +94,7 @@ plt.plot(x, poly1d_fn(x), '--', color="red",
 
 plt.legend()
 plt.ylabel(r"Number of links $N$")
-plt.xlabel(r"Area$\propto M^2$ [a.u]")
+plt.xlabel(r"Area $(4\pi M^2)$ [a.u]")
 plt.grid(alpha=0.3)
 
 figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_Poiss={Poiss}.png"

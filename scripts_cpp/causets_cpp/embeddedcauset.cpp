@@ -1630,15 +1630,15 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
  * Then counts lambdas between maximal 
  * elements -below t_f and inside r_S- and maximal_but_one elements outside r_S.
  * 
+ * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
 
  * @return map<int, std::vector<int>> : key is maximal element label, value 
-           is a vector of maximal but one connected elements' labels.
+ *         is a vector of maximal but one connected elements' labels.
  */
-std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(
-                                                                    double& t_f, 
-                                                                    double r_S)
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f, 
+                                                            double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -1709,9 +1709,12 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(
 
  * @return map<int, int> : key is lambdas' size, value is number of
            such lambdas.
+ *         Also, note, we also keep:
+ *         result[-1] = mintime;
+ *         result[-2] = innermost;
+ *         result[-3] = outermost;
  */
-std::map<int,int> EmbeddedCauset::count_lambdas(double& t_f, 
-                                                            double r_S)
+std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -1862,8 +1865,12 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 
  * @return map<int, int> : key is lambdas' size, value is number of
            such lambdas.
+ *         Also, note, we also keep:
+ *         result[-1] = mintime;
+ *         result[-2] = innermost;
+ *         result[-3] = outermost;
  */
-std::map<int,int> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
+std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -1987,7 +1994,7 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
 
     if (strcmp(molecule_option, "lambdas")==0)
     {
-        for (std::pair<int,int> xy : count_lambdas(t_f, r_S))
+        for (auto xy : count_lambdas(t_f, r_S))
         {
             out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
         }
@@ -2012,7 +2019,7 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
 
     else if (strcmp(molecule_option, "HRVs")==0)
     {
-        std::map<int,int> HRVs_distr = count_HRVs(t_f, r_S);
+        auto HRVs_distr = count_HRVs(t_f, r_S);
         out<<"NHRVs_Open" <<","<<HRVs_distr[0]<<std::endl;
         out<<"NHRVs_Close"<<","<<HRVs_distr[1]<<std::endl;
         
@@ -2069,7 +2076,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
     std::map<int, std::vector<int>> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e6;
+    double mintime = 1e2;
  
     #pragma omp parallel for
     for (int j = 1; j<_size; j++)
@@ -2117,10 +2124,10 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
 
- * @return map<int, int> : key is label of maximal element, value is number of
+ * @return map<int, double> : key is label of maximal element, value is number of
            maximal but one elements associated with it.
  */
-std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
+std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
 {
     if (!strcmp(_spacetime._name, "BlackHole")==0)
     {
@@ -2130,11 +2137,11 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     }
 
     // Maps label of maximal element to size of its lambda
-    std::map<int, int> lambdas;
+    std::map<int, double> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e6;
-    double innermost = 1e6;
+    double mintime = 1e2;
+    double innermost = 1e2;
     double outermost = 0;
  
     #pragma omp parallel for
@@ -2173,6 +2180,9 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::cout << "t_min for elements in lambdas = " << mintime << std::endl; 
     std::cout << "r_min for elements in lambdas = " << innermost<<std::endl; 
     std::cout << "r_max for elements in lambdas = " << outermost<<std::endl; 
+    lambdas[-1] = mintime;
+    lambdas[-2] = innermost;
+    lambdas[-3] = outermost;
     return lambdas;
 }
 
@@ -2184,23 +2194,26 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
  *          Currently works only for spacetime "Schwarzschild" in EForig coords, 
  *          but could be expanded if needed in the future. 
  * 
- * @param lambdas map<int,int> : key is label of maximal element, value is 
+ * @param lambdas map<int,double> : key is label of maximal element, value is 
  *        number of maximal but one elements associated with it, i.e. size.
 
- * @return map<int, int> : key is label of lambdas' size, value is number of
+ * @return map<int, double> : key is label of lambdas' size, value is number of
            occurrences.
  */
-std::map<int,int> EmbeddedCauset::get_lambdas_distr(const std::map<int, int> &
-                                                   lambdas)
+std::map<int,double> EmbeddedCauset::get_lambdas_distr(
+    const std::map<int, double> &lambdas)
 {
     // Maps label of maximal element to size of its lambda
-    std::map<int, int> lambdas_distr;
+    std::map<int, double> lambdas_distr;
 
     //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
     {
-        if (pair.second != 0)
+        if (pair.second != 0 && pair.first > 0)
         lambdas_distr[pair.second] += 1;
+
+        else if (pair.first < 0)
+        lambdas_distr[pair.first] = pair.second;
     }
     return lambdas_distr;
 }
@@ -2232,8 +2245,8 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
     std::map<int, std::vector<int>> HRVs;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e6;
-    double innermost = 1e6;
+    double mintime = 1e2;
+    double innermost = 1e2;
     double outermost = 0;
  
     #pragma omp parallel for
@@ -2299,7 +2312,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
  * @return map<int, int> : key is 0 for open and 1 for close 
     value is pair of labels of [a,b].
  */
-std::map<int,int> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f, 
+std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f, 
                                                                double r_S)
 {
     if (!strcmp(_spacetime._name, "BlackHole")==0)
@@ -2310,11 +2323,11 @@ std::map<int,int> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     }
 
     // Maps label of maximal element to size of its lambda
-    std::map<int, int> HRVs_distr;
+    std::map<int, double> HRVs_distr;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e6;
-    double innermost = 1e6;
+    double mintime = 1e2;
+    double innermost = 1e2;
     double outermost = 0;
  
     #pragma omp parallel for
@@ -2383,6 +2396,9 @@ std::map<int,int> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
     std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
     std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
+    HRVs_distr[-1] = mintime;
+    HRVs_distr[-2] = innermost;
+    HRVs_distr[-3] = outermost;
     return HRVs_distr;
 }
 

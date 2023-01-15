@@ -373,7 +373,7 @@ vector<bool> Spacetime::Flat_general_causal_periodic(const vector<double>& xvec,
  * @brief Initialises a Black Hole Spacetime.
  *
  * @param dim: dimension of spacetime. Default 2.
- * @param r_S: Schwarzschild radius. Default 0.5
+ * @param mass: Schwarzschild mass. Default 1.
  * @param metric: Specify metric: either "EF(original)" (default), or "EF(uv)",
  *                or "Schwarzschild" or "S".
  */
