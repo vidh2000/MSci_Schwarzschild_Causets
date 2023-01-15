@@ -75,7 +75,7 @@ for (auto mass : masses)
 }
 
 // Sprinkling Parameters
-bool poisson = false;
+bool poisson = true;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
@@ -205,6 +205,7 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
 
         std::string filename = std::string(homeDir) 
                 + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
+                + "Poiss=True/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])
@@ -215,8 +216,8 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         std::cout << "Saving to the file: " << filename << std::endl;
         
         // Create/open the text file then write into it
-        std::ofstream out(filename);
-        out << "N_reps, N_links_avg, N_links_std,       " <<
+        std::ofstream out(filename,std::ios_base::app);
+        out << "\nN_reps, N_links_avg, N_links_std,       " <<
         N_reps << ", " << N_links_avg << ", " << N_links_std;
         out.close();
 

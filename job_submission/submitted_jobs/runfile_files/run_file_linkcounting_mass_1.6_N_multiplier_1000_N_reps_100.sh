@@ -28,6 +28,7 @@ mass=1.6
 N_multiplier=1000
 N_reps=100
 
-# Execute the created .exe program
-./${runfilename::-4}".exe" $mass $N_multiplier $N_reps
+# Execute the copy of the created .exe program
+cp ${runfilename::-4}".exe" "executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe"
+"./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps
 

@@ -19,7 +19,7 @@ N_reps=100
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
 mem=256
-runtime="08:00:00" #format: "hh:mm:ss"
+runtime="24:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
