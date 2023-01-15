@@ -617,7 +617,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_links,// = false,
                                     const char* sets_type)// = "both only")
 {
-    //Fix coordinates to EF(orginal) if it is BlackHole
+    // 1. Fix coordinates to EF(orginal) if it is BlackHole
     typedef void (*inversefunc)
     (std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
     inversefunc inverse_transf = Spacetime::do_nothing;
@@ -629,8 +629,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         this->sort_coords(0, false);
     }
 
-    //Perform Causality
-
+    // 2. Perform Causality
     if (strcmp(sets_type, "all with links")==0)
     {  
         this->make_cmatrix_and_allpasts(special);
@@ -717,9 +716,9 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
     }
 
-    //Coords back to initial ones (does nothing if were already EF(original))
+    //Coords back to initial ones (does nothing if were not BlackHole or
+    //were already EF(original))
     inverse_transf(_coords, _spacetime._mass, "original");
-
     return;
 }
 

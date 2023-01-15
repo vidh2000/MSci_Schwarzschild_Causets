@@ -1,28 +1,26 @@
 
 #%% 
-import causetplotting as ocplt
-
-import matplotlib.pyplot as plt
-import numpy as np
-import os 
-
 ########################################################
 # Load file
 dim = 2
 card = 1000
 edge = 0.5
+centre_cube_in_horizon = 1
 
 phi0 = 6.29/4
 which_interval = 0
 projection = 0
 
-
-centre_cube_in_horizon = 1
-
 use_redge_in_name_file = True
 isBH = True
 isEFv = False
 isS = False
+
+from causets_py import causetplotting as cplt
+
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
 
 
 ps = {"text.usetex": True,
@@ -81,8 +79,9 @@ if (centre_cube_in_horizon):
 file_name += ".txt"
 print(file_name)
 
-ax = ocplt.plot_causet_and_lambdas(file_name, phi_limits = phi_limits, projection = projection)
-plt.show()
+ax = cplt.plot_causet_and_lambdas(file_name, 
+                                  phi_limits = phi_limits, 
+                                  projection = projection)
 
 
 # #Plot cones inside horizon crossing a point (t0, r0)
@@ -107,4 +106,6 @@ plt.show()
 #         else:
 #             ax.plot(rs, upper_null(rs, t0, r0), ls = "--", c = "green", alpha = 0.8,
 #                     label = "Light Cone")
+
+plt.show()
 # %%

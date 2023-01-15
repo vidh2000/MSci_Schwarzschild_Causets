@@ -82,13 +82,6 @@ SprinkledCauset::SprinkledCauset(int card,
         Spacetime::CarttoSpherical(_coords);
     }
 
-    // if (spacetime._metricname=="EF(uv)")
-    //     {Spacetime::StoInEF(_coords, spacetime._mass, "uv");}
-    // else if (spacetime._metricname=="EF(original)")
-    //     {Spacetime::StoInEF(_coords, spacetime._mass, "original");}
-    // else if (spacetime._metricname=="GP")
-    //     {Spacetime::StoGP(_coords, spacetime._mass);}
-
     this->sort_coords(0, false);
     this->make_attrs("coordinates", make_matrix, special, use_transitivity,
                      make_sets, make_links, sets_type);
