@@ -63,11 +63,12 @@ std::vector<double> radii = {};
 std::vector<double> durations = {};
 std::vector<int> repetitions_arr = {};
 
+
 for (auto mass : masses)
 {
-        // Make a "square" cylinder with r,h=4M, since r_S=2M
-        radii.push_back(4*mass);
-        durations.push_back(4); // since min(t_min) ~ -3.5, 4 is adequate
+        // Make a cylinder which "just" includes all relevant links; r_S=2M
+        radii.push_back(2*mass+0.1);
+        durations.push_back(2); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points
         cards.push_back(N_multiplier*mass*mass*mass);
         // Add # of repetitions for each mass
@@ -117,7 +118,8 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 auto repstart = high_resolution_clock::now();
                 // Set up shape
                 std::vector<double> center = {-myduration/2,0.0,0.0,0.0};
-                CoordinateShape shape(dim,name,center,radius,myduration);
+                double hollow = 0.9;
+                CoordinateShape shape(dim,name,center,radius,myduration,hollow);
                 // Set up spacetime
                 Spacetime S = Spacetime();
                 S.BlackHoleSpacetime(dim,mass);
@@ -130,7 +132,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 auto repend = high_resolution_clock::now();
                 double duration = duration_cast<microseconds>(repend - repstart).count();
                 std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
-                std::cout << "Time taken generating for N = " << card
+                std::cout << "Time taken generating for N = " << C._size
                 << ": " << duration/pow(10,6) << " seconds" << std::endl;
 
                 // Count links and store it
@@ -145,7 +147,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                         linkcountend - linkcountstart).count();
                 std::cout << "N_links counted = " << N_links << std::endl;
                 std::cout << "Time taken in count_links_fromCMatrix for N = "
-                << card << ": " << durationlinks/pow(10,6) << " seconds"
+                << C._size << ": " << durationlinks/pow(10,6) << " seconds"
                 << std::endl;
 
                 
@@ -204,8 +206,8 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         std::string dur_str = stream3.str();
 
         std::string filename = std::string(homeDir) 
-                + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
-                + "Poiss=True/"
+                + "/MSci_Schwarzschild_Causets/data/test_sprinkle_boundaries/"
+                //+ "Poiss=True/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])

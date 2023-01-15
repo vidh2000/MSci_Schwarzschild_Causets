@@ -76,9 +76,10 @@ class CoordinateShape
                         std::vector<double> center = {},//{0}
                         double radius   = 1,
                         double duration = 2,
+                        double hollow   = 0
                         double edge     = 1,
-                        std::vector<double> edges = {},//{1}
-                        double hollow   = 0);
+                        std::vector<double> edges = {});//{1}
+                        
         
         void param_rangecheck(std::string name, 
                                 double maxValue = std::nan(""),

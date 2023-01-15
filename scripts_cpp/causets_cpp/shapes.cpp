@@ -71,9 +71,9 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
                                 vector<double> center,
                                 double radius,
                                 double duration,
+                                double hollow,
                                 double edge,
-                                vector<double> edges,
-                                double hollow)
+                                vector<double> edges)
 {
     // Set Dimension
     if (dim < 1)

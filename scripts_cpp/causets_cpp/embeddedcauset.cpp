@@ -1566,7 +1566,8 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
     
     // To find point with lowest time component. Hypersurface set at t=0 btw.
     std::vector<double> min_times;
- 
+    std::vector<double> min_radii;
+    std::vector<double> max_radii;
     for (int i = _size-2; i>-1; i--)
     {     
         if (_coords[i][1]>r_S) // i outside horizon
@@ -1585,13 +1586,15 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
                             {
                                 N++;
                                 min_times.push_back(_coords[i][0]);
+                                min_radii.push_back(_coords[i][1]);
+                                max_radii.push_back(_coords[j][1]);
                             }
                         }
                     }
                 }
                 else // t_j<t_i //
                 {
-                    std::cout << "t_j<t_i\n";
+                    std::cout << "t_j<t_i!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
                     if (_coords[i][1]<r_S && _coords[j][1]>r_S) // t_j<t_i
                     {
                         if (_future_links[i].size()==0 &&  // if i==maximal
@@ -1610,7 +1613,11 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
         }
     }
     double mintime = vecmin(min_times);
+    double minradius = vecmin(min_radii);
+    double maxradius = vecmax(max_radii);
     std::cout << "t_min for elements in these links = " << mintime << std::endl; 
+    std::cout << "r_min outside = " << minradius << std::endl;
+    std::cout << "r_max inside = " << maxradius << std::endl;
     return N;
 }
 
