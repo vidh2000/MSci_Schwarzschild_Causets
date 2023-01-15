@@ -68,7 +68,7 @@ for (auto mass : masses)
 {
         // Make a cylinder which "just" includes all relevant links; r_S=2M
         radii.push_back(2*mass+0.1);
-        durations.push_back(2); // since min(t_min) ~ -3.5, 4 is adequate
+        durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points
         cards.push_back(N_multiplier*mass*mass*mass);
         // Add # of repetitions for each mass

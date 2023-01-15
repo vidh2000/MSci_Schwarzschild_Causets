@@ -1,0 +1,38 @@
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/../causets_cpp/embeddedcauset.h:13,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/../causets_cpp/sprinkledcauset.h:9,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:18:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/../causets_cpp/shapes.h:80:25: error: expected ‘,’ before ‘double’
+                         double edge     = 1,
+                         ^~~~~~
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.h:13,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:26:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:80:25: error: expected ‘,’ before ‘double’
+                         double edge     = 1,
+                         ^~~~~~
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.h:13,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp:23:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:80:25: error: expected ‘,’ before ‘double’
+                         double edge     = 1,
+                         ^~~~~~
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp:21:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:80:25: error: expected ‘,’ before ‘double’
+                         double edge     = 1,
+                         ^~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp:70:1: error: no declaration matches ‘CoordinateShape::CoordinateShape(int, const char*, std::vector<double>, double, double, double, double, std::vector<double>)’
+ CoordinateShape::CoordinateShape(int dim, const char* name,
+ ^~~~~~~~~~~~~~~
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp:21:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:60:7: note: candidates are: ‘CoordinateShape::CoordinateShape(CoordinateShape&&)’
+ class CoordinateShape
+       ^~~~~~~~~~~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:60:7: note:                 ‘CoordinateShape::CoordinateShape(const CoordinateShape&)’
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:74:9: note:                 ‘CoordinateShape::CoordinateShape(int, const char*, std::vector<double>, double, double, double, std::vector<double>)’
+         CoordinateShape(int dim = 4,
+         ^~~~~~~~~~~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:60:7: note: ‘class CoordinateShape’ defined here
+ class CoordinateShape
+       ^~~~~~~~~~~~~~~
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp:19:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.h:80:25: error: expected ‘,’ before ‘double’
+                         double edge     = 1,
+                         ^~~~~~
