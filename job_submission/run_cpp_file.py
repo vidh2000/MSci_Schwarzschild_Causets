@@ -28,7 +28,9 @@ compiler_stuff = [
     f"'{causets_cpp}spacetimes.cpp'",
 ]
 
+
 # Create Executable
+############################################
 exec = [ " ",
     "-o",
     #"'output.exe'"
@@ -36,6 +38,7 @@ exec = [ " ",
 ]
 
 #Optimisation flags
+############################################
 optimisations = [ " ",
     "-std=c++17",   
     "-Ofast",
@@ -45,6 +48,7 @@ optimisations = [ " ",
     ]
 
 # Include paths
+###########################################
 from os.path import expanduser
 home = expanduser("~")
 includes = [" ",
@@ -54,7 +58,7 @@ includes = [" ",
     ]
 
 # Compile
-
+############################################
 to_render = " ".join(compiler_stuff) + " ".join(exec) + \
             " ".join(optimisations) + " ".join(includes)
 
@@ -62,17 +66,3 @@ print("\nC++ files to compile, flags used, executable produced:")
 print(to_render)
 os.system(to_render)
 print(".............................Compiled............................!\n")
-
-
-
-
-
-
-
-
-
-
-
-
-
-

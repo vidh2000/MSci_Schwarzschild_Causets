@@ -130,19 +130,32 @@ class EmbeddedCauset: public Causet
         int count_links_fromCMatrix(double& t_f, double r_S = 2);
         int count_links_BH(double& t_f, double r_S = 2);
 
-        std::map<int,std::vector<int>> get_lambdas(double& t_f, 
-                                                               double r_S = 2);
-        std::map<int,int> count_lambdas(double& t_f, double r_S = 2);
-        void save_lambdas(const char* path_file_ext, const char* storage_option, 
-                            double & t_f, double & r_S);
+
+        std::map<int,std::vector<int>> get_lambdas(double& t_f, double r_S=2);
+        std::map<int,int>            count_lambdas(double& t_f, double r_S=2);
+
+
+        std::map<int,std::vector<int>> get_HRVs(double& t_f, double r_S = 2);
+        std::map<int,int>            count_HRVs(double& t_f, double r_S = 2);
+
+
+        void save_molecules(const char* path_file_ext = "boh", 
+                            const char* storage_option = "sets", 
+                            double t_f = 0, double r_S = 2,
+                            const char* molecule_option = "lambdas");
         
 
         // Counting Behind the Scenes
 
-        std::map<int,std::vector<int>> get_lambdas_from_futlinks(double& t_f,double r_S = 2);
+        std::map<int,std::vector<int>> get_lambdas_from_futlinks(double& t_f,
+                                                                 double r_S=2);
         std::map<int,int> get_lambdas_sizes(double& t_f, double r_S = 2);
         std::map<int,int> get_lambdas_distr(const std::map<int, int> & lambdas);
 
+        std::map<int,std::vector<int>> get_HRVs_from_futlinks(double& t_f,
+                                                              double r_S=2);
+        std::map<int,int> get_HRVs_distr_from_futlinks(double& t_f, 
+                                                       double r_S = 2);
 
         //Destructor
         ~EmbeddedCauset();       

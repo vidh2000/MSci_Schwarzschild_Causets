@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-Created on 4 Jan 2022
+Created on 15 Jan 2022
 
 @author: Stefano Veroni, Vid Homsak
 '''
@@ -113,6 +113,9 @@ def get_causet_attrs (lambdasfile_ext):
 
 #from from https://stackoverflow.com/questions/15301999/default-arguments-with-args-and-kwargs
 def default_kwargs(**defaultKwargs):
+    """
+    Decorator to make defaultkawargs the default kwargs in a function.
+    """
     def actual_decorator(fn):
         @functools.wraps(fn)
         def g(*args, **kwargs):
@@ -120,3 +123,43 @@ def default_kwargs(**defaultKwargs):
             return fn(*args, **defaultKwargs)
         return g
     return actual_decorator
+
+def std_combine(Ns, mus, stds):
+    """
+    Function combining the stds of M rounds i of Ns[i[ measurements, each 
+    having mean mus[i] and std stds[i].
+
+    Note: M = len(Ns) = len(ms) = len(stds).
+
+    Parameters
+    ----------
+    Ns : arraylike[int]
+        Measurements of each ith round.
+    
+    mus : arraylike[float]
+        Mean of each ith round of measurements.
+    
+    stds : arraylike[float]
+        Std of each ith round of measurements.
+    
+    Returns
+    -------
+    std : float
+        Std of the combination of all measurements.
+    """
+    coeffs = []
+    M = len(Ns)
+    N = sum(Ns)
+    for i in range(M):
+        Ni = Ns[i]
+        mui = mus[i]
+        stdi = stds[i]
+        term_i = (Ni-1)/(N-1)*stdi**2
+        coeffs.append(term_i)
+        for j in range(i, M):
+            Nj = Ns[j]
+            muj = mus[j]
+            stdj = stds[j]
+            term_mixed = Ni*Nj/(N*(N-1)) * (mui - muj)**2
+            coeffs.append(term_mixed)
+    return np.sqrt(sum(coeffs))
