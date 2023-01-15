@@ -617,7 +617,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                                     bool make_links,// = false,
                                     const char* sets_type)// = "both only")
 {
-    //Fix coordinates to EF(orginal) if it is BlackHole
+    // 1. Fix coordinates to EF(orginal) if it is BlackHole
     typedef void (*inversefunc)
     (std::vector<std::vector<double>>& coords, double mass, const char* EFtype);
     inversefunc inverse_transf = Spacetime::do_nothing;
@@ -629,8 +629,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         this->sort_coords(0, false);
     }
 
-    //Perform Causality
-
+    // 2. Perform Causality
     if (strcmp(sets_type, "all with links")==0)
     {  
         this->make_cmatrix_and_allpasts(special);
@@ -717,9 +716,9 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         }
     }
 
-    //Coords back to initial ones (does nothing if were already EF(original))
+    //Coords back to initial ones (does nothing if were not BlackHole or
+    //were already EF(original))
     inverse_transf(_coords, _spacetime._mass, "original");
-
     return;
 }
 
@@ -1762,6 +1761,159 @@ std::map<int,int> EmbeddedCauset::count_lambdas(double& t_f,
     }
 }
 
+
+
+
+/**
+ * @brief First, creates from causal matrix _CMatrix KIND OF a set of 
+ * future_links vectors such that if an element has 2 or more future links, 
+ * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
+ * (as that is enough to see if an element is maximal but 2).
+ * Then get Hawking's radiation molecules apb:
+ * - p maximal but two below t_f and outside the horizon
+ * - a maximal below t_f and outside the horizon
+ * - b maximal below t_f and inside the hoizon
+ * Note: 
+ * - if a<b the molecule is "close";
+ * - if b spacelike a the molecule is "open".
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, std::vector<int>> : key is minimal p element label, value 
+           is the pair of labels of [a,b].
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f, 
+                                                        double r_S)
+{
+    if (strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
+        
+        if (_future_links.size() == _size) /*if already defined*/
+        {
+            return this->get_HRVs_from_futlinks(t_f,r_S);
+        }
+        else
+        {
+            _future_links.resize(_size);
+        
+            #pragma omp parallel for schedule(dynamic)
+            for (int i=0; i<_size; i++)
+            {
+                int n_links_of_i = 0;
+                for (int j=i+1; j<_size; j++)
+                {
+                    if (_CMatrix[i][j] == 0) {
+                        continue;
+                    }
+                    else
+                    {
+                        bool has_broken = false;
+                        for (int k=i+1; k<j;k++)
+                        {
+                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                                has_broken = true;
+                                break;}
+                        }
+                        if (!has_broken)
+                        {
+                            n_links_of_i += 1;
+                            _future_links[i].insert(j);
+                            if (n_links_of_i - 2 > 0)
+                                {break;} /*breaks j loop, hence goes to next i*/
+                        }
+                    }
+                }
+            }
+            return this->get_HRVs_from_futlinks(t_f,r_S);
+        }
+    }
+    else /*Spacetime name not BlackHole*/
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future."
+        << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+}
+
+
+/**
+ * @brief First, creates from causal matrix _CMatrix a kind of a set of 
+ * future_links vectors such that if an element has one or more future links, 
+ * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
+ * (as that is enough to see if an element is maximal).
+ * Then counts lambdas between maximal elements -below t_f and inside r_S- 
+ * and maximal_but_one elements outside r_S. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, int> : key is lambdas' size, value is number of
+           such lambdas.
+ */
+std::map<int,int> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
+{
+    if (strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
+        
+        if (_future_links.size() == _size) /*if already defined*/
+        {
+            return this->get_HRVs_distr_from_futlinks(t_f,r_S);
+        }
+        else
+        {
+            _future_links.resize(_size);
+        
+            #pragma omp parallel for
+            for (int i=0; i<_size; i++)
+            {
+                int n_links_of_i = 0;
+                for (int j=i+1; j<_size; j++)
+                {
+                    if (_CMatrix[i][j] == 0) {
+                        continue;
+                    }
+                    else
+                    {
+                        bool has_broken = false;
+                        for (int k=i+1; k<j;k++)
+                        {
+                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+                                has_broken = true;
+                                break;}
+                        }
+                        if (!has_broken)
+                        {
+                            n_links_of_i += 1;
+                            _future_links[i].insert(j);
+                            if (n_links_of_i - 2 > 0)
+                                {break;} /*breaks j loop, hence goes to next i*/
+                        }
+                    }
+                }
+            }
+            return this->get_HRVs_distr_from_futlinks(t_f,r_S);
+        }
+    }
+    else /*Spacetime name not BlackHole*/
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future."
+        << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+}
+
+
 /**
  * @brief Save the following information in a file:
  * =================================================================================
@@ -1775,7 +1927,7 @@ std::map<int,int> EmbeddedCauset::count_lambdas(double& t_f,
  * [5,0] -> "Matrix"
  * [6 to 6+size-1, 0 to size-1] -> Cmatrix; 
  * 
- * == "sets" option    =======>
+ * ===================================== "sets" option    =======>
  * [6 to 6+size-1,:] pasts
  * [6+size+1 to 6+2size,:] futures
  * [6+2size+2 to 6+3size+1,:] past links
@@ -1786,7 +1938,8 @@ std::map<int,int> EmbeddedCauset::count_lambdas(double& t_f,
  * 
  * [6+2size+1] -> r_S
  * 
- * From [6+2size+2]
+ * ==================================== "lambdas" option ========>
+ * From [6+2size+2], for sets
  * "NLambdas_Sized_1", number of lambdas with size 1 (single links)
  * "NLambdas_Sized_2", number of lambdas with size 2 (the normal lambda)
  * "NLambdas_Sized_i", number of lambdas with size i (i-lambda)
@@ -1797,14 +1950,27 @@ std::map<int,int> EmbeddedCauset::count_lambdas(double& t_f,
  * "Lambda1", upvertex, downvertex2, downvertex2, etc... ENDL
  * etc for all lambdas...
  * 
+ *  * ==================================== "HRVs" option ========>
+ * From [6+2size+2], for sets
+ * "NHRVs_Open", number of open HRVs (a spacelike b)
+ * "NHRVs_Close", number of close HRVs (a<b)
+ * 
+ * From after that
+ * "HRV0" p-vertex, upvertex_a, upvertex_b
+ * "HRV1", p-vertex, upvertex_b, upvertex_b
+ * etc for all HRVs...
+ * 
+ * 
  * @param path_file_ext 
- * @param storage_option
+ * @param storage_option const char*. Either "sets"(default) or "cmatrix".
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
- * @param r_S Schwarzschild radius.
+ * @param r_S Schwarzschild radius. Default 2.
+ * @param molecule_option const char*. Either "lambdas"(default) or "HRVs".
  */
-void EmbeddedCauset::save_lambdas(const char* path_file_ext,
-                                  const char* storage_option,
-                                  double & t_f, double & r_S)
+void EmbeddedCauset::save_molecules(const char* path_file_ext,
+                                    const char* storage_option,
+                                    double t_f, double r_S,
+                                    const char* molecule_option)
 {
     this->save_causet(path_file_ext, storage_option);
 
@@ -1812,31 +1978,62 @@ void EmbeddedCauset::save_lambdas(const char* path_file_ext,
     out.open(path_file_ext, std::ios::app);
     out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
 
-    for (std::pair<int,int> xy : count_lambdas(t_f, r_S))
+    if (strcmp(molecule_option, "lambdas")==0)
     {
-        out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
-    }
-     
-    int i = 0;
-    auto lambdas = get_lambdas(t_f, r_S);
-    int N = lambdas.size();
-    for (std::pair<int,std::vector<int>> lambda_i : lambdas)
-    {
-        out<<"Lambda"<<i<<",";
-        out<<lambda_i.first<<",";
-        for (int j = 0; j < lambda_i.second.size(); j++)
+        for (std::pair<int,int> xy : count_lambdas(t_f, r_S))
         {
-            out<<lambda_i.second[j];
-            if (j != lambda_i.second.size()-1)
-                out<<",";
+            out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
         }
-        if (i != N-1) out<<std::endl;
-        i++;
+        
+        int i = 0;
+        auto lambdas = get_lambdas(t_f, r_S);
+        int N = lambdas.size();
+        for (std::pair<int,std::vector<int>> lambda_i : lambdas)
+        {
+            out<<"Lambda"<<i<<",";
+            out<<lambda_i.first<<",";
+            for (int j = 0; j < lambda_i.second.size(); j++)
+            {
+                out<<lambda_i.second[j];
+                if (j != lambda_i.second.size()-1)
+                    out<<",";
+            }
+            if (i != N-1) out<<std::endl;
+            i++;
+        }
     }
 
+    else if (strcmp(molecule_option, "HRVs")==0)
+    {
+        std::map<int,int> HRVs_distr = count_HRVs(t_f, r_S);
+        out<<"NHRVs_Open" <<","<<HRVs_distr[0]<<std::endl;
+        out<<"NHRVs_Close"<<","<<HRVs_distr[1]<<std::endl;
+        
+        int i = 0;
+        auto HRVs = get_HRVs(t_f, r_S);
+        int N = HRVs.size();
+        for (std::pair<int,std::vector<int>> hrv_i : HRVs)
+        {
+            out<<"HRV"<<i<<",";
+            out<<hrv_i.first<<",";
+            for (int j = 0; j < hrv_i.second.size(); j++)
+            {
+                out<<hrv_i.second[j];
+                if (j != hrv_i.second.size()-1)
+                    out<<",";
+            }
+            if (i != N-1) out<<std::endl;
+            i++;
+        }
+    }
     out.close();
 }
 
+
+
+
+
+// Counting Behind the Scenes
 
 /**
  * @brief   Finds lambdas in the causet connecting maximal elements 
@@ -1930,6 +2127,8 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
     double mintime = 1e6;
+    double innermost = 1e6;
+    double outermost = 0;
  
     #pragma omp parallel for
     for (int j = 1; j<_size; j++)
@@ -1950,6 +2149,10 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                             lambdas[j] += 1;
                             if (_coords[i][0] < mintime)
                             mintime = _coords[i][0];
+                            if (_coords[j][1] < innermost)
+                            mintime = _coords[j][1];
+                            if (_coords[i][1] > outermost)
+                            mintime = _coords[i][1];
                         }
                     }
                 }
@@ -1960,10 +2163,11 @@ std::map<int,int> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
             }
         }
     }
-    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
+    std::cout << "t_min for elements in lambdas = " << mintime << std::endl; 
+    std::cout << "r_min for elements in lambdas = " << innermost<<std::endl; 
+    std::cout << "r_max for elements in lambdas = " << outermost<<std::endl; 
     return lambdas;
 }
-
 
 
 /**
@@ -1993,6 +2197,188 @@ std::map<int,int> EmbeddedCauset::get_lambdas_distr(const std::map<int, int> &
     }
     return lambdas_distr;
 }
+
+
+
+/**
+ * @brief   Finds HRVs in the causet.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of minimal element, 
+    value is pair of labels of [a,b].
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> HRVs;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    double mintime = 1e6;
+    double innermost = 1e6;
+    double outermost = 0;
+ 
+    #pragma omp parallel for
+    for (int p = 1; p<_size; p++)
+    {
+        // if j is maximal and inside the horizon
+        if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
+        {
+            std::vector<int> ab;
+            ab.insert(ab.end(),
+                     _future_links[p].begin(), _future_links[p].end());
+            int a = (ab[0] < ab[1])? ab[0] : ab[1];
+            int b = (ab[0] < ab[1])? ab[1] : ab[0];
+            if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
+            {
+                //the one inside is maximal
+                if (_future_links[b].size()==0) 
+                {
+                    //the one outside is either maximal 
+                    // or maximal but one and only connected to b
+                    if (_future_links[a].size()==0 ||
+                        (_future_links[a].size()==1 && 
+                         set_contains(b,_future_links[a]))
+                        ) 
+                    {
+                        HRVs[p] = {a,b};
+                        if (_coords[p][0] < mintime)
+                        {
+                            mintime = _coords[p][0];
+                        }
+                        if (_coords[b][1] < innermost)
+                        {
+                            innermost = _coords[b][1];
+                        }
+                        if (_coords[p][1] > outermost)
+                        {
+                            outermost = _coords[p][1];
+                        }
+                        if (_coords[a][1] > outermost)
+                        {
+                            outermost = _coords[a][1];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
+    std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
+    std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
+    return HRVs;
+}
+
+
+/**
+ * @brief   Finds distribution of HRVs in the causet (how many open and close).
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, int> : key is 0 for open and 1 for close 
+    value is pair of labels of [a,b].
+ */
+std::map<int,int> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f, 
+                                                               double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, int> HRVs_distr;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    double mintime = 1e6;
+    double innermost = 1e6;
+    double outermost = 0;
+ 
+    #pragma omp parallel for
+    for (int p = 1; p<_size; p++)
+    {
+        // if j is maximal and inside the horizon
+        if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
+        {
+            std::vector<int> ab;
+            ab.insert(ab.end(),
+                     _future_links[p].begin(), _future_links[p].end());
+            int a = (ab[0] < ab[1])? ab[0] : ab[1];
+            int b = (ab[0] < ab[1])? ab[1] : ab[0];
+            if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
+            {
+                //the one inside is maximal
+                if (_future_links[b].size()==0) 
+                {
+                    //the one outside is maximal -> open
+                    if (_future_links[a].size()==0)
+                    {
+                        HRVs_distr[0] += 1;
+                        if (_coords[p][0] < mintime)
+                        {
+                            mintime = _coords[p][0];
+                        }
+                        if (_coords[b][1] < innermost)
+                        {
+                            innermost = _coords[b][1];
+                        }
+                        if (_coords[p][1] > outermost)
+                        {
+                            outermost = _coords[p][1];
+                        }
+                        if (_coords[a][1] > outermost)
+                        {
+                            outermost = _coords[a][1];
+                        }
+                    }
+                    // the one outside is only connected to a -> close
+                    else if (_future_links[a].size()==1 && 
+                             set_contains(b,_future_links[a]))
+                    {
+                        HRVs_distr[1] += 1;
+                        if (_coords[p][0] < mintime)
+                        {
+                            mintime = _coords[p][0];
+                        }
+                        if (_coords[b][1] < innermost)
+                        {
+                            innermost = _coords[b][1];
+                        }
+                        if (_coords[p][1] > outermost)
+                        {
+                            outermost = _coords[p][1];
+                        }
+                        if (_coords[a][1] > outermost)
+                        {
+                            outermost = _coords[a][1];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
+    std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
+    std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
+    return HRVs_distr;
+}
+
 
 
 

@@ -49,7 +49,7 @@ std::vector<double> center (dim, 0.0);
 double radius = 4.0;
 
 
-bool poisson = false;
+bool poisson = true;
 bool make_matrix = false;
 bool special = true;
 bool use_transitivity = false;
@@ -124,15 +124,15 @@ int main(){
     cout<<"\n========================================================\n";
     CoordinateShape shape(dim,"bicone",center,radius);
     Spacetime S = Spacetime();
-    S.FlatSpacetime(dim);
+    S.BlackHoleSpacetime(dim);
     SprinkledCauset Cs(card, S, shape, poisson,
                         make_matrix, special, use_transitivity,
                         make_sets, make_links, sets_type);
 
 
     cout << "\n1. CHECK MATRIX AND SETS REPRESENTATIONS ARE EQUIVALENT\n";
-    cout << "MM estimation with CMatrix (mean, std):";
     vector<double> MMd_result = Cs.MMdim_est("big", 20, card/4, card, true);
+    cout << "MM estimation with CMatrix (mean, std):";
     print_vector(MMd_result);
     MMd_result = Cs.MMdim_est("big", 20, card/4, card, false);
     cout << "MM estimation with SETS   (mean, std):";
