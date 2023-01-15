@@ -67,7 +67,7 @@ std::vector<int> repetitions_arr = {};
 for (auto mass : masses)
 {
         // Make a cylinder which "just" includes all relevant links; r_S=2M
-        radii.push_back(2*mass+0.1);
+        radii.push_back(3*mass);
         durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points
         cards.push_back(N_multiplier*mass*mass*mass);
@@ -103,12 +103,14 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
         // Store N_links for each repetition
         std::vector<int> N_links_arr = {};
         // Define params for causet generation
+        double hollow = 0.4;
         int card,repetitions;
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration, repetitions) = tup;
         std::cout << "======================================================\n";
         std::cout << "Main interation count: " << (iteration)<<"/"<< masses.size() <<
         "\nN = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
+        ". Hollow = " << hollow <<
         ". Dimension = " << dim << ". Height = " << myduration <<
         ". Centered at t = " << -myduration/2 << ".\n";
         
@@ -118,7 +120,6 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 auto repstart = high_resolution_clock::now();
                 // Set up shape
                 std::vector<double> center = {-myduration/2,0.0,0.0,0.0};
-                double hollow = 0.9;
                 CoordinateShape shape(dim,name,center,radius,myduration,hollow);
                 // Set up spacetime
                 Spacetime S = Spacetime();

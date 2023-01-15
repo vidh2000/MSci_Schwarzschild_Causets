@@ -1621,7 +1621,7 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
     std::cout << "r_max OUT = " << maxradiusOut << std::endl;
     std::cout << "r_min OUT = " << minradiusOut << std::endl;
     std::cout << "r_max IN = " << maxradiusIn << std::endl;
-    std::cout << "r_max IN = " << minradiusIn << std::endl;
+    std::cout << "r_min IN = " << minradiusIn << std::endl;
     return N;
 }
 
