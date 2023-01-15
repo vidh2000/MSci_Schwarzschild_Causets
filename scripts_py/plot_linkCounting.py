@@ -68,7 +68,7 @@ for i,filename in enumerate(os.listdir(dataDir)):
 
 
 plt.figure()
-x = np.array(masses)**2
+x = 4*np.pi*np.array(masses)**2
 y = Nlinks_avgs
 plt.errorbar(x, y, yerr=Nlinks_stds,
             capsize=4,ls="",fmt="o", color="black",
