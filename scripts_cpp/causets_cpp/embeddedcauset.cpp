@@ -1586,8 +1586,8 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
                             {
                                 N++;
                                 min_times.push_back(_coords[i][0]);
-                                min_radii.push_back(_coords[i][1]);
-                                max_radii.push_back(_coords[j][1]);
+                                min_radii.push_back(_coords[i][1]); //outside points
+                                max_radii.push_back(_coords[j][1]); //inside points
                             }
                         }
                     }
@@ -1613,11 +1613,15 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
         }
     }
     double mintime = vecmin(min_times);
-    double minradius = vecmin(min_radii);
-    double maxradius = vecmax(max_radii);
+    double minradiusOut = vecmin(min_radii);
+    double maxradiusOut = vecmax(min_radii);
+    double maxradiusIn = vecmax(max_radii);
+    double minradiusIn = vecmin(max_radii);
     std::cout << "t_min for elements in these links = " << mintime << std::endl; 
-    std::cout << "r_min outside = " << minradius << std::endl;
-    std::cout << "r_max inside = " << maxradius << std::endl;
+    std::cout << "r_max OUT = " << maxradiusOut << std::endl;
+    std::cout << "r_min OUT = " << minradiusOut << std::endl;
+    std::cout << "r_max IN = " << maxradiusIn << std::endl;
+    std::cout << "r_max IN = " << minradiusIn << std::endl;
     return N;
 }
 
