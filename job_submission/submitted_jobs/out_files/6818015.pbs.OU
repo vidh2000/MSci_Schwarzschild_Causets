@@ -29,3 +29,12 @@ Main interation count: 1/1
 N = 393039. r_S = 6.8. Radius = 10.2. Hollow = 0.4. Dimension = 4. Height = 1. Centered at t = -0.5.
 M=3.4, 1/20
 Time taken generating for N = 393039: 231.716 seconds
+t_min for elements in these links = -0.817255
+r_max OUT = 7.31367
+r_min OUT = 6.80013
+r_max IN = 6.79957
+r_min IN = 6.28737
+N_links counted = 979
+Time taken in count_links_fromCMatrix for N = 393039: 1282.14 seconds
+M=3.4, 2/20
+Time taken generating for N = 393039: 282.338 seconds

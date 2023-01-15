@@ -57,10 +57,10 @@ std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="
                 <<N_reps<<"\n\n";
                 
 int dim = 4; //want it to be "hard coded = 4"
-double hollow = 0.4;
 std::vector<double> masses = {mass};
 std::vector<int> cards = {};
 std::vector<double> radii = {};
+std::vector<double> hollow_vals = {};
 std::vector<double> durations = {};
 std::vector<int> repetitions_arr = {};
 
@@ -69,9 +69,10 @@ for (auto mass : masses)
 {
         // Make a cylinder which "just" includes all relevant links; r_S=2M
         radii.push_back(2*mass+1);
-        durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
-        // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass*mass);
+        hollow_vals.push_back((2*mass-1)/(2*mass+1));
+        durations.push_back(1);
+        // Keep the same density of points, i.e such that N(M=1)=N_multiplier
+        cards.push_back(N_multiplier/26*((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
 }
@@ -96,7 +97,8 @@ std::vector<double> N_links_avgs = {};
 std::vector<double> N_links_stds = {};
 
 int iteration = 0;
-for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_arr))
+for (auto && tup : boost::combine(cards, radii, hollow_vals,
+                                         masses, durations, repetitions_arr))
 {
         iteration++;
         auto start = high_resolution_clock::now();
@@ -105,8 +107,8 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
         std::vector<int> N_links_arr = {};
         // Define params for causet generation
         int card,repetitions;
-        double radius, myduration, mass;
-        boost::tie(card, radius, mass, myduration, repetitions) = tup;
+        double radius, myduration, mass, hollow;
+        boost::tie(card, radius, hollow, mass, myduration, repetitions) = tup;
         std::cout << "======================================================\n";
         std::cout << "Main interation count: " << (iteration)<<"/"<< masses.size() <<
         "\nN = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
@@ -205,19 +207,20 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         std::stringstream stream3;
         stream3 << std::fixed << std::setprecision(1) << durations[0];
         std::string dur_str = stream3.str(); 
-        std::stringstream stream4;
-        stream4 << std::fixed << std::setprecision(2) << hollow;
-        std::string hollow_str = stream4.str();
+        // Saving hollow used when set as global param in testing
+        //std::stringstream stream4;
+        //stream4 << std::fixed << std::setprecision(2) << hollow;
+        //std::string hollow_str = stream4.str();
         
 
         std::string filename = std::string(homeDir) 
                 + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
-                + "Poiss=False_efficientSprink/"
+                + "Poiss=False_Rho=constant/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])
                 + "_r=" + radius_str
-                //+ "_hollow=" + hollow_str // No need for this as it changes
+                //+ "_hollow=" + hollow_str // Only used in testing
                 + "_dur=" + dur_str
                 + ".txt";
         
