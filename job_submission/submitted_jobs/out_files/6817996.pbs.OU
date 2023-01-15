@@ -1,0 +1,222 @@
+Using 256 cores
+Using 256GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_1.6_N_multiplier_10000_N_reps_20.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+count_lambdas.cpp
+count_links.cpp
+count_links.exe
+executables
+PARAMETERS used in the causet generation:
+mass=1.6, N_multiplier=10000, N_reps=20
+
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+N_multiplier = 10000
+ 
+======================================================
+Main interation count: 1/1
+N = 40960. r_S = 3.2. Radius = 4.8. Hollow = 0.4. Dimension = 4. Height = 1. Centered at t = -0.5.
+M=1.6, 1/20
+Time taken generating for N = 40960: 2.48341 seconds
+t_min for elements in these links = -0.785978
+r_max OUT = 3.62602
+r_min OUT = 3.20027
+r_max IN = 3.1992
+r_min IN = 2.66731
+N_links counted = 231
+Time taken in count_links_fromCMatrix for N = 40960: 5.45085 seconds
+M=1.6, 2/20
+Time taken generating for N = 40960: 2.66977 seconds
+t_min for elements in these links = -0.769728
+r_max OUT = 3.67119
+r_min OUT = 3.20141
+r_max IN = 3.19794
+r_min IN = 2.73784
+N_links counted = 222
+Time taken in count_links_fromCMatrix for N = 40960: 5.87737 seconds
+M=1.6, 3/20
+Time taken generating for N = 40960: 2.65383 seconds
+t_min for elements in these links = -0.719212
+r_max OUT = 3.68428
+r_min OUT = 3.20012
+r_max IN = 3.19893
+r_min IN = 2.76258
+N_links counted = 238
+Time taken in count_links_fromCMatrix for N = 40960: 5.8845 seconds
+M=1.6, 4/20
+Time taken generating for N = 40960: 2.71505 seconds
+t_min for elements in these links = -0.838503
+r_max OUT = 3.61437
+r_min OUT = 3.20004
+r_max IN = 3.19898
+r_min IN = 2.79657
+N_links counted = 224
+Time taken in count_links_fromCMatrix for N = 40960: 6.0912 seconds
+M=1.6, 5/20
+Time taken generating for N = 40960: 2.69866 seconds
+t_min for elements in these links = -0.698332
+r_max OUT = 3.70151
+r_min OUT = 3.2027
+r_max IN = 3.19771
+r_min IN = 2.79429
+N_links counted = 218
+Time taken in count_links_fromCMatrix for N = 40960: 6.17654 seconds
+M=1.6, 6/20
+Time taken generating for N = 40960: 2.5478 seconds
+t_min for elements in these links = -0.724744
+r_max OUT = 3.55056
+r_min OUT = 3.20435
+r_max IN = 3.19916
+r_min IN = 2.81362
+N_links counted = 239
+Time taken in count_links_fromCMatrix for N = 40960: 7.26661 seconds
+M=1.6, 7/20
+Time taken generating for N = 40960: 2.53699 seconds
+t_min for elements in these links = -0.668692
+r_max OUT = 3.60879
+r_min OUT = 3.20134
+r_max IN = 3.19933
+r_min IN = 2.74149
+N_links counted = 241
+Time taken in count_links_fromCMatrix for N = 40960: 5.89244 seconds
+M=1.6, 8/20
+Time taken generating for N = 40960: 2.54852 seconds
+t_min for elements in these links = -0.805897
+r_max OUT = 3.65404
+r_min OUT = 3.2006
+r_max IN = 3.19868
+r_min IN = 2.78189
+N_links counted = 226
+Time taken in count_links_fromCMatrix for N = 40960: 6.84093 seconds
+M=1.6, 9/20
+Time taken generating for N = 40960: 2.52947 seconds
+t_min for elements in these links = -0.770301
+r_max OUT = 3.6161
+r_min OUT = 3.20028
+r_max IN = 3.19638
+r_min IN = 2.70852
+N_links counted = 229
+Time taken in count_links_fromCMatrix for N = 40960: 6.91395 seconds
+M=1.6, 10/20
+Time taken generating for N = 40960: 2.53435 seconds
+t_min for elements in these links = -0.699639
+r_max OUT = 3.5992
+r_min OUT = 3.20005
+r_max IN = 3.19973
+r_min IN = 2.80058
+N_links counted = 218
+Time taken in count_links_fromCMatrix for N = 40960: 5.95338 seconds
+M=1.6, 11/20
+Time taken generating for N = 40960: 2.52479 seconds
+t_min for elements in these links = -0.74574
+r_max OUT = 3.69042
+r_min OUT = 3.20097
+r_max IN = 3.19775
+r_min IN = 2.80091
+N_links counted = 225
+Time taken in count_links_fromCMatrix for N = 40960: 5.87103 seconds
+M=1.6, 12/20
+Time taken generating for N = 40960: 2.53731 seconds
+t_min for elements in these links = -0.687499
+r_max OUT = 3.66668
+r_min OUT = 3.2021
+r_max IN = 3.19985
+r_min IN = 2.77744
+N_links counted = 200
+Time taken in count_links_fromCMatrix for N = 40960: 5.90337 seconds
+M=1.6, 13/20
+Time taken generating for N = 40960: 2.5554 seconds
+t_min for elements in these links = -0.69236
+r_max OUT = 3.62111
+r_min OUT = 3.20031
+r_max IN = 3.19957
+r_min IN = 2.69523
+N_links counted = 259
+Time taken in count_links_fromCMatrix for N = 40960: 6.02475 seconds
+M=1.6, 14/20
+Time taken generating for N = 40960: 2.539 seconds
+t_min for elements in these links = -0.737287
+r_max OUT = 3.56853
+r_min OUT = 3.20244
+r_max IN = 3.19893
+r_min IN = 2.72399
+N_links counted = 248
+Time taken in count_links_fromCMatrix for N = 40960: 5.853 seconds
+M=1.6, 15/20
+Time taken generating for N = 40960: 2.59603 seconds
+t_min for elements in these links = -0.73664
+r_max OUT = 3.63836
+r_min OUT = 3.20117
+r_max IN = 3.19987
+r_min IN = 2.77603
+N_links counted = 226
+Time taken in count_links_fromCMatrix for N = 40960: 5.79124 seconds
+M=1.6, 16/20
+Time taken generating for N = 40960: 2.55719 seconds
+t_min for elements in these links = -0.746226
+r_max OUT = 3.62472
+r_min OUT = 3.20461
+r_max IN = 3.19974
+r_min IN = 2.66469
+N_links counted = 243
+Time taken in count_links_fromCMatrix for N = 40960: 5.80128 seconds
+M=1.6, 17/20
+Time taken generating for N = 40960: 2.53995 seconds
+t_min for elements in these links = -0.710604
+r_max OUT = 3.63503
+r_min OUT = 3.20038
+r_max IN = 3.19854
+r_min IN = 2.82125
+N_links counted = 254
+Time taken in count_links_fromCMatrix for N = 40960: 5.86304 seconds
+M=1.6, 18/20
+Time taken generating for N = 40960: 2.53274 seconds
+t_min for elements in these links = -0.742857
+r_max OUT = 3.67917
+r_min OUT = 3.20022
+r_max IN = 3.1991
+r_min IN = 2.74002
+N_links counted = 223
+Time taken in count_links_fromCMatrix for N = 40960: 6.11943 seconds
+M=1.6, 19/20
+Time taken generating for N = 40960: 2.54758 seconds
+t_min for elements in these links = -0.706636
+r_max OUT = 3.67398
+r_min OUT = 3.20003
+r_max IN = 3.19902
+r_min IN = 2.71702
+N_links counted = 231
+Time taken in count_links_fromCMatrix for N = 40960: 5.86429 seconds
+M=1.6, 20/20
+Time taken generating for N = 40960: 2.5811 seconds
+t_min for elements in these links = -0.738131
+r_max OUT = 3.65214
+r_min OUT = 3.20013
+r_max IN = 3.1991
+r_min IN = 2.72445
+N_links counted = 243
+Time taken in count_links_fromCMatrix for N = 40960: 5.93416 seconds
+Number of links over the horizon = 231.9 +- 13.5458
+Average time taken for generating 20 causets with N = 40960:
+9.01543 seconds
+
+===============================================================
+
+Program took in total: 180.309 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 10000
+Results:
+M = 1.6, Card = 40960, N_links = 231.9 +- 13.5458
+Saving to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/M=1.60_Rho=10000_Card=40960_r=4.8_hollow=0.40_dur=1.0.txt

@@ -57,6 +57,7 @@ std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="
                 <<N_reps<<"\n\n";
                 
 int dim = 4; //want it to be "hard coded = 4"
+double hollow = 0.4;
 std::vector<double> masses = {mass};
 std::vector<int> cards = {};
 std::vector<double> radii = {};
@@ -67,7 +68,7 @@ std::vector<int> repetitions_arr = {};
 for (auto mass : masses)
 {
         // Make a cylinder which "just" includes all relevant links; r_S=2M
-        radii.push_back(3*mass);
+        radii.push_back(2*mass+1);
         durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points
         cards.push_back(N_multiplier*mass*mass*mass);
@@ -76,7 +77,7 @@ for (auto mass : masses)
 }
 
 // Sprinkling Parameters
-bool poisson = true;
+bool poisson = false;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
@@ -103,7 +104,6 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
         // Store N_links for each repetition
         std::vector<int> N_links_arr = {};
         // Define params for causet generation
-        double hollow = 0.4;
         int card,repetitions;
         double radius, myduration, mass;
         boost::tie(card, radius, mass, myduration, repetitions) = tup;
@@ -204,15 +204,20 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         std::string radius_str = stream2.str();
         std::stringstream stream3;
         stream3 << std::fixed << std::setprecision(1) << durations[0];
-        std::string dur_str = stream3.str();
+        std::string dur_str = stream3.str(); 
+        std::stringstream stream4;
+        stream4 << std::fixed << std::setprecision(2) << hollow;
+        std::string hollow_str = stream4.str();
+        
 
         std::string filename = std::string(homeDir) 
-                + "/MSci_Schwarzschild_Causets/data/test_sprinkle_boundaries/"
-                //+ "Poiss=True/"
+                + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
+                + "Poiss=False_efficientSprink/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])
                 + "_r=" + radius_str
+                //+ "_hollow=" + hollow_str // No need for this as it changes
                 + "_dur=" + dur_str
                 + ".txt";
         

@@ -17,14 +17,14 @@ N_reps=100
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
-ncpus=48
-mem=16
-runtime="01:00:00" #format: "hh:mm:ss"
+ncpus=256
+mem=256
+runtime="08:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in 1.0 #$(seq 5.1 .1 6.0)
+for mass in $(seq 1.0 .1 2.5)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

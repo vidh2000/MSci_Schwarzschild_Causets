@@ -118,9 +118,7 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
     }
     if (poisson)
     {
-        //std::default_random_engine generator;
-        std::random_device rd;
-        std::mt19937 genenerator(rd());
+        std::default_random_engine generator;
         std::poisson_distribution<int> distribution(count);
         count = distribution(generator);
     }

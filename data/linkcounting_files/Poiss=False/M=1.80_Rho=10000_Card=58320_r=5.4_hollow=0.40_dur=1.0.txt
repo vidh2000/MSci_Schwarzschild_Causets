@@ -1,0 +1,2 @@
+
+N_reps, N_links_avg, N_links_std,       20, 280.7, 17.0179

@@ -1,0 +1,17 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp: In function ‘int main(int, char**)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:209:58: error: ‘hollow’ was not declared in this scope
+         stream4 << std::fixed << std::setprecision(2) << hollow;
+                                                          ^~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:209:58: note: suggested alternative: ‘valloc’
+         stream4 << std::fixed << std::setprecision(2) << hollow;
+                                                          ^~~~~~
+                                                          valloc
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp: In static member function ‘static std::vector<std::vector<double> > SprinkledCauset::sprinkle(int, CoordinateShape, bool, int)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp:125:30: error: ‘generator’ was not declared in this scope
+         count = distribution(generator);
+                              ^~~~~~~~~
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp:125:30: note: suggested alternative: ‘genenerator’
+         count = distribution(generator);
+                              ^~~~~~~~~
+                              genenerator
+=>> PBS: job killed: mem 284236208kb exceeded limit 268435456kb
