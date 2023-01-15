@@ -52,7 +52,7 @@ class SprinkledCauset: public EmbeddedCauset
         SprinkledCauset(int card,
                         Spacetime spacetime, 
                         CoordinateShape shape, 
-                        bool poisson = true,
+                        bool poisson = false,
                         bool make_matrix = true,
                         bool special = false,
                         bool use_transitivity = true,

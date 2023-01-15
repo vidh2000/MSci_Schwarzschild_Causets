@@ -13,7 +13,7 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 
 # CPP VARIABLES
 N_multiplier=10000
-N_reps=50
+N_reps=100
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS

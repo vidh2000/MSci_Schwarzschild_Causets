@@ -74,7 +74,7 @@ SprinkledCauset::SprinkledCauset(int card,
 
     if (poisson)
         {_intensity = card*1;}
-    _coords = sprinkle_coords(card, shape, seed);
+    _coords = sprinkle(card, shape, poisson, seed);
 
     _size = _coords.size();
 
@@ -118,7 +118,9 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
     }
     if (poisson)
     {
-        std::default_random_engine generator;
+        //std::default_random_engine generator;
+        std::random_device rd;
+        std::mt19937 genenerator(rd());
         std::poisson_distribution<int> distribution(count);
         count = distribution(generator);
     }
