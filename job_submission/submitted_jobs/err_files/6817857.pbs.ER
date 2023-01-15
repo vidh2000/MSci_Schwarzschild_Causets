@@ -1,0 +1,6 @@
+In file included from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/../causets_cpp/embeddedcauset.h:13,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/../causets_cpp/sprinkledcauset.h:9,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:18:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/../causets_cpp/shapes.h:80:25: error: expected ‘,’ before ‘double’
+                         double edge     = 1,
+                         ^~~~~~
