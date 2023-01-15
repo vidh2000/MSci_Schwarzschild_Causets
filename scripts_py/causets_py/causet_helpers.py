@@ -9,36 +9,35 @@ Created on 15 Jan 2022
 import numpy as np
 import functools
 
+
 def get_causet_attrs (lambdasfile_ext):
     """
 
     Parameters
     ----------
-    lambdasfile_ext : str
+    - lambdasfile_ext : str
         Name of file from which import info
     
     Returns
     ---------
-    storage_option : str (#0)
+    - size : int (#0)
 
-    size : int (#1)
+    - dim : int (#1)
 
-    dim : int (#2)
+    - shapename : str (#2)
 
-    shapename : str (#3)
+    - spacetimename : str (#3)
 
-    spacetimename : str (#4)
+    - coords : list<list<float>> (#4)
 
-    coords : list<list<float>> (#5)
-
-    fut_links : list<list<int>> (#6)
+    - fut_links : list<list<int>> (#5)
         Note, some are empty
 
-    r_S : float (#7)
+    - r_S : float (#6)
     
-    lambdas : list<list<int>> (#7)
+    - molecules : list<list<int>> (#7)
 
-    distribution : list<list<int>> (#8)
+    - distribution : list<list<int>> (#8)
     """
     with open(lambdasfile_ext, 'r') as fl: 
             f = fl.readlines() 
@@ -52,7 +51,7 @@ def get_causet_attrs (lambdasfile_ext):
                 raise AttributeError(f"Dim is {dim}: too big!!!")
 
             distribution = []
-            lambdas = []
+            mols = []
             coords = []
             r_S = 0
 
@@ -60,22 +59,39 @@ def get_causet_attrs (lambdasfile_ext):
             while go < 0:
                 row = f[go].split(",")
                 key = row[0]
-                if key[0] == "L":
-                    lambdas.append([])
+
+                if key == "":
+                    go -= 1
+
+                elif key[0] == "Lambda":
+                    mols.append([])
                     for label in row[1:]:
                         if label != "" and label != "\n":
-                            lambdas[-1].append(int(label))
+                            mols[-1].append(int(label))
                     go -= 1
-                elif key[0] == "N":
+                elif key[0:7] == "NLambda":
                     distribution.append([int(key[-1]), int(row[1])])
                     go -= 1
+                
+                elif key[0:3] == "HRV":
+                    mols.append([])
+                    for label in row[1:]:
+                        if label != "" and label != "\n":
+                            mols[-1].append(int(label))
+                    go =- 1
+                elif key[0:4] == "NHRV":
+                    if key[-1] == "n":
+                        distribution.append([0, int(row[1])])
+                    else: #key[-1] == "e":
+                        distribution.append([1, int(row[1])])
+                    go -= 1
+
                 elif key == "r_S" or key == "r_S\n":
                     r_S = float(row[1])
                     go -= 1
+
                 elif key == "Coordinates" or key == "Coordinates\n":
                     break
-                elif key == "":
-                    go -= 1
                 else:
                     coords.insert(0, [])
                     for i in range(dim):
@@ -98,8 +114,7 @@ def get_causet_attrs (lambdasfile_ext):
                 fut_links = [[int(v) for v in line if (v != "\n" and v != "")] 
                                 for line in lines[6+3*size+3:6+4*size+3]]
 
-    return [storage_option, #0
-            size,           #1
+    return [size,           #1
             dim,            #2
             shapename,      #3
             spacetimename,  #4
@@ -108,8 +123,9 @@ def get_causet_attrs (lambdasfile_ext):
             fut_links,      #6
             r_S,            #7
 
-            lambdas,        #7
-            distribution]   #8
+            mols,           #8
+            distribution]   #9
+
 
 #from from https://stackoverflow.com/questions/15301999/default-arguments-with-args-and-kwargs
 def default_kwargs(**defaultKwargs):
@@ -123,6 +139,7 @@ def default_kwargs(**defaultKwargs):
             return fn(*args, **defaultKwargs)
         return g
     return actual_decorator
+
 
 def std_combine(Ns, mus, stds):
     """

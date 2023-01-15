@@ -72,7 +72,7 @@ ColorSchemes = {
 
 
 @ch.default_kwargs(**my_kwargs)
-def plot_causet(file_ext, savefile_ext = 0, 
+def plot_causet(causetfile_ext, savefile_ext = 0, 
                 phi_limits = (0, 2*3.1416), projection = False,
                 **plot_kwargs):
     """
@@ -81,7 +81,7 @@ def plot_causet(file_ext, savefile_ext = 0,
 
     Parameters
     ----------
-    file_ext : string
+    causetfile_ext : string
         Path + filename + ext
 
     savefile_ext : string (default is int 0)
@@ -116,7 +116,7 @@ def plot_causet(file_ext, savefile_ext = 0,
 
     #############################################################
     #GET CAUSET INFO
-    storage_option, \
+    
     size,           \
     dim,            \
     shapename,      \
@@ -125,7 +125,7 @@ def plot_causet(file_ext, savefile_ext = 0,
     fut_links,      \
     r_S, lambdas,   \
     distribution =  \
-    ch.get_causet_attrs(file_ext)
+    ch.get_causet_attrs(causetfile_ext)
     
 
     fig = plt.figure(figsize = figsize, tight_layout = True)
@@ -244,8 +244,9 @@ def plot_causet(file_ext, savefile_ext = 0,
 
 
 
+
 @ch.default_kwargs(**my_kwargs)
-def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0, 
+def plot_lambdas_and_lambdasdistr(causetfile_ext, savefile_ext = 0, 
                                   phi_limits=(0, 2*3.1416), **plot_kwargs):
     """
     PLot the lambdas of a causet with Horizon and their distribution.
@@ -253,7 +254,7 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
 
     Parameters
     ----------
-    lambdasfile_ext : string
+    causetfile_ext : string
         Path + filename + ext
 
     savefile_ext : string (default is int 0)
@@ -284,7 +285,7 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
 
     #############################################################
     #GET CAUSET INFO
-    storage_option, \
+    
     size,           \
     dim,            \
     shapename,      \
@@ -293,7 +294,7 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
     fut_links,      \
     r_S, lambdas,   \
     distribution =  \
-    ch.get_causet_attrs(lambdasfile_ext)
+    ch.get_causet_attrs(causetfile_ext)
 
 
     rc = 2
@@ -415,7 +416,7 @@ def plot_lambdas_and_lambdasdistr(lambdasfile_ext, savefile_ext = 0,
     return fig
 
 @ch.default_kwargs(**my_kwargs)
-def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
+def plot_lambdas(causetfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
 **plot_kwargs):
     """
     PLot the lambdas of a causet with Horizon.
@@ -423,7 +424,7 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
 
     Parameters
     ----------
-    lambdasfile_ext : string
+    causetfile_ext : string
         Path + filename + ext
 
     savefile_ext : string (default is int 0)
@@ -452,7 +453,7 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
 
     #############################################################
     #GET CAUSET INFO
-    storage_option, \
+    
     size,           \
     dim,            \
     shapename,      \
@@ -461,7 +462,7 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
     fut_links,      \
     r_S, lambdas,   \
     distribution =  \
-    ch.get_causet_attrs(lambdasfile_ext)
+    ch.get_causet_attrs(causetfile_ext)
     
 
     fig = plt.figure(figsize = figsize, tight_layout = True)
@@ -559,8 +560,9 @@ def plot_lambdas(lambdasfile_ext, savefile_ext = 0, phi_limits = (0, 2*3.1416),
 
 
 
+
 @ch.default_kwargs(**my_kwargs)
-def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext, 
+def plot_causet_and_lambdas_and_lambdasdistr(causetfile_ext, 
                                             savefile_ext = 0,
                                             phi_limits = (0, 2*3.1416),
                                             **plot_kwargs):
@@ -570,7 +572,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
 
     Parameters
     ----------
-    lambdasfile_ext : string
+    causetfile_ext : string
         Path + filename + ext
 
     savefile_ext : string (default is int 0)
@@ -599,7 +601,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
 
     #############################################################
     #GET CAUSET INFO
-    storage_option, \
+    
     size,           \
     dim,            \
     shapename,      \
@@ -608,7 +610,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
     fut_links,      \
     r_S, lambdas,   \
     distribution =  \
-    ch.get_causet_attrs(lambdasfile_ext)
+    ch.get_causet_attrs(causetfile_ext)
     
     rc = 2
     r  = 2
@@ -779,7 +781,7 @@ def plot_causet_and_lambdas_and_lambdasdistr(lambdasfile_ext,
     return fig
 
 @ch.default_kwargs(**my_kwargs)
-def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0, 
+def plot_causet_and_lambdas(causetfile_ext, savefile_ext = 0, 
                             phi_limits = (0, 2*3.1416),
                             projection = False,
                             **plot_kwargs):
@@ -789,7 +791,7 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
 
     Parameters
     ----------
-    lambdasfile_ext : string
+    causetfile_ext : string
         Path + filename + ext
 
     savefile_ext : string (default is int 0)
@@ -824,16 +826,16 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
 
     #############################################################
     #GET CAUSET INFO
-    storage_option, \
     size,           \
     dim,            \
     shapename,      \
     spacetimename,  \
     coords,         \
     fut_links,      \
-    r_S, lambdas,   \
+    r_S,            \
+    lambdas,        \
     distribution =  \
-    ch.get_causet_attrs(lambdasfile_ext)
+    ch.get_causet_attrs(causetfile_ext)
     
     ###############################################################
     #PLOTTING
@@ -1088,6 +1090,604 @@ def plot_causet_and_lambdas(lambdasfile_ext, savefile_ext = 0,
 
     return ax
 
+
+
+
+@ch.default_kwargs(**my_kwargs)
+def plot_causet_and_hrvs(causetfile_ext, savefile_ext = 0, 
+                         phi_limits = (0, 2*3.1416),
+                         projection = False,
+                         **plot_kwargs):
+    """
+    PLot the whole causet highlighting the HRV molecules.
+    Time on vertical axis. The spatial dimensions can be 2 or 3.
+
+    Parameters
+    ----------
+    causetfile_ext : string
+        Path + filename + ext from which get the info
+
+    savefile_ext : string (default is int 0)
+        Path + filename + ext to save file to
+    
+    phi_limits : tuple (default is (0, 2*\pi))
+    
+    projection: bool (default is false)
+        Plot the 3D case as if it was a 2D (t,r) plot. Useful when phi_limits
+        pick a narrow interval.
+
+    **plot_kwargs: These include
+    - figsize. Default (7.5, 15).
+    - lambda_link_alpha. Default is 1.
+    - link_alpha. Default 0.5.
+    - link_lw. Default 0.5.
+    - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
+
+    Returns
+    -------
+    plt.figure
+    """
+    #############################################################
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    lambda_link_alpha = plot_kwargs['lambda_link_alpha']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+    lambdas_colors = plot_kwargs['lambdas_colors']
+
+    #############################################################
+    #GET CAUSET INFO
+    size,           \
+    dim,            \
+    shapename,      \
+    spacetimename,  \
+    coords,         \
+    fut_links,      \
+    r_S,            \
+    mols,           \
+    distribution =  \
+    ch.get_causet_attrs(causetfile_ext)
+    
+    ###############################################################
+    #PLOTTING
+    fig = plt.figure(figsize = figsize, tight_layout = True)
+    ax = plt.axes()
+    Ncolors = len(lambdas_colors)
+    
+    if dim == 2:
+        plt.ylabel("t*")
+        plt.xlabel("r")        
+        
+        #START WITH LAMBDAS
+        for mol_i in mols:
+            #Get molecule and set color based on type (a prec b?)
+            p, a, b = mol_i
+            close = int(b in fut_links[a])
+            facecolor = lambdas_colors[close]
+            tp = coords[p][0]; ta = coords[a][0]; tb = coords[b][0]
+            xp = coords[p][1]; xa = coords[a][1]; xb = coords[b][1]
+            plt.plot([xp, xa, xb], [tp, ta, tb], marker="o", 
+                        markersize = markersize, 
+                        markeredgecolor=facecolor, 
+                        markerfacecolor=facecolor,
+                        lw = 0,
+                        zorder = 10)
+            plt.plot([xp, xa], [tp, ta], markersize = 0,
+                    ls = "solid", color=facecolor, 
+                    alpha = lambda_link_alpha, lw = link_lw,
+                    zorder = 9)
+            plt.plot([xp, xb], [tp, tb], markersize = 0,
+                    ls = "solid", color=facecolor, 
+                    alpha = lambda_link_alpha, lw = link_lw,
+                    zorder = 9)
+            if close:
+                plt.plot([xa, xb], [ta, tb], markersize = 0,
+                        ls = "solid", color=facecolor, 
+                        alpha = lambda_link_alpha, lw = link_lw,
+                        zorder = 9)
+
+        ##NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
+        lambdas_labels = [lbl for mol_i in mols for lbl in mol_i]
+        for i in range(size):
+            if not (i in lambdas_labels):
+                ti = coords[i][0]
+                xi = coords[i][1]
+                for j in [i] + fut_links[i]:
+                    tj = coords[j][0]
+                    xj = coords[j][1]
+                    if not (j in lambdas_labels):
+                        plt.plot([xi, xj], [ti, tj], 
+                                    marker = "o", markersize = markersize, 
+                                    markeredgecolor = "black", 
+                                    markerfacecolor = std_color,
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 5)
+                    else:
+                        plt.plot([xi, xj], [ti, tj], 
+                                    marker = "o", markersize = markersize, 
+                                    markeredgecolor = "black", 
+                                    markerfacecolor = std_color,
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 5)
+        #FINALLY MARK THE HORIZON
+        ys = plt.ylim()
+        plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
+        
+        if min(np.array(coords)[:,1]) < 0:
+            plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
+        plt.ylim(ys)
+
+    elif dim == 3:
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+
+        #START WITH LAMBDAS
+        for mol_i in mols:
+            #Get molecule and set color based on type (a prec b?)
+            p, a, b = mol_i
+            close = int(b in fut_links[a])
+            facecolor = lambdas_colors[close]
+            tp = coords[p][0]  ; ta = coords[a][0]  ; tb = coords[b][0]
+            rp = coords[p][1]  ; ra = coords[a][1]  ; rb = coords[b][1]
+            phip = coords[p][2]; phia = coords[a][2]; phib = coords[b][2]
+            p_in = phi_limits[0] < phip and phip < phi_limits[1]
+            a_in = phi_limits[0] < phia and phia < phi_limits[1]
+            b_in = phi_limits[0] < phib and phib < phi_limits[1]
+            #Plot
+            xp = rp * np.cos(phip)
+            yp = rp * np.sin(phip)
+            if p_in:
+                if a_in and b_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    xb = rb * np.cos(phib)
+                    yb = rb * np.sin(phib)
+                    plt.plot([xp, xa], [yp, ya], [tp, ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    plt.plot([xp, xb], [yp, yb], [tp, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    if close:
+                        plt.plot([xa, xb], [ya, yb], [ta, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif a_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    plt.plot([xp, xa], [yp, ya], [tp, ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif b_in:
+                    xb = rb * np.cos(phib)
+                    yb = rb * np.sin(phib)
+                    plt.plot([xp, xb], [yp, yb], [tp, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+            else:
+                if a_in and b_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    xb = rb * np.cos(phia)
+                    yb = rb * np.sin(phia)
+                    plt.plot([xa], [ya], [ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    plt.plot([xb], [yb], [tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    if close:
+                        plt.plot([xa, xb], [ya, yb], [ta, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif a_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    plt.plot([xa], [ya], [ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif b_in:
+                    xb = rb * np.cos(phib)
+                    yb = rb * np.sin(phib)
+                    plt.plot([xb], [yb], [tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)               
+        
+        #NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
+        mols_labels = [lbl for mol_i in mols for lbl in mol_i]
+        for i in range(size):
+            if not (i in mols_labels):
+                ti   = coords[i][0]
+                ri   = coords[i][1]
+                phii = coords[i][2]
+                if phi_limits[0] < phii and phii < phi_limits[1]:
+                    xi = ri * np.cos(phii)
+                    yi = ri * np.sin(phii)
+                    for j in [i] + fut_links[i]:
+                        tj = coords[j][0]
+                        rj = coords[j][1]
+                        phij = coords[j][2]
+                        if phi_limits[0] < phij and phij < phi_limits[1]:
+                            xj = rj * np.cos(phij)
+                            yj = rj * np.sin(phij)
+                            ax.plot([xi, xj], [yi, yj], [ti, tj], 
+                                    markersize = 0, 
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 4)
+                            if not (j in lambdas_labels):
+                                mecj = "red" if rj < r_S else "black"
+                                ax.plot([xj], [yj], [tj], 
+                                        marker = "o", markersize = markersize, 
+                                        markeredgecolor = mecj, 
+                                        markerfacecolor = std_color,
+                                        zorder = 5)
+        #FINALLY MARK THE HORIZON
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
+        Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
+
+    if savefile_ext:
+        plt.savefig(savefile_ext)
+    plt.show()
+
+    return ax
+
+@ch.default_kwargs(**my_kwargs)
+def plot_causet_and_hrvs_and_hrvsdistr(causetfile_ext, 
+                                            savefile_ext = 0,
+                                            phi_limits = (0, 2*3.1416),
+                                            **plot_kwargs):
+    """
+    PLot the whole causet highlighting the lambdas and their distribution.
+    Time on vertical axis. The spatial dimensions can be 2 or 3.
+
+    Parameters
+    ----------
+    causetfile_ext : string
+        Path + filename + ext
+
+    savefile_ext : string (default is int 0)
+        Path + filename + ext to save file to
+    
+    phi_limits : tuple (default is (0, 2*\pi))
+
+    **plot_kwargs: These include
+    - figsize. Default (7.5, 15).
+    - lambda_link_alpha. Default 1.
+    - link_alpha. Default 0.5.
+    - link_lw. Default 0.5.
+    - markersize. Default 5.
+    - std_color. Default "#002147" (kind of dark blue).
+
+    Returns
+    -------
+    plt.figure
+    """
+    #GET KWARGS
+    figsize    = plot_kwargs['figsize']
+    lambda_link_alpha = plot_kwargs['lambda_link_alpha']
+    link_alpha = plot_kwargs['link_alpha']
+    link_lw    = plot_kwargs['link_lw']
+    markersize = plot_kwargs['markersize']
+    std_color  = plot_kwargs['std_color']
+    lambdas_colors = plot_kwargs['lambdas_colors']
+
+    #############################################################
+    #GET CAUSET INFO
+    size,           \
+    dim,            \
+    shapename,      \
+    spacetimename,  \
+    coords,         \
+    fut_links,      \
+    r_S,            \
+    mols,           \
+    distribution =  \
+    ch.get_causet_attrs(causetfile_ext)
+    
+    rc = 2
+    r  = 2
+    c  = 1
+    fig, axes = plt.figure(figsize = figsize, tight_layout = True)
+    Ncolors = len(lambdas_colors)
+    
+    plt.subplot(r, c, 1)
+    if dim == 2:
+        plt.ylabel("t*")
+        plt.xlabel("r")        
+        
+        #START WITH LAMBDAS
+        for mol_i in mols:
+            #Get molecule and set color based on type (a prec b?)
+            p, a, b = mol_i
+            close = int(b in fut_links[a])
+            facecolor = lambdas_colors[close]
+            tp = coords[p][0]; ta = coords[a][0]; tb = coords[b][0]
+            xp = coords[p][1]; xa = coords[a][1]; xb = coords[b][1]
+            plt.plot([xp, xa, xb], [tp, ta, tb], marker="o", 
+                        markersize = markersize, 
+                        markeredgecolor=facecolor, 
+                        markerfacecolor=facecolor,
+                        lw = 0,
+                        zorder = 10)
+            plt.plot([xp, xa], [tp, ta], markersize = 0,
+                    ls = "solid", color=facecolor, 
+                    alpha = lambda_link_alpha, lw = link_lw,
+                    zorder = 9)
+            plt.plot([xp, xb], [tp, tb], markersize = 0,
+                    ls = "solid", color=facecolor, 
+                    alpha = lambda_link_alpha, lw = link_lw,
+                    zorder = 9)
+            if close:
+                plt.plot([xa, xb], [ta, tb], markersize = 0,
+                        ls = "solid", color=facecolor, 
+                        alpha = lambda_link_alpha, lw = link_lw,
+                        zorder = 9)
+
+        ##NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
+        lambdas_labels = [lbl for mol_i in mols for lbl in mol_i]
+        for i in range(size):
+            if not (i in lambdas_labels):
+                ti = coords[i][0]
+                xi = coords[i][1]
+                for j in [i] + fut_links[i]:
+                    tj = coords[j][0]
+                    xj = coords[j][1]
+                    if not (j in lambdas_labels):
+                        plt.plot([xi, xj], [ti, tj], 
+                                    marker = "o", markersize = markersize, 
+                                    markeredgecolor = "black", 
+                                    markerfacecolor = std_color,
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 5)
+                    else:
+                        plt.plot([xi, xj], [ti, tj], 
+                                    marker = "o", markersize = markersize, 
+                                    markeredgecolor = "black", 
+                                    markerfacecolor = std_color,
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 5)
+        #FINALLY MARK THE HORIZON
+        ys = plt.ylim()
+        plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
+        
+        if min(np.array(coords)[:,1]) < 0:
+            plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
+        plt.ylim(ys)
+
+    elif dim == 3:
+        ax = plt.axes(projection = "3d")
+        ax.set_zlabel("t*")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+
+        #START WITH LAMBDAS
+        for mol_i in mols:
+            #Get molecule and set color based on type (a prec b?)
+            p, a, b = mol_i
+            close = int(b in fut_links[a])
+            facecolor = lambdas_colors[close]
+            tp = coords[p][0]  ; ta = coords[a][0]  ; tb = coords[b][0]
+            rp = coords[p][1]  ; ra = coords[a][1]  ; rb = coords[b][1]
+            phip = coords[p][2]; phia = coords[a][2]; phib = coords[b][2]
+            p_in = phi_limits[0] < phip and phip < phi_limits[1]
+            a_in = phi_limits[0] < phia and phia < phi_limits[1]
+            b_in = phi_limits[0] < phib and phib < phi_limits[1]
+            #Plot
+            xp = rp * np.cos(phip)
+            yp = rp * np.sin(phip)
+            if p_in:
+                if a_in and b_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    xb = rb * np.cos(phib)
+                    yb = rb * np.sin(phib)
+                    plt.plot([xp, xa], [yp, ya], [tp, ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    plt.plot([xp, xb], [yp, yb], [tp, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    if close:
+                        plt.plot([xa, xb], [ya, yb], [ta, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif a_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    plt.plot([xp, xa], [yp, ya], [tp, ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif b_in:
+                    xb = rb * np.cos(phib)
+                    yb = rb * np.sin(phib)
+                    plt.plot([xp, xb], [yp, yb], [tp, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+            else:
+                if a_in and b_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    xb = rb * np.cos(phia)
+                    yb = rb * np.sin(phia)
+                    plt.plot([xa], [ya], [ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    plt.plot([xb], [yb], [tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                    if close:
+                        plt.plot([xa, xb], [ya, yb], [ta, tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif a_in:
+                    xa = ra * np.cos(phia)
+                    ya = ra * np.sin(phia)
+                    plt.plot([xa], [ya], [ta], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)
+                elif b_in:
+                    xb = rb * np.cos(phib)
+                    yb = rb * np.sin(phib)
+                    plt.plot([xb], [yb], [tb], marker="o", 
+                            markersize = markersize, 
+                            markeredgecolor="red", 
+                            markerfacecolor=facecolor,
+                            ls = "solid", color = facecolor, 
+                            alpha = lambda_link_alpha, lw = link_lw,
+                            zorder = 10)               
+        
+        #NOW DO OTHER POINTS (SKIPPING THOSE IN LAMBDAS)
+        mols_labels = [lbl for mol_i in mols for lbl in mol_i]
+        for i in range(size):
+            if not (i in mols_labels):
+                ti   = coords[i][0]
+                ri   = coords[i][1]
+                phii = coords[i][2]
+                if phi_limits[0] < phii and phii < phi_limits[1]:
+                    xi = ri * np.cos(phii)
+                    yi = ri * np.sin(phii)
+                    for j in [i] + fut_links[i]:
+                        tj = coords[j][0]
+                        rj = coords[j][1]
+                        phij = coords[j][2]
+                        if phi_limits[0] < phij and phij < phi_limits[1]:
+                            xj = rj * np.cos(phij)
+                            yj = rj * np.sin(phij)
+                            ax.plot([xi, xj], [yi, yj], [ti, tj], 
+                                    markersize = 0, 
+                                    ls = "solid", color = std_color, 
+                                    alpha = link_alpha, lw = link_lw,
+                                    zorder = 4)
+                            if not (j in lambdas_labels):
+                                mecj = "red" if rj < r_S else "black"
+                                ax.plot([xj], [yj], [tj], 
+                                        marker = "o", markersize = markersize, 
+                                        markeredgecolor = mecj, 
+                                        markerfacecolor = std_color,
+                                        zorder = 5)
+        #FINALLY MARK THE HORIZON
+        zs = ax.set_zlim()
+        h = abs(zs[1] - zs[0])
+        cz = (zs[0]+zs[1])/2
+        Xc,Yc,Zc = cylinder_along_z(0, 0, cz, r_S, h)
+        ax.plot_surface(Xc, Yc, Zc, alpha=0.05, 
+                        color = "#9F004E", label = "Horizon")
+        ax.set_zlim(zs)
+        xymax = max(list(ax.set_ylim())+list(ax.set_xlim()))
+        ax.set_ylim(-xymax, xymax)
+        ax.set_xlim(-xymax, xymax)
+
+    
+    plt.subplot(r, c, 2)
+    distribution = np.array(distribution)
+    plt.step(distribution[:,0], distribution[:,1])
+    props = dict(boxstyle='round', facecolor='wheat', 
+                edgecolor = 'black', ls = '', alpha=0.5)
+    plt.annotate (f"Tot = {sum(distribution[:,1])}", 
+                  (0.8, 0.8), xycoords = "axes fraction", 
+                  va='bottom', ha = 'left', bbox=props) 
+    plt.xticks(labels = ["Open HRVs", "Close HRVs"])
+    plt.ylabel("Number of Occurrences")
+
+    if savefile_ext:
+        plt.savefig(savefile_ext)
+    plt.show()
+
+    return axes
 
 
 
