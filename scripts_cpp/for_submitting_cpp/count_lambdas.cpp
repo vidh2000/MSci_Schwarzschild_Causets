@@ -169,22 +169,25 @@ int dim = 4; //want it to be "hard coded = 4"
 std::vector<double> masses = {mass};
 std::vector<int> cards = {};
 std::vector<double> radii = {};
+std::vector<double> hollow_vals = {};
 std::vector<double> durations = {};
 std::vector<int> repetitions_arr = {};
 
 for (auto mass : masses)
 {
         // Make a "square" cylinder with r,h=4M, since r_S=2M
-        radii.push_back(4*mass);
-        durations.push_back(4); // since min(t_min) ~ -3.5, 4 is adequate
-        // Keep the same density of points
-        cards.push_back(N_multiplier*mass*mass*mass);
+        radii.push_back(2*mass+1);
+        hollow_vals.push_back((2*mass-1)/(2*mass+1));
+        durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
+        // Keep the same density of points, i.e such that N(M=1)=N_multiplier
+        cards.push_back(N_multiplier/26*
+        ((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
 }
 
 // Sprinkling Parameters
-bool poisson = true;
+bool poisson = false;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
@@ -203,22 +206,24 @@ std::vector<double> N_links_avgs = {};
 std::vector<double> N_links_stds = {};
 
 int iteration = 0;
-for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_arr))
+for (auto && tup : boost::combine(cards, radii, hollow_vals,
+                                         masses, durations, repetitions_arr))
 {
         iteration++;
         auto start = high_resolution_clock::now();
 
         // Store N_links for each repetition
-        std::map<int, std::vector<int>> all_lambdas_results;
+        std::map<int, std::vector<double>> all_lambdas_results;
         std::vector<int> pastkeys = {};
 
         // Define params for causet generation
         int card,repetitions;
-        double radius, myduration, mass;
-        boost::tie(card, radius, mass, myduration, repetitions) = tup;
+        double radius, myduration, mass, hollow;
+        boost::tie(card, radius, hollow, mass, myduration, repetitions) = tup;
         std::cout << "======================================================\n";
         std::cout << "Main interation count: " << (iteration)<<"/"<< masses.size() <<
         "\nN = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
+        ". Hollow = " << hollow <<
         ". Dimension = " << dim << ". Height = " << myduration <<
         ". Centered at t = " << -myduration/2 << ".\n";
         
@@ -228,7 +233,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 auto repstart = high_resolution_clock::now();
                 // Set up shape
                 std::vector<double> center = {-myduration/2,0.0,0.0,0.0};
-                CoordinateShape shape(dim,name,center,radius,myduration);
+                CoordinateShape shape(dim,name,center,radius,myduration,hollow);
                 // Set up spacetime
                 Spacetime S = Spacetime();
                 S.BlackHoleSpacetime(dim,mass);
@@ -241,7 +246,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 auto repend = high_resolution_clock::now();
                 double duration = duration_cast<microseconds>(repend - repstart).count();
                 std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
-                std::cout << "Time taken generating for N = " << card
+                std::cout << "Time taken generating for N = " << C._size
                 << ": " << duration/pow(10,6) << " seconds" << std::endl;
 
                 // Count lambdas and store it
@@ -255,7 +260,7 @@ for (auto && tup : boost::combine(cards, radii, masses, durations, repetitions_a
                 double durationlinks = duration_cast<microseconds>(
                         linkcountend - linkcountstart).count();
                 std::cout << "Time taken in count_lambdas for N = "
-                << card << ": " << durationlinks/pow(10,6) << " seconds"
+                << C._size << ": " << durationlinks/pow(10,6) << " seconds"
                 << std::endl;     
         }
 
@@ -290,7 +295,7 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
 {
         double mass, N_links_avg, N_links_std;
         boost::tie(mass, N_links_avg, N_links_std) = tup;
-        std::cout << "M = "<<mass<< ", Card = " << N_multiplier*mass*mass*mass
+        std::cout << "M = "<<mass<< ", Card = " << cards[0]
         << ", N_links = " << N_links_avg << " +- " << N_links_std 
         << std::endl;
 
@@ -308,8 +313,8 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         std::string dur_str = stream3.str();
 
         std::string filename = std::string(homeDir) 
-                + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
-                + "Poiss=True/"
+                + "/MSci_Schwarzschild_Causets/data/lambdas/"
+                + "Poiss=False/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])

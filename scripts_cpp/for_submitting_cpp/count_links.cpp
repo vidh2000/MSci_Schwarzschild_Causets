@@ -72,7 +72,8 @@ for (auto mass : masses)
         hollow_vals.push_back((2*mass-1)/(2*mass+1));
         durations.push_back(1);
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        cards.push_back(N_multiplier/26*((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
+        cards.push_back(N_multiplier/26*
+        ((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
 }
@@ -191,7 +192,7 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
 {
         double mass, N_links_avg, N_links_std;
         boost::tie(mass, N_links_avg, N_links_std) = tup;
-        std::cout << "M = "<<mass<< ", Card = " << N_multiplier*mass*mass*mass
+        std::cout << "M = "<<mass<< ", Card = " << cards[0]
         << ", N_links = " << N_links_avg << " +- " << N_links_std 
         << std::endl;
 
