@@ -22,43 +22,34 @@
 #include "../causets_cpp/functions.h"
 #include "../causets_cpp/vecfunctions.h"
 
-using namespace std::chrono;
-/**
- * @brief   To run this file, you must:
- *          - Go to to the folder in which it is located
- *          - Type into the command line:
- *              cd scripts_cpp
- *              g++ -g causets_cpp/causet.cpp causets_cpp/shapes.cpp causets_cpp/spacetimes.cpp causets_cpp/embeddedcauset.cpp causets_cpp/sprinkledcauset.cpp sprinkle.cpp -std=c++17 -o testsprinkle -O2
- *          - This creates the executable sprinkle.exe
- *          - Run sprinkle.exe by typing into command line:
- *              ./testsprinkle
- * 
- *          NOTE: running in Windows cmd does not print no matetr what
- * 
- */
+using namespace std::chrono;//can't use duration
+
 
 // Sprinkled causet parameters
-int card = 1000;
+int card = 20;
 int dim = 3;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
 double myduration = 10;
+double hollow = 0;
 double edge = 1.5;
 std::vector<double> edges = {1,2,3,4};
 
-// Causet generation
+
+// Sprinkling Parameters
 bool poisson = false;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
 bool make_sets = false;
-bool make_links = false;
-const char* sets_type = "future"; // "all with links", "both only", "all", "past", "future"
-
+bool make_links = false; 
+const char* sets_type = "future"; 
+const char* name = "cylinder";
 
 //Analysis Parameters (printing related)
 bool want_matrix = false;
 bool want_coords = false;
+
 
 int main(){
     
@@ -66,11 +57,11 @@ int main(){
     //std::cout << "Starting building shape..." << std::endl;
     std::vector<const char*> names = {"cylinder"};// "ball", "cylinder", "cube", "cuboid"};
     edges.resize(dim);
-    card = (want_coords || want_matrix)? 10 : card;
+    //card = (want_coords || want_matrix)? 10 : card;
     for (const char* name : names)
     {
 
-        CoordinateShape shape(dim,name,center,radius);
+        CoordinateShape shape(dim,name,center,radius,myduration,hollow,edge,edges);
         std::cout<<"\n\n============= USING "<<name<<" ====================\n";
         // std::cout << "What are the just-Shape's parameters?\n";
         // for (auto const& p : shape._params)

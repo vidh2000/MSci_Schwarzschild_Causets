@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -14,8 +15,8 @@
 #include <stdexcept>
 #include <string>
 #include <string.h>
+#include <time.h>
 #include <vector>
-#include <chrono>
 #include <unordered_set>
 
 //using namespace std::chrono;
@@ -100,14 +101,16 @@ SprinkledCauset::SprinkledCauset(int card,
  * @param shape : CoordinateShape where to sprinkle
  * @param poisson : bool, if true count is average of Poisson distribution
  * from which get the effective count
- * @param seed : int, default is no seed.
+ * @param seed : int. Seed for coordinates. Default 0 means no seed.
+ * @param poisson_seed : int. Seed for Poisson. Default 0 means no seed.
  * @return vector<vector<double>> coordinates, with ith entry being coordinates
  * of ith point.
  */
 vector<vector<double>> SprinkledCauset::sprinkle( int count, 
                                                     CoordinateShape shape,
                                                     bool poisson,// = false,
-                                                    int seed)// = 0)
+                                                    int seed, // = 0,
+                                                    int poisson_seed)// = 0)
 {
     if (count<0)
     {   
@@ -118,9 +121,15 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
     }
     if (poisson)
     {
-        std::default_random_engine generator;
+        if (poisson_seed==0)
+        {
+            poisson_seed = std::chrono::system_clock::now().time_since_epoch().count();
+        }
+        
+
+        std::mt19937 gen(poisson_seed);
         std::poisson_distribution<int> distribution(count);
-        count = distribution(generator);
+        count = distribution(gen);
     }
     vector<vector<double>> coords = SprinkledCauset::sprinkle_coords
                                                       (count,shape,seed); 
@@ -156,7 +165,8 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
     if (seed==0)
     {
         std::random_device rd;
-        seed = rd();
+        seed = std::chrono::system_clock::now().time_since_epoch().count(); 
+        //seed = rd();
     }  
     std::mt19937 gen(seed);
 

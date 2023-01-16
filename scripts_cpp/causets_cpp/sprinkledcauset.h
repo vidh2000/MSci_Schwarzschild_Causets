@@ -67,7 +67,8 @@ class SprinkledCauset: public EmbeddedCauset
         static std::vector<std::vector<double>> sprinkle(int count, 
                                                         CoordinateShape shape, 
                                                         bool poisson = false,
-                                                        int seed = 0);
+                                                        int seed = 0,
+                                                        int poisson_seed = 0);
         static std::vector<std::vector<double>> sprinkle_coords(int count,
                                                         CoordinateShape shape,
                                                         int seed = 0);
