@@ -7,7 +7,7 @@ import os
 
 
 usehome = True
-Poiss="False"
+#Poiss="False"
 
 # Home Directory
 home = expanduser("~")
@@ -16,7 +16,7 @@ path = os.getcwd()
 
 if usehome:
     plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
-    dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}_Rho=constant"
+    dataDir = home + f"/MSci_Schwarzschild_Causets/data/links/"
 else:
     plotsDir = path + "/figures/Nlinks_vs_Area/"
     dataDir = path + f"/data/linkcounting_files/Poiss={Poiss}"
@@ -95,9 +95,9 @@ plt.plot(x, poly1d_fn(x), '--', color="red",
 
 plt.legend()
 plt.ylabel(r"Number of links $N$")
-plt.xlabel(r"Area $(4\pi M^2)$ [a.u]")
+plt.xlabel(r"Area $(4\pi R_s^2)$ [a.u]")
 plt.grid(alpha=0.3)
 
-figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_Poiss=False_Rho=const.png"
+figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
 plt.savefig(figname)
 plt.show()
