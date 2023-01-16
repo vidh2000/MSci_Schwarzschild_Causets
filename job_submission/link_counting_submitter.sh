@@ -12,19 +12,19 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 
 
 # CPP VARIABLES
-N_multiplier=20000
-N_reps=20
+N_multiplier=10000
+N_reps=10
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
-ncpus=256
-mem=920
-runtime="08:00:00" #format: "hh:mm:ss"
+ncpus=48
+mem=16
+runtime="01:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in $(seq 4.3 .1 5.0)
+for mass in 1.0 #$(seq 4.6 .1 5.0)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
@@ -84,7 +84,7 @@ echo "" >> $sh_run_file
 ###############################################################################
 #______________________________________________________________________________
 ##### Write the submit file based on variables used and run_file.sh to submit
-submitfile="${submitted_jobsDir}submit_files/submitme_mass_${mass}_N_multiplier_${N_multiplier}_N_reps_${N_reps}.pbs"
+submitfile="${submitted_jobsDir}submit_files/subLink_mass_${mass}_N_multiplier_${N_multiplier}_N_reps_${N_reps}.pbs"
 
 echo "#!/bin/sh" > $submitfile
 echo "#PBS -lselect=1:ncpus=${ncpus}:mem=${mem}gb" >> $submitfile
