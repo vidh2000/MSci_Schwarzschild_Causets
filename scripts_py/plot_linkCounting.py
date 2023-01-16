@@ -76,7 +76,7 @@ for i,filename in enumerate(os.listdir(dataDir)):
 
 
 plt.figure()
-x = 4*np.pi*np.array(masses)**2
+x = 4*np.pi*(4*np.array(masses)**2)
 y = Nlinks_avgs
 plt.errorbar(x, y, yerr=Nlinks_stds,
             capsize=4,ls="",fmt="o", color="black",
@@ -86,7 +86,7 @@ plt.errorbar(x, y, yerr=Nlinks_stds,
 coef = np.polyfit(x,y,1)
 print(f"===============================================================\n\
         Linear fit coefficients: {coef}\n\
-        Gradient factor w.r.t \sqrt(rho) = {coef[0]/np.sqrt(rho/26)}\n\
+        Gradient factor w.r.t \sqrt(rho) = {coef[0]/np.sqrt(rho/(4*np.pi/3*26))}\n\
         ===============================================================")
 poly1d_fn = np.poly1d(coef) 
 x = np.linspace(min(x),max(x),100)
