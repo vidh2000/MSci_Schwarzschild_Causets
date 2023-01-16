@@ -72,14 +72,14 @@ for (auto mass : masses)
         hollow_vals.push_back((2*mass-1)/(2*mass+1));
         durations.push_back(1);
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        cards.push_back(N_multiplier/26*
+        cards.push_back(N_multiplier/26.0*
         ((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
 }
 
 // Sprinkling Parameters
-bool poisson = false;
+bool poisson = true;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
@@ -215,8 +215,8 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         
 
         std::string filename = std::string(homeDir) 
-                + "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
-                + "Poiss=False_Rho=constant/"
+                + "/MSci_Schwarzschild_Causets/data/links/"
+                //+ "linkcounting_files/Poiss=False_Rho=constant/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])

@@ -314,7 +314,6 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
 
         std::string filename = std::string(homeDir) 
                 + "/MSci_Schwarzschild_Causets/data/lambdas/"
-                + "Poiss=False/"
                 + "M=" + mass_str
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])
