@@ -7,7 +7,7 @@ import os
 
 
 usehome = True
-Poiss="True"
+Poiss="False"
 
 # Home Directory
 home = expanduser("~")
@@ -16,7 +16,7 @@ path = os.getcwd()
 
 if usehome:
     plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
-    dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}"
+    dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss={Poiss}_Rho=constant"
 else:
     plotsDir = path + "/figures/Nlinks_vs_Area/"
     dataDir = path + f"/data/linkcounting_files/Poiss={Poiss}"
@@ -24,7 +24,7 @@ else:
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
 Ms = None #=None if you want to choose all existinig masses
-rho = 1000
+rho = 20000
 
 
 # Get data
@@ -86,6 +86,7 @@ plt.errorbar(x, y, yerr=Nlinks_stds,
 coef = np.polyfit(x,y,1)
 print(f"===============================================================\n\
         Linear fit coefficients: {coef}\n\
+        Gradient factor w.r.t \sqrt(rho) = {coef[0]/np.sqrt(rho/26)}\n\
         ===============================================================")
 poly1d_fn = np.poly1d(coef) 
 x = np.linspace(min(x),max(x),100)
@@ -97,6 +98,6 @@ plt.ylabel(r"Number of links $N$")
 plt.xlabel(r"Area $(4\pi M^2)$ [a.u]")
 plt.grid(alpha=0.3)
 
-figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_Poiss={Poiss}.png"
+figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_Poiss=False_Rho=const.png"
 plt.savefig(figname)
 plt.show()
