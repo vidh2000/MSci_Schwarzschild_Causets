@@ -118,7 +118,7 @@ std::vector<std::map<int, double>> avg_distr(
         {
             int key = pair->first;
             std::vector<num> values = pair->second;
-            avg_i = mymean(values);
+            double avg_i = mymean(values);
 
             double accum = 0.0;
             std::for_each(std::begin(values), std::end(values),
