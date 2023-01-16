@@ -180,14 +180,14 @@ for (auto mass : masses)
         hollow_vals.push_back((2*mass-1)/(2*mass+1));
         durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        cards.push_back(N_multiplier/26*
+        cards.push_back(N_multiplier/26.0*
         ((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
 }
 
 // Sprinkling Parameters
-bool poisson = false;
+bool poisson = true;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
