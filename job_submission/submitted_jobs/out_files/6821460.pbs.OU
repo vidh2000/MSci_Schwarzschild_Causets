@@ -155,3 +155,68 @@ N_links counted = 1826
 Time taken in count_links_fromCMatrix for N = 283018: 555.308 seconds
 M=3.9, 15/20
 Time taken generating for N = 282866: 88.4451 seconds
+t_min for elements in these links = -0.745853
+r_max OUT = 8.23882
+r_min OUT = 7.80006
+r_max IN = 7.79976
+r_min IN = 7.28343
+N_links counted = 1819
+Time taken in count_links_fromCMatrix for N = 282866: 648.652 seconds
+M=3.9, 16/20
+Time taken generating for N = 281950: 93.2131 seconds
+t_min for elements in these links = -0.749847
+r_max OUT = 8.20615
+r_min OUT = 7.80022
+r_max IN = 7.79997
+r_min IN = 7.40377
+N_links counted = 1790
+Time taken in count_links_fromCMatrix for N = 281950: 637.702 seconds
+M=3.9, 17/20
+Time taken generating for N = 281588: 92.0386 seconds
+t_min for elements in these links = -0.69987
+r_max OUT = 8.29992
+r_min OUT = 7.80008
+r_max IN = 7.79983
+r_min IN = 7.39508
+N_links counted = 1884
+Time taken in count_links_fromCMatrix for N = 281588: 641.661 seconds
+M=3.9, 18/20
+Time taken generating for N = 282262: 88.3761 seconds
+t_min for elements in these links = -0.68479
+r_max OUT = 8.24079
+r_min OUT = 7.80008
+r_max IN = 7.79987
+r_min IN = 7.30661
+N_links counted = 1901
+Time taken in count_links_fromCMatrix for N = 282262: 642.684 seconds
+M=3.9, 19/20
+Time taken generating for N = 283061: 91.1806 seconds
+t_min for elements in these links = -0.676174
+r_max OUT = 8.29004
+r_min OUT = 7.80003
+r_max IN = 7.79976
+r_min IN = 7.33679
+N_links counted = 1840
+Time taken in count_links_fromCMatrix for N = 283061: 651.411 seconds
+M=3.9, 20/20
+Time taken generating for N = 282542: 90.7738 seconds
+t_min for elements in these links = -0.694597
+r_max OUT = 8.20083
+r_min OUT = 7.80007
+r_max IN = 7.79994
+r_min IN = 7.33154
+N_links counted = 1917
+Time taken in count_links_fromCMatrix for N = 282542: 702.282 seconds
+Number of links over the horizon = 1844.65 +- 42.1951
+Average time taken for generating 20 causets with N = 282338:
+708.252 seconds
+
+===============================================================
+
+Program took in total: 14165 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 20000
+Results:
+M = 3.9, Card = 282338, N_links = 1844.65 +- 42.1951
+Saving to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/links/M=3.90_Rho=20000_Card=282338_r=8.8_dur=1.0.txt
