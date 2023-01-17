@@ -16,7 +16,8 @@ path = os.getcwd()
 
 if usehome:
     plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
-    dataDir = home + f"/MSci_Schwarzschild_Causets/data/links/"
+    #dataDir = home + f"/MSci_Schwarzschild_Causets/data/links/"
+    dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/"
 else:
     plotsDir = path + "/figures/Nlinks_vs_Area/"
     dataDir = path + f"/data/linkcounting_files/Poiss={Poiss}"
@@ -24,7 +25,7 @@ else:
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
 Ms = None #=None if you want to choose all existinig masses
-rho = 20000
+rho = 10000
 
 
 # Get data
@@ -40,8 +41,11 @@ for i,filename in enumerate(os.listdir(dataDir)):
     
     # Select wanted files
     cont = True
-    if f"Rho={rho}" not in filename:
+    if f"Rho={rho}_" not in filename:
+
         cont = False
+    if cont==False:
+        continue
     if Ms == None:
         M = float(filename[2:6])
         masses.append(M)
@@ -55,7 +59,7 @@ for i,filename in enumerate(os.listdir(dataDir)):
     # Extract useful information and calculate avgs/stds
     card = int(filename[filename.find("Card")+5:filename.find("_r=")])
     print(filename)
-    print(card)
+    
     filename = dataDir +"/"+filename
     data = pd.DataFrame(pd.read_csv(filename, sep = ",",header=None,
                                     skiprows=0))
@@ -78,6 +82,7 @@ for i,filename in enumerate(os.listdir(dataDir)):
 plt.figure()
 x = 4*np.pi*(4*np.array(masses)**2)
 y = Nlinks_avgs
+print(len(x),len(y),len(Nlinks_stds))
 plt.errorbar(x, y, yerr=Nlinks_stds,
             capsize=4,ls="",fmt="o", color="black",
             label=r"$3+1D$ Schwarzshild spacetime")
@@ -98,6 +103,6 @@ plt.ylabel(r"Number of links $N$")
 plt.xlabel(r"Area $(4\pi R_s^2)$ [a.u]")
 plt.grid(alpha=0.3)
 
-figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
-plt.savefig(figname)
-plt.show()
+#figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
+#plt.savefig(figname)
+#plt.show()
