@@ -2080,7 +2080,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
     std::map<int, std::vector<int>> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e2;
+    double mintime = std::nan("");
  
     #pragma omp parallel for
     for (int j = 1; j<_size; j++)
@@ -2099,7 +2099,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
                         if (set_contains(j,_future_links[i])) //i-j is link
                         {
                             lambdas[j].push_back(i);
-                            if (_coords[i][0] < mintime)
+                            if (_coords[i][0] < mintime || std::isnan(mintime))
                             {
                                 mintime = _coords[i][0];
                             }
@@ -2144,9 +2144,9 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::map<int, double> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e2;
-    double innermost = 1e2;
-    double outermost = 0;
+    double mintime = std::nan("");
+    double innermost = std::nan("");
+    double outermost = std::nan("");
  
     #pragma omp parallel for
     for (int j = 1; j<_size; j++)
@@ -2165,11 +2165,11 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                         if (set_contains(j,_future_links[i])) //i-j is link
                         {
                             lambdas[j] += 1;
-                            if (_coords[i][0] < mintime)
+                            if (_coords[i][0] < mintime || std::isnan(mintime))
                             mintime = _coords[i][0];
-                            if (_coords[j][1] < innermost)
+                            if (_coords[j][1] < innermost || std::isnan(innermost))
                             mintime = _coords[j][1];
-                            if (_coords[i][1] > outermost)
+                            if (_coords[i][1] > outermost || std::isnan(outermost))
                             mintime = _coords[i][1];
                         }
                     }
@@ -2249,9 +2249,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
     std::map<int, std::vector<int>> HRVs;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e2;
-    double innermost = 1e2;
-    double outermost = 0;
+    double mintime = std::nan("");
+    double innermost = std::nan("");
+    double outermost = std::nan("");
  
     #pragma omp parallel for
     for (int p = 1; p<_size; p++)
@@ -2277,19 +2277,19 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
                         ) 
                     {
                         HRVs[p] = {a,b};
-                        if (_coords[p][0] < mintime)
+                        if (_coords[p][0] < mintime || std::isnan(mintime))
                         {
                             mintime = _coords[p][0];
                         }
-                        if (_coords[b][1] < innermost)
+                        if (_coords[b][1] < innermost || std::isnan(innermost))
                         {
                             innermost = _coords[b][1];
                         }
-                        if (_coords[p][1] > outermost)
+                        if (_coords[p][1] > outermost || std::isnan(outermost))
                         {
                             outermost = _coords[p][1];
                         }
-                        if (_coords[a][1] > outermost)
+                        if (_coords[a][1] > outermost || std::isnan(outermost))
                         {
                             outermost = _coords[a][1];
                         }
@@ -2330,9 +2330,9 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     std::map<int, double> HRVs_distr;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = 1e2;
-    double innermost = 1e2;
-    double outermost = 0;
+    double mintime = std::nan("");
+    double innermost = std::nan("");
+    double outermost = std::nan("");
  
     #pragma omp parallel for
     for (int p = 1; p<_size; p++)
@@ -2354,19 +2354,19 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                     if (_future_links[a].size()==0)
                     {
                         HRVs_distr[0] += 1;
-                        if (_coords[p][0] < mintime)
+                        if (_coords[p][0] < mintime || std::isnan(mintime))
                         {
                             mintime = _coords[p][0];
                         }
-                        if (_coords[b][1] < innermost)
+                        if (_coords[b][1] < innermost || std::isnan(innermost))
                         {
                             innermost = _coords[b][1];
                         }
-                        if (_coords[p][1] > outermost)
+                        if (_coords[p][1] > outermost || std::isnan(outermost))
                         {
                             outermost = _coords[p][1];
                         }
-                        if (_coords[a][1] > outermost)
+                        if (_coords[a][1] > outermost || std::isnan(outermost))
                         {
                             outermost = _coords[a][1];
                         }
@@ -2376,19 +2376,19 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                              set_contains(b,_future_links[a]))
                     {
                         HRVs_distr[1] += 1;
-                        if (_coords[p][0] < mintime)
+                        if (_coords[p][0] < mintime || std::isnan(mintime))
                         {
                             mintime = _coords[p][0];
                         }
-                        if (_coords[b][1] < innermost)
+                        if (_coords[b][1] < innermost || std::isnan(innermost))
                         {
                             innermost = _coords[b][1];
                         }
-                        if (_coords[p][1] > outermost)
+                        if (_coords[p][1] > outermost || std::isnan(outermost))
                         {
                             outermost = _coords[p][1];
                         }
-                        if (_coords[a][1] > outermost)
+                        if (_coords[a][1] > outermost || std::isnan(outermost))
                         {
                             outermost = _coords[a][1];
                         }
