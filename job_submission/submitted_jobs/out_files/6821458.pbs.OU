@@ -182,3 +182,41 @@ N_links counted = 1683
 Time taken in count_links_fromCMatrix for N = 253430: 428.213 seconds
 M=3.7, 18/20
 Time taken generating for N = 255010: 67.0728 seconds
+t_min for elements in these links = -0.639136
+r_max OUT = 7.85405
+r_min OUT = 7.40001
+r_max IN = 7.3999
+r_min IN = 6.88927
+N_links counted = 1663
+Time taken in count_links_fromCMatrix for N = 255010: 432.621 seconds
+M=3.7, 19/20
+Time taken generating for N = 254767: 66.457 seconds
+t_min for elements in these links = -0.661654
+r_max OUT = 7.83122
+r_min OUT = 7.40009
+r_max IN = 7.39978
+r_min IN = 6.98482
+N_links counted = 1595
+Time taken in count_links_fromCMatrix for N = 254767: 431.381 seconds
+M=3.7, 20/20
+Time taken generating for N = 253596: 66.3465 seconds
+t_min for elements in these links = -0.699404
+r_max OUT = 7.79553
+r_min OUT = 7.40003
+r_max IN = 7.39964
+r_min IN = 6.96041
+N_links counted = 1691
+Time taken in count_links_fromCMatrix for N = 253596: 424.999 seconds
+Number of links over the horizon = 1671.6 +- 41.7246
+Average time taken for generating 20 causets with N = 254276:
+503.885 seconds
+
+===============================================================
+
+Program took in total: 10077.7 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 20000
+Results:
+M = 3.7, Card = 254276, N_links = 1671.6 +- 41.7246
+Saving to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/links/M=3.70_Rho=20000_Card=254276_r=8.4_dur=1.0.txt
