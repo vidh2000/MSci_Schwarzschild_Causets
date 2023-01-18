@@ -16,8 +16,8 @@ path = os.getcwd()
 
 if usehome:
     plotsDir = home + "/MSci_Schwarzschild_Causets/figures/Nlinks_vs_Area/"
-    #dataDir = home + f"/MSci_Schwarzschild_Causets/data/links/"
-    dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/"
+    dataDir = home + f"/MSci_Schwarzschild_Causets/data/links/"
+    #dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/"
 else:
     plotsDir = path + "/figures/Nlinks_vs_Area/"
     dataDir = path + f"/data/linkcounting_files/Poiss={Poiss}"
@@ -103,6 +103,6 @@ plt.ylabel(r"Number of links $N$")
 plt.xlabel(r"Area $(4\pi R_s^2)$ [a.u]")
 plt.grid(alpha=0.3)
 
-#figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
-#plt.savefig(figname)
-#plt.show()
+figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
+plt.savefig(figname)
+plt.show()
