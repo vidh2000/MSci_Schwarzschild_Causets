@@ -1,9 +1,12 @@
 # Instructions For Submission
 
-Use \{name\}_submitter.sh files to submit files, with name being either
+From inside job_submission folder, `sh \{name\}_submitter.sh` submits files for analysis, with name being either
 
 - linkcounting
-- lambda counting
+- lambda_counting
+- HRVs_counting
+
+These use ... (VID PLEASE COMPLETE)
 
 Other things are "old", before the proper job submission scripts were written
 which submit 1 job per mass.
