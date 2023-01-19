@@ -48,7 +48,7 @@ echo "" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# .cpp file you want to run in" >> $sh_run_file
 echo "" >> $sh_run_file 
-echo "runfilename='count_lambdas.cpp'" >> $sh_run_file
+echo "runfilename='count_HRVs.cpp'" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "### Specify relative path from MSci_Schwarzschild_Causets" >> $sh_run_file
 echo "# to the .cpp file you want to compile/execute" >> $sh_run_file
@@ -120,5 +120,3 @@ echo "runtime = ${runtime}"
 echo ""
 qstat
 echo "========================================================================"
-
-
