@@ -1,0 +1,12 @@
+Using 48 cores
+Using 16GB of RAM
+Running /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_1.0_N_multiplier_10000_N_reps_50.sh
+Building the executable...
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+count_HRVs.cpp
+count_lambdas.cpp
+count_links.cpp
+count_links.exe
+executables
