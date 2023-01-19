@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
 
 double mass = 1;
 int N_multiplier = 1000; //1000;
-int N_reps = 30;
+int N_reps = 20;
 
 std::cout << "PARAMETERS used in the causet generation:\n";
 std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="

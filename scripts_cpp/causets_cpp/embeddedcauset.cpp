@@ -2149,9 +2149,9 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::map<int, double> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime   = std::nan("");
-    double innermost = std::nan("");
-    double outermost = std::nan("");
+    std::vector<double> mintime_vec;
+    std::vector<double> innermost_vec;
+    std::vector<double> outermost_vec;
  
     #pragma omp parallel for
     for (int j = 1; j<_size; j++)
@@ -2159,26 +2159,25 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
         // if j is maximal and inside the horizon
         if (_future_links[j].size()==0 && _coords[j][1]<r_S) 
         {
+            //std::cout<<"get_lambdas_sizes above lambdas[j] = 0;\n";
             lambdas[j] = 0;
             for (int i = j-1; i>-1; i--)
             {
+                //std::cout<<"get_lambdas_sizes above if (_coords[j][0]>_coords[i][0])\n";
                 if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
                 {
                     // if i is maximal but one and outside the horizon
+                    //std::cout<<"get_lambdas_sizes above if (_future_links[i].size()==1 && _coords[i][1]>r_S)\n";
                     if (_future_links[i].size()==1 && _coords[i][1]>r_S)
                     {
-                        if (set_contains(j,_future_links[i])) //i-j is link
+                        //std::cout<<"get_lambdas_sizes above if (_future_links[i].find(j) != _future_links[i].end())\n";
+                        //i-j is link
+                        if (_future_links[i].find(j) != _future_links[i].end()) 
                         {
                             lambdas[j] += 1;
-                            if (_coords[i][0] < mintime   || std::isnan(mintime))
-                            {mintime = _coords[i][0]*1.;}
-                            if (_coords[j][1] < innermost || std::isnan(innermost))
-                            {innermost = _coords[j][1]*1.;}
-                            if (_coords[i][1] > outermost || std::isnan(outermost))
-                            {
-                                std::cout<<outermost;
-                                outermost = _coords[i][1]*1.;
-                            }
+                            mintime_vec  .push_back(_coords[i][0]);
+                            innermost_vec.push_back(_coords[j][1]);
+                            outermost_vec.push_back(_coords[i][1]);
                         }
                     }
                 }
@@ -2189,6 +2188,9 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
             }
         }
     }
+    double mintime   = vecmin(mintime_vec);
+    double innermost = vecmin(innermost_vec);
+    double outermost = vecmax(outermost_vec);
     std::cout << "\nt_min for elements in lambdas = " << mintime << std::endl; 
     std::cout << "r_min for elements in lambdas = " << innermost<<std::endl; 
     std::cout << "r_max for elements in lambdas = " << outermost<<std::endl; 
@@ -2217,7 +2219,6 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
 {
     // Maps label of maximal element to size of its lambda
     std::map<int, double> lambdas_distr;
-    std::cout << "Inside get_lambdas_distr" << std::endl;
 
     //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
@@ -2228,7 +2229,6 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
         else if (pair.first < 0)
         lambdas_distr[pair.first] = pair.second*1.;
     }
-    std::cout << "Finished get_lambdas_distr" << std::endl;
     return lambdas_distr;
 }
 
@@ -2259,9 +2259,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
     std::map<int, std::vector<int>> HRVs;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = std::nan("");
-    double innermost = std::nan("");
-    double outermost = std::nan("");
+    std::vector<double> mintime_vec;
+    std::vector<double> innermost_vec;
+    std::vector<double> outermost_vec;
  
     #pragma omp parallel for
     for (int p = 1; p<_size; p++)
@@ -2287,27 +2287,18 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
                         ) 
                     {
                         HRVs[p] = {a,b};
-                        if (_coords[p][0] < mintime || std::isnan(mintime))
-                        {
-                            mintime = _coords[p][0]*1.;
-                        }
-                        if (_coords[b][1] < innermost || std::isnan(innermost))
-                        {
-                            innermost = _coords[b][1]*1.;
-                        }
-                        if (_coords[p][1] > outermost || std::isnan(outermost))
-                        {
-                            outermost = _coords[p][1]*1.;
-                        }
-                        if (_coords[a][1] > outermost || std::isnan(outermost))
-                        {
-                            outermost = _coords[a][1]*1.;
-                        }
+                        mintime_vec  .push_back(_coords[p][0]);
+                        innermost_vec.push_back(_coords[b][1]);
+                        outermost_vec.push_back(_coords[p][1]);
+                        outermost_vec.push_back(_coords[a][1]);
                     }
                 }
             }
         }
     }
+    double mintime   = vecmin(mintime_vec);
+    double innermost = vecmin(innermost_vec);
+    double outermost = vecmax(outermost_vec);
     std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
     std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
     std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
@@ -2340,9 +2331,9 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     std::map<int, double> HRVs_distr;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = std::nan("");
-    double innermost = std::nan("");
-    double outermost = std::nan("");
+    std::vector<double> mintime_vec;
+    std::vector<double> innermost_vec;
+    std::vector<double> outermost_vec;
  
     #pragma omp parallel for
     for (int p = 1; p<_size; p++)
@@ -2373,28 +2364,17 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                     }
                     
                     //update
-                    if (_coords[p][0] < mintime || std::isnan(mintime))
-                    {
-                        mintime = _coords[p][0]*1.;
-                    }
-                    if (_coords[b][1] < innermost || std::isnan(innermost))
-                    {
-                        innermost = _coords[b][1]*1.;
-                    }
-                    if (_coords[p][1] > outermost || std::isnan(outermost))
-                    {
-                        std::cout<<outermost; //seems required to work
-                        outermost = _coords[p][1]*1.;
-                    }
-                    if (_coords[a][1] > outermost || std::isnan(outermost))
-                    {
-                        std::cout<<outermost; //seems required to work
-                        outermost = _coords[a][1]*1.;
-                    }
+                    mintime_vec  .push_back(_coords[p][0]);
+                    innermost_vec.push_back(_coords[b][1]);
+                    outermost_vec.push_back(_coords[p][1]);
+                    outermost_vec.push_back(_coords[a][1]);
                 }
             }
         }
     }
+    double mintime   = vecmin(mintime_vec);
+    double innermost = vecmin(innermost_vec);
+    double outermost = vecmax(outermost_vec);
     std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
     std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
     std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
