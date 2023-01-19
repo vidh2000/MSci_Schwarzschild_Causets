@@ -76,9 +76,9 @@ echo "N_multiplier=${N_multiplier}" >> $sh_run_file
 echo "N_reps=${N_reps}" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# Execute the copy of the created .exe program" >> $sh_run_file
-echo 'cp ${runfilename::-4}".exe" "executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
+echo 'cp ${runfilename::-4}".exe" "executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
 #echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
-echo '"./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
+echo '"./executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
 echo "" >> $sh_run_file
 
 ###############################################################################

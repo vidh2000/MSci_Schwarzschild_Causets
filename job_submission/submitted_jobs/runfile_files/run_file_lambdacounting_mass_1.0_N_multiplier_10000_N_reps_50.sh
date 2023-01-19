@@ -29,6 +29,6 @@ N_multiplier=10000
 N_reps=50
 
 # Execute the copy of the created .exe program
-cp ${runfilename::-4}".exe" "executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe"
-"./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps
+cp ${runfilename::-4}".exe" "executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe"
+"./executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps
 
