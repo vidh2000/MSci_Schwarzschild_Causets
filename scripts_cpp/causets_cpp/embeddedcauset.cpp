@@ -2210,6 +2210,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
 {
     // Maps label of maximal element to size of its lambda
     std::map<int, double> lambdas_distr;
+    std::cout << "Inside get_lambdas_distr" << std::endl;
 
     //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
