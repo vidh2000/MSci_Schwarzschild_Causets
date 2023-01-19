@@ -25,13 +25,16 @@ The C++ modules(classes) in scripts_cpp/causets_cpp:
 - shapes.cpp(Shape): it handles the definition of the implemented.
 - spacetime.cpp(Spacetime): it handles the definition and properties of a certain spacetime metric.
 
-The python module is scripts_py/CausetPlotting.py. This allows for the plotting of a causet from a file saved in the format determined by the scripts_cpp/causet.cpp/Causet::save_causet() function. As this coding framework was born for horizon molecules' analysis, it is also possible to plot certain type of horizon molecules. The module uses 'matplotlib'
+The python modules in scripts_py/causets_py:
+
+- causetplotting.py: functions for the plotting of a causet from a file saved in the format determined by the EmbeddedCauset::save_causet() and EmbeddedCauset::save_molecules() functiona. As this coding framework was born for horizon molecules' analysis, it is also possible to plot certain type of horizon molecules. It uses 'matplotlib'.
+- causethelpers.py: some functions in support of the plotting.
 
 The modules (classes and functions) are documented.
 
 ## Testing
 
-Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'.
+Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'. It is specified whether functions have been tested.
 
 ## Examples
 
