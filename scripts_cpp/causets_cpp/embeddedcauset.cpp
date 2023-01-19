@@ -2171,13 +2171,13 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                         {
                             lambdas[j] += 1;
                             if (_coords[i][0] < mintime   || std::isnan(mintime))
-                            {mintime = _coords[i][0];}
+                            {mintime = _coords[i][0]*1.;}
                             if (_coords[j][1] < innermost || std::isnan(innermost))
-                            {innermost = _coords[j][1];}
+                            {innermost = _coords[j][1]*1.;}
                             if (_coords[i][1] > outermost || std::isnan(outermost))
                             {
                                 std::cout<<outermost;
-                                outermost = _coords[i][1];
+                                outermost = _coords[i][1]*1.;
                             }
                         }
                     }
@@ -2222,11 +2222,11 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
     //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
     {
-        if (pair.second != 0 && pair.first > 0)
+        if (pair.first > 0 && pair.second != 0)
         lambdas_distr[pair.second] += 1;
 
         else if (pair.first < 0)
-        lambdas_distr[pair.first] = pair.second;
+        lambdas_distr[pair.first] = pair.second*1.;
     }
     std::cout << "Finished get_lambdas_distr" << std::endl;
     return lambdas_distr;
@@ -2289,19 +2289,19 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
                         HRVs[p] = {a,b};
                         if (_coords[p][0] < mintime || std::isnan(mintime))
                         {
-                            mintime = _coords[p][0];
+                            mintime = _coords[p][0]*1.;
                         }
                         if (_coords[b][1] < innermost || std::isnan(innermost))
                         {
-                            innermost = _coords[b][1];
+                            innermost = _coords[b][1]*1.;
                         }
                         if (_coords[p][1] > outermost || std::isnan(outermost))
                         {
-                            outermost = _coords[p][1];
+                            outermost = _coords[p][1]*1.;
                         }
                         if (_coords[a][1] > outermost || std::isnan(outermost))
                         {
-                            outermost = _coords[a][1];
+                            outermost = _coords[a][1]*1.;
                         }
                     }
                 }
@@ -2375,21 +2375,21 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                     //update
                     if (_coords[p][0] < mintime || std::isnan(mintime))
                     {
-                        mintime = _coords[p][0];
+                        mintime = _coords[p][0]*1.;
                     }
                     if (_coords[b][1] < innermost || std::isnan(innermost))
                     {
-                        innermost = _coords[b][1];
+                        innermost = _coords[b][1]*1.;
                     }
                     if (_coords[p][1] > outermost || std::isnan(outermost))
                     {
                         std::cout<<outermost; //seems required to work
-                        outermost = _coords[p][1];
+                        outermost = _coords[p][1]*1.;
                     }
                     if (_coords[a][1] > outermost || std::isnan(outermost))
                     {
                         std::cout<<outermost; //seems required to work
-                        outermost = _coords[a][1];
+                        outermost = _coords[a][1]*1.;
                     }
                 }
             }
