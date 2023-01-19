@@ -235,7 +235,9 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             // Count lambdas and update results
             auto countstart = high_resolution_clock::now();
             double t_f = 0;
+            std::cout << "Count lambdas starting to run now.." << std::endl;
             std::map<int, double> lambdas_distr = C.count_lambdas(t_f,2*mass);
+            std::cout << "Update distr starting to run now.." << std::endl;
             update_distr(all_iter_lambda_results, lambdas_distr, 
                         iter_pastkeys, rep);
 

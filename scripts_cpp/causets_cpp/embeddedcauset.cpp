@@ -1763,6 +1763,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                     }
                 }
             }
+            std::cout << "Finished count lambdas" << std::endl;
             return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
         }
     }
@@ -2212,6 +2213,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
 {
     // Maps label of maximal element to size of its lambda
     std::map<int, double> lambdas_distr;
+    std::cout << "Inside get_lambdas_distr" << std::endl;
 
     //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
@@ -2222,6 +2224,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
         else if (pair.first < 0)
         lambdas_distr[pair.first] = pair.second;
     }
+    std::cout << "Finished get_lambdas_distr" << std::endl;
     return lambdas_distr;
 }
 
