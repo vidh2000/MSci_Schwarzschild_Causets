@@ -1914,7 +1914,7 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
                         {
                             n_links_of_i += 1;
                             _future_links[i].insert(j);
-                            if (n_links_of_i - 2 > 0)
+                            if (n_links_of_i - 2 > 0) //n links of i == 3
                                 {break;} /*breaks j loop, hence goes to next i*/
                         }
                     }
@@ -2360,44 +2360,32 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                     if (_future_links[a].size()==0)
                     {
                         HRVs_distr[0] += 1;
-                        if (_coords[p][0] < mintime || std::isnan(mintime))
-                        {
-                            mintime = _coords[p][0];
-                        }
-                        if (_coords[b][1] < innermost || std::isnan(innermost))
-                        {
-                            innermost = _coords[b][1];
-                        }
-                        if (_coords[p][1] > outermost || std::isnan(outermost))
-                        {
-                            outermost = _coords[p][1];
-                        }
-                        if (_coords[a][1] > outermost || std::isnan(outermost))
-                        {
-                            outermost = _coords[a][1];
-                        }
                     }
                     // the one outside is only connected to a -> close
                     else if (_future_links[a].size()==1 && 
                              set_contains(b,_future_links[a]))
                     {
                         HRVs_distr[1] += 1;
-                        if (_coords[p][0] < mintime || std::isnan(mintime))
-                        {
-                            mintime = _coords[p][0];
-                        }
-                        if (_coords[b][1] < innermost || std::isnan(innermost))
-                        {
-                            innermost = _coords[b][1];
-                        }
-                        if (_coords[p][1] > outermost || std::isnan(outermost))
-                        {
-                            outermost = _coords[p][1];
-                        }
-                        if (_coords[a][1] > outermost || std::isnan(outermost))
-                        {
-                            outermost = _coords[a][1];
-                        }
+                    }
+                    
+                    //update
+                    if (_coords[p][0] < mintime || std::isnan(mintime))
+                    {
+                        mintime = _coords[p][0];
+                    }
+                    if (_coords[b][1] < innermost || std::isnan(innermost))
+                    {
+                        innermost = _coords[b][1];
+                    }
+                    if (_coords[p][1] > outermost || std::isnan(outermost))
+                    {
+                        std::cout<<outermost; //seems required to work
+                        outermost = _coords[p][1];
+                    }
+                    if (_coords[a][1] > outermost || std::isnan(outermost))
+                    {
+                        std::cout<<outermost; //seems required to work
+                        outermost = _coords[a][1];
                     }
                 }
             }

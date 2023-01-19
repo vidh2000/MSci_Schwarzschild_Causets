@@ -1,4 +1,4 @@
-# Instructions For Submission
+# Instructions For Submission on High-Performance Computing Cluster
 
 From inside job_submission folder, `sh \{name\}_submitter.sh` submits files for analysis, with name being either
 
@@ -6,7 +6,7 @@ From inside job_submission folder, `sh \{name\}_submitter.sh` submits files for 
 - lambda_counting
 - HRVs_counting
 
-In general, the `{name\}_submitter.sh` file has a variable `cpp_file_to_run`: this is the file that needs to be run. The `{name\}_submitter.sh` file creates the sh file running `cpp_file_to_run`. 
+In general, the `{name\}_submitter.sh` file has a variable `cpp_file_to_run`: this is the file that needs to be run. The `{name\}_submitter.sh` file creates the sh file running `cpp_file_to_run`.
 
 Then stuff will appear (thanks to the other files created).
 
@@ -16,7 +16,6 @@ which submit 1 job per mass.
 ## Useful Commands
 
 - `qstat` : gives you status of your submitted files
-
 
 ## Requirements
 
