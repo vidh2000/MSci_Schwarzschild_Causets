@@ -1,0 +1,2 @@
+/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_1.0_N_multiplier_10000_N_reps_50.sh: line 18: python: command not found
+/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_1.0_N_multiplier_10000_N_reps_50.sh: line 33: 2787562 Segmentation fault      "./executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps

@@ -1763,8 +1763,12 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                     }
                 }
             }
-            std::cout << "Finished count lambdas" << std::endl;
-            return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
+            std::cout << "Finished done futlinks" << std::endl;
+            auto sizes = get_lambdas_sizes(t_f,r_S);
+            std::cout << "Finished get_lambdas_sizes" << std::endl;
+            auto distr = get_lambdas_distr(sizes); 
+            std::cout << "Finished get_lambdas_distr" << std::endl;
+            return distr;
         }
     }
     else /*Spacetime name not BlackHole*/
