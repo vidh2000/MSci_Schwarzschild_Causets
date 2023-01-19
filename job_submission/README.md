@@ -13,6 +13,11 @@ Then stuff will appear (thanks to the other files created).
 Other things are "old", before the proper job submission scripts were written
 which submit 1 job per mass.
 
+## Useful Commands
+
+- `qstat` : gives you status of your submitted files
+
+
 ## Requirements
 
 Requires miniconda and boost. The latter works with version 1.80.0, available as <https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.gz/download>. No idea for the other versions. These have to be installed as:
