@@ -1,0 +1,3 @@
+/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_1.0_N_multiplier_10000_N_reps_50.sh: line 18: python: command not found
+cp: cannot stat 'count_lambdas.exe': No such file or directory
+/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_1.0_N_multiplier_10000_N_reps_50.sh: line 33: ./executables/M1.0_rho10000_reps50.exe: No such file or directory

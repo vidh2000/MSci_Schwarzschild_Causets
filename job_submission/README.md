@@ -6,7 +6,9 @@ From inside job_submission folder, `sh \{name\}_submitter.sh` submits files for 
 - lambda_counting
 - HRVs_counting
 
-These use ... (VID PLEASE COMPLETE)
+In general, the `{name\}_submitter.sh` file has a variable `cpp_file_to_run`: this is the file that needs to be run. The `{name\}_submitter.sh` file creates the sh file running `cpp_file_to_run`. 
+
+Then stuff will appear (thanks to the other files created).
 
 Other things are "old", before the proper job submission scripts were written
 which submit 1 job per mass.
@@ -17,6 +19,11 @@ Requires miniconda and boost. The latter works with version 1.80.0, available as
 
 - homedir/miniconda
 - homedir/boost/boost_1_80_0
+
+If you want to use github for sharing data, it is also required to configure github log. This must be done by commands
+
+- `git config --global user.email "myeamail@whatever.smth"`
+- `git config --global user.name "myusername"`
 
 ## Results
 
