@@ -2185,7 +2185,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
             }
         }
     }
-    std::cout << "t_min for elements in lambdas = " << mintime << std::endl; 
+    std::cout << "\nt_min for elements in lambdas = " << mintime << std::endl; 
     std::cout << "r_min for elements in lambdas = " << innermost<<std::endl; 
     std::cout << "r_max for elements in lambdas = " << outermost<<std::endl; 
     lambdas[-1] = mintime;

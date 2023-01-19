@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
 
 double mass = 1;
 int N_multiplier = 1000; //1000;
-int N_reps = 10;
+int N_reps = 30;
 
 std::cout << "PARAMETERS used in the causet generation:\n";
 std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="
@@ -285,9 +285,11 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
                             + "_r=" + radius_str
                             + "_dur=" + dur_str
                             + ".txt";
-
+    std::cout<<"\n==========================================================\n";
     std::cout << "Saving Iteration "<< iteration <<
-                "to the file: " << filename << std::endl;  
+                " to the file:\n" << filename << std::endl;  
+    std::cout<<"Pastkeys found are";
+    print_vector(iter_pastkeys);
     
 
     /////////////////////////////////////////////////////////////////////
@@ -325,7 +327,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
         std::string line_0 = previous_lines[0];
         for (int j = 0; j<line_0.size(); j++)
         {
-            if (line_0[j] == 's')
+            if (line_0[j] == ',')
             N_prev_rounds += 1;
         }
         N_prev_rounds -= 1; //for the , at the end of line
@@ -355,7 +357,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
         int n_prev_keys = (previous_lines.size() - 1)/2;
         if (n_prev_keys < iter_pastkeys.size())
         {
-            for (int i = n_prev_keys+1; i<iter_pastkeys.size(); i++)
+            for (int i = n_prev_keys; i<iter_pastkeys.size(); i++)
             {
                 int key = iter_pastkeys[i];
                 out<<key<<"avg,";
@@ -376,8 +378,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
 auto finish = high_resolution_clock::now();
 double duration = duration_cast<microseconds>(finish - beginning).count();
 std::cout<<"\n=============================================================\n";
-std::cout<<"===============================================================\n";
-std::cout << "\nProgram took in total: "
+std::cout << "Program took in total: "
         << duration/pow(10,6) << " seconds\n" << std::endl;
 
 std::cout << "Parameters used:\n";
