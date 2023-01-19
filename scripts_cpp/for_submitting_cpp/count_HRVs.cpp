@@ -74,7 +74,7 @@ std::vector<std::map<int, double>> avg_distr(
         double sum = 0.0;
         double N = 0.0;
         std::for_each(std::begin(values), std::end(values),
-                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1}}
+                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
                         );
         double avg_i = sum/N;
 
