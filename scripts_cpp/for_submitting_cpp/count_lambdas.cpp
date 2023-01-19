@@ -78,8 +78,8 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 
 /**
  * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
- * int is the key (size of lambda) and double is the avg/std of the results (the 
- * counts of the lambdas of that size).
+ * int is the key (size of lambda) and double is the avg/std of the results
+ * (the counts of the lambdas of that size).
  * 
  * @param all_results 
  * @param newresults 
