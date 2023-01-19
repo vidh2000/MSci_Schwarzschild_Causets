@@ -2168,9 +2168,9 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                             if (_coords[i][0] < mintime || std::isnan(mintime))
                             mintime = _coords[i][0];
                             if (_coords[j][1] < innermost || std::isnan(innermost))
-                            mintime = _coords[j][1];
+                            innermost = _coords[j][1];
                             if (_coords[i][1] > outermost || std::isnan(outermost))
-                            mintime = _coords[i][1];
+                            outermost = _coords[i][1];
                         }
                     }
                 }

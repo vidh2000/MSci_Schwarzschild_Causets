@@ -49,16 +49,17 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 {        
         //Create newkeys from new results
         std::vector<int> newkeys;
-        for(std::map<int,int>::iterator it = newresults.begin(); 
-            it != newresults.end(); ++it) 
+        for(auto it = newresults.begin(); it != newresults.end(); ++it) 
         {
             newkeys.push_back(it->first);
         }
 
         // Extend pastkeys if newkeys contain keys that are not in pastkeys
         // and update results with 0s in N previous rounds for new keys
-        int pastkeymax = std::max_element(pastkeys.begin(), pastkeys.end());
-        int newkeymax  = std::max_element(newkeys.begin(), newkeys.end());
+        auto pastkeymax_it = std::max_element(pastkeys.begin(), pastkeys.end());
+        auto newkeymax_it  = std::max_element(newkeys.begin(), newkeys.end());
+        int pastkeymax = *pastkeymax_it;
+        int newkeymax = *newkeymax_it;
         if (newkeymax > pastkeymax)
         {
             for (int i = pastkeymax+1; i<=newkeymax; i++)
@@ -80,8 +81,8 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 
 /**
  * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
- * int is the key (size of lambda) and double is the avg/std of the results (the 
- * counts of the lambdas of that size).
+ * int is the key (size of lambda) and double is the avg/std of the results
+ * (the counts of the lambdas of that size).
  * 
  * @param all_results 
  * @param newresults 
@@ -98,8 +99,8 @@ std::vector<std::map<int, double>> avg_distr(
     //Get avg and std; need to avoid possible nans
     for (auto pair : all_results)
     {
-        int key = pair->first;
-        std::vector<num> values = pair->second;
+        int key = pair.first;
+        std::vector<num> values = pair.second;
 
         double sum = 0.0;
         double N = 0.0;
@@ -143,6 +144,7 @@ int main(int argc, char* argv[]){
 double mass = std::atof(argv[1]); 
 int N_multiplier = std::atoi(argv[2]); //1000;
 int N_reps = std::atoi(argv[3]);
+
 
 std::cout << "PARAMETERS used in the causet generation:\n";
 std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="
