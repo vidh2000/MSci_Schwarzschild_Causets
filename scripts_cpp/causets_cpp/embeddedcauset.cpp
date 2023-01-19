@@ -2144,7 +2144,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::map<int, double> lambdas;
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    double mintime = std::nan("");
+    double mintime   = std::nan("");
     double innermost = std::nan("");
     double outermost = std::nan("");
  
@@ -2165,12 +2165,15 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                         if (set_contains(j,_future_links[i])) //i-j is link
                         {
                             lambdas[j] += 1;
-                            if (_coords[i][0] < mintime || std::isnan(mintime))
-                            mintime = _coords[i][0];
+                            if (_coords[i][0] < mintime   || std::isnan(mintime))
+                            {mintime = _coords[i][0];}
                             if (_coords[j][1] < innermost || std::isnan(innermost))
-                            innermost = _coords[j][1];
+                            {innermost = _coords[j][1];}
                             if (_coords[i][1] > outermost || std::isnan(outermost))
-                            outermost = _coords[i][1];
+                            {
+                                std::cout<<outermost;
+                                outermost = _coords[i][1];
+                            }
                         }
                     }
                 }

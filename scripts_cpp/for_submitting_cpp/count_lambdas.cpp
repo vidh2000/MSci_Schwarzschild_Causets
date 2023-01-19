@@ -334,19 +334,19 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             std::string line_i = previous_lines[i];
             if (i == 0)//Nreps line
             {
-                out<<line_i<<","<<std::endl;
+                out<<line_i<<repetitions<<","<<std::endl;
             }
             else if (i % 2) //odd i -> avg line
             {
                 int key_index = i/2;
                 int key = iter_pastkeys[key_index];
-                out<<line_i<<","<<iter_avgs[key]<<","<<std::endl;
+                out<<line_i<<iter_avgs[key]<<","<<std::endl;
             }
             else //Even i -> std line
             {
                 int key_index = i/2 -1;
                 int key = iter_pastkeys[key_index];
-                out<<line_i<<","<<iter_stds[key]<<","<<std::endl;
+                out<<line_i<<iter_stds[key]<<","<<std::endl;
             }
         }
 

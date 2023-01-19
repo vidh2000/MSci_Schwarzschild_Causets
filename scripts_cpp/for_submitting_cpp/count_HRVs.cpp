@@ -68,8 +68,8 @@ std::vector<std::map<int, double>> avg_distr(
     //Get avg and std; need to avoid possible nans
     for (auto pair : all_results)
     {
-        int key = pair->first;
-        std::vector<num> values = pair->second;
+        int key = pair.first;
+        std::vector<num> values = pair.second;
 
         double sum = 0.0;
         double N = 0.0;
@@ -82,7 +82,7 @@ std::vector<std::map<int, double>> avg_distr(
         std::for_each(std::begin(values), std::end(values),
                         [&](double v){if (!std::isnan(v))
                         {accum += (v - avg_i) * (v - avg_i);}}
-                        );
+                     );
         double std_i = sqrt(accum / (N-1));
 
         avgs[key] = avg_i;
@@ -291,19 +291,19 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             std::string line_i = previous_lines[i];
             if (i == 0)//Nreps line
             {
-                out<<line_i<<","<<std::endl;
+                out<<line_i<<repetitions<<","<<std::endl;
             }
             else if (i % 2) //odd i -> avg line
             {
                 int key_index = i/2;
                 int key = iter_pastkeys[key_index];
-                out<<line_i<<","<<iter_avgs[key]<<","<<std::endl;
+                out<<line_i<<iter_avgs[key]<<","<<std::endl;
             }
             else //Even i -> std line
             {
                 int key_index = i/2 -1;
                 int key = iter_pastkeys[key_index];
-                out<<line_i<<","<<iter_stds[key]<<","<<std::endl;
+                out<<line_i<<iter_stds[key]<<","<<std::endl;
             }
         }
         out.close();
