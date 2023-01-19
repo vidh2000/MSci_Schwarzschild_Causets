@@ -62,9 +62,11 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
         if (newkeymax > pastkeymax)
         {
             for (int i = pastkeymax+1; i<=newkeymax; i++)
-            pastkeys.push_back(i);
-            all_results[i] = {};
-            all_results[i].resize(N, 0);
+            {
+                pastkeys.push_back(i);
+                all_results[i] = {};
+                all_results[i].resize(N, 0);
+            }
         }
         
         //Update past results with new ones
@@ -102,7 +104,7 @@ std::vector<std::map<int, double>> avg_distr(
         double sum = 0.0;
         double N = 0.0;
         std::for_each(std::begin(values), std::end(values),
-                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1}}
+                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
                         );
         double avg_i = sum/N;
 

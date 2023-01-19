@@ -20,7 +20,7 @@ Requires miniconda and boost. The latter works with version 1.80.0, available as
 - homedir/miniconda
 - homedir/boost/boost_1_80_0
 
-It is also required to configure github log. This must be done by commands
+If you want to use github for sharing data, it is also required to configure github log. This must be done by commands
 
 - `git config --global user.email "myeamail@whatever.smth"`
 - `git config --global user.name "myusername"`
