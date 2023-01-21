@@ -1,3 +1,0 @@
-terminate called after throwing an instance of 'std::bad_alloc'
-  what():  std::bad_alloc
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_3.7_N_multiplier_10000_N_reps_20.sh: line 33: 3489871 Aborted                 "./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps

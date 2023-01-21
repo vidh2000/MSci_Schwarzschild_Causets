@@ -9,7 +9,7 @@
 homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
-cpp_file_to_run="'count_lambdas.cpp'"
+cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 N_multiplier=10000

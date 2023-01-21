@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_cpp_file.py", line 16, in <module>
-    runfilename = sys.argv[2] #"test_hello_world.cpp"
-IndexError: list index out of range
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_linkcounting_mass_2.0_N_multiplier_400_N_reps_10.sh: line 27: 3806156 Segmentation fault      ./${runfilename::-4}".exe" $mass $N_multiplier $N_reps

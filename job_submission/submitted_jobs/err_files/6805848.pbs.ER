@@ -1,6 +1,0 @@
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp: In function ‘int main(int, char**)’:
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_links.cpp:198:25: error: invalid operands of types ‘const char [53]’ and ‘const char [3]’ to binary ‘operator+’
-         filename += "/MSci_Schwarzschild_Causets/data/linkcounting_files/"
-                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                         + "M=" + std::to_string(mass)
-                         ^~~~~~

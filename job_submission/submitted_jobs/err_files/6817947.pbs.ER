@@ -1,8 +1,0 @@
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp: In static member function ‘static std::vector<std::vector<double> > SprinkledCauset::sprinkle(int, CoordinateShape, bool, int)’:
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp:125:30: error: ‘generator’ was not declared in this scope
-         count = distribution(generator);
-                              ^~~~~~~~~
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp:125:30: note: suggested alternative: ‘genenerator’
-         count = distribution(generator);
-                              ^~~~~~~~~
-                              genenerator
