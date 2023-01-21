@@ -1763,7 +1763,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                     }
                 }
             }
-            std::cout << "Finished done futlinks" << std::endl;
+            std::cout << "Finished done futlinks HIiiYa" << std::endl;
             auto sizes = get_lambdas_sizes(t_f,r_S);
             std::cout << "Finished get_lambdas_sizes" << std::endl;
             auto distr = get_lambdas_distr(sizes); 
@@ -2086,8 +2086,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
     
     // To find point with lowest time component. Hypersurface set at t=tmax btw.
     double mintime = std::nan("");
- 
-    #pragma omp parallel for
+
     for (int j = 1; j<_size; j++)
     {
         // if j is maximal and inside the horizon
@@ -2153,7 +2152,6 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
-    #pragma omp parallel for
     for (int j = 1; j<_size; ++j)
     {
         // if j is maximal and inside the horizon
@@ -2263,7 +2261,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
-    #pragma omp parallel for
     for (int p = 1; p<_size; p++)
     {
         // if j is maximal and inside the horizon
@@ -2335,7 +2332,6 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
-    #pragma omp parallel for
     for (int p = 1; p<_size; p++)
     {
         // if j is maximal and inside the horizon
