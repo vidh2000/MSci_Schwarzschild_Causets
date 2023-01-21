@@ -12,7 +12,7 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
-N_multiplier=9999
+N_multiplier=666
 N_reps=50
 
 
