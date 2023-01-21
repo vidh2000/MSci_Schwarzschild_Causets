@@ -32,6 +32,21 @@ The python modules in scripts_py/causets_py:
 
 The modules (classes and functions) are documented.
 
+## Requirements
+
+The C++ boost library is required for integration and equation solving. We used boost_1_80_0, which should be available at this link here [https://www.boost.org/users/history/version_1_80_0.html](https://www.boost.org/users/history/version_1_80_0.html) The boost/numeric/odeint/integrate/integrate.hpp file was modified, adding the following at line 59:
+
+```c++
+//I PUT THIS
+template<class System , class State , class Time , class Observer >
+size_t 
+integrate( System system , State &start_state , Time start_time , Time end_time , Time dt , Observer observer )
+{
+    typedef controlled_runge_kutta< runge_kutta_dopri5< State , State , State , Time > > stepper_type;
+    return integrate_adaptive( stepper_type() , system , start_state , start_time , end_time , dt , observer );
+}
+```
+
 ## Testing
 
 Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'. It is specified whether functions have been tested.
