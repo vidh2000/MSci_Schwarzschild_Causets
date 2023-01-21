@@ -55,15 +55,18 @@ std::vector<double> densities = {}
 for (auto N_multiplier : N_mults)
 {
         // Make a cylinder which "just" includes all relevant links; r_S=2M
-        radii.push_back(2*mass+dur);
+        double r_out = 2*mass+dur;
+        double r_in =  0;//2*mass-dur
+        radii.push_back(r_out);
         hollow_vals.push_back(0);
         durations.push_back(dur);
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        cards.push_back(N_multiplier*(2*mass+dur)*(2*mass+dur)*(2*mass+dur));
+        cards.push_back(N_multiplier*r_out*r_out*r_out);
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
         // Calculate density for each N_mult value
-        densities.push_back(N_multiplier/(4*pi/3));
+        densities.push_back(N_multiplier/
+            (4/3*(r_out*r_out*r_out-r_in*r_in*r_in)*dur));
 }
 
 
