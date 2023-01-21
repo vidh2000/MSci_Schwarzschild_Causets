@@ -34,31 +34,36 @@ using namespace std::chrono;
 
 std::vector<int> N_mults = {500,750,1000,2000,3000, 5000, 10000} 
 int N_reps = 100;
-double mass = 2.0;
+double mass = 1.0;
 double dur = 4.0;
+
+const double pi = 3.14159265358979323846
+
 
 
 int main(){
+
+
 int dim = 4;
 std::vector<int> cards = {};
 std::vector<double> radii = {};
 std::vector<double> hollow_vals = {};
 std::vector<double> durations = {};
 std::vector<int> repetitions_arr = {};
-
+std::vector<double> densities = {}
 
 for (auto N_multiplier : N_mults)
 {
         // Make a cylinder which "just" includes all relevant links; r_S=2M
         radii.push_back(2*mass+dur);
-        hollow_vals.push_back((2*mass-dur)/(2*mass+dur));
+        hollow_vals.push_back(0);
         durations.push_back(dur);
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        cards.push_back(N_multiplier/26.0*
-        ((2*mass+dur)*(2*mass+dur)*(2*mass+dur)-
-         (2*mass-dur)*(2*mass-dur)*(2*mass-dur)));
+        cards.push_back(N_multiplier*(2*mass+dur)*(2*mass+dur)*(2*mass+dur));
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
+        // Calculate density for each N_mult value
+        densities.push_back(N_multiplier/(4*pi/3));
 }
 
 
@@ -84,7 +89,8 @@ std::map<int, std::vector<double>> all_lambda_results;
 
 int iteration = 0;
 for (auto && tup : boost::combine(cards, radii, hollow_vals,
-                                    N_mults, durations, repetitions_arr))
+                                    N_mults, durations, repetitions_arr,
+                                    densities))
 {
     iteration++;
     auto start = high_resolution_clock::now();
@@ -95,11 +101,13 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     
     // Define params for causet generation
     int card,repetitions;
-    double radius, myduration, mass, hollow;
-    boost::tie(card, radius, hollow, mass, myduration, repetitions) = tup;
+    double radius, myduration, N_multiplier, hollow, density;
+    boost::tie(card, radius, hollow, N_multiplier, myduration, repetitions,
+                                                    densities) = tup;
     std::cout << "======================================================\n";
-    std::cout << "Main interation count: " << (iteration)<<"/"<< masses.size()
-        <<"\nN = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
+    std::cout << "Main interation count: " << (iteration)<<"/"<< N_mults.size()
+    << "\nN_mult = " << N_multiplier << 
+    ". N = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
     ". Hollow = " << hollow <<
     ". Dimension = " << dim << ". Height = " << myduration <<
     ". Centered at t = " << -myduration/2 << ".\n";
@@ -122,7 +130,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             //Timing generation
             auto repend = high_resolution_clock::now();
             double duration = duration_cast<microseconds>(repend - repstart).count();
-            std::cout << "M="<<mass<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+            std::cout << "N_mult="<<N_multiplier<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
             std::cout << "Time taken generating for N = " << C._size
             << ": " << duration/pow(10,6) << " seconds" << std::endl;
 
@@ -166,17 +174,18 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     stream1 << std::fixed << std::setprecision(2) << mass;
     std::string mass_str = stream1.str();
     std::stringstream stream2;
-    stream2 << std::fixed << std::setprecision(1) << radii[0];
+    stream2 << std::fixed << std::setprecision(1) << radius;
     std::string radius_str = stream2.str();
     std::stringstream stream3;
-    stream3 << std::fixed << std::setprecision(1) << durations[0];
+    stream3 << std::fixed << std::setprecision(1) << myduration;
     std::string dur_str = stream3.str();
 
     std::string filename = std::string(homeDir) 
-                            + "/MSci_Schwarzschild_Causets/data/lambdas/"
+                            + "/MSci_Schwarzschild_Causets/data/test_boundary_vs_density/"
+                            + "Rho=" + densities
                             + "M=" + mass_str
                             + "_Nmult=" + std::to_string(N_multiplier)
-                            + "_Card=" + std::to_string(cards[0])
+                            + "_Card=" + std::to_string(card)
                             + "_r=" + radius_str
                             + "_dur=" + dur_str
                             + ".txt";
@@ -276,6 +285,4 @@ std::cout<<"\n=============================================================\n";
 std::cout << "\nProgram took in total: "
         << duration/pow(10,6) << " seconds\n" << std::endl;
 
-std::cout << "Parameters used:\n";
-std::cout << "Dim = "<< dim << ", N_multiplier = "<< N_multiplier << std::endl;
 }
