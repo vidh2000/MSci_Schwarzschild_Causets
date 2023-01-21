@@ -33,3 +33,13 @@ If you want to use github for sharing data, it is also required to configure git
 
 The results are then written into the text file with avg and std of the links/lambdas/HRV molecules
 counted for specific causet generation configuration.
+
+## Job submitting
+
+To submit the jobs, special files called "____submitter.sh" exist, which
+- write the bash file which will state what parameters the .cpp file which will be executed should have
+- .sub file which will be submitted to the cluster and will make the job run the above-mentioned .sh file
+	-> run the .cpp file with the parameters that you want.
+The __submitter.sh file(s) has vars to change on the top and allows you to set the resources used for job
+and mass of the black hole.
+
