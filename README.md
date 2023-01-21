@@ -47,6 +47,8 @@ integrate( System system , State &start_state , Time start_time , Time end_time 
 }
 ```
 
+Also, if you lack the mutex C++ module, which is possible on Windows, it is advisable to comment out lines 409-412 in boost/math/special_functions/detail/polygamma.hpp.
+
 ## Testing
 
 Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'. It is specified whether functions have been tested.
