@@ -32,13 +32,102 @@
 
 using namespace std::chrono;
 
-std::vector<int> N_mults = {500,750,1000,2000,3000, 5000, 10000} 
+std::vector<double> densities = {1,5,10,20,50,100,200,400};
 int N_reps = 100;
-double mass = 1.0;
-double dur = 4.0;
+double mass = 2.0;
 
-const double pi = 3.14159265358979323846
+const double pi = 3.14159265358979323846;
 
+/**
+ * @brief Add new results to previous, whereeach results is given by a map
+ * <int, vector<int>>, such as for lambdas.
+ * 
+ * @param all_results 
+ * @param newresults 
+ * @param pastkeys vector<int> : do not pass an empty vector
+ * @param N int : number of PREVIOUS repetitions
+ */
+template <typename num>
+void update_distr(std::map<int, std::vector<num>> &all_results, 
+                  std::map<int, num> &newresults,
+                  std::vector<int> &pastkeys,
+                  int N = 0)
+{        
+        //Create newkeys from new results
+        std::vector<int> newkeys;
+        for(auto it = newresults.begin(); it != newresults.end(); ++it) 
+        {
+            newkeys.push_back(it->first);
+        }
+
+        // Extend pastkeys if newkeys contain keys that are not in pastkeys
+        // and update results with 0s in N previous rounds for new keys
+        auto pastkeymax_it = std::max_element(pastkeys.begin(), pastkeys.end());
+        auto newkeymax_it  = std::max_element(newkeys.begin(), newkeys.end());
+        int pastkeymax = *pastkeymax_it;
+        int newkeymax = *newkeymax_it;
+        if (newkeymax > pastkeymax)
+        {
+            for (int i = pastkeymax+1; i<=newkeymax; i++)
+            {
+                pastkeys.push_back(i);
+                all_results[i] = {};
+                all_results[i].resize(N, 0);
+            }
+        }
+        
+        //Update past results with new ones
+        for (int key : pastkeys)
+        {
+            //if newresults didn't have such key, newresults[key]=0 so no prob
+            all_results[key].push_back(newresults[key]);
+        }
+}
+
+
+/**
+ * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
+ * int is the key (size of lambda) and double is the avg/std of the results
+ * (the counts of the lambdas of that size).
+ * 
+ * @param all_results 
+ * @param newresults 
+ * @param pastkeys 
+ */
+template <typename num>
+std::vector<std::map<int, double>> avg_distr(
+                                std::map<int, std::vector<num>> &all_results, 
+                                std::vector<int> &pastkeys)
+{
+    std::map<int, double> avgs;
+    std::map<int, double> stds;
+
+    //Get avg and std; need to avoid possible nans
+    for (auto pair : all_results)
+    {
+        int key = pair.first;
+        std::vector<num> values = pair.second;
+
+        double sum = 0.0;
+        double N = 0.0;
+        std::for_each(std::begin(values), std::end(values),
+                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
+                        );
+        double avg_i = sum/N;
+
+        double accum = 0.0;
+        std::for_each(std::begin(values), std::end(values),
+                        [&](double v){if (!std::isnan(v))
+                        {accum += (v - avg_i) * (v - avg_i);}}
+                        );
+        double std_i = sqrt(accum / (N-1));
+
+        avgs[key] = avg_i;
+        stds[key] = std_i;
+    }
+
+    return {avgs, stds};
+}
 
 
 int main(){
@@ -50,23 +139,50 @@ std::vector<double> radii = {};
 std::vector<double> hollow_vals = {};
 std::vector<double> durations = {};
 std::vector<int> repetitions_arr = {};
-std::vector<double> densities = {}
 
-for (auto N_multiplier : N_mults)
+
+std::cout << "Checking boundaries for Rho = " << std::endl;
+print_vector(densities);
+std::cout << "These yield causets with cardinalities:" << std::endl;
+
+for (auto rho : densities)
 {
-        // Make a cylinder which "just" includes all relevant links; r_S=2M
-        double r_out = 2*mass+dur;
-        double r_in =  0;//2*mass-dur
+        // Make a 4-cylinder which "just" includes all relevant links; r_S=2M
+        double r_out; 
+        double r_in;
+        double dur;
+
+        if (rho<=10)
+        {
+            dur = 4;
+            r_out = 2*mass+dur;
+            r_in = 0;
+        }   
+        else if (rho>10 && rho<80)
+        {
+            dur = 2;
+            r_out = 2*mass+dur;
+            r_in = 2*mass-dur;
+        }
+        else if (rho>80)
+        {
+            dur = 1;
+            r_out = 2*mass+dur;
+            r_in = 2*mass-dur;
+        }
+        else{
+            std::cout << "What the hell did you put for the density?!\n";
+        }
+
         radii.push_back(r_out);
         hollow_vals.push_back(0);
         durations.push_back(dur);
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        cards.push_back(N_multiplier*r_out*r_out*r_out);
+        int card = rho*4/3*pi*(r_out*r_out*r_out-r_in*r_in*r_in)*dur;
+        cards.push_back(card);
+        std::cout << "Cardinality = " << card << std::endl;
         // Add # of repetitions for each mass
         repetitions_arr.push_back(N_reps);
-        // Calculate density for each N_mult value
-        densities.push_back(N_multiplier/
-            (4/3*(r_out*r_out*r_out-r_in*r_in*r_in)*dur));
 }
 
 
@@ -81,8 +197,7 @@ const char* sets_type = "future";
 const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
-std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
-std::cout << "This file counts lambdas at the constant mass and" <<
+std::cout << "\nThis file counts lambdas at the constant mass and" <<
             " finds the boundary values (min/max) of radius and duration" <<
             " at different densities i.e different N_multiplier. \n \n";
 std::cout << "Mass = " << mass << "\n \n";
@@ -92,8 +207,7 @@ std::map<int, std::vector<double>> all_lambda_results;
 
 int iteration = 0;
 for (auto && tup : boost::combine(cards, radii, hollow_vals,
-                                    N_mults, durations, repetitions_arr,
-                                    densities))
+                                    densities, durations, repetitions_arr))
 {
     iteration++;
     auto start = high_resolution_clock::now();
@@ -104,12 +218,11 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     
     // Define params for causet generation
     int card,repetitions;
-    double radius, myduration, N_multiplier, hollow, density;
-    boost::tie(card, radius, hollow, N_multiplier, myduration, repetitions,
-                                                    densities) = tup;
+    double radius, myduration, hollow, density;
+    boost::tie(card, radius, hollow, density, myduration, repetitions) = tup;
     std::cout << "======================================================\n";
-    std::cout << "Main interation count: " << (iteration)<<"/"<< N_mults.size()
-    << "\nN_mult = " << N_multiplier << 
+    std::cout << "Main interation count: " << (iteration)<<"/"<< densities.size()
+    << "\nRho = " << density << 
     ". N = " << card << ". r_S = " << 2*mass << ". Radius = " << radius <<
     ". Hollow = " << hollow <<
     ". Dimension = " << dim << ". Height = " << myduration <<
@@ -133,7 +246,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             //Timing generation
             auto repend = high_resolution_clock::now();
             double duration = duration_cast<microseconds>(repend - repstart).count();
-            std::cout << "N_mult="<<N_multiplier<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+            std::cout << "Rho="<<density<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
             std::cout << "Time taken generating for N = " << C._size
             << ": " << duration/pow(10,6) << " seconds" << std::endl;
 
@@ -182,18 +295,25 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     std::stringstream stream3;
     stream3 << std::fixed << std::setprecision(1) << myduration;
     std::string dur_str = stream3.str();
+    std::stringstream stream4;
+    stream4 << std::fixed << std::setprecision(0) << density;
+    std::string rho_str = stream4.str();
+    std::stringstream stream5;
+    stream5 << std::fixed << std::setprecision(2) << hollow;
+    std::string hollow_str = stream5.str();
 
     std::string filename = std::string(homeDir) 
                             + "/MSci_Schwarzschild_Causets/data/test_boundary_vs_density/"
-                            + "Rho=" + densities
+                            + "Rho=" + rho_str
                             + "M=" + mass_str
-                            + "_Nmult=" + std::to_string(N_multiplier)
+                            //+ "_Nmult=" + std::to_string(N_multiplier)
                             + "_Card=" + std::to_string(card)
                             + "_r=" + radius_str
+                            + "_hollow=" + hollow_str
                             + "_dur=" + dur_str
                             + ".txt";
     std::cout<<"\n==========================================================\n";
-    std::cout << "Saving Iteration "<< iteration <<
+    std::cout << "Saving Iteration "<< (iteration)<<"/"<< densities.size()<<
                 " to the file:\n" << filename << std::endl;  
     std::cout<<"Pastkeys found are";
     print_vector(iter_pastkeys);
