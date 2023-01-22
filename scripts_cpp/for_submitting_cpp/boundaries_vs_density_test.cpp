@@ -32,9 +32,9 @@
 
 using namespace std::chrono;
 
-std::vector<double> densities = {1,5,10,20,50,100,200,400};
+std::vector<double> densities = {1,5,10,20,50,100,200,400}; //only do rho>1
 int N_reps = 100;
-double mass = 2.0;
+
 
 const double pi = 3.14159265358979323846;
 
@@ -134,6 +134,7 @@ int main(){
 
 
 int dim = 4;
+double mass = 2.0;
 std::vector<int> cards = {};
 std::vector<double> radii = {};
 std::vector<double> hollow_vals = {};
@@ -154,21 +155,21 @@ for (auto rho : densities)
 
         if (rho<=10)
         {
-            dur = 4;
-            r_out = 2*mass+dur;
+            dur = 3;
+            r_out = 2*mass+2;
             r_in = 0;
         }   
         else if (rho>10 && rho<80)
         {
             dur = 2;
-            r_out = 2*mass+dur;
-            r_in = 2*mass-dur;
+            r_out = 2*mass+1.5;
+            r_in = 2*mass-1.5;
         }
         else if (rho>80)
         {
             dur = 1;
-            r_out = 2*mass+dur;
-            r_in = 2*mass-dur;
+            r_out = 2*mass+1;
+            r_in = 2*mass-1;
         }
         else{
             std::cout << "What the hell did you put for the density?!\n";
@@ -246,7 +247,8 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             //Timing generation
             auto repend = high_resolution_clock::now();
             double duration = duration_cast<microseconds>(repend - repstart).count();
-            std::cout << "Rho="<<density<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
+            std::cout << "----------------------------------------------------\n";
+            std::cout << "\nRho="<<density<<", "<<(rep+1)<<"/"<<repetitions<<"\n";
             std::cout << "Time taken generating for N = " << C._size
             << ": " << duration/pow(10,6) << " seconds" << std::endl;
 
