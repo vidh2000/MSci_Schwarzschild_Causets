@@ -2312,7 +2312,8 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
  * @param r_S Schwarzschild radius
 
  * @return map<int, int> : key is 0 for open and 1 for close 
-    value is pair of labels of [a,b].
+    value is pair of labels of [a,b]. Also, -3, -2, -1 for outermost, innermost
+    and mintime.
  */
 std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f, 
                                                                double r_S)

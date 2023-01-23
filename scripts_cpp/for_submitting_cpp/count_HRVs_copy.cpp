@@ -31,65 +31,18 @@
 
 using namespace std::chrono;
 
-/**
- * @brief Add new results to previous, whereeach results is given by a map
- * <int, vector<int>>, such as for HRVs.
- * 
- * @param all_results 
- * @param newresults 
- */
-template <typename num>
-void update_distr(std::map<int, std::vector<num>> &all_results, 
-                  std::map<int, num> &newresults)
-{                
-        //Update past results with new ones
-        for (int key : {-3, -2, -1, 0, 1})
-        {
-            all_results[key].push_back(newresults[key]);
-        }
-}
 
+///////////////////////////////////////////////////////////////////////////////
+// USEFUL FUNCTIONS
+///////////////////////////////////////////////////////////////////////////////
 
-/**
- * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
- * int is the key (size of HRVs) and double is the avg/std of the results (the 
- * counts of the HRVs of that size).
- * 
- * @param all_results 
- */
 template <typename num>
 std::vector<std::map<int, double>> avg_distr(
-                                std::map<int, std::vector<num>> &all_results)
-{
-    std::map<int, double> avgs;
-    std::map<int, double> stds;
+                                std::map<int, std::vector<num>> &all_results);
 
-    //Get avg and std; need to avoid possible nans
-    for (auto pair : all_results)
-    {
-        int key = pair.first;
-        std::vector<num> values = pair.second;
-
-        double sum = 0.0;
-        double N = 0.0;
-        std::for_each(std::begin(values), std::end(values),
-                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
-                        );
-        double avg_i = sum/N;
-
-        double accum = 0.0;
-        std::for_each(std::begin(values), std::end(values),
-                        [&](double v){if (!std::isnan(v))
-                        {accum += (v - avg_i) * (v - avg_i);}}
-                     );
-        double std_i = sqrt(accum / (N-1));
-
-        avgs[key] = avg_i;
-        stds[key] = std_i;
-    }
-
-    return {avgs, stds};
-}
+template <typename num>
+void update_distr(std::map<int, std::vector<num>> &all_results, 
+                  std::map<int, num> &newresults);
 
 
 
@@ -111,7 +64,7 @@ int main(int argc, char* argv[]){
 
 double mass = 0.25;
 double Rho = 1014.24/2; //1000;
-int N_reps = 50;
+int N_reps = 15;
 
 std::cout << "PARAMETERS used in the causet generation:\n";
 std::cout << "mass="<<mass<<", Rho="<<Rho<<", N_reps="
@@ -272,53 +225,54 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     }
     prev_file.close();
 
-    // 2.1 If file didn't exist, write for first time
+    // 2 If file didn't exist, write for first time
     if (previous_lines.size()==0)
     {
         std::ofstream out(filename);
         // First line: labels
         out<<std::left<<std::setw(11);
-        out<<"Nreps,"<<"open_avg,"<<"open_std,"<<"close_avg,"<<"close_std,";
-        out<<std::endl;
-
+        out<<"Nreps,";
         out<<std::left<<std::setw(11);
-        out<<repetitions<<",";
-        for (int key : HRV_keys)
-        {
-            out<<std::left<<std::setw(11);
-            std::stringstream stream0;
-            stream0 << std::fixed << std::setprecision(7) << iter_avgs[key];
-            out<<stream0.str()<<",";
-            out<<std::left<<std::setw(11);
-            std::stringstream stream1;
-            stream1 << std::fixed << std::setprecision(7) << iter_stds[key];
-            out<<stream1.str()<<",";
-        }
+        out<<"outer_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"outer_std,";
+        out<<std::left<<std::setw(11);
+        out<<"inner_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"inner_std,";
+        out<<std::left<<std::setw(11);
+        out<<"mintm_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"mintm_std,";
+        out<<std::left<<std::setw(11);
+        out<<"open_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"open_std,";
+        out<<std::left<<std::setw(11);
+        out<<"close_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"close_std,";
         out<<std::endl;
         out.close();   
     }
 
-    // 2.2 If file existed, rewrite file append new info
-    else
+    // 3 Append new info
+    std::ofstream out(filename, std::ios::app);
+    out<<std::left<<std::setw(11);
+    out<<repetitions<<",";
+    for (int key : HRV_keys)
     {
-        // append new lines
-        std::ofstream out(filename, std::ios::app);
-        out<<std::left<<std::setw(11);
-        out<<repetitions<<",";
-        for (int i = 0; i<HRV_keys.size(); i++)
-        {
-            int key = HRV_keys[i];
-            out<<std::left<<std::setw(11);
-            std::stringstream stream0;
-            stream0 << std::fixed << std::setprecision(7) << iter_avgs[key];
-            out<<stream0.str()<<",";
-            out<<std::left<<std::setw(11);
-            std::stringstream stream1;
-            stream1 << std::fixed << std::setprecision(7) << iter_stds[key];
-            out<<stream1.str()<<",";
-        }
-        out.close();
+        out<<std::left<<std::setw(10);
+        std::stringstream stream0;
+        stream0 << std::fixed << std::setprecision(6) << iter_avgs[key];
+        out<<stream0.str()<<",";
+        out<<std::left<<std::setw(10);
+        std::stringstream stream1;
+        stream1 << std::fixed << std::setprecision(6) << iter_stds[key];
+        out<<stream1.str()<<",";
     }
+    out<<std::endl;
+    out.close();
 }
 
 
@@ -331,4 +285,68 @@ std::cout << "\nProgram took in total: "
 
 std::cout << "Parameters used:\n";
 std::cout << "Dim = "<< dim << ", Rho = "<< Rho << std::endl;
+}
+
+
+
+
+
+/**
+ * @brief Add new results to previous, whereeach results is given by a map
+ * <int, vector<int>>, such as for HRVs.
+ * 
+ * @param all_results 
+ * @param newresults 
+ */
+template <typename num>
+void update_distr(std::map<int, std::vector<num>> &all_results, 
+                  std::map<int, num> &newresults)
+{                
+        //Update past results with new ones
+        for (int key : {-3, -2, -1, 0, 1})
+        {
+            all_results[key].push_back(newresults[key]);
+        }
+}
+
+
+/**
+ * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
+ * int is the key (size of HRVs) and double is the avg/std of the results (the 
+ * counts of the HRVs of that size).
+ * 
+ * @param all_results 
+ */
+template <typename num>
+std::vector<std::map<int, double>> avg_distr(
+                                std::map<int, std::vector<num>> &all_results)
+{
+    std::map<int, double> avgs;
+    std::map<int, double> stds;
+
+    //Get avg and std; need to avoid possible nans
+    for (auto pair : all_results)
+    {
+        int key = pair.first;
+        std::vector<num> values = pair.second;
+
+        double sum = 0.0;
+        double N = 0.0;
+        std::for_each(std::begin(values), std::end(values),
+                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
+                        );
+        double avg_i = sum/N;
+
+        double accum = 0.0;
+        std::for_each(std::begin(values), std::end(values),
+                        [&](double v){if (!std::isnan(v))
+                        {accum += (v - avg_i) * (v - avg_i);}}
+                     );
+        double std_i = sqrt(accum / (N-1));
+
+        avgs[key] = avg_i;
+        stds[key] = std_i;
+    }
+
+    return {avgs, stds};
 }
