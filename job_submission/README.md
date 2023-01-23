@@ -43,3 +43,7 @@ To submit the jobs, special files called "____submitter.sh" exist, which
 The __submitter.sh file(s) has vars to change on the top and allows you to set the resources used for job
 and mass of the black hole.
 
+## Running any .cpp file
+
+Run the run_file.sh bash file and in it specify which .cpp file you'd wish to compile and run,
+and what's the location of this file.
