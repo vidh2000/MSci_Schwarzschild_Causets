@@ -190,7 +190,7 @@ std::map<int, std::vector<double>> all_lambda_results;
 
 int iteration = 0;
 for (auto && tup : boost::combine(cards, radii, hollow_vals,
-                                    masses, durations, repetitions_arr))
+                                    masses, durations, repetitions_arr))//zip
 {
     iteration++;
     auto start = high_resolution_clock::now();
