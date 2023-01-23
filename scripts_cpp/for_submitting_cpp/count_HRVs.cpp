@@ -32,65 +32,18 @@
 
 using namespace std::chrono;
 
-/**
- * @brief Add new results to previous, whereeach results is given by a map
- * <int, vector<int>>, such as for HRVs.
- * 
- * @param all_results 
- * @param newresults 
- */
-template <typename num>
-void update_distr(std::map<int, std::vector<num>> &all_results, 
-                  std::map<int, num> &newresults)
-{                
-        //Update past results with new ones
-        for (int key : {-3, -2, -1, 0, 1})
-        {
-            all_results[key].push_back(newresults[key]);
-        }
-}
 
+///////////////////////////////////////////////////////////////////////////////
+// USEFUL FUNCTIONS (defined below everything)
+///////////////////////////////////////////////////////////////////////////////
 
-/**
- * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
- * int is the key (size of HRVs) and double is the avg/std of the results (the 
- * counts of the HRVs of that size).
- * 
- * @param all_results 
- */
 template <typename num>
 std::vector<std::map<int, double>> avg_distr(
-                                std::map<int, std::vector<num>> &all_results)
-{
-    std::map<int, double> avgs;
-    std::map<int, double> stds;
+                                std::map<int, std::vector<num>> &all_results);
 
-    //Get avg and std; need to avoid possible nans
-    for (auto pair : all_results)
-    {
-        int key = pair.first;
-        std::vector<num> values = pair.second;
-
-        double sum = 0.0;
-        double N = 0.0;
-        std::for_each(std::begin(values), std::end(values),
-                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
-                        );
-        double avg_i = sum/N;
-
-        double accum = 0.0;
-        std::for_each(std::begin(values), std::end(values),
-                        [&](double v){if (!std::isnan(v))
-                        {accum += (v - avg_i) * (v - avg_i);}}
-                     );
-        double std_i = sqrt(accum / (N-1));
-
-        avgs[key] = avg_i;
-        stds[key] = std_i;
-    }
-
-    return {avgs, stds};
-}
+template <typename num>
+void update_distr(std::map<int, std::vector<num>> &all_results, 
+                  std::map<int, num> &newresults);
 
 
 
@@ -127,13 +80,17 @@ std::vector<double> durations = {};
 std::vector<int> repetitions_arr = {};
 
 
-// Make a "square" cylinder with r,h=M, since r_S=2M
-radii.push_back(2*mass+1);
-hollow_vals.push_back((2*mass-1)/(2*mass+1));
-durations.push_back(1); // since min(t_min) ~ -3.5, 4 is adequate
+// Shape Parameters
+double R = 2*mass+1;
+double r = 2*mass-1;
+double h = r/R;
+double T = 1;
+int N = N_multiplier/26.0 * (R*R*R-r*r*r) * T; //* (4*3.1415/3)
+radii.push_back(R);
+hollow_vals.push_back(h);
+durations.push_back(T); // since min(t_min) ~ -3.5, 4 is adequate
 // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-cards.push_back(N_multiplier/26.0*
-((2*mass+1)*(2*mass+1)*(2*mass+1)-(2*mass-1)*(2*mass-1)*(2*mass-1)));
+cards.push_back(N);
 // Add # of repetitions for each mass
 repetitions_arr.push_back(N_reps);
 
@@ -232,20 +189,23 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     /* Save the average and standard deviation of HRVs for current settings
     into a text file to be read afterwards*/
     const char* homeDir = getenv("HOME");
+    std::stringstream stream0;
+    stream0 << std::fixed << std::setprecision(2) << N_multiplier;
+    std::string rho_str = stream0.str();
     std::stringstream stream1;
     stream1 << std::fixed << std::setprecision(2) << mass;
     std::string mass_str = stream1.str();
     std::stringstream stream2;
-    stream2 << std::fixed << std::setprecision(1) << radii[0];
+    stream2 << std::fixed << std::setprecision(2) << radii[0];
     std::string radius_str = stream2.str();
     std::stringstream stream3;
-    stream3 << std::fixed << std::setprecision(1) << durations[0];
+    stream3 << std::fixed << std::setprecision(2) << durations[0];
     std::string dur_str = stream3.str();
 
     std::string filename = std::string(homeDir) 
                             + "/MSci_Schwarzschild_Causets/data/HRVs/"
                             + "M=" + mass_str
-                            + "_Nmult=" + std::to_string(N_multiplier)
+                            + "_Nmult=" + rho_str //tho currently Nmult
                             + "_Card=" + std::to_string(cards[0])
                             + "_r=" + radius_str
                             + "_dur=" + dur_str
@@ -320,4 +280,81 @@ std::cout << "\nProgram took in total: "
 
 std::cout << "Parameters used:\n";
 std::cout << "Dim = "<< dim << ", N_multiplier = "<< N_multiplier << std::endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// USEFUL FUNCTIONS' DEFINITIONS
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+/**
+ * @brief Add new results to previous, whereeach results is given by a map
+ * <int, vector<int>>, such as for HRVs.
+ * 
+ * @param all_results 
+ * @param newresults 
+ */
+template <typename num>
+void update_distr(std::map<int, std::vector<num>> &all_results, 
+                  std::map<int, num> &newresults)
+{                
+        //Update past results with new ones
+        for (int key : {-3, -2, -1, 0, 1})
+        {
+            all_results[key].push_back(newresults[key]);
+        }
+}
+
+
+/**
+ * @brief get {avgs, stds}, where avgs and stds are maps int->double, where
+ * int is the key (size of HRVs) and double is the avg/std of the results (the 
+ * counts of the HRVs of that size).
+ * 
+ * @param all_results 
+ */
+template <typename num>
+std::vector<std::map<int, double>> avg_distr(
+                                std::map<int, std::vector<num>> &all_results)
+{
+    std::map<int, double> avgs;
+    std::map<int, double> stds;
+
+    //Get avg and std; need to avoid possible nans
+    for (auto pair : all_results)
+    {
+        int key = pair.first;
+        std::vector<num> values = pair.second;
+
+        double sum = 0.0;
+        double N = 0.0;
+        std::for_each(std::begin(values), std::end(values),
+                        [&](double v){if (!std::isnan(v)) {sum += v; N+=1;}}
+                        );
+        double avg_i = sum/N;
+
+        double accum = 0.0;
+        std::for_each(std::begin(values), std::end(values),
+                        [&](double v){if (!std::isnan(v))
+                        {accum += (v - avg_i) * (v - avg_i);}}
+                     );
+        double std_i = sqrt(accum / (N-1));
+
+        avgs[key] = avg_i;
+        stds[key] = std_i;
+    }
+
+    return {avgs, stds};
 }
