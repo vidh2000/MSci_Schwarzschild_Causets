@@ -251,7 +251,7 @@ if plot_molecules:
     ax.text(0.05, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
             va='bottom', ha = 'left', bbox=props)
     plt.legend()
-    plt.xlabel('Horizon Area [\mathcal(l)^2]')
+    plt.xlabel('Horizon Area [\ell^2]')
     plt.ylabel("Occurrences")
     plt.grid(alpha = 0.2) 
 
