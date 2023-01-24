@@ -13,8 +13,8 @@ varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Nmult"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 40000     #value of fixed_var
 
-plot_boundaries = True
-plot_molecules = False
+plot_boundaries = False
+plot_molecules = True
 
 
 ##############################################################################
@@ -29,17 +29,12 @@ if not os.path.exists(dataDir):
     plotsDir = path + f"/figures/N{molecules}_vs_Area/"
     dataDir = path + f"/data/{molecules}"
 
-
-fixed_string = f"{fixed_var}={fixed_val}"
 # ensure that, if using Mor Rho, it is decimal with exactly 2 dec digits
-if fixed_var == "M" or fixed_var == "Rho":
-    if "." not in fixed_string:
-            fixed_string += ".00"
-    elif fixed_string.index(".") != len(fixed_string)-3:
-        while fixed_string.index(".") != len(fixed_string)-3:
-            fixed_string.append("0")
-            
 
+if fixed_var == "M" or fixed_var == "Rho":
+    fixed_string = f"{fixed_var}=" + format(fixed_val,".2f")
+else:
+    fixed_string = f"{fixed_var}={fixed_val}"
 
 
 ##############################################################################
@@ -116,15 +111,15 @@ for root, dirs, files in os.walk(dataDir):
                 mintimes_std  .append(mintime_std_i)
                 # 2.3 get molecules info #####################################
                 mol_info_i = everything_i[:,7:]
-                ntypes = mol_info_i.shape[1]/2
+                ntypes_i = mol_info_i.shape[1]/2
                 # should be even
-                if (ntypes - int(ntypes)): 
-                    raise Exception(f"Number of cols {ntypes*2} is odd")
+                if (ntypes_i - int(ntypes_i)): 
+                    raise Exception(f"Number of cols {ntypes_i*2} is odd")
                 else:
-                    ntypes = int(ntypes)
-                molecules_distr.append([])
-                molecules_distr_std.append([])
-                for n in range(ntypes):
+                    ntypes_i = int(ntypes_i)
+                #molecules_distr.append([])
+                #molecules_distr_std.append([])
+                for n in range(ntypes_i):
                     avgs_mol_n_i = mol_info_i[:,2*n]
                     stds_mol_n_i = mol_info_i[:,2*n+1]
                     n_mol_n_i, std_mol_n_i = ch.combine_meass(Nreps,
@@ -141,23 +136,30 @@ for root, dirs, files in os.walk(dataDir):
                         zeros = np.zeros(n_prev_values).tolist()
                         molecules_distr    .append(zeros + [n_mol_n_i]) 
                         molecules_distr_std.append(zeros + [std_mol_n_i])
-# Clear a bit
-# del root, dirs, files
-# del file_i_path, file_i_pieces, piece_j
-# del i, file_i
-# del outermosts_avg_arr_i, outermosts_std_arr_i, outermost_i, outermost_std_i
-# del innermosts_avg_arr_i, innermosts_std_arr_i, innermost_i, innermost_std_i
-# del mintimes_avg_arr_i, mintimes_std_arr_i, mintime_i, mintime_std_i 
-# del mol_info_i, avgs_mol_n_i, stds_mol_n_i, n_mol_n_i, std_mol_n_i, 
-# del n, ntypes, zeros
 
+
+n_max = max([len(l) for l in molecules_distr])
+for l,ls in zip(molecules_distr, molecules_distr_std):
+    while len(l) < n_max:
+        l.append(0)
+        ls.append(0)
 
 ##############################################################################
 # 2. PLOT
 ##############################################################################
 print("loop done")
-#A = 4*np.pi*(2*mass)**2
+print(varying_values)
+print(molecules_distr)
 x = np.array(varying_values)
+if varying_var=="M":
+    x = 4*np.pi*(2*x)**2 #==Area
+    if fixed_var == "Nmult":    
+        Rho = fixed_val/(4/3*np.pi*26)
+        print("You're doing Nmult fixed!") 
+    elif fixed_var == "Rho":
+        Rho = fixed_val
+    x /= Rho**(-1/2)
+    # x_A = x/divide by fund units
 
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
@@ -216,24 +218,26 @@ if plot_boundaries:
 
 # 2.1 MOLECULES'S DISTRIBUTION ##############################################
 if plot_molecules:
-    fig, ax = plt.figure(f"Molecules for {fixed_string}")
+
+    plt.figure(f"Molecules for {fixed_string}")
     for n in range(len(molecules_distr)):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
-        prefix = ("Open " if n==0 else "Close ") if molecules == "HRVs" \
-                else f"{n}-"
-        plt.errorbar(x_A, y, yerr, 
-                    fmt = '.', ls = 'dashed', capsize = 4, 
-                    label = f'{prefix}{molecules}')
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
-    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
-            va='bottom', ha = 'right', bbox=props)
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else str(n) + r"$\mathbf{-}\Lambda$"
+        plt.errorbar(x, y, yerr, 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=1)
+    plt.annotate(fixed_string, (0.95, 0.5), xycoords = "axes fraction",
+            fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend()
-    plt.xlabel('Horizon Area [\ell^2]')
-    plt.ylabel("Occurrences")
-    plt.grid(alpha = 0.2) 
-
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel("Number")
+    plt.grid(alpha = 0.2)
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
+    plt.show()
 
 
 
