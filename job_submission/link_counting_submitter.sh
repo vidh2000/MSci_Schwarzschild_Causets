@@ -13,18 +13,18 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 
 # CPP VARIABLES
 N_multiplier=40000  #20000
-N_reps=10
+N_reps=20
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
-mem=920
+mem=600
 runtime="08:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in $(seq 3.1 .1 3.6)
+for mass in $(seq 2.4 .1 3.0)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

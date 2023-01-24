@@ -10,7 +10,7 @@ from causets_py import causet_helpers as ch
 ##############################################################################
 usehome = True
 molecules = "lambdas" #links, HRVs
-mass = 0.25
+mass = 1
 want_rho = True
 
 plot_boundaries = True
@@ -29,6 +29,7 @@ home = expanduser("~")
 path = os.getcwd()
 if usehome:
     plotsDir = f"{home}/MSci_Schwarzschild_Causets/figures/N{molecules}_vs_Area/"
+
     dataDir = f"{home}/MSci_Schwarzschild_Causets/data/{molecules}/"
     #dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/"
 else:
@@ -163,20 +164,19 @@ for root, dirs, files in os.walk(dataDir):
                         molecules_distr_std.append(zeros + [std_mol_n_i])
 
 # Clear a bit
-del root, dirs, files
-del file_path, file_pieces, piece_j
-del i, file_i
-del outermosts_avg_arr_i, outermosts_std_arr_i, outermost_i, outermost_std_i
-del innermosts_avg_arr_i, innermosts_std_arr_i, innermost_i, innermost_std_i
-del mintimes_avg_arr_i, mintimes_std_arr_i, mintime_i, mintime_std_i 
-del mol_info_i, avgs_mol_n_i, stds_mol_n_i, n_mol_n_i, std_mol_n_i, 
-del n, ntypes, zeros
+#del root, dirs, files
+#del i, file_i
+#del outermosts_avg_arr_i, outermosts_std_arr_i, outermost_i, outermost_std_i
+#del innermosts_avg_arr_i, innermosts_std_arr_i, innermost_i, innermost_std_i
+#del mintimes_avg_arr_i, mintimes_std_arr_i, mintime_i, mintime_std_i 
+#del mol_info_i, avgs_mol_n_i, stds_mol_n_i, n_mol_n_i, std_mol_n_i, 
+#del n, ntypes, zeros
 
 
 ##############################################################################
 # 2. PLOT
 ##############################################################################
-A = 4*np.pi*mass**2
+A = 4*np.pi*(2*mass)**2
 x = np.array(rhos) if want_rho else np.array(nmults)
 x_A = A/np.sqrt(x)
 
@@ -231,7 +231,7 @@ if plot_boundaries:
     plt.ylabel("Outermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
-    plt.savefig(plotsDir + f"{mass_string}_Boundaries")
+    plt.savefig(plotsDir + f"{mass_string}_Boundaries.png")
     plt.show()
 
 

@@ -16,9 +16,9 @@ runfileDir = sys.argv[1] #f"{main_dir}scripts_cpp/tests/"
 runfilename = sys.argv[2] #"test_hello_world.cpp"
 
 # Directory path of causets_cpp
-causets_cpp = main_dir + "scripts_cpp/causets_cpp_int8_t/"
-
-print("Using int8_t Cmatrix!")
+causets_cpp = main_dir + "scripts_cpp/causets_cpp/"#_int8_t/"
+#causets_cpp = main_dir + "scripts_cpp/causets_cpp_int8_t/"
+#print("Using int8_t Cmatrix!")
 
 # Compile commands
 compiler_stuff = [

@@ -12,19 +12,19 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
-N_multiplier=666
-N_reps=50
+N_multiplier=40000
+N_reps=10
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
-ncpus=48
-mem=16
-runtime="02:00:00" #format: "hh:mm:ss"
+ncpus=256
+mem=512
+runtime="08:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in 1.0 #$(seq 4.6 .1 5.0)
+for mass in $(seq 2.1 .1 3.0)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

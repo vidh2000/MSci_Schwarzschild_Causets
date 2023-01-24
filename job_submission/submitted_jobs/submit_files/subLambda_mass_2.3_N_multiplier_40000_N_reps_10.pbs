@@ -1,0 +1,13 @@
+#!/bin/sh
+#PBS -lselect=1:ncpus=256:mem=512gb
+#PBS -lwalltime=08:00:00
+#PBS -o /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/out_files
+#PBS -e /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/err_files
+
+export OMP_NUM_THREADS=256
+
+echo Using 256 cores
+echo Using 512GB of RAM
+
+echo Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_2.3_N_multiplier_40000_N_reps_10.sh
+sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_2.3_N_multiplier_40000_N_reps_10.sh
