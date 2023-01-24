@@ -104,16 +104,9 @@ for root, dirs, files in os.walk(dataDir):
 ##############################################################################
 # 2. PLOT
 ##############################################################################
-# Define a custom formatter function
-def format_fn(tick_val, tick_pos):
-    if int(tick_val) == tick_val:
-        return str(int(tick_val))
-    else:
-        return str(tick_val)
 
-A = 4*np.pi*(2*mass)**2
+
 x = np.array(rhos)
-x_A = A/np.sqrt(x)
 
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 
@@ -139,7 +132,7 @@ ax.set_xscale("log")
 
 # INNERMOST #######################################################
 ax = plt.subplot(r, c, 2)
-plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
+plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction",  
                 va='bottom', ha = 'left')
 plt.errorbar(x, innermosts, innermosts_std, 
             fmt = '.', capsize = 4, 
