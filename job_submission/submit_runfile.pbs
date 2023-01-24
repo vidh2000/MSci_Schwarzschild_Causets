@@ -1,15 +1,15 @@
 #!/bin/sh
 
-#PBS -lselect=1:ncpus=16:mem=16gb
-#PBS -lwalltime=01:00:00
+#PBS -lselect=1:ncpus=32:mem=40gb
+#PBS -lwalltime=08:00:00
 #PBS -o /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/out_files
 #PBS -e /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/err_files
 
 
-export OMP_NUM_THREADS=16
+export OMP_NUM_THREADS=32
 
-echo Using 16 cores
-echo Using 16GB of RAM
+echo Using 32 cores
+echo Using 40GB of RAM
 echo Walltime: 1 hours
 
 echo Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh

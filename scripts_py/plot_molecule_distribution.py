@@ -9,7 +9,7 @@ from causets_py import causet_helpers as ch
 # 0. SET USER VARIABLES
 ##############################################################################
 molecules = "lambdas" #links, HRVs
-mass = 0.25
+mass = 1
 want_rho = True
 
 plot_boundaries = True
@@ -175,7 +175,7 @@ del n, ntypes, zeros
 ##############################################################################
 # 2. PLOT
 ##############################################################################
-A = 4*np.pi*mass**2
+A = 4*np.pi*(2*mass)**2
 x = np.array(rhos) if want_rho else np.array(nmults)
 x_A = A/np.sqrt(x)
 
@@ -230,7 +230,7 @@ if plot_boundaries:
     plt.ylabel("Outermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
-    plt.savefig(plotsDir + f"{mass_string}_Boundaries")
+    plt.savefig(plotsDir + f"{mass_string}_Boundaries.png")
     plt.show()
 
 

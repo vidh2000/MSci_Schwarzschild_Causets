@@ -25,7 +25,7 @@ else:
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
 Ms = None #=None if you want to choose all existinig masses
-rho = 10000
+rho = 40000
 
 
 # Get data

@@ -1,0 +1,53 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp_int8_t/causet.cpp: In member function ‘std::vector<std::vector<int> > Causet::CMatrix(std::vector<int>)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp_int8_t/causet.cpp:142:38: error: no matching function for call to ‘std::vector<std::vector<int> >::vector(std::vector<std::vector<signed char> >&)’
+         {return (vector<vector<int>>)_CMatrix;}
+                                      ^~~~~~~~
+In file included from /usr/include/c++/8/vector:64,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp_int8_t/causet.cpp:16:
+/usr/include/c++/8/bits/stl_vector.h:543:2: note: candidate: ‘template<class _InputIterator, class> std::vector<_Tp, _Alloc>::vector(_InputIterator, _InputIterator, const allocator_type&)’
+  vector(_InputIterator __first, _InputIterator __last,
+  ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:543:2: note:   template argument deduction/substitution failed:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp_int8_t/causet.cpp:142:38: note:   candidate expects 3 arguments, 1 provided
+         {return (vector<vector<int>>)_CMatrix;}
+                                      ^~~~~~~~
+In file included from /usr/include/c++/8/vector:64,
+                 from /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp_int8_t/causet.cpp:16:
+/usr/include/c++/8/bits/stl_vector.h:515:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(std::initializer_list<_Tp>, const allocator_type&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<std::vector<int> >]’
+       vector(initializer_list<value_type> __l,
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:515:7: note:   no known conversion for argument 1 from ‘std::vector<std::vector<signed char> >’ to ‘std::initializer_list<std::vector<int> >’
+/usr/include/c++/8/bits/stl_vector.h:490:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(std::vector<_Tp, _Alloc>&&, const allocator_type&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<std::vector<int> >]’
+       vector(vector&& __rv, const allocator_type& __m)
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:490:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/8/bits/stl_vector.h:480:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(const std::vector<_Tp, _Alloc>&, const allocator_type&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<std::vector<int> >]’
+       vector(const vector& __x, const allocator_type& __a)
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:480:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/8/bits/stl_vector.h:476:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(std::vector<_Tp, _Alloc>&&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >]’
+       vector(vector&& __x) noexcept
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:476:7: note:   no known conversion for argument 1 from ‘std::vector<std::vector<signed char> >’ to ‘std::vector<std::vector<int> >&&’
+/usr/include/c++/8/bits/stl_vector.h:458:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(const std::vector<_Tp, _Alloc>&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >]’
+       vector(const vector& __x)
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:458:7: note:   no known conversion for argument 1 from ‘std::vector<std::vector<signed char> >’ to ‘const std::vector<std::vector<int> >&’
+/usr/include/c++/8/bits/stl_vector.h:427:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(std::vector<_Tp, _Alloc>::size_type, const value_type&, const allocator_type&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >; std::vector<_Tp, _Alloc>::size_type = long unsigned int; std::vector<_Tp, _Alloc>::value_type = std::vector<int>; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<std::vector<int> >]’
+       vector(size_type __n, const value_type& __value,
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:427:7: note:   candidate expects 3 arguments, 1 provided
+/usr/include/c++/8/bits/stl_vector.h:415:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(std::vector<_Tp, _Alloc>::size_type, const allocator_type&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >; std::vector<_Tp, _Alloc>::size_type = long unsigned int; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<std::vector<int> >]’
+       vector(size_type __n, const allocator_type& __a = allocator_type())
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:415:7: note:   no known conversion for argument 1 from ‘std::vector<std::vector<signed char> >’ to ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’}
+/usr/include/c++/8/bits/stl_vector.h:402:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector(const allocator_type&) [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<std::vector<int> >]’
+       vector(const allocator_type& __a) _GLIBCXX_NOEXCEPT
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:402:7: note:   no known conversion for argument 1 from ‘std::vector<std::vector<signed char> >’ to ‘const allocator_type&’ {aka ‘const std::allocator<std::vector<int> >&’}
+/usr/include/c++/8/bits/stl_vector.h:391:7: note: candidate: ‘std::vector<_Tp, _Alloc>::vector() [with _Tp = std::vector<int>; _Alloc = std::allocator<std::vector<int> >]’
+       vector()
+       ^~~~~~
+/usr/include/c++/8/bits/stl_vector.h:391:7: note:   candidate expects 0 arguments, 1 provided
+cp: cannot stat 'count_lambdas.exe': No such file or directory
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_1.8_N_multiplier_20000_N_reps_100.sh: line 33: ./executables/lambdas_M1.8_rho20000_reps100.exe: No such file or directory
