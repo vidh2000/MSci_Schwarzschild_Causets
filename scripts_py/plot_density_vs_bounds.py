@@ -5,20 +5,14 @@ from os.path import expanduser
 from causets_py import causet_helpers as ch
 import pandas as pd
 import re
+from matplotlib.ticker import FuncFormatter,ScalarFormatter
 
 ##############################################################################
 # 0. SET USER VARIABLES
 ##############################################################################
 usehome = True
-want_rho = True
 
 mass = 2.0
-
-plot_boundaries = True
-plot_molecules = True
-
-want_Nmult = not want_rho
-
 
 
 ##############################################################################
@@ -36,10 +30,7 @@ else:
     dataDir = path + f"/data/test_boundary_vs_density/"
 
 # mass_string must have 6 characters
-mass = round(mass, 2)
-mass_string = f"M={round(mass,2)}"
-
-
+mass_string = "M="+format(mass,".2f")
 
 
 ##############################################################################
@@ -67,8 +58,6 @@ for root, dirs, files in os.walk(dataDir):
     # for each file file_i
     for i, file_i in enumerate(files):
         
-
-        print(file_i)
         if f"M={round(mass,2)}" not in file_i:
             continue
 
@@ -95,19 +84,15 @@ for root, dirs, files in os.walk(dataDir):
         mintimes_avg_arr_i = data.iloc[:,5].tolist()
         mintimes_std_arr_i = data.iloc[:,6].tolist()
 
-        print(Nreps_i)
-        print(outermosts_avg_arr_i)
-        print(outermosts_std_arr_i)
-
-        outermost_i, outermost_std_i = ch.std_combine(Nreps_i,
+        outermost_i, outermost_std_i = ch.combine_meass(Nreps_i,
                                                 outermosts_avg_arr_i,
                                                 outermosts_std_arr_i,)
         innermost_i, innermost_std_i = ch.combine_meass(Nreps_i,
-                                                outermosts_avg_arr_i,
-                                                outermosts_std_arr_i,)
+                                                innermosts_avg_arr_i,
+                                                innermosts_std_arr_i,)
         mintime_i, mintime_std_i = ch.combine_meass(Nreps_i,
-                                                outermosts_avg_arr_i,
-                                                outermosts_std_arr_i,)
+                                                mintimes_avg_arr_i,
+                                                mintimes_std_arr_i,)
         outermosts    .append(outermost_i)
         outermosts_std.append(outermost_std_i)
         innermosts    .append(innermost_i)
@@ -115,118 +100,77 @@ for root, dirs, files in os.walk(dataDir):
         mintimes      .append(mintime_i)
         mintimes_std  .append(mintime_std_i)
 
-        # 2.3 get molecules info #####################################
-        mol_info_i = np.loadtxt(file_i, delimiter = ",", 
-                                skiprows=1) [:,7:]
-        ntypes = mol_info_i.shape[1]/2
-        if (ntypes - int(ntypes)): 
-            raise Exception(f"Number of cols {ntypes*2} is odd")
-        molecules_distr.append([])
-        molecules_distr_std.append([])
-        for n in range(ntypes):
-            avgs_mol_n_i = mol_info_i[:,2*n]
-            stds_mol_n_i = mol_info_i[:,2*n+1]
-            n_mol_n_i, std_mol_n_i = ch.combine_meass(Nreps,
-                                                    avgs_mol_n_i,
-                                                    stds_mol_n_i)
-            # if the nth molecule had already been found
-            try:
-                molecules_distr[n]    .append(n_mol_n_i)
-                molecules_distr_std[n].append(std_mol_n_i)
-            #if the nth molecule was never found
-            except IndexError: 
-                # make zeros for previous (general for rho and nmult)
-                n_prev_rhos = max(len(rhos), len(nmults)) -1
-                zeros = np.zeros(n_prev_rhos).tolist()
-                molecules_distr    .append(zeros + [n_mol_n_i]) 
-                molecules_distr_std.append(zeros + [std_mol_n_i])
 
-
-print(rhos)
 ##############################################################################
 # 2. PLOT
 ##############################################################################
+# Define a custom formatter function
+def format_fn(tick_val, tick_pos):
+    if int(tick_val) == tick_val:
+        return str(int(tick_val))
+    else:
+        return str(tick_val)
+
 A = 4*np.pi*(2*mass)**2
-x = np.array(rhos) if want_rho else np.array(nmults)
+x = np.array(rhos)
 x_A = A/np.sqrt(x)
 
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
-if plot_boundaries:
-    rc = 3; c = 1; r = 3
-    figsize = (c * 4, r * 3)
-    plt.figure(f'Boundaries for {mass_string}',
-                figsize = figsize, tight_layout = True)
-    # MINTIME #######################################################
-    ax = plt.subplot(r, c, 1)
-    plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
-    plt.errorbar(x, mintimes, mintimes_std, 
-                fmt = '.', ls = 'dashed', capsize = 4, 
-                zorder = 5)
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
-    plt.xlabel('Rho [a.u.]')
-    plt.ylabel("Oldest Molecule's Time")
-    plt.grid(alpha = 0.4) 
 
-    # INNERMOST #######################################################
-    ax = plt.subplot(r, c, 2)
-    plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
-    plt.errorbar(x, innermosts, innermosts_std, 
-                fmt = '.', ls = 'dashed', capsize = 4, 
-                zorder = 5)
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
-    plt.xlabel('Rho [a.u.]')
-    plt.ylabel("Innermost Molecule's r")
-    plt.grid(alpha = 0.4) 
+rc = 3; c = 1; r = 3
+figsize = (c * 4, r * 3)
+plt.figure(f'Boundaries for {mass_string}',
+            figsize = figsize, tight_layout = True)
+# MINTIME #######################################################
+ax = plt.subplot(r, c, 1)
+plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
+                va='bottom', ha = 'left')
+plt.errorbar(x, -np.array(mintimes), mintimes_std, 
+            fmt = '.', capsize = 4, #ls = 'dashed', 
+            zorder = 5)
+props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
+            ls = '', alpha=0.5)
+ax.text(0.95, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
+        va='top', ha = 'right', bbox=props)
+plt.xlabel(r'Number density $\rho$ [a.u.]')
+plt.ylabel(r"$-t_{min}$ [a.u]")
+plt.grid(alpha = 0.4) 
+ax.set_xscale("log")
 
-    # OUTERMOST #######################################################
-    ax = plt.subplot(r, c, 2)
-    plt.annotate ("c)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
-    plt.errorbar(x, outermosts, outermosts_std, 
-                fmt = '.', ls = 'dashed', capsize = 4, 
-                zorder = 5)
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
-    plt.xlabel('Rho [a.u.]')
-    plt.ylabel("Outermost Molecule's r")
-    plt.grid(alpha = 0.4) 
+# INNERMOST #######################################################
+ax = plt.subplot(r, c, 2)
+plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
+                va='bottom', ha = 'left')
+plt.errorbar(x, innermosts, innermosts_std, 
+            fmt = '.', capsize = 4, 
+            zorder = 5)
+props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
+            ls = '', alpha=0.5)
+ax.text(0.95, 0.05, mass_string, transform=ax.transAxes, fontsize=14, 
+        va='bottom', ha = 'right', bbox=props)
+plt.xlabel(r'Number density $\rho$ [a.u.]')
+plt.ylabel(r"$r_{min}$ [a.u]")
+plt.grid(alpha = 0.4) 
+ax.set_xscale("log")
 
-    plt.savefig(plotsDir + f"{mass_string}_Boundaries")
-    plt.show()
+# OUTERMOST #######################################################
+ax = plt.subplot(r, c, 3)
+ax.annotate ("c)", (-0.05, 1.05), xycoords = "axes fraction", 
+                va='bottom', ha = 'left')
+ax.errorbar(x, outermosts, outermosts_std, 
+            fmt = '.', capsize = 4, 
+            zorder = 5)
+props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
+            ls = '', alpha=0.5)
+ax.text(0.95, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
+        va='top', ha = 'right', bbox=props)
+ax.set_xlabel(r'Number density $\rho$ [a.u.]')
+ax.set_ylabel(r"$r_{max}$ [a.u]")
+ax.grid(alpha = 0.4) 
+ax.set_xscale("log")
 
-
-# 2.1 MOLECULES'S DISTRIBUTION ##############################################
-"""
-if plot_molecules:
-    fig, ax = plt.figure(f"Molecules for {mass_string}")
-    for n in range(len(molecules_distr)):
-        y    = molecules_distr[n]
-        yerr = molecules_distr_std[n]
-        prefix = ("Open " if n==0 else "Close ") if molecules == "HRVs" \
-                else f"{n}-"
-        plt.errorbar(x_A, y, yerr, 
-                    fmt = '.', ls = 'dashed', capsize = 4, 
-                    label = f'{prefix}{molecules}')
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, mass_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
-    plt.legend()
-    plt.xlabel('Horizon Area [\ell^2]')
-    plt.ylabel("Occurrences")
-    plt.grid(alpha = 0.2) 
-"""
-
+plt.savefig(plotsDir + f"{mass_string}_Boundaries.png")
+plt.show()
 
 
                     
