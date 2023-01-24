@@ -43,7 +43,6 @@ else:
 
 # an entry for each rho
 varying_values = []
-Nreps = []
 outermosts = []
 outermosts_std = []
 innermosts = []
@@ -122,7 +121,7 @@ for root, dirs, files in os.walk(dataDir):
                 for n in range(ntypes_i):
                     avgs_mol_n_i = mol_info_i[:,2*n]
                     stds_mol_n_i = mol_info_i[:,2*n+1]
-                    n_mol_n_i, std_mol_n_i = ch.combine_meass(Nreps,
+                    n_mol_n_i, std_mol_n_i = ch.combine_meass(Nreps_i,
                                                             avgs_mol_n_i,
                                                             stds_mol_n_i)
                     # if the nth molecule had already been found
@@ -147,9 +146,7 @@ for l,ls in zip(molecules_distr, molecules_distr_std):
 ##############################################################################
 # 2. PLOT
 ##############################################################################
-print("loop done")
-print(varying_values)
-print(molecules_distr)
+
 x = np.array(varying_values)
 if varying_var=="M":
     x = 4*np.pi*(2*x)**2 #==Area
@@ -189,6 +186,7 @@ if plot_boundaries:
     plt.errorbar(x, innermosts, innermosts_std, 
                 fmt = '.', ls = 'dashed', capsize = 4, 
                 zorder = 5)
+                
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
@@ -215,16 +213,53 @@ if plot_boundaries:
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries.png")
     plt.show()
 
-
+print(molecules_distr_std)
 # 2.1 MOLECULES'S DISTRIBUTION ##############################################
+print("")
 if plot_molecules:
 
     plt.figure(f"Molecules for {fixed_string}")
+
+    gradients = []
     for n in range(len(molecules_distr)):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
         label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                else str(n) + r"$\mathbf{-}\Lambda$"
+                else str(n+1) + r"$\mathbf{-}\Lambda$"
+        plt.errorbar(x, y, yerr, 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+        # Linear fit
+        coef = np.polyfit(x,y,1)
+        print(f"Gradient factor for {n+1}-lambda = {round(coef[0],8)}")
+        poly1d_fn = np.poly1d(coef) 
+        xfit = np.linspace(min(x),max(x),100)
+        #plt.plot(xfit, poly1d_fn(xfit), '--', color="red")
+        gradients.append(coef[0])
+
+    coefsum = sum([(n+1)*gradients[n] for n in range(len(gradients))])
+    print(f"\nGradients weighted sum = {round(coefsum,8)}")
+
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=1)
+    plt.annotate(fixed_string, (0.95, 0.5), xycoords = "axes fraction",
+            fontsize=12, va='center', ha = 'right', bbox=props)
+    plt.legend()
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel("Number")
+    plt.grid(alpha = 0.2)
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
+    plt.show()
+
+
+
+
+    plt.figure(f"Large molecules for {fixed_string}")
+    for n in range(3, len(molecules_distr)):
+        y    = molecules_distr[n]
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else str(n+1) + r"$\mathbf{-}\Lambda$"
         plt.errorbar(x, y, yerr, 
                     fmt = '.', capsize = 4, 
                     label = label)
@@ -236,7 +271,7 @@ if plot_molecules:
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel("Number")
     plt.grid(alpha = 0.2)
-    plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
+    plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png") 
     plt.show()
 
 
