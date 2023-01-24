@@ -135,3 +135,38 @@ M=2.2, 9/10
 Time taken generating for N = 181528: 31.0713 seconds
 Count lambdas starting to run now..
 Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.557744
+r_min for elements in lambdas = 4.03714
+r_max for elements in lambdas = 4.73801
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 181528: 91.3969 seconds
+M=2.2, 10/10
+Time taken generating for N = 181305: 36.6845 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.530421
+r_min for elements in lambdas = 4.0207
+r_max for elements in lambdas = 4.7791
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 181305: 91.6485 seconds
+Average time taken for generating 10 causets with N = 181784:
+125.973 seconds
+
+
+==========================================================
+Saving Iteration 1 to the file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/lambdas/M=2.20_Nmult=40000_Card=181784_r=5.40_dur=1.00.txt
+Pastkeys found are{-3, -2, -1, 1, 2, 3, 4, 5, 6, 7}
+
+=============================================================
+
+Program took in total: 1259.74 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 40000
