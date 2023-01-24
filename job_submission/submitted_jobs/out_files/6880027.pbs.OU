@@ -1131,3 +1131,11 @@ M=1.9, 92/100
 Time taken generating for N = 135970: 17.0673 seconds
 Count lambdas starting to run now..
 Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.535332
+r_min for elements in lambdas = 3.46753
+r_max for elements in lambdas = 4.15238
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 135970: 41.9984 seconds
