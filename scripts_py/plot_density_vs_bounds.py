@@ -4,6 +4,7 @@ import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
 import pandas as pd
+import re
 
 ##############################################################################
 # 0. SET USER VARIABLES
@@ -66,6 +67,8 @@ for root, dirs, files in os.walk(dataDir):
     # for each file file_i
     for i, file_i in enumerate(files):
         
+
+        print(file_i)
         if f"M={round(mass,2)}" not in file_i:
             continue
 
@@ -74,31 +77,29 @@ for root, dirs, files in os.walk(dataDir):
 
         file_i = root + file_i
 
+        # Get data from the file_i
+        with open(file_i, "r") as f:
+            lines = list(f)[1:] #skip first row
+            data = []
+            for i, line in enumerate(lines):
+                data.append([float(x) for x in line.split()])
+        data = pd.DataFrame(data)
+
         # 2.1 get Nreps ############################################
-        Nreps_i = pd.read_csv(file_i, delimiter = ",",
-                                skiprows=1).iloc[:, 0].tolist()
+        Nreps_i = [int(x) for x in data.iloc[:,0].tolist()] 
+        # 2.2 get outermost, innermost, mintime info ################
+        outermosts_avg_arr_i = data.iloc[:,1].tolist()
+        outermosts_std_arr_i = data.iloc[:,2].tolist()
+        innermosts_avg_arr_i = data.iloc[:,3].tolist()
+        innermosts_std_arr_i = data.iloc[:,4].tolist()
+        mintimes_avg_arr_i = data.iloc[:,5].tolist()
+        mintimes_std_arr_i = data.iloc[:,6].tolist()
 
         print(Nreps_i)
-        # 2.2 get outermost, innermost, mintime info ################
-        outermosts_avg_arr_i = np.loadtxt(file_i, delimiter = ",", 
-                                    skiprows=1,
-                                    usecols = 1)
-        outermosts_std_arr_i = np.loadtxt(file_i, delimiter = ",", 
-                                    skiprows=1,
-                                    usecols = 2)
-        innermosts_avg_arr_i = np.loadtxt(file_i, delimiter = ",", 
-                                    skiprows=1,
-                                    usecols = 3)
-        innermosts_std_arr_i = np.loadtxt(file_i, delimiter = ",", 
-                                    skiprows=1,
-                                    usecols = 4)
-        mintimes_avg_arr_i = np.loadtxt(file_i, delimiter = ",", 
-                                    skiprows=1,
-                                    usecols = 5)
-        mintimes_std_arr_i = np.loadtxt(file_i, delimiter = ",", 
-                                    skiprows=1,
-                                    usecols = 6)
-        outermost_i, outermost_std_i = ch.combine_meass(Nreps_i,
+        print(outermosts_avg_arr_i)
+        print(outermosts_std_arr_i)
+
+        outermost_i, outermost_std_i = ch.std_combine(Nreps_i,
                                                 outermosts_avg_arr_i,
                                                 outermosts_std_arr_i,)
         innermost_i, innermost_std_i = ch.combine_meass(Nreps_i,
