@@ -98,13 +98,13 @@ for root, dirs, files in os.walk(dataDir):
         mintimes_std_arr_i = np.loadtxt(file_i, delimiter = ",", 
                                     skiprows=1,
                                     usecols = 6)
-        outermost_i, outermost_std_i = ch.std_combine(Nreps_i,
+        outermost_i, outermost_std_i = ch.combine_meass(Nreps_i,
                                                 outermosts_avg_arr_i,
                                                 outermosts_std_arr_i,)
-        innermost_i, innermost_std_i = ch.std_combine(Nreps_i,
+        innermost_i, innermost_std_i = ch.combine_meass(Nreps_i,
                                                 outermosts_avg_arr_i,
                                                 outermosts_std_arr_i,)
-        mintime_i, mintime_std_i = ch.std_combine(Nreps_i,
+        mintime_i, mintime_std_i = ch.combine_meass(Nreps_i,
                                                 outermosts_avg_arr_i,
                                                 outermosts_std_arr_i,)
         outermosts    .append(outermost_i)
@@ -125,7 +125,7 @@ for root, dirs, files in os.walk(dataDir):
         for n in range(ntypes):
             avgs_mol_n_i = mol_info_i[:,2*n]
             stds_mol_n_i = mol_info_i[:,2*n+1]
-            n_mol_n_i, std_mol_n_i = ch.std_combine(Nreps,
+            n_mol_n_i, std_mol_n_i = ch.combine_meass(Nreps,
                                                     avgs_mol_n_i,
                                                     stds_mol_n_i)
             # if the nth molecule had already been found

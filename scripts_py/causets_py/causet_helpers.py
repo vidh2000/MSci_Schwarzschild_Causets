@@ -141,10 +141,10 @@ def default_kwargs(**defaultKwargs):
     return actual_decorator
 
 
-def std_combine(Ns, mus, stds):
+def combine_meass(Ns, mus, stds):
     """
     Function combining the stds of M rounds i of Ns[i[ measurements, each 
-    having mean mus[i] and std stds[i].
+    having mean mus[i] and std stds[i]. It returns the new mean and the new std.
 
     Note: M = len(Ns) = len(ms) = len(stds).
 
@@ -161,9 +161,13 @@ def std_combine(Ns, mus, stds):
     
     Returns
     -------
+    mu  : float
+        Mean of meausurements
     std : float
         Std of the combination of all measurements.
     """
+    if not hasattr(mus, "__len__") and not hasattr(stds, "__len__"):
+        return mus, stds
     coeffs = []
     M = len(Ns)
     N = sum(Ns)
@@ -179,4 +183,4 @@ def std_combine(Ns, mus, stds):
             stdj = stds[j]
             term_mixed = Ni*Nj/(N*(N-1)) * (mui - muj)**2
             coeffs.append(term_mixed)
-    return np.sqrt(sum(coeffs))
+    return np.mean(mus), np.sqrt(sum(coeffs))
