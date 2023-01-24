@@ -79,50 +79,35 @@ for root, dirs, files in os.walk(dataDir):
                             print(varying_var+"=", varying_var_i)
                             varying_values.append(varying_var_i)
                         break
-            elif want_Nmult and "Nmult" in file_i:
-                go_on = True
-                file_i_path = os.path.join(root, file_i)
-                file_i_pieces = file_i.split("_")
-                # get nmult of file_i
-                for piece_j in file_i_pieces:
-                    if piece_j[0:3] == "Nmult":
-                        nmult_i = float(piece_j.split("=")[1])
-                        if nmult_i not in nmults:
-                            nmults.append(nmult_i)
-                        break
             # if the file is correct
             if go_on: 
-                # 2.1 get Nreps ############################################
-                Nreps_i = np.loadtxt(file_i_path, delimiter = ",", skiprows=1,
-                                            usecols = 0)
-                # 2.2 get outermost, innermost, mintime info ################
-                outermosts_avg_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                            skiprows=1,
-                                            usecols = 1)
-                outermosts_std_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                            skiprows=1,
-                                            usecols = 2)
-                innermosts_avg_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                            skiprows=1,
-                                            usecols = 3)
-                innermosts_std_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                            skiprows=1,
-                                            usecols = 4)
-                mintimes_avg_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                            skiprows=1,
-                                            usecols = 5)
-                mintimes_std_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                            skiprows=1,
-                                            usecols = 6)
+                # 2.1 get file and Nreps #####################################
+                try:
+                    everything_i = np.loadtxt(file_i_path, 
+                                            delimiter = ",", skiprows=1,
+                                            dtype = str)[:,:-1].astype(float)
+                except IndexError: # only one line in txt file
+                    everything_i = np.loadtxt(file_i_path, 
+                                            delimiter = ",", skiprows=1,
+                                            dtype = str)[:-1].astype(float)
+                    everything_i=np.array([everything_i]) #make it 2D for latr
+                Nreps_i = everything_i[:,0]
+                # 2.2 get mintime, innermost, outermost ####################
+                outermosts_avg_arr_i = everything_i[:,1]
+                outermosts_std_arr_i = everything_i[:,2]
+                innermosts_avg_arr_i = everything_i[:,3]
+                innermosts_std_arr_i = everything_i[:,4]
+                mintimes_avg_arr_i   = everything_i[:,5]
+                mintimes_std_arr_i   = everything_i[:,6]
                 outermost_i, outermost_std_i = ch.combine_meass(Nreps_i,
                                                         outermosts_avg_arr_i,
                                                         outermosts_std_arr_i,)
                 innermost_i, innermost_std_i = ch.combine_meass(Nreps_i,
-                                                        outermosts_avg_arr_i,
-                                                        outermosts_std_arr_i,)
+                                                        innermosts_avg_arr_i,
+                                                        innermosts_std_arr_i,)
                 mintime_i, mintime_std_i = ch.combine_meass(Nreps_i,
-                                                        outermosts_avg_arr_i,
-                                                        outermosts_std_arr_i,)
+                                                        mintimes_avg_arr_i,
+                                                        mintimes_std_arr_i,)
                 outermosts    .append(outermost_i)
                 outermosts_std.append(outermost_std_i)
                 innermosts    .append(innermost_i)
@@ -130,10 +115,9 @@ for root, dirs, files in os.walk(dataDir):
                 mintimes      .append(mintime_i)
                 mintimes_std  .append(mintime_std_i)
                 # 2.3 get molecules info #####################################
-                mol_info_i = np.loadtxt(file_i_path, delimiter = ",", 
-                                        skiprows=1, dtype = str)[:,7:-1]\
-                                        .astype(float)
+                mol_info_i = everything_i[:,7:]
                 ntypes = mol_info_i.shape[1]/2
+                # should be even
                 if (ntypes - int(ntypes)): 
                     raise Exception(f"Number of cols {ntypes*2} is odd")
                 else:
@@ -153,8 +137,8 @@ for root, dirs, files in os.walk(dataDir):
                     #if the nth molecule was never found
                     except IndexError: 
                         # make zeros for previous (general for rho and nmult)
-                        n_prev_rhos = max(len(varying_values), len(nmults)) -1
-                        zeros = np.zeros(n_prev_rhos).tolist()
+                        n_prev_values = len(varying_values) -1
+                        zeros = np.zeros(n_prev_values).tolist()
                         molecules_distr    .append(zeros + [n_mol_n_i]) 
                         molecules_distr_std.append(zeros + [std_mol_n_i])
 # Clear a bit
@@ -172,15 +156,13 @@ for root, dirs, files in os.walk(dataDir):
 # 2. PLOT
 ##############################################################################
 print("loop done")
-A = 4*np.pi*(2*mass)**2
-x = np.array(varying_values) if want_rho else np.array(nmults)
-print(x)
-x_A = A/np.sqrt(x)
+#A = 4*np.pi*(2*mass)**2
+x = np.array(varying_values)
 
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
     rc = 3; c = 1; r = 3
-    figsize = (c * 4, r * 3)
+    figsize = (c * 6, r * 2.3)
     plt.figure(f'Boundaries for {fixed_string}',
                 figsize = figsize, tight_layout = True)
     # MINTIME #######################################################
@@ -191,10 +173,10 @@ if plot_boundaries:
                 fmt = '.', ls = 'dashed', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, fixed_string, transform=ax.transAxes, fontsize=14, 
+                ls = '', alpha=0.2)
+    ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'left', bbox=props)
-    plt.xlabel('Rho [a.u.]')
+    plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Oldest Molecule's Time")
     plt.grid(alpha = 0.4) 
 
@@ -206,10 +188,10 @@ if plot_boundaries:
                 fmt = '.', ls = 'dashed', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, fixed_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
-    plt.xlabel('Rho [a.u.]')
+                ls = '', alpha=0.2)
+    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+            va='bottom', ha = 'right', bbox=props)
+    plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Innermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
@@ -221,10 +203,10 @@ if plot_boundaries:
                 fmt = '.', ls = 'dashed', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, fixed_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
-    plt.xlabel('Rho [a.u.]')
+                ls = '', alpha=0.2)
+    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+            va='bottom', ha = 'right', bbox=props)
+    plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Outermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
@@ -244,9 +226,9 @@ if plot_molecules:
                     fmt = '.', ls = 'dashed', capsize = 4, 
                     label = f'{prefix}{molecules}')
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.5)
-    ax.text(0.05, 0.95, fixed_string, transform=ax.transAxes, fontsize=14, 
-            va='bottom', ha = 'left', bbox=props)
+                ls = '', alpha=0.2)
+    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+            va='bottom', ha = 'right', bbox=props)
     plt.legend()
     plt.xlabel('Horizon Area [\ell^2]')
     plt.ylabel("Occurrences")
