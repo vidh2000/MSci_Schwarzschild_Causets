@@ -8,13 +8,12 @@ from causets_py import causet_helpers as ch
 ##############################################################################
 # 0. SET USER VARIABLES
 ##############################################################################
-usehome = True
 molecules = "lambdas" #links, HRVs
 mass = 0.25
 want_rho = True
 
 plot_boundaries = True
-plot_molecules = True
+plot_molecules = False
 
 want_Nmult = not want_rho
 
@@ -23,17 +22,15 @@ want_Nmult = not want_rho
 ##############################################################################
 # 1 SET USEFUL STRINGS
 ##############################################################################
-# Home Directory
 home = expanduser("~")
-# Path
-path = os.getcwd()
-if usehome:
-    plotsDir = f"{home}/MSci_Schwarzschild_Causets/figures/N{molecules}_vs_Area/"
-    dataDir = f"{home}/MSci_Schwarzschild_Causets/data/{molecules}/"
-    #dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/"
-else:
+plotsDir = f"{home}/MSci_Schwarzschild_Causets/figures/N{molecules}_vs_Area/"
+dataDir = f"{home}/MSci_Schwarzschild_Causets/data/{molecules}/"
+#dataDir = home + f"/MSci_Schwarzschild_Causets/data/linkcounting_files/Poiss=False/"
+if not os.path.exists(dataDir):
+    path = os.getcwd()
     plotsDir = path + f"/figures/N{molecules}_vs_Area/"
     dataDir = path + f"/data/{molecules}"
+
 
 # mass_string must have 6 characters, being M=I.ab
 mass = round(mass, 2)
@@ -73,25 +70,27 @@ molecules_distr_std = []
 for root, dirs, files in os.walk(dataDir):
     # for each file file_i
     for i, file_i in enumerate(files):
+        print(i, file_i)
         if mass_string in file_i:
             go_on = False
             if want_rho and "Rho" in file_i:
                 go_on = True
-                file_path = os.path.join(root, file_i)
-                file_pieces = file_i.split("_")
+                file_i_path = os.path.join(root, file_i)
+                file_i_pieces = file_i.split("_")
                 # get rho of file_i
-                for piece_j in file_pieces:
+                for piece_j in file_i_pieces:
                     if piece_j[0:3] == "Rho":
                         rho_i = piece_j.split("=")[1]
                         if rho_i not in rhos:
+                            print("Rho =", rho_i)
                             rhos.append(rho_i)
                         break
             elif want_Nmult and "Nmult" in file_i:
                 go_on = True
-                file_path = os.path.join(root, file_i)
-                file_pieces = file_i.split("_")
+                file_i_path = os.path.join(root, file_i)
+                file_i_pieces = file_i.split("_")
                 # get nmult of file_i
-                for piece_j in file_pieces:
+                for piece_j in file_i_pieces:
                     if piece_j[0:3] == "Nmult":
                         nmult_i = piece_j.split("=")[1]
                         if nmult_i not in nmults:
@@ -100,25 +99,25 @@ for root, dirs, files in os.walk(dataDir):
             # if the file is correct
             if go_on: 
                 # 2.1 get Nreps ############################################
-                Nreps_i = np.loadtxt(file_i, delimeter = ",", skiprows=1,
+                Nreps_i = np.loadtxt(file_i_path, delimiter = ",", skiprows=1,
                                             usecols = 0)
                 # 2.2 get outermost, innermost, mintime info ################
-                outermosts_avg_arr_i = np.loadtxt(file_i, delimeter = ",", 
+                outermosts_avg_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
                                             skiprows=1,
                                             usecols = 1)
-                outermosts_std_arr_i = np.loadtxt(file_i, delimeter = ",", 
+                outermosts_std_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
                                             skiprows=1,
                                             usecols = 2)
-                innermosts_avg_arr_i = np.loadtxt(file_i, delimeter = ",", 
+                innermosts_avg_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
                                             skiprows=1,
                                             usecols = 3)
-                innermosts_std_arr_i = np.loadtxt(file_i, delimeter = ",", 
+                innermosts_std_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
                                             skiprows=1,
                                             usecols = 4)
-                mintimes_avg_arr_i = np.loadtxt(file_i, delimeter = ",", 
+                mintimes_avg_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
                                             skiprows=1,
                                             usecols = 5)
-                mintimes_std_arr_i = np.loadtxt(file_i, delimeter = ",", 
+                mintimes_std_arr_i = np.loadtxt(file_i_path, delimiter = ",", 
                                             skiprows=1,
                                             usecols = 6)
                 outermost_i, outermost_std_i = ch.std_combine(Nreps_i,
@@ -137,7 +136,7 @@ for root, dirs, files in os.walk(dataDir):
                 mintimes      .append(mintime_i)
                 mintimes_std  .append(mintime_std_i)
                 # 2.3 get molecules info #####################################
-                mol_info_i = np.loadtxt(file_i, delimeter = ",", 
+                mol_info_i = np.loadtxt(file_i_path, delimiter = ",", 
                                         skiprows=1) [:,7:]
                 ntypes = mol_info_i.shape[1]/2
                 if (ntypes - int(ntypes)): 
@@ -163,8 +162,8 @@ for root, dirs, files in os.walk(dataDir):
                         molecules_distr_std.append(zeros + [std_mol_n_i])
 
 # Clear a bit
-del root, dirs, files
-del file_path, file_pieces, piece_j
+# del root, dirs, files
+del file_i_path, file_i_pieces, piece_j
 del i, file_i
 del outermosts_avg_arr_i, outermosts_std_arr_i, outermost_i, outermost_std_i
 del innermosts_avg_arr_i, innermosts_std_arr_i, innermost_i, innermost_std_i
