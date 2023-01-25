@@ -414,9 +414,3 @@ if plot_boundaries:
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries_from_rS_in_l.png")
     plt.show()
-
-
-
-                    
-            
-           
