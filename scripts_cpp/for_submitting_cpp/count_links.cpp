@@ -209,9 +209,9 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
         stream3 << std::fixed << std::setprecision(1) << durations[0];
         std::string dur_str = stream3.str(); 
         // Saving hollow used when set as global param in testing
-        //std::stringstream stream4;
-        //stream4 << std::fixed << std::setprecision(2) << hollow;
-        //std::string hollow_str = stream4.str();
+        std::stringstream stream4;
+        stream4 << std::fixed << std::setprecision(2) << hollow;
+        std::string hollow_str = stream4.str();
         
 
         std::string filename = std::string(homeDir) 
@@ -221,7 +221,7 @@ for (auto && tup : boost::combine(masses, N_links_avgs, N_links_stds))
                 + "_Rho=" + std::to_string(N_multiplier)
                 + "_Card=" + std::to_string(cards[0])
                 + "_r=" + radius_str
-                //+ "_hollow=" + hollow_str // Only used in testing
+                + "_hollow=" + hollow_str
                 + "_dur=" + dur_str
                 + ".txt";
         
