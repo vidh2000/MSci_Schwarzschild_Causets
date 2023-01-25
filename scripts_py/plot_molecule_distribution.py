@@ -168,7 +168,7 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 1)
     plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    plt.errorbar(x, mintimes, mintimes_std, 
+    plt.errorbar(varying_values, mintimes, mintimes_std, 
                 fmt = '.', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
@@ -183,7 +183,7 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 2)
     plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    plt.errorbar(x, innermosts, innermosts_std, 
+    plt.errorbar(varying_values, innermosts, innermosts_std, 
                 fmt = '.', capsize = 4, 
                 zorder = 5)
                 
@@ -199,7 +199,7 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 3)
     plt.annotate ("c)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    plt.errorbar(x, outermosts, outermosts_std, 
+    plt.errorbar(varying_values, outermosts, outermosts_std, 
                 fmt = '.', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
