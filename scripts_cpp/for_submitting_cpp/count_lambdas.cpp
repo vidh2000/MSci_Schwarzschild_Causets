@@ -208,6 +208,10 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     std::stringstream stream3;
     stream3 << std::fixed << std::setprecision(2) << durations[0];
     std::string dur_str = stream3.str();
+    // Saving hollow used when set as global param in testing
+    std::stringstream stream4;
+    stream4 << std::fixed << std::setprecision(2) << hollow;
+    std::string hollow_str = stream4.str();
 
     std::string filename = std::string(homeDir) 
                             + "/MSci_Schwarzschild_Causets/data/lambdas/"
@@ -215,6 +219,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
                             + "_Nmult=" + rho_str //tho currently Nmult
                             + "_Card=" + std::to_string(cards[0])
                             + "_r=" + radius_str
+                            + "_hollow=" + hollow_str
                             + "_dur=" + dur_str
                             + ".txt";
     std::cout<<"\n==========================================================\n";
