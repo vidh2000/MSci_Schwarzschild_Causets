@@ -216,7 +216,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     std::string filename = std::string(homeDir) 
                             + "/MSci_Schwarzschild_Causets/data/lambdas/"
                             + "M=" + mass_str
-                            + "_Nmult=" + rho_str //tho currently Nmult
+                            + "_Rho=" + rho_str 
                             + "_Card=" + std::to_string(cards[0])
                             + "_r=" + radius_str
                             + "_hollow=" + hollow_str
