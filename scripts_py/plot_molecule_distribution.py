@@ -340,4 +340,4 @@ if plot_molecules:
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
     print(f"\nDiscreteness scale = {round(l,5)} +- {round(l_unc,5)} l_p")
-           
+ 
