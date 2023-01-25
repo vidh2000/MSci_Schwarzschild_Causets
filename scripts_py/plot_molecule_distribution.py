@@ -168,14 +168,22 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 1)
     plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    plt.errorbar(varying_values, mintimes, mintimes_std, 
+    if varying_var == "M":
+        plt.errorbar(2*np.array(varying_values), mintimes,
+                mintimes_std, fmt = '.', capsize = 4, 
+                zorder = 5)
+    else:
+        plt.errorbar(np.array(varying_values), mintimes, mintimes_std, 
                 fmt = '.', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
     ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'left', bbox=props)
-    plt.xlabel(f'{varying_var} [a.u.]')
+    if varying_var == "M":
+        plt.xlabel(r'$r_S$ [a.u.]')
+    else:
+        plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Oldest Molecule's Time")
     plt.grid(alpha = 0.4) 
 
@@ -183,15 +191,23 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 2)
     plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    plt.errorbar(varying_values, innermosts, innermosts_std, 
+    if varying_var == "M":
+        plt.errorbar(2*np.array(varying_values), innermosts,
+                innermosts_std, fmt = '.', capsize = 4, 
+                zorder = 5)
+    else:
+        plt.errorbar(np.array(varying_values), innermosts, innermosts_std, 
                 fmt = '.', capsize = 4, 
                 zorder = 5)
-                
+
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
-    plt.xlabel(f'{varying_var} [a.u.]')
+    if varying_var == "M":
+        plt.xlabel(r'$r_S$ [a.u.]')
+    else:
+        plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Innermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
@@ -199,21 +215,28 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 3)
     plt.annotate ("c)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    plt.errorbar(varying_values, outermosts, outermosts_std, 
+    if varying_var == "M":
+        plt.errorbar(2*np.array(varying_values), outermosts,
+                outermosts_std, fmt = '.', capsize = 4, 
+                zorder = 5)
+    else:
+        plt.errorbar(np.array(varying_values), outermosts, outermosts_std, 
                 fmt = '.', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
-    plt.xlabel(f'{varying_var} [a.u.]')
+    if varying_var == "M":
+        plt.xlabel(r'$r_S$ [a.u.]')
+    else:
+        plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Outermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries.png")
     plt.show()
 
-print(molecules_distr_std)
 # 2.1 MOLECULES'S DISTRIBUTION ##############################################
 print("")
 if plot_molecules:
