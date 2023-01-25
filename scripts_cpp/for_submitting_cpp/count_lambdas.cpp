@@ -84,16 +84,16 @@ std::vector<int> repetitions_arr = {};
 
 
 // Shape Parameters
-double scale = std::pow(Rho, -1/4);
+double scale = std::pow(Rho, -1.0/4.0);
+std::cout << "Scale = " << scale << std::endl;
 double R = 2*mass+3*scale;
 double r = 2*mass-3*scale;
 double T = 4*scale;
 double h = r/R;
-int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T; //* (4*3.1415/3)
+int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
 radii.push_back(R);
 hollow_vals.push_back(h);
-durations.push_back(T); // since min(t_min) ~ -3.5, 4 is adequate
-// Keep the same density of points, i.e such that N(M=1)=Rho
+durations.push_back(T); 
 cards.push_back(N);
 // Add # of repetitions for each mass
 repetitions_arr.push_back(N_reps);

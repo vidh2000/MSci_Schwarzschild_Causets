@@ -12,19 +12,19 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
-N_multiplier=40000
-N_reps=10
+Rho=5000
+N_reps=2
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
-mem=512
+mem=920
 runtime="08:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in $(seq 2.1 .1 3.0)
+for mass in 3.0 #$(seq 2.3 .1 2.5)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
@@ -66,25 +66,25 @@ echo "echo Finished building the executable" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "echo Go into the directory of the executable file:" >> $sh_run_file
 echo 'cd $mainDir$runfileRelativeDir' >> $sh_run_file
-echo "pwd" >> $sh_run_file
-echo "Files in the directory:"
-echo "ls" >> $sh_run_file
+#echo "pwd" >> $sh_run_file
+#echo "Files in the directory:"
+#echo "ls" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "mass=${mass}" >> $sh_run_file
-echo "N_multiplier=${N_multiplier}" >> $sh_run_file
+echo "Rho=${Rho}" >> $sh_run_file
 echo "N_reps=${N_reps}" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# Execute the copy of the created .exe program" >> $sh_run_file
-echo 'cp ${runfilename::-4}".exe" "executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
+echo 'cp ${runfilename::-4}".exe" "executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}.exe"' >> $sh_run_file
 #echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
-echo '"./executables/lambdas_M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
+echo '"./executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}.exe" $mass $Rho $N_reps' >> $sh_run_file
 echo "" >> $sh_run_file
 
 ###############################################################################
 #______________________________________________________________________________
 ##### Write the submit file based on variables used and run_file.sh to submit
-submitfile="${submitted_jobsDir}submit_files/subLambda_mass_${mass}_N_multiplier_${N_multiplier}_N_reps_${N_reps}.pbs"
+submitfile="${submitted_jobsDir}submit_files/subLambda_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}.pbs"
 
 echo "#!/bin/sh" > $submitfile
 echo "#PBS -lselect=1:ncpus=${ncpus}:mem=${mem}gb" >> $submitfile
@@ -112,7 +112,7 @@ done
 
 echo "----------------------------------------------------------------------"
 echo "Submitted ${counter} jobs for parameters:"
-echo "N_multiplier = ${N_multiplier}"
+echo "Rho = ${Rho}"
 echo "N_reps = ${N_reps}"
 echo "ncpus = ${ncpus}"
 echo "mem = ${mem}"

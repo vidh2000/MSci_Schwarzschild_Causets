@@ -7,7 +7,7 @@
 
 ### Files you want to run in 
 #runfilename="link_counting_4D_futmatrix.cpp"
-runfilename="boundaries_vs_density_test.cpp"
+runfilename="generate_causet_lambdas.cpp"
 #runfilename="speed_testing_BH.cpp"
 #runfilename="test_hello_world.cpp"
 
