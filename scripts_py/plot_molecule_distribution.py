@@ -3,6 +3,7 @@ import numpy as np
 import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
+from scipy.optimize import curve_fit
 
 
 ##############################################################################
@@ -147,6 +148,11 @@ for l,ls in zip(molecules_distr, molecules_distr_std):
 # 2. PLOT
 ##############################################################################
 
+# Fitting function == linear through vertex
+def lin_func(x,a):
+    return a*x
+
+
 x = np.array(varying_values)
 if varying_var=="M":
     x = 4*np.pi*(2*x)**2 #==Area
@@ -244,6 +250,7 @@ if plot_molecules:
     plt.figure(f"Molecules for {fixed_string}")
 
     gradients = []
+    gradients_unc = []
     for n in range(len(molecules_distr)):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
@@ -253,16 +260,19 @@ if plot_molecules:
                     fmt = '.', capsize = 4, 
                     label = label)
         # Linear fit
-        coef = np.polyfit(x,y,1)
-        print(f"Gradient factor for {n+1}-lambda = {round(coef[0],8)}")
-        poly1d_fn = np.poly1d(coef) 
+        # Fitting function == linear through vertex
+
+        # fit the function to the data
+        popt, pcov = curve_fit(lin_func, x, y, sigma=yerr,
+                                absolute_sigma=True)
+        unc = np.sqrt(np.diag(pcov))
+        print(f"Gradient factor for {n+1}-lambda = {round(popt[0],3)} +- {round(unc[0],3)}")
+        
         xfit = np.linspace(min(x),max(x),100)
-        #plt.plot(xfit, poly1d_fn(xfit), '--', color="red")
-        gradients.append(coef[0])
-
-    coefsum = sum([(n+1)*gradients[n] for n in range(len(gradients))])
-    print(f"\nGradients weighted sum = {round(coefsum,8)}")
-
+        #plt.plot(xfit, lin_func(xfit,*popt), '--', color="red")
+        gradients.append(popt[0])
+        gradients_unc.append(unc[0])
+    
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=1)
     plt.annotate(fixed_string, (0.95, 0.5), xycoords = "axes fraction",
@@ -273,8 +283,6 @@ if plot_molecules:
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.show()
-
-
 
 
     plt.figure(f"Large molecules for {fixed_string}")
@@ -297,8 +305,39 @@ if plot_molecules:
     plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png") 
     plt.show()
 
+    ### Find entropy and C_hv and discretness length scale
+
+    noninf_indices = tuple([np.where(np.isfinite(gradients_unc))[0]])
+    gradients = np.array(gradients)[noninf_indices]
+    gradients_unc = np.array(gradients_unc)[noninf_indices]
 
 
-                    
-            
+
+    # Uncertainty propagation
+    coefsum = sum([(n+1)*gradients[n] for n in range(len(gradients))])
+    coefsum_unc = np.sqrt(
+        sum([((n+1)*gradients_unc[n])**2 for n in range(len(gradients))]))
+    print(f"\nGradients weighted sum = {round(coefsum,5)} +- {round(coefsum_unc,5)}")
+
+    # Find probability distribution of n-lambdas
+    grad_sum = sum(gradients)
+    grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
+
+    lambd_probs = gradients/sum(gradients)
+    lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
+                               gradients**2*grad_sum_unc**2/grad_sum**4)
+    
+    print("Distribution of n-lambdas:\n",
+            [round(l,7) for l in lambd_probs])
+
+    # Find discreteness scale
+    P = sum([p*np.log(p) for p in lambd_probs])
+    P_unc = np.sqrt(sum((lambd_probs+1)**2 * lambd_probs_uncs**2))
+    C_hv = - sum(gradients)*sum([p*np.log(p) for p in lambd_probs])
+    C_hv_unc = np.sqrt(P**2 * grad_sum_unc**2 +
+                       grad_sum**2 * P_unc**2)     
+    # Discreteness length in terms of Planckian length
+    l = 2*np.sqrt(C_hv)
+    l_unc = C_hv_unc/np.sqrt(C_hv)
+    print(f"\nDiscreteness scale = {round(l,5)} +- {round(l_unc,5)} l_p")
            

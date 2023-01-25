@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from os.path import expanduser
 import os
+from scipy.optimize import curve_fit
 
 
 
@@ -87,15 +88,26 @@ plt.errorbar(x, y, yerr=Nlinks_stds,
             capsize=4,ls="",fmt="o", color="black",
             label=r"$3+1D$ Schwarzshild spacetime")
 
-# Linear fit
-coef = np.polyfit(x,y,1)
+### Linear fit
+
+# Fitting function == linear through vertex
+def lin_func(x,a):
+    return a*x
+
+# fit the function to the data
+popt, pcov = curve_fit(lin_func, x, y, sigma=Nlinks_stds,
+                        absolute_sigma=True)
+unc = np.sqrt(np.diag(pcov))
+
+# print the optimal parameter values
 print(f"===============================================================\n\
-        Linear fit coefficients: {coef}\n\
-        Gradient factor w.r.t \sqrt(rho) = {coef[0]/np.sqrt(rho/(4*np.pi/3*26))}\n\
-        ===============================================================")
-poly1d_fn = np.poly1d(coef) 
+        Linear fit coefficients: {round(popt[0],3)} +- {round(unc[0],3)}")
+scale = np.sqrt(rho/(4*np.pi/3*26))
+print(f"\tGradient factor w.r.t \sqrt(rho) = {round(popt[0]/scale,3)} +- {round(unc[0]/scale,3)}")
+print(f"===============================================================")
+ 
 x = np.linspace(min(x),max(x),100)
-plt.plot(x, poly1d_fn(x), '--', color="red",
+plt.plot(x, lin_func(x,*popt), '--', color="red",
         label=f"Linear fit")
 
 plt.legend()
