@@ -13,7 +13,7 @@ varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Nmult"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 40000     #value of fixed_var
 
-plot_boundaries = False
+plot_boundaries = True
 plot_molecules = True
 
 
@@ -169,7 +169,7 @@ if plot_boundaries:
     plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
-                fmt = '.', ls = 'dashed', capsize = 4, 
+                fmt = '.', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
@@ -184,7 +184,7 @@ if plot_boundaries:
     plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
     plt.errorbar(x, innermosts, innermosts_std, 
-                fmt = '.', ls = 'dashed', capsize = 4, 
+                fmt = '.', capsize = 4, 
                 zorder = 5)
                 
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
@@ -200,7 +200,7 @@ if plot_boundaries:
     plt.annotate ("c)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
     plt.errorbar(x, outermosts, outermosts_std, 
-                fmt = '.', ls = 'dashed', capsize = 4, 
+                fmt = '.', capsize = 4, 
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)

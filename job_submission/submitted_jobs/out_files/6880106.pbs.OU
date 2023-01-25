@@ -1,0 +1,172 @@
+Using 256 cores
+Using 512GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_3.0_N_multiplier_40000_N_reps_10.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_lambdas.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_lambdas.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp
+boundaries_vs_density_test.cpp
+boundaries_vs_density_test.exe
+count_HRVs_copy.cpp
+count_HRVs_copy.exe
+count_HRVs.cpp
+count_lambdas_copy.cpp
+count_lambdas_copy.exe
+count_lambdas copy_nmult.cpp
+count_lambdas.cpp
+count_lambdas.exe
+count_links.cpp
+executables
+PARAMETERS used in the causet generation:
+mass=3, N_multiplier=40000, N_reps=10
+
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+N_multiplier = 40000
+ 
+======================================================
+Main interation count: 1/1
+N = 335384. r_S = 6. Radius = 7. Hollow = 0.714286. Dimension = 4. Height = 1. Centered at t = -0.5.
+M=3, 1/10
+Time taken generating for N = 335657: 164.856 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.567222
+r_min for elements in lambdas = 5.64598
+r_max for elements in lambdas = 6.37522
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335657: 409.708 seconds
+M=3, 2/10
+Time taken generating for N = 334970: 150.651 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.554513
+r_min for elements in lambdas = 5.70748
+r_max for elements in lambdas = 6.40862
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 334970: 373.17 seconds
+M=3, 3/10
+Time taken generating for N = 335578: 130.102 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.548386
+r_min for elements in lambdas = 5.61141
+r_max for elements in lambdas = 6.35865
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335578: 373.575 seconds
+M=3, 4/10
+Time taken generating for N = 335718: 120.979 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.535096
+r_min for elements in lambdas = 5.63874
+r_max for elements in lambdas = 6.32175
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335718: 367.041 seconds
+M=3, 5/10
+Time taken generating for N = 335138: 108.119 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.537031
+r_min for elements in lambdas = 5.63405
+r_max for elements in lambdas = 6.36923
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335138: 367.005 seconds
+M=3, 6/10
+Time taken generating for N = 335497: 107.038 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.552596
+r_min for elements in lambdas = 5.67585
+r_max for elements in lambdas = 6.32439
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335497: 367.955 seconds
+M=3, 7/10
+Time taken generating for N = 334995: 107.788 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.561858
+r_min for elements in lambdas = 5.60033
+r_max for elements in lambdas = 6.41554
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 334995: 368.984 seconds
+M=3, 8/10
+Time taken generating for N = 335311: 105.62 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.590012
+r_min for elements in lambdas = 5.65637
+r_max for elements in lambdas = 6.34525
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335311: 362.612 seconds
+M=3, 9/10
+Time taken generating for N = 335455: 106.155 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.543829
+r_min for elements in lambdas = 5.61531
+r_max for elements in lambdas = 6.3365
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 335455: 374.207 seconds
+M=3, 10/10
+Time taken generating for N = 334940: 107.855 seconds
+Count lambdas starting to run now..
+Finished done futlinks HIiiYa
+
+t_min for elements in lambdas = -0.588868
+r_min for elements in lambdas = 5.65016
+r_max for elements in lambdas = 6.41048
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 334940: 364.349 seconds
+Average time taken for generating 10 causets with N = 335384:
+494.352 seconds
+
+
+==========================================================
+Saving Iteration 1 to the file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/lambdas/M=3.00_Nmult=40000_Card=335384_r=7.00_dur=1.00.txt
+Pastkeys found are{-3, -2, -1, 1, 2, 3, 4, 5, 6}
+
+=============================================================
+
+Program took in total: 4943.53 seconds
+
+Parameters used:
+Dim = 4, N_multiplier = 40000
