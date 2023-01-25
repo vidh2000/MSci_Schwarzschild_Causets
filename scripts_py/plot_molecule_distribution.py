@@ -175,10 +175,7 @@ if plot_boundaries:
                 ls = '', alpha=0.2)
     ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'left', bbox=props)
-    if varying_var == "M":
-        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2)
-    else:
-        plt.xlabel(f'{varying_var} [a.u.]')
+    plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Oldest Molecule's Time")
     plt.grid(alpha = 0.4) 
 
@@ -194,10 +191,7 @@ if plot_boundaries:
                 ls = '', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
-    if varying_var == "M":
-        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2)
-    else:
-        plt.xlabel(f'{varying_var} [a.u.]')
+    plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Innermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
@@ -212,10 +206,7 @@ if plot_boundaries:
                 ls = '', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
-    if varying_var == "M":
-        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2)
-    else:
-        plt.xlabel(f'{varying_var} [a.u.]')
+    plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel("Outermost Molecule's r")
     plt.grid(alpha = 0.4) 
 
