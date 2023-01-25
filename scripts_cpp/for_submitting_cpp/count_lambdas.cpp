@@ -208,7 +208,6 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     std::stringstream stream3;
     stream3 << std::fixed << std::setprecision(2) << durations[0];
     std::string dur_str = stream3.str();
-    // Saving hollow used when set as global param in testing
     std::stringstream stream4;
     stream4 << std::fixed << std::setprecision(2) << hollow;
     std::string hollow_str = stream4.str();
