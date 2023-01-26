@@ -162,7 +162,11 @@ if varying_var=="M":
     elif fixed_var == "Rho":
         Rho = fixed_val
     x /= Rho**(-1/2)
+    
     # x_A = x/divide by fund units
+
+print(f"Rho = {Rho:.0f}")
+fixed_string = rf"Rho = {Rho:.0f}"
 
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
@@ -184,7 +188,7 @@ if plot_boundaries:
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
-    ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+    ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, fontsize=10,  #text==fixed_string
             va='bottom', ha = 'left', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S$ [a.u.]')
@@ -208,7 +212,7 @@ if plot_boundaries:
 
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
-    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+    ax.text(0.95, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S$ [a.u.]')
@@ -231,7 +235,7 @@ if plot_boundaries:
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
-    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+    ax.text(0.95, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S$ [a.u.]')
@@ -241,6 +245,7 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries.png")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries.pdf")
     plt.show()
 
 # 2.1 MOLECULES'S DISTRIBUTION ##############################################
@@ -275,13 +280,14 @@ if plot_molecules:
     
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=1)
-    plt.annotate(fixed_string, (0.95, 0.5), xycoords = "axes fraction",
+    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
             fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel("Number")
+    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
     plt.show()
 
 
@@ -296,13 +302,14 @@ if plot_molecules:
                     label = label)
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=1)
-    plt.annotate(fixed_string, (0.95, 0.5), xycoords = "axes fraction",
+    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
             fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel("Number")
+    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
     plt.grid(alpha = 0.2)
-    plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png") 
+    plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
+    plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
     plt.show()
 
     ### Find entropy and C_hv and discretness length scale
@@ -326,6 +333,24 @@ if plot_molecules:
     lambd_probs = gradients/sum(gradients)
     lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
                                gradients**2*grad_sum_unc**2/grad_sum**4)
+    
+
+    plt.figure("n-lambda probability distribution")
+    plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            label = r"$n\mathbf{-}\Lambda$ probability distribution")
+    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red")
+    plt.xlabel(r"$n$")
+    plt.ylabel("Density")
+    plt.legend()
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=1)
+    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.95), xycoords = "axes fraction",
+            fontsize=12, va='top', ha = 'right', bbox=props)
+    plt.grid(alpha=0.2)
+    plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
+    plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
+    plt.show()
     
     print("Distribution of n-lambdas:\n",
             [round(l,7) for l in lambd_probs])

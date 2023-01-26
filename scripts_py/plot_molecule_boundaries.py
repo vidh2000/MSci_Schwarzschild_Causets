@@ -148,8 +148,8 @@ if plot_boundaries:
                 zorder = 5, label = r"Innermost (with 5$\sigma$)")
     plt.plot(r_S_norm, shape_r_min, ls = "--", label = "Spacetime Inner Radius")
                 
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
@@ -171,8 +171,8 @@ if plot_boundaries:
                 fmt = '.', capsize = 4,
                 zorder = 5, label = r"Outermost (with 5$\sigma$)")
     plt.plot(r_S_norm, shape_r_max, ls = "--", label = "Spacetime Outer Radius")
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
@@ -184,6 +184,7 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries_Compared_Limits.png")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_Compared_Limits.pdf")
     plt.show()
 
 
@@ -207,8 +208,8 @@ if plot_boundaries:
     plt.errorbar(r_S_norm, mintimes, 5*np.array(mintimes_std), 
                 fmt = '.', capsize = 4,
                 zorder = 5, label = r"Mintime (with 5$\sigma$)")
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'left', bbox=props)
     if varying_var == "M":
@@ -230,8 +231,8 @@ if plot_boundaries:
                 zorder = 5, label = r"Innermost (with 5$\sigma$)")
     plt.plot(r_S_norm, shape_r_min-r_S, ls = "--", label = "Spacetime Inner Radius")
                 
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
@@ -264,6 +265,7 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries_from_rS.png")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_from_rS.pdf")
     plt.show()
 
 
@@ -296,8 +298,8 @@ if plot_boundaries:
                 zorder = 5, label = r"Innermost (with 5$\sigma$)")
     #plt.plot(r_S_norm, shape_r_min, ls = "--", label = "Spacetime Inner Radius")
                 
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
@@ -319,8 +321,8 @@ if plot_boundaries:
                 fmt = '.', capsize = 4,
                 zorder = 5, label = r"Outermost (with 5$\sigma$)")
     #plt.plot(r_S_norm, shape_r_max, ls = "--", label = "Spacetime Outer Radius")
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
@@ -332,6 +334,7 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries_Compared_Limits_in_l.png")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_Compared_Limits_in_l.pdf")
     plt.show()
 
 
@@ -354,8 +357,8 @@ if plot_boundaries:
     plt.errorbar(r_S_norm, mintimes, 5*np.array(mintimes_std), 
                 fmt = '.', capsize = 4,
                 zorder = 5, label = r"Mintime (with 5$\sigma$)")
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'left', bbox=props)
     if varying_var == "M":
@@ -378,8 +381,8 @@ if plot_boundaries:
     # plt.plot(r_S_norm, shape_r_min-r_S_norm, ls = "--", 
     #         label = "Spacetime Inner Radius")
                 
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=0.2)
     ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
             va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
@@ -413,4 +416,5 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries_from_rS_in_l.png")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_from_rS_in_l.pdf")
     plt.show()
