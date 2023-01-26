@@ -280,8 +280,8 @@ if plot_molecules:
     
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=1)
-    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
-            fontsize=12, va='center', ha = 'right', bbox=props)
+    #plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
+    #        fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
