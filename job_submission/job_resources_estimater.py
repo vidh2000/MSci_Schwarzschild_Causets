@@ -1,7 +1,7 @@
 import numpy as np
 
 
-masses = [1,1.5,2,2.5,3]
+masses = [1, 1.5, 2, 2.5, 2.6, 3]
 rhos = np.array([5000])
 int8_t = False
 
