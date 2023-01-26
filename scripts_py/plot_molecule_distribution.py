@@ -341,12 +341,12 @@ if plot_molecules:
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red")
     plt.xlabel(r"$n$")
-    plt.ylabel("Density")
-    plt.legend()
+    plt.ylabel("Probability")
+    plt.legend(loc="upper right")
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=1)
-    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.95), xycoords = "axes fraction",
-            fontsize=12, va='top', ha = 'right', bbox=props)
+    #plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.95), xycoords = "axes fraction",
+    #        fontsize=12, va='top', ha = 'right', bbox=props)
     plt.grid(alpha=0.2)
     plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
