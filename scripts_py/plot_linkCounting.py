@@ -26,7 +26,7 @@ else:
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
 Ms = None #=None if you want to choose all existinig masses
-rho = 40000
+rho = 20000
 
 
 # Get data
@@ -120,5 +120,7 @@ plt.xlabel(r"Horizon Area [$\ell^2$]")
 plt.grid(alpha=0.3)
 
 figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
+plt.savefig(figname)
+figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.pdf"
 plt.savefig(figname)
 plt.show()

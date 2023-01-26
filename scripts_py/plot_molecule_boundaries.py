@@ -353,19 +353,20 @@ if plot_boundaries:
                     va='bottom', ha = 'left')
     plt.errorbar(r_S_norm, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"Mintime (with 1$\sigma$)")
+                zorder = 10, label = r"$t_{min}$ (with 1$\sigma$)")
     plt.errorbar(r_S_norm, mintimes, 5*np.array(mintimes_std), 
                 fmt = '.', capsize = 4,
-                zorder = 5, label = r"Mintime (with 5$\sigma$)")
+                zorder = 5, label = r"$t_{min}$ (with 5$\sigma$)")
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=0.2)
-    ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
-            va='bottom', ha = 'left', bbox=props)
+    #ax.text(0.80, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+    #        va='bottom', ha = 'left', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S \; [\ell]$') #not yet in terms of l^2)
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"Oldest Molecule's Time $[\ell]$")
+    plt.ylabel(r"$t_{min}$ $[\ell]$")
+    plt.legend(loc='upper right')
     plt.grid(alpha = 0.4) 
 
     # INNERMOST #######################################################
@@ -383,14 +384,14 @@ if plot_boundaries:
                 
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=0.2)
-    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
-            va='bottom', ha = 'right', bbox=props)
+    #ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+    #        va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S \; [\ell]$') #not yet in terms of l^2)
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel(r"Distance from $r_S$ $[\ell]$")
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.grid(alpha = 0.4) 
 
     # OUTERMOST #######################################################
@@ -405,14 +406,14 @@ if plot_boundaries:
                 zorder = 5, label = r"Outermost (with 5$\sigma$)")
     # plt.plot(r_S_norm, shape_r_max-r_S_norm, ls = "--", 
     #         label = "Spacetime Outer Radius")
-    ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
-            va='bottom', ha = 'right', bbox=props)
+    #ax.text(0.95, 0.05, fixed_string, transform=ax.transAxes, fontsize=10, 
+    #        va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S \; [\ell]$') #not yet in terms of l^2)
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
     plt.ylabel(r"Distance from $r_S$ $[\ell]$")
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.grid(alpha = 0.4) 
 
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries_from_rS_in_l.png")
