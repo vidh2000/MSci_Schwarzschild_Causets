@@ -168,12 +168,16 @@ if varying_var=="M":
 print(f"Rho = {Rho:.0f}")
 fixed_string = rf"Rho = {Rho:.0f}"
 
+
+
+###########################################################################
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
     rc = 3; c = 1; r = 3
     figsize = (c * 6, r * 2.3)
     plt.figure(f'Boundaries for {fixed_string}',
                 figsize = figsize, tight_layout = True)
+
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
     plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
@@ -188,7 +192,8 @@ if plot_boundaries:
                 zorder = 5)
     props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
                 ls = '', alpha=0.2)
-    ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, fontsize=10,  #text==fixed_string
+    ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", 
+            transform=ax.transAxes, fontsize=10,  #text==fixed_string
             va='bottom', ha = 'left', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'$r_S$ [a.u.]')
@@ -248,6 +253,9 @@ if plot_boundaries:
     plt.savefig(plotsDir + f"{fixed_string}_Boundaries.pdf")
     plt.show()
 
+
+
+#############################################################################
 # 2.1 MOLECULES'S DISTRIBUTION ##############################################
 print("")
 if plot_molecules:
@@ -312,15 +320,16 @@ if plot_molecules:
     plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
     plt.show()
 
-    ### Find entropy and C_hv and discretness length scale
 
+    ##########################################################################
+    ### Find entropy and C_hv and discretness length scale
+    ##########################################################################
     noninf_indices = tuple([np.where(np.isfinite(gradients_unc))[0]])
     gradients = np.array(gradients)[noninf_indices]
     gradients_unc = np.array(gradients_unc)[noninf_indices]
 
 
-
-    # Uncertainty propagation
+    # Link Counting (to compare to Barton et al.)
     coefsum = sum([(n+1)*gradients[n] for n in range(len(gradients))])
     coefsum_unc = np.sqrt(
         sum([((n+1)*gradients_unc[n])**2 for n in range(len(gradients))]))
@@ -333,7 +342,6 @@ if plot_molecules:
     lambd_probs = gradients/sum(gradients)
     lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
                                gradients**2*grad_sum_unc**2/grad_sum**4)
-    
 
     plt.figure("n-lambda probability distribution")
     plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
@@ -345,22 +353,20 @@ if plot_molecules:
     plt.legend(loc="upper right")
     props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
                 ls = '-', alpha=1)
-    #plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.95), xycoords = "axes fraction",
-    #        fontsize=12, va='top', ha = 'right', bbox=props)
     plt.grid(alpha=0.2)
     plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
     plt.show()
     
     print("Distribution of n-lambdas:\n",
-            [round(l,7) for l in lambd_probs])
+            [round(pj,7) for pj in lambd_probs])
 
-    # Find discreteness scale
-    P = sum([p*np.log(p) for p in lambd_probs])
-    P_unc = np.sqrt(sum((lambd_probs+1)**2 * lambd_probs_uncs**2))
-    C_hv = - sum(gradients)*sum([p*np.log(p) for p in lambd_probs])
-    C_hv_unc = np.sqrt(P**2 * grad_sum_unc**2 +
-                       grad_sum**2 * P_unc**2)     
+    # Find overall proportionality and discreteness scale
+    C_hv = sum(gradients*np.log(grad_sum/gradients))
+    dC_da_i = np.log(grad_sum/gradients)
+    C_hv_unc = np.sqrt( sum(gradients_unc**2 * dC_da_i**2))  
+    print(f"\nC_hv = {round(C_hv,5)} +- {round(C_hv_unc,5)} l_p")
+
     # Discreteness length in terms of Planckian length
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
