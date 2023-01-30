@@ -41,10 +41,10 @@ std::vector<double> rhos = {0.5, 1, 3};
 
 // Sprinkle Parameters
 bool poisson          = true;
-bool make_matrix      = false;
+bool make_matrix      = true;
 bool special          = false;
-bool use_transitivity = true;
-bool make_sets        = true;
+bool use_transitivity = false;
+bool make_sets        = false;
 bool make_links       = false;
 const char* sets_type = "all with links";
 
