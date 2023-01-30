@@ -1659,7 +1659,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1735,7 +1734,6 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1763,7 +1761,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                     }
                 }
             }
-            std::cout << "Finished done futlinks HIiiYa" << std::endl;
+            std::cout << "Finished done futlinks" << std::endl;
             auto sizes = get_lambdas_sizes(t_f,r_S);
             std::cout << "Finished get_lambdas_sizes" << std::endl;
             auto distr = get_lambdas_distr(sizes); 
@@ -1819,8 +1817,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         else
         {
             _future_links.resize(_size);
-        
-            #pragma omp parallel for schedule(dynamic)
+
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1896,7 +1893,6 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2003,12 +1999,15 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
 
     if (strcmp(molecule_option, "lambdas")==0)
     {
+        std::cout<<"Getting lambdas's size"<<std::endl;
         for (auto xy : count_lambdas(t_f, r_S))
         {
             out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
         }
         
+
         int i = 0;
+        std::cout<<"Getting the lambdas"<<std::endl;
         auto lambdas = get_lambdas(t_f, r_S);
         int N = lambdas.size();
         for (std::pair<int,std::vector<int>> lambda_i : lambdas)
@@ -2218,7 +2217,6 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
     // Maps label of maximal element to size of its lambda
     std::map<int, double> lambdas_distr;
 
-    //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
     {
         if (pair.first > 0 && pair.second != 0)

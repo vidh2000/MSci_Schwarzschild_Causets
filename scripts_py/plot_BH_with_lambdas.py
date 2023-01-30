@@ -14,8 +14,6 @@ which_interval = 0
 projection = 0
 
 isBH = True
-isEFv = False
-isS = False
 
 from causets_py import causetplotting as cplt
 
@@ -37,36 +35,29 @@ ps = {"text.usetex": True,
 plt.rcParams.update(ps)
 del ps
 
+
+###################################################################
+#%%### SET PHI LIMITS
+###################################################################
 phi_limits = (0, 6.29)
 if phi0 < 6.28:
     phi_limits = np.array([0, phi0]) + which_interval*phi0
 
 
-
+###################################################################
+#%%### GET FILE
+###################################################################
 path = os.getcwd() # folder path
 print(path)
-# os.chdir("../")
-# path = os.getcwd()
-# print(path)
-#file_name = os.path.join(path, 'data/flatspace_bicone_causet.txt')
-#file_name = os.path.join(path, 'data/known_causet_from_matrixSetsTest.txt')
 file_name = "data/data_for_plotting/"
 if isBH:
-    if isEFv and isS:
-        file_name += f"blackhole_EFvToS_{dim}D_N{card}"
-    elif isEFv:
-        file_name += f"blackhole_EFv_{dim}D_N{card}"
-    elif isS:
-        file_name += f"blackhole_S_{dim}D_N{card}"
-    else:
-        file_name += "blackhole_and_"
-        file_name += "lambdas" if (molecule == "lambda") else "HRVs"
-        file_name += f"{dim}D_N{card}"
+    file_name += "blackhole_and_"
+    file_name += "lambdas" if (molecule == "lambda") else "HRVs"
+    file_name += f"{dim}D_N{card}"
 else:
     file_name += f"flat{dim}D_N{card}"
 
 file_name = path + "/"+ file_name
-#path = os.chdir("scripts_py")
 
 if use_redge_in_name_file:
     edge_string = str(round(edge, 2))
@@ -82,6 +73,10 @@ if (centre_cube_in_horizon):
 file_name += ".txt"
 print(file_name)
 
+
+###################################################################
+#%%### PLOT
+###################################################################
 ax = cplt.plot_causet_and_lambdas(file_name, 
                                   phi_limits = phi_limits, 
                                   projection = projection)

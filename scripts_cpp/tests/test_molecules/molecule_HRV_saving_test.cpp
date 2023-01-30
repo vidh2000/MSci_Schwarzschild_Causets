@@ -34,7 +34,7 @@ using namespace std::chrono;
 
 
 ////////////////////////////////
-vector<int> dims = {3};
+vector<int> dims = {3, 4};
 double t_f = 0;
 double r_S = 2;
 std::vector<int> cards = {1000, 2000, 3000};
@@ -42,7 +42,7 @@ std::vector<int> cards = {1000, 2000, 3000};
 // Cube Shape Parameters
 double radius = 4;
 double myduration = 4;
-vector<double> loop_edges = {5}; //edges of cubes to loop over 
+vector<double> loop_edges = {4}; //edges of cubes to loop over 
 bool centre_cube_in_horizon = false;//(spatially center 2D cube on horizon)
 
 // Sprinkle Parameters
@@ -113,7 +113,7 @@ int main()
             rstream << std::fixed << std::setprecision(2) << radius;
             std::string redge_s = (shapeindex==1)?estream.str():rstream.str();
 
-            std::string path_file_str = "../../data/data_for_plotting/blackhole_and_lambdas"
+            std::string path_file_str = "../../../data/data_for_plotting/blackhole_and_HRVs"
                                             + std::to_string(dim)
                                             + "D_N" + std::to_string(card)
                                             + "_redge" + redge_s;
@@ -122,7 +122,8 @@ int main()
             path_file_str +=  ".txt";
             const char* path_file = path_file_str.c_str();
 
-            C.save_molecules(path_file, "sets", t_f, r_S, "lambdas");
+            std::cout<<"Counting links"<<std::endl;
+            C.save_molecules(path_file, "sets", t_f, r_S, "HRVs");
         }
     }
     }
