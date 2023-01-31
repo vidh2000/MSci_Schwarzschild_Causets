@@ -1290,7 +1290,6 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
 {
     if (strcmp(method, "coordinates")==0)
     {
-        std::cout << "Making all futures, no cmatrix\n";
         auto xycausality = this->_spacetime.Causality();
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
@@ -1646,15 +1645,16 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
         
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_lambdas_from_futlinks(t_f,r_S);
         }
+
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
         else
         {
             _future_links.resize(_size);
@@ -1724,7 +1724,11 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
         if (_future_links.size() == _size) /*if already defined*/
         {
             std::cout<<"No need for futlinks, straight to counting molecules\n";
-            return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
+            std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
+            std::cout << "Finished get_lambdas_sizes" << std::endl;
+            std::map<int,double> distr = get_lambdas_distr(sizes); 
+            std::cout << "Finished get_lambdas_distr" << std::endl;
+            return distr;
         }
 
         else if (_CMatrix.size()==0)
@@ -1766,9 +1770,9 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                 }
             }
             std::cout << "Finished done futlinks" << std::endl;
-            auto sizes = get_lambdas_sizes(t_f,r_S);
+            std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
             std::cout << "Finished get_lambdas_sizes" << std::endl;
-            auto distr = get_lambdas_distr(sizes); 
+            std::map<int,double> distr = get_lambdas_distr(sizes); 
             std::cout << "Finished get_lambdas_distr" << std::endl;
             return distr;
         }
@@ -2000,16 +2004,10 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
     std::fstream out;
     out.open(path_file_ext, std::ios::app);
     out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
+    _future_links.resize(0);
 
     if (strcmp(molecule_option, "lambdas")==0)
-    {
-        std::cout<<"Getting lambdas's size"<<std::endl;
-        for (auto xy : count_lambdas(t_f, r_S))
-        {
-            out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
-        }
-        
-
+    {   
         int i = 0;
         std::cout<<"Getting the lambdas"<<std::endl;
         auto lambdas = get_lambdas(t_f, r_S);
@@ -2030,11 +2028,7 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
     }
 
     else if (strcmp(molecule_option, "HRVs")==0)
-    {
-        auto HRVs_distr = count_HRVs(t_f, r_S);
-        out<<"NHRVs_Open" <<","<<HRVs_distr[0]<<std::endl;
-        out<<"NHRVs_Close"<<","<<HRVs_distr[1]<<std::endl;
-        
+    {        
         int i = 0;
         auto HRVs = get_HRVs(t_f, r_S);
         int N = HRVs.size();
@@ -2106,10 +2100,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
                         if (set_contains(j,_future_links[i])) //i-j is link
                         {
                             lambdas[j].push_back(i);
-                            if (_coords[i][0] < mintime || std::isnan(mintime))
-                            {
-                                mintime = _coords[i][0];
-                            }
                         }
                     }
                 }
@@ -2120,7 +2110,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
             }
         }
     }
-    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
     return lambdas;
 }
 
