@@ -22,7 +22,8 @@ my_kwargs = {
                                 "gold", 
                                 "limegreen", 
                                 "dodgerblue", 
-                                "violet"]
+                                "purple",
+                                "mediumorchid"]
             }
 
 ColorSchemes = {
@@ -411,7 +412,7 @@ def plot_lambdas_horizon(causetfile_ext, savefile_ext = 0,
     - link_lw. Default 0.5.
     - markersize. Default 5.
     - std_color. Default "#002147" (kind of dark blue).
-    - lambdas_colors. Default is rainbow like.
+    - lambdas_colors. Default is more or less rainbow like.
 
     Returns
     -------
@@ -452,11 +453,12 @@ def plot_lambdas_horizon(causetfile_ext, savefile_ext = 0,
 
         #START WITH LAMBDAS
         for lambda_i in lambdas:
-            #Set Color based on Size
             lambdas_size = len(lambda_i)
-            if lambdas_size >= Ncolors:
-                lambdas_size = Ncolors-1
-            facecolor = lambdas_colors[lambdas_size-1]
+            #Skip the single points
+            if lambdas_size == 1: 
+                continue
+            #Set Color based on Size
+            facecolor = lambdas_colors[int(min(lambdas_size-2, Ncolors-1))]
             #Plot
             uplabel = lambda_i[0]
             tup = coords[uplabel][0]
@@ -495,6 +497,14 @@ def plot_lambdas_horizon(causetfile_ext, savefile_ext = 0,
         ys = r_S * np.sin(phis)
         ax.plot(xs, ys, ls ="--", color = "red", label = "Horizon")
         ax.legend()
+
+        #FIX LIMITS
+        xs = ax.set_xlim()
+        ys = ax.set_ylim()
+        downmin = min([xs[0], ys[0]])
+        upmax   = max([xs[1], ys[1]])
+        ax.set_xlim(downmin, upmax)
+        ax.set_ylim(downmin, upmax)
     
 
     elif dim == 4:
@@ -505,11 +515,12 @@ def plot_lambdas_horizon(causetfile_ext, savefile_ext = 0,
 
         #START WITH LAMBDAS
         for lambda_i in lambdas:
-            #Set Color based on Size
             lambdas_size = len(lambda_i)
-            if lambdas_size >= Ncolors:
-                lambdas_size = Ncolors-1
-            facecolor = lambdas_colors[lambdas_size-1]
+            #Skip the single points
+            if lambdas_size == 1: 
+                continue
+            #Set Color based on Size
+            facecolor = lambdas_colors[int(min(lambdas_size-2, Ncolors-1))]
             #Plot
             uplabel = lambda_i[0]
             tup   = coords[uplabel][0]
@@ -548,10 +559,23 @@ def plot_lambdas_horizon(causetfile_ext, savefile_ext = 0,
 
         #FINALLY MARK THE HORIZON
         phi, theta = np.linspace(0, 2 * np.pi, 50), np.linspace(0, np.pi, 50)
-        x, y, z = r_S * np.outer(np.cos(phi), np.sin(theta))
+        x = r_S * np.outer(np.sin(theta), np.cos(phi))
+        y = r_S * np.outer(np.sin(theta), np.sin(phi))
+        z = r_S * np.outer(np.cos(theta), 1)
         ax.plot_surface(x, y, z, alpha=0.05, 
                         color = "#9F004E", label = "Horizon")
-        ax.legend()
+
+        #FIX LIMITS
+        xs = ax.set_xlim()
+        ys = ax.set_ylim()
+        zs = ax.set_zlim()
+        downmin = min([xs[0], ys[0], zs[0]])
+        upmax   = max([xs[1], ys[1], zs[1]])
+        ax.set_xlim(downmin, upmax)
+        ax.set_ylim(downmin, upmax)
+        ax.set_zlim(downmin, upmax)
+
+        #ax.legend()
 
     if savefile_ext:
         plt.savefig(savefile_ext)

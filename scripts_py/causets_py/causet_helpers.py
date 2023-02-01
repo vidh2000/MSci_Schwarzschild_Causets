@@ -47,7 +47,7 @@ def get_causet_attrs (lambdasfile_ext):
             dim            = int(f[2].split(",")[1])
             shapename      = str(f[3].split(",")[1])
             spacetimename  = str(f[4].split(",")[1])
-            if dim > 3:
+            if dim > 4:
                 raise AttributeError(f"Dim is {dim}: too big!!!")
 
             distribution = []
@@ -63,7 +63,7 @@ def get_causet_attrs (lambdasfile_ext):
                 if key == "":
                     go -= 1
 
-                elif key[0] == "Lambda":
+                elif key[0:6] == "Lambda":
                     mols.append([])
                     for label in row[1:]:
                         if label != "" and label != "\n":
@@ -86,13 +86,13 @@ def get_causet_attrs (lambdasfile_ext):
                         distribution.append([1, int(row[1])])
                     go -= 1
 
-                elif key == "r_S" or key == "r_S\n":
+                elif "r_S" in key:
                     r_S = float(row[1])
                     go -= 1
 
-                elif key == "Coordinates" or key == "Coordinates\n":
+                elif "Coordinates" in key:
                     break
-                else:
+                else: #the coordinates#
                     coords.insert(0, [])
                     for i in range(dim):
                         coords[0].append(float(row[i]))
