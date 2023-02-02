@@ -4,6 +4,7 @@ import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
+from scipy.stats import chisquare
 
 
 ##############################################################################
@@ -159,6 +160,10 @@ def corrected_lin_func(x,a, coeff = - 0.0544):
     M = np.sqrt(np.array(x)/(16*np.pi))
     return (a + coeff/M)*x
 
+def i_exp(x, A, I):
+    """ A*I^(x-1) """
+    return A* I**(x-1)
+
 # Set the right x for the varying-fixed values -> Area in l^2 units
 x = np.array(varying_values)
 if varying_var=="M":
@@ -269,8 +274,10 @@ if plot_molecules:
 
     plt.figure(f"Molecules for {fixed_string}")
 
-    gradients = []
-    gradients_unc = []
+    gradients     = [] # list of gradients of linear fit
+    gradients_unc = [] # uncertainties of linear fit
+    unsafe_start  = 0  # first lambda that returns exception in curve_fit,
+                       # implying not enough statistics is there
     for n in range(len(molecules_distr)):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
@@ -283,11 +290,15 @@ if plot_molecules:
         # print(f"mean of # of {n+1}-Lambda: {[round(yi,8) for yi in y]}")
         # print(f"stds of # of {n+1}-Lambda: {[round(yerri,8) for yerri in yerr]}")
         # n-Lambda Linear fit to line through vertex
+        Chi2, pvalue = None, None
         try:
             popt, pcov = curve_fit(lin_func, x, y, sigma=yerr,
                                     absolute_sigma=True)
             unc = np.sqrt(np.diag(pcov))
+            expected = lin_func(x, *popt)
+            #Chi2, pvalue = chisquare(y, expected, len(popt)) #not ideal
         except RuntimeError:
+            unsafe_start += n if unsafe_start == 0 else 0
             non0_indices = tuple([np.where(np.array(y) != 0)])
             xs2      = np.array(x)[non0_indices][0]
             ys2      = np.array(y)[non0_indices][0]
@@ -296,6 +307,7 @@ if plot_molecules:
                                     absolute_sigma=True)
             unc = np.sqrt(np.diag(pcov))
         print(f"Gradient factor for {n+1}-lambda = {round(popt[0],5)} +- {round(unc[0],5)}")
+        #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
         
         xfit = np.linspace(min(x),max(x),100)
         #plt.plot(xfit, lin_func(xfit,*popt), '--', color="red")
@@ -350,7 +362,7 @@ if plot_molecules:
     ##########################################################################
     ### Find Link proportionality (Barton et al)
     ##########################################################################
-    print(" \n#### LINKS ANALYSIS ####")
+    print(" \n#### LINKS ANALYSIS (for Barton et al a = 0.17321) ####")
     # Link Counting from weighted sum of gradients (to compare to Barton et al.)
     coefsum = sum([(n+1)*gradients[n] for n in range(len(gradients))])
     coefsum_unc = np.sqrt(
@@ -370,42 +382,46 @@ if plot_molecules:
                             absolute_sigma=True)
     unc = np.sqrt(np.diag(pcov))
     print(f"Gradient of Links      = {round(popt[0],4)} +- {round(unc[0],4)}")
+    # expected = lin_func(x, *popt)
+    # Chi2, pvalue = chisquare(links, expected, len(popt))
+    # print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
     # Fit to corrected linear fit
     def schwarz_lin_func(x, a):
-        return corrected_lin_func(x, a, coeff = +0.0544)
+        return corrected_lin_func(x, a, coeff = +0.0464)
     popt, pcov = curve_fit(schwarz_lin_func, x, links, sigma=links_std,
                             absolute_sigma=True)
     unc = np.sqrt(np.diag(pcov))
     print(f"Curv-Correct Gradient  = {round(popt[0],4)} +- {round(unc[0],4)}")
+    # expected = schwarz_lin_func(x, *popt)
+    # print(links)
+    # print(expected)
+    # Chi2, pvalue = chisquare(links, expected, len(popt))
+    # print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
 
+    
     ##########################################################################
-    ### Find Entropy and C_hv and Discretness Length Scale
+    ### Find Probability Distribution of Lambda
     ##########################################################################
-    # Find probability distribution of n-lambdas
     grad_sum = sum(gradients)
     grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
 
+    
+    lambd_occurs = [sum(molecules_distr[n]) 
+                        for n in range(len(molecules_distr))]
     lambd_probs = gradients/sum(gradients)
     lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
                                gradients**2*grad_sum_unc**2/grad_sum**4)
 
-    plt.figure("n-lambda probability distribution")
-    plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            label = r"$n\mathbf{-}\Lambda$ probability distribution")
-    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red")
-    plt.xlabel(r"$n$")
-    plt.ylabel("Probability")
-    plt.legend(loc="upper right")
-    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
-                ls = '-', alpha=1)
-    plt.grid(alpha=0.2)
-    plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
-    plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
-    plt.show()
-    
+    # fit to exponential A I**n
+    ns = np.arange(1, unsafe_start+1)
+    popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
+                            sigma=lambd_probs_uncs[:unsafe_start],
+                            absolute_sigma=True)
+    unc = np.sqrt(np.diag(pcov))
+    #expected = i_exp(ns, *popt)
+    #Chi2, pvalue = chisquare(lambd_occurs[:unsafe_start], expected, len(popt))
     print(" \n#### N-LAMBDAS DISTRIBUTION ####")
     print("Distribution of n-lambdas:\n",
             [round(pn,7) for pn in lambd_probs])
@@ -415,7 +431,61 @@ if plot_molecules:
     print("Ratio of n_to_n+1-lambdas:\n",
             [round(lambd_probs[n]/lambd_probs[n+1],5) 
             for n in range(len(lambd_probs)-1)])
+    print(f"\nExponential fit A I^n is {round(popt[0],4)}  {round(popt[1],4)}^n")
+    print(f"with uncertainties being {round(unc[0],4)} & {round(unc[1],4)}^n")
+    print(f"or have fit A e^an is {round(popt[0],4)}  e^{round(np.log(popt[1]),4)}n")
+    print(f"with uncertainties being {round(unc[0],4)} & {round(unc[1]/popt[1],4)}^n")
+    print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
+    
 
+    plt.figure("n-lambda probability distribution")
+    plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            label = r"$n\mathbf{-}\Lambda$ probability distribution")
+    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red")
+    xs = np.linspace(1, len(lambd_probs)+1,100)
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
+            label = r"$A I^n$"+ f", A = {round(popt[0],3)}+-{round(unc[0],3)}"+
+            f", I = {round(popt[1],3)}+-{round(unc[1],3)}")
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
+    plt.legend(loc="upper right")
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=1)
+    plt.grid(alpha=0.2)
+    plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
+    plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
+    plt.show()
+
+
+    plt.figure("n-lambda probability distribution (safe)")
+    # plt.bar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
+    #         lambd_probs[:unsafe_start],
+    #         label = r"$n\mathbf{-}\Lambda$ probability distribution",
+    #         alpha = 0.7)
+    plt.errorbar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
+            lambd_probs[:unsafe_start],
+            yerr=lambd_probs_uncs[:unsafe_start],
+            capsize=7,fmt="",ls="",ecolor="red")
+    xs = np.linspace(1, len(lambd_probs[:unsafe_start])+1,50)
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+            label = r"A $e^{- \alpha n}$"+ 
+            f", A = {round(popt[0],3)}+-{round(unc[0],3)}"+
+            r", $\alpha$"+ f" = {-round(np.log(popt[1]),3)}+-{round(unc[1]/popt[1],3)}")
+    plt.xlabel(r"$n$")
+    plt.ylabel(r"Probability $p_n$")
+    plt.legend(loc="upper right")
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=1)
+    plt.grid(alpha=0.2)
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
+    plt.show()
+
+
+    ##########################################################################
+    ### Find Entropy and C_hv and Discretness Length Scale
+    ##########################################################################
     print(" \n#### FINAL RESULTS ####")
     # Find overall proportionality and discreteness scale
     C_hv = sum(gradients*np.log(grad_sum/gradients))
