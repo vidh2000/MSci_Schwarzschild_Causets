@@ -4,7 +4,7 @@ import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
-from scipy.stats import chisquare
+from scipy.stats import chisquare, pearsonr
 
 
 ##############################################################################
@@ -306,7 +306,11 @@ if plot_molecules:
             popt, pcov = curve_fit(lin_func, xs2, ys2, sigma=yerrs2,
                                     absolute_sigma=True)
             unc = np.sqrt(np.diag(pcov))
-        print(f"Gradient factor for {n+1}-lambda = {round(popt[0],5)} +- {round(unc[0],5)}")
+        print(f"Gradient factor for {n+1}-lambda"+
+                f" = {round(popt[0],5)} +- {round(unc[0],5)}")
+        r, pvalue = pearsonr(x, y)
+        print(f"Linearity of {n+1}-lambda data:"+ 
+                f"Pearson r = {round(r,3)}, p-value = {round(1-pvalue,3)}")
         #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
         
         xfit = np.linspace(min(x),max(x),100)
@@ -393,6 +397,9 @@ if plot_molecules:
                             absolute_sigma=True)
     unc = np.sqrt(np.diag(pcov))
     print(f"Curv-Correct Gradient  = {round(popt[0],4)} +- {round(unc[0],4)}")
+
+    r, pvalue = pearsonr(x, links)
+    print(f"Linearity of links: Pearson r = {round(r,3)}, p-value = {round(1-pvalue,3)}")
     # expected = schwarz_lin_func(x, *popt)
     # print(links)
     # print(expected)
@@ -435,7 +442,7 @@ if plot_molecules:
     print(f"with uncertainties being {round(unc[0],4)} & {round(unc[1],4)}^n")
     print(f"or have fit A e^an is {round(popt[0],4)}  e^{round(np.log(popt[1]),4)}n")
     print(f"with uncertainties being {round(unc[0],4)} & {round(unc[1]/popt[1],4)}^n")
-    print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
+    #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
     
 
     plt.figure("n-lambda probability distribution")
