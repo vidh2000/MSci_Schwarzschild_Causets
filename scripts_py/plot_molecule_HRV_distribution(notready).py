@@ -11,10 +11,10 @@ from scipy.optimize import curve_fit
 ##############################################################################
 molecules = "lambdas" #lambdas, HRVs
 varying_var = "M"     #variable varying: can be M, Rho, Nmult
-fixed_var = "Nmult"   #variable fixed: can be, M, Rho, Nmult
+fixed_var = "Nmult"   #variable fixed:   can be, M, Rho, Nmult
 fixed_val = 40000     #value of fixed_var
 
-plot_boundaries = True
+plot_boundaries = False
 plot_molecules = True
 
 
@@ -150,15 +150,22 @@ for l,ls in zip(molecules_distr, molecules_distr_std):
 
 # Fitting function == linear through vertex
 def lin_func(x,a):
+    " x is Area in l units"
     return a*x
 
+# Fitting function2 == corrected-linear through vertex
+def corrected_lin_func(x,a, coeff = - 0.0544):
+    " x is A in l units"
+    M = np.sqrt(np.array(x)/(16*np.pi))
+    return (a + coeff/M)*x
 
+# Set the right x for the varying-fixed values -> Area in l^2 units
 x = np.array(varying_values)
 if varying_var=="M":
     x = 4*np.pi*(2*x)**2 #==Area
     if fixed_var == "Nmult":    
         Rho = fixed_val/(4/3*np.pi*26)
-        print("You're doing Nmult fixed!") 
+        print(f"You're doing Nmult {fixed_val} fixed!") 
     elif fixed_var == "Rho":
         Rho = fixed_val
     x /= Rho**(-1/2)
@@ -267,19 +274,28 @@ if plot_molecules:
     for n in range(len(molecules_distr)):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
-        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs"\
                 else str(n+1) + r"$\mathbf{-}\Lambda$"
         plt.errorbar(x, y, yerr, 
                     fmt = '.', capsize = 4, 
                     label = label)
-        # Linear fit
-        # Fitting function == linear through vertex
 
-        # fit the function to the data
-        popt, pcov = curve_fit(lin_func, x, y, sigma=yerr,
-                                absolute_sigma=True)
-        unc = np.sqrt(np.diag(pcov))
-        print(f"Gradient factor for {n+1}-lambda = {round(popt[0],3)} +- {round(unc[0],3)}")
+        # print(f"mean of # of {n+1}-Lambda: {[round(yi,8) for yi in y]}")
+        # print(f"stds of # of {n+1}-Lambda: {[round(yerri,8) for yerri in yerr]}")
+        # n-Lambda Linear fit to line through vertex
+        try:
+            popt, pcov = curve_fit(lin_func, x, y, sigma=yerr,
+                                    absolute_sigma=True)
+            unc = np.sqrt(np.diag(pcov))
+        except RuntimeError:
+            non0_indices = tuple([np.where(np.array(y) != 0)])
+            xs2      = np.array(x)[non0_indices][0]
+            ys2      = np.array(y)[non0_indices][0]
+            yerrs2   = np.array(yerr)[non0_indices][0]
+            popt, pcov = curve_fit(lin_func, xs2, ys2, sigma=yerrs2,
+                                    absolute_sigma=True)
+            unc = np.sqrt(np.diag(pcov))
+        print(f"Gradient factor for {n+1}-lambda = {round(popt[0],5)} +- {round(unc[0],5)}")
         
         xfit = np.linspace(min(x),max(x),100)
         #plt.plot(xfit, lin_func(xfit,*popt), '--', color="red")
@@ -322,19 +338,51 @@ if plot_molecules:
 
 
     ##########################################################################
-    ### Find entropy and C_hv and discretness length scale
+    ##########################################################################
+    ### DO THE NUMERICAL ANALYSIS
+    ##########################################################################
     ##########################################################################
     noninf_indices = tuple([np.where(np.isfinite(gradients_unc))[0]])
-    gradients = np.array(gradients)[noninf_indices]
-    gradients_unc = np.array(gradients_unc)[noninf_indices]
+    gradients      = np.array(gradients)[noninf_indices]
+    gradients_unc  = np.array(gradients_unc)[noninf_indices]
 
 
-    # Link Counting (to compare to Barton et al.)
+    ##########################################################################
+    ### Find Link proportionality (Barton et al)
+    ##########################################################################
+    print(" \n#### LINKS ANALYSIS ####")
+    # Link Counting from weighted sum of gradients (to compare to Barton et al.)
     coefsum = sum([(n+1)*gradients[n] for n in range(len(gradients))])
     coefsum_unc = np.sqrt(
         sum([((n+1)*gradients_unc[n])**2 for n in range(len(gradients))]))
-    print(f"\nGradients weighted sum = {round(coefsum,5)} +- {round(coefsum_unc,5)}")
+    print(f"Gradients Weighted Sum = {round(coefsum,4)} +- {round(coefsum_unc,4)}")
 
+    # Find total number of links for each x
+    links      = np.zeros(len(molecules_distr[0]))
+    links_std2 = np.zeros(len(molecules_distr[0]))
+    for n in range(len(molecules_distr)):
+        links      += (n+1)    *np.array(molecules_distr[n])
+        links_std2 += (n+1)**2 * np.array(molecules_distr_std[n])**2
+    links_std = np.sqrt(links_std2)
+    
+    # Fit to linear fit
+    popt, pcov = curve_fit(lin_func, x, links, sigma=links_std,
+                            absolute_sigma=True)
+    unc = np.sqrt(np.diag(pcov))
+    print(f"Gradient of Links      = {round(popt[0],4)} +- {round(unc[0],4)}")
+
+    # Fit to corrected linear fit
+    def schwarz_lin_func(x, a):
+        return corrected_lin_func(x, a, coeff = +0.0544)
+    popt, pcov = curve_fit(schwarz_lin_func, x, links, sigma=links_std,
+                            absolute_sigma=True)
+    unc = np.sqrt(np.diag(pcov))
+    print(f"Curv-Correct Gradient  = {round(popt[0],4)} +- {round(unc[0],4)}")
+
+
+    ##########################################################################
+    ### Find Entropy and C_hv and Discretness Length Scale
+    ##########################################################################
     # Find probability distribution of n-lambdas
     grad_sum = sum(gradients)
     grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
@@ -358,17 +406,25 @@ if plot_molecules:
     plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
     plt.show()
     
+    print(" \n#### N-LAMBDAS DISTRIBUTION ####")
     print("Distribution of n-lambdas:\n",
-            [round(pj,7) for pj in lambd_probs])
+            [round(pn,7) for pn in lambd_probs])
+    print("Ratio of n+1_to_n-lambdas:\n",
+            [round(lambd_probs[n+1]/lambd_probs[n],5) 
+            for n in range(len(lambd_probs)-1)])
+    print("Ratio of n_to_n+1-lambdas:\n",
+            [round(lambd_probs[n]/lambd_probs[n+1],5) 
+            for n in range(len(lambd_probs)-1)])
 
+    print(" \n#### FINAL RESULTS ####")
     # Find overall proportionality and discreteness scale
     C_hv = sum(gradients*np.log(grad_sum/gradients))
     dC_da_i = np.log(grad_sum/gradients)
     C_hv_unc = np.sqrt( sum(gradients_unc**2 * dC_da_i**2))  
-    print(f"\nC_hv = {round(C_hv,5)} +- {round(C_hv_unc,5)} l_p")
+    print(f"Overall Proportion C_hv = {round(C_hv,5)} +- {round(C_hv_unc,5)}")
 
     # Discreteness length in terms of Planckian length
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
-    print(f"\nDiscreteness scale = {round(l,5)} +- {round(l_unc,5)} l_p")
+    print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p")
  
