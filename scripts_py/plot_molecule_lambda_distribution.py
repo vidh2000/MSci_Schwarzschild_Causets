@@ -353,6 +353,28 @@ if plot_molecules:
     plt.show()
 
 
+
+    plt.figure(f"Small molecules uncertainty for {fixed_string}")
+    for n in range(0, 4):
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else str(n+1) + r"$\mathbf{-}\Lambda$"
+        plt.errorbar(x, yerr, 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
+                ls = '-', alpha=1)
+    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
+            fontsize=12, va='center', ha = 'right', bbox=props)
+    plt.legend()
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel(r"Uncertainty of $n\mathbf{-}\Lambda$")
+    plt.grid(alpha = 0.2)
+    plt.savefig(plotsDir + f"{fixed_string}_uncertainty_small_{molecules}.png")
+    plt.savefig(plotsDir + f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
+    plt.show()
+
+
     ##########################################################################
     ##########################################################################
     ### DO THE NUMERICAL ANALYSIS
@@ -413,7 +435,6 @@ if plot_molecules:
     ##########################################################################
     grad_sum = sum(gradients)
     grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
-
     
     lambd_occurs = [sum(molecules_distr[n]) 
                         for n in range(len(molecules_distr))]
@@ -421,7 +442,8 @@ if plot_molecules:
     lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
                                gradients**2*grad_sum_unc**2/grad_sum**4)
 
-    # fit to exponential A I**n
+    ###################################################################
+    # Fit to exponential A I**n
     ns = np.arange(1, unsafe_start+1)
     popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
                             sigma=lambd_probs_uncs[:unsafe_start],
@@ -438,13 +460,34 @@ if plot_molecules:
     print("Ratio of n_to_n+1-lambdas:\n",
             [round(lambd_probs[n]/lambd_probs[n+1],5) 
             for n in range(len(lambd_probs)-1)])
-    print(f"\nExponential fit A I^n is {round(popt[0],4)}  {round(popt[1],4)}^n")
-    print(f"with uncertainties being {round(unc[0],4)} & {round(unc[1],4)}^n")
-    print(f"or have fit A e^an is {round(popt[0],4)}  e^{round(np.log(popt[1]),4)}n")
-    print(f"with uncertainties being {round(unc[0],4)} & {round(unc[1]/popt[1],4)}^n")
+    print("\nFIT RESULTS")
+    print(f"Exponential fit A I^(n-1) has:")
+    print(f" - A = {round(popt[0],4)} +- {round(unc[0],4)}")
+    print(f" - I = {round(popt[1],4)} +- {round(unc[1],4)}")
+    print(f"With e^-x rather than I, it has:")
+    print(f" - x = {round(np.log(popt[1]),4)} +- {round(unc[1]/popt[1],4)}")
     #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
+
+    ###################################################################
+    # Do numerical calculation rather than fit
+    r1 = grad_sum/coefsum
+    r1unc = grad_sum_unc/coefsum
+    I = 1 - r1
+    Iunc = r1unc
+    x = - np.log(I)
+    xunc = Iunc/I
+    print("\nPLAIN NUMERICAL RESULTS")
+    print(f"Exponential model A I^(n-1) has:")
+    print(f" - A = {round(lambd_probs[0],4)} +- {round(lambd_probs_uncs[0],4)}")
+    print(f" - I = {round(I,4)} +- {round(Iunc,4)}")
+    print(f"With e^-x rather than I, it has:")
+    print(f" - x = {round(x,4)} +- {round(xunc,4)}")
+    print(f"p1 = {round(lambd_probs[0],4)} == gradsum/a_links = {round(r1,4)} ?")
+
     
 
+    #################################################################
+    # PLot Distribution (all, all in logscale, small)
     plt.figure("n-lambda probability distribution")
     plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             label = r"$n\mathbf{-}\Lambda$ probability distribution")
@@ -457,11 +500,27 @@ if plot_molecules:
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.legend(loc="upper right")
-    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
-                ls = '-', alpha=1)
     plt.grid(alpha=0.2)
     plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
+    plt.show()
+
+
+    plt.figure("n-lambda probability distribution (logscale)")
+    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
+            label = r"$n\mathbf{-}\Lambda$ distribution")
+    xs = np.linspace(1, len(lambd_probs)+1,100)
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+            label = r"$A I^n$"+ f", A = {round(popt[0],3)}+-{round(unc[0],3)}"+
+            f", I = {round(popt[1],3)}+-{round(unc[1],3)}")
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
+    plt.yscale("log")
+    plt.legend(loc="upper right")
+    plt.grid(alpha=0.2)
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_logy.png")
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_logy.pdf")
     plt.show()
 
 
@@ -482,8 +541,6 @@ if plot_molecules:
     plt.xlabel(r"$n$")
     plt.ylabel(r"Probability $p_n$")
     plt.legend(loc="upper right")
-    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
-                ls = '-', alpha=1)
     plt.grid(alpha=0.2)
     plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
@@ -503,5 +560,5 @@ if plot_molecules:
     # Discreteness length in terms of Planckian length
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
-    print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p")
+    print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p\n")
  

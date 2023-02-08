@@ -22,7 +22,7 @@ The C++ modules(classes) in scripts_cpp/causets_cpp:
 - causet.cpp(Causet): handles a generic causet, NOT embedded in a spacetime, i.e. the points do not have coordinates assigned.
 - embeddedcauset.cpp(EmbeddedCauset): it inherits from Causet to handle a causet embedded in a region of spacetime.
 - sprinkledcauset.cpp(SprinkledCauset): it inherits from EmbeddedCauset to generate via Poisson Sprinkling a causet embedded in a given region of spacetime.
-- shapes.cpp(Shape): it handles the definition of the implemented.
+- shapes.cpp(Shape): it handles the definition of the aforementioned implemented shapes
 - spacetime.cpp(Spacetime): it handles the definition and properties of a certain spacetime metric.
 
 The python modules in scripts_py/causets_py:
