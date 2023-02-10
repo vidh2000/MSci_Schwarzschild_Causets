@@ -447,6 +447,18 @@ void EmbeddedCauset::discard(vector<int> labels,
 }
 
 
+/**
+ * @brief Get the interval between minimal and maximal element
+ *          Essentially recreates the causet, getting rid of all
+ *          the elements that aren't in the interval ->
+ *          -> changes the pasts/futures sets and reduces the cmatrix
+ */
+void get_interval()
+{
+    // place holder
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 //===========================================================================

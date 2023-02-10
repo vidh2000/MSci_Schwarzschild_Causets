@@ -82,6 +82,7 @@ class EmbeddedCauset: public Causet
                      bool make_sets = false, bool make_links = true);  
         void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
+        void get_interval();
 
         // SAVE
         
@@ -156,6 +157,8 @@ class EmbeddedCauset: public Causet
                                                               double r_S=2);
         std::map<int,double> get_HRVs_distr_from_futlinks(double& t_f, 
                                                           double r_S = 2);
+
+
 
         //Destructor
         ~EmbeddedCauset();       
