@@ -88,8 +88,9 @@ double chi_k(double d, double k){
  * @param d - Manifold dimension 
  * @param C_k_arr - List of C_ks (Numbers of k-long chains)
  *               for chain lengths k=1,2,3,4.
+ * @return double
  */
-void MMdim_eqn(double d, std::vector<double> C_k_arr)
+double MMdim_eqn(double d, std::vector<double> C_k_arr)
 {
     // C_k_arr must have length 4
     if (C_k_arr.size() !=4)
@@ -108,7 +109,9 @@ void MMdim_eqn(double d, std::vector<double> C_k_arr)
             (k*d+2)*((k+1)*d+2)*std::pow(C_k, 4/k) /
             std::pow(chi_k(d,k), 4/k);
     }
+    return result;
 }
+
 
 
 int main(){
