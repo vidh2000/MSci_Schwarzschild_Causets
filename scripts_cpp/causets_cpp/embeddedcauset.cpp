@@ -452,10 +452,77 @@ void EmbeddedCauset::discard(vector<int> labels,
  *          Essentially recreates the causet, getting rid of all
  *          the elements that aren't in the interval ->
  *          -> changes the pasts/futures sets and reduces the cmatrix
+ * 
+ *          The intervals are chosen at random and must contain #elemenets
+ *          larger than min_size.
+ * 
+ * @param min_size - Minimal size of the interval (min # of elements in it) 
+ * @param N_max - max number of tries to find the interval before stopping
  */
-void get_interval()
+void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by default
 {
-    // place holder
+    bool found = false; 
+    int N_tries = 0;
+
+    std::unordered_set<int> all_indices;
+    for (int i = start; i < end; i++) {
+        all_indices.insert(i);
+  }
+
+    while (!found)
+    {
+        // Failsafe
+        if (N_tries > N_max){
+            std::cout << "Couldn't find suitable interval in " << N_max
+                << "tries" << std::endl;
+            break;
+        } 
+
+        // Define mersenne_twister_engine Random Gen. (with random seed)
+        std::random_device rd;
+        int seed = rd();
+        std::mt19937 gen(seed);
+        std::uniform_real_distribution<> dis(0,*N);
+        
+        // Pick two random elements
+        int e1 = (int) dis(gen), e2 =(int) dis(gen);
+        int a; int b;
+        if (e1 == e2){
+            N_tries += 1;
+            continue;
+        }
+        else if (e1 < e2){
+            a = e1;
+            b = e2;
+        }
+        else if (e1>e2){
+            a = e2;
+            b = e1;
+        }
+        else{
+            N_tries += 1;
+            continue;
+        }
+        int n = IntervalCard(a, b);
+        if (n >= min_size && n<= _size)
+        {  
+
+            std::unordered_set<int> interval = set_intersection(
+                        _futures[a], _pasts[b]);
+            std::unordered_set<int> indices_to_remove =
+                        set_diff(all_indices,interval);
+            std::vector<int> to_discard(indices_to_remove.begin(),
+                                        indices_to_remove.end());
+
+            // Assume matrix is created and future and pasts but no links.
+            EmbeddedCauset::discard(to_discard,true,true,false);
+            found = true;
+        }
+        else{
+            N_tries +=1;
+            continue;
+        }
+    }
 }
 
 

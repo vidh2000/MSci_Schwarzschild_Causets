@@ -177,14 +177,14 @@ double T(double d, double C_k, double rho, double r)
 
 /**
  * @brief Ricci scalar value at the centre of the interval
- * 
+ *          (from RSS - Roy, Sinha, Surya 2013 paper)
  * @param d - Manifold dim
  * @param C_k - Number of chains of size k
  * @param rho - Density of causet sprinkling
  * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
-double R(double d, double C_k, double rho, double r) 
+double R_RSS(double d, double C_k, double rho, double r) 
 {
     double K1 = K_k(1,d,C_k,rho,r);
     double K2 = K_k(2,d,C_k,rho,r);
@@ -201,8 +201,8 @@ double R(double d, double C_k, double rho, double r)
 }
 
 /**
- * @brief (0,0) component of the Ricci tensorat the centre of the interval
- * 
+ * @brief (0,0) component of the Ricci tensor at the centre of the interval
+ *              (from RSS - Roy, Sinha, Surya 2013 paper)
  * @param d - Manifold dim
  * @param C_k - Number of chains of size k
  * @param rho - Density of causet sprinkling
@@ -221,6 +221,19 @@ double R_00(double d, double C_k, double rho, double r)
 }
 
 
+/**
+ * @brief Ricci scalar as calculated via Benincasa-Dowker action
+ * 
+ * @param l - discreteness length
+ * @param N_arr - array (N1, N2, N3, N4) where
+ *          N_i: Number of i-chains in the interval
+ * @return double 
+ */
+double R_BD(double l, std::vector<double> N_arr)
+{
+    return 4*std::pow(2,0.5)/(std::pow(3,0.5)*l*l) *
+            (1-(N_arr[0]-9*N_arr[1]+16*N_arr[2]-8*N_arr[3]));
+}
 
 
 int main(){
