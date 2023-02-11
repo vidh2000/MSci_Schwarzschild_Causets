@@ -12,8 +12,8 @@ from scipy.stats import chisquare, pearsonr
 ##############################################################################
 molecules = "lambdas" #lambdas, HRVs
 varying_var = "M"     #variable varying: can be M, Rho, Nmult
-fixed_var = "Nmult"   #variable fixed:   can be, M, Rho, Nmult
-fixed_val = 40000     #value of fixed_var
+fixed_var = "Rho"   #variable fixed:   can be, M, Rho, Nmult
+fixed_val = 5000     #value of fixed_var
 
 plot_boundaries = False
 plot_molecules = True
@@ -445,6 +445,7 @@ if plot_molecules:
     ###################################################################
     # Fit to exponential A I**n
     ns = np.arange(1, unsafe_start+1)
+    print(unsafe_start)
     popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
                             sigma=lambd_probs_uncs[:unsafe_start],
                             absolute_sigma=True)
