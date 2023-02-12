@@ -452,6 +452,7 @@ if plot_molecules:
     ###################################################################
     # Fit to exponential (1-I) * I**n
     ns = np.arange(1, unsafe_start+1)
+    print(unsafe_start)
     popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
                             p0 = 1-lambd_probs[0],
                             sigma=lambd_probs_uncs[:unsafe_start],
