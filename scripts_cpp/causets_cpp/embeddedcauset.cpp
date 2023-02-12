@@ -1821,6 +1821,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
             _future_links.resize(_size);
         
+            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
