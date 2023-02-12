@@ -82,7 +82,7 @@ for root, dirs, files in os.walk(dataDir):
                     everything_i = np.loadtxt(file_i_path, 
                                             delimiter = ",", skiprows=1,
                                             dtype = str)[:,:-1].astype(float)
-                except IndexError: # only one line in txt file
+                except IndexError: # only one line of data in txt file
                     everything_i = np.loadtxt(file_i_path, 
                                             delimiter = ",", skiprows=1,
                                             dtype = str)[:-1].astype(float)
@@ -145,8 +145,10 @@ for l,ls in zip(molecules_distr, molecules_distr_std):
         l.append(0)
         ls.append(0)
 
+
+
 ##############################################################################
-# 2. PLOT
+# 2. FIT & PLOT
 ##############################################################################
 
 # Fitting function == linear through vertex
@@ -160,9 +162,9 @@ def corrected_lin_func(x,a, coeff = - 0.0544):
     M = np.sqrt(np.array(x)/(16*np.pi))
     return (a + coeff/M)*x
 
-def i_exp(x, A, I):
-    """ A*I^(x-1) """
-    return A* I**(x-1)
+def i_exp(n, I):
+    """ (1-I) * I^(n-1) """
+    return (1. - I) * I**(n-1)
 
 # Set the right x for the varying-fixed values -> Area in l^2 units
 x = np.array(varying_values)
@@ -276,7 +278,8 @@ if plot_molecules:
 
     gradients     = [] # list of gradients of linear fit
     gradients_unc = [] # uncertainties of linear fit
-    unsafe_start  = 0  # first lambda that returns exception in curve_fit,
+    unsafe_start  = len(molecules_distr)
+                       # first lambda that returns exception in curve_fit,
                        # implying not enough statistics is there
     for n in range(len(molecules_distr)):
         y    = molecules_distr[n]
@@ -295,10 +298,13 @@ if plot_molecules:
             popt, pcov = curve_fit(lin_func, x, y, sigma=yerr,
                                     absolute_sigma=True)
             unc = np.sqrt(np.diag(pcov))
+            if (unsafe_start == len(molecules_distr) and np.isnan(unc[0])):
+                unsafe_start = n 
             expected = lin_func(x, *popt)
             #Chi2, pvalue = chisquare(y, expected, len(popt)) #not ideal
         except RuntimeError:
-            unsafe_start += n if unsafe_start == 0 else 0
+            if (unsafe_start == len(molecules_distr)):
+                unsafe_start = n 
             non0_indices = tuple([np.where(np.array(y) != 0)])
             xs2      = np.array(x)[non0_indices][0]
             ys2      = np.array(y)[non0_indices][0]
@@ -312,6 +318,7 @@ if plot_molecules:
         print(f"Linearity of {n+1}-lambda data:"+ 
                 f"Pearson r = {round(r,3)}, p-value = {round(1-pvalue,3)}")
         #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
+        
         
         xfit = np.linspace(min(x),max(x),100)
         #plt.plot(xfit, lin_func(xfit,*popt), '--', color="red")
@@ -443,10 +450,11 @@ if plot_molecules:
                                gradients**2*grad_sum_unc**2/grad_sum**4)
 
     ###################################################################
-    # Fit to exponential A I**n
+    # Fit to exponential (1-I) * I**n
     ns = np.arange(1, unsafe_start+1)
     print(unsafe_start)
     popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
+                            p0 = 1-lambd_probs[0],
                             sigma=lambd_probs_uncs[:unsafe_start],
                             absolute_sigma=True)
     unc = np.sqrt(np.diag(pcov))
@@ -462,11 +470,10 @@ if plot_molecules:
             [round(lambd_probs[n]/lambd_probs[n+1],5) 
             for n in range(len(lambd_probs)-1)])
     print("\nFIT RESULTS")
-    print(f"Exponential fit A I^(n-1) has:")
-    print(f" - A = {round(popt[0],4)} +- {round(unc[0],4)}")
-    print(f" - I = {round(popt[1],4)} +- {round(unc[1],4)}")
+    print(f"Exponential fit (1-I) I^(n-1) has:")
+    print(f" - I = {round(popt[0],4)} +- {round(unc[0],4)}")
     print(f"With e^-x rather than I, it has:")
-    print(f" - x = {round(np.log(popt[1]),4)} +- {round(unc[1]/popt[1],4)}")
+    print(f" - x = {-round(np.log(popt[0]),4)} +- {round(unc[0]/popt[0],4)}")
     #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
     ###################################################################
@@ -475,14 +482,13 @@ if plot_molecules:
     r1unc = grad_sum_unc/coefsum
     I = 1 - r1
     Iunc = r1unc
-    x = - np.log(I)
-    xunc = Iunc/I
+    chi = - np.log(I)
+    chiunc = Iunc/I
     print("\nPLAIN NUMERICAL RESULTS")
-    print(f"Exponential model A I^(n-1) has:")
-    print(f" - A = {round(lambd_probs[0],4)} +- {round(lambd_probs_uncs[0],4)}")
+    print(f"Exponential model (1-I) I^(n-1) has:")
     print(f" - I = {round(I,4)} +- {round(Iunc,4)}")
     print(f"With e^-x rather than I, it has:")
-    print(f" - x = {round(x,4)} +- {round(xunc,4)}")
+    print(f" - x = {round(chi,4)} +- {round(chiunc,4)}")
     print(f"p1 = {round(lambd_probs[0],4)} == gradsum/a_links = {round(r1,4)} ?")
 
     
@@ -490,14 +496,14 @@ if plot_molecules:
     #################################################################
     # PLot Distribution (all, all in logscale, small)
     plt.figure("n-lambda probability distribution")
-    plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            label = r"$n\mathbf{-}\Lambda$ probability distribution")
+    #plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs)
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red")
+            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
+            label = r"$n\mathbf{-}\Lambda$ probability distribution")
     xs = np.linspace(1, len(lambd_probs)+1,100)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
-            label = r"$A I^n$"+ f", A = {round(popt[0],3)}+-{round(unc[0],3)}"+
-            f", I = {round(popt[1],3)}+-{round(unc[1],3)}")
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+            label = r"(1-I) $I^{(n-1)}$"+ 
+            f", I = {round(I,3)}+-{round(I,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.legend(loc="upper right")
@@ -513,8 +519,8 @@ if plot_molecules:
             label = r"$n\mathbf{-}\Lambda$ distribution")
     xs = np.linspace(1, len(lambd_probs)+1,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
-            label = r"$A I^n$"+ f", A = {round(popt[0],3)}+-{round(unc[0],3)}"+
-            f", I = {round(popt[1],3)}+-{round(unc[1],3)}")
+            label = r"(1-I) $I^{(n-1)}$"+ 
+            f", I = {round(I,3)}+-{round(I,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.yscale("log")
@@ -536,9 +542,9 @@ if plot_molecules:
             capsize=7,fmt="",ls="",ecolor="red")
     xs = np.linspace(1, len(lambd_probs[:unsafe_start])+1,50)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
-            label = r"A $e^{- \alpha n}$"+ 
-            f", A = {round(popt[0],3)}+-{round(unc[0],3)}"+
-            r", $\alpha$"+ f" = {-round(np.log(popt[1]),3)}+-{round(unc[1]/popt[1],3)}")
+            label = r"(1-$e^{- \chi (n-1)}$) $e^{- \chi (n-1)}$"+ 
+            r", $\chi$"+ 
+            f" = {round(chi,3)}+-{round(chiunc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel(r"Probability $p_n$")
     plt.legend(loc="upper right")
