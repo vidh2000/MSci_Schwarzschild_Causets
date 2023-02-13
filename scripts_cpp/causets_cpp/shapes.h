@@ -49,11 +49,11 @@
 
     @param duration: time extension of cylinder. Default 2.
 
+    @param hollow: fraction [0,1) of interior which is hollow. Default 0.
+
     @param edge: float > 0 for "cube". Default 1.
 
     @param edges: vector of floats > 0 for "cuboid". Default {1}.
-
-    @param hollow: fraction [0,1) of interior which is hollow. Default 0.
 
  * 
  */

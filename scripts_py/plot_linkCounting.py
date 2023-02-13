@@ -26,7 +26,7 @@ else:
 # Variables to select runs you want
 #Ms = [1.0,1.2,1.4,2.0,2.4,3.0] 
 Ms = None #=None if you want to choose all existinig masses
-rho = 40000
+rho = 20000
 
 
 # Get data
@@ -80,10 +80,16 @@ for i,filename in enumerate(os.listdir(dataDir)):
 
 
 
-plt.figure()
+### Plot the N_vs_Area [l^2]
+
+# Determine the scale
+scale = (rho/(4*np.pi/3*26))**(-1/4)
+print("Scale = ", scale)
 x = 4*np.pi*(4*np.array(masses)**2)
+x = x/scale**2
 y = Nlinks_avgs
-print(len(x),len(y),len(Nlinks_stds))
+
+plt.figure()
 plt.errorbar(x, y, yerr=Nlinks_stds,
             capsize=4,ls="",fmt="o", color="black",
             label=r"$3+1D$ Schwarzshild spacetime")
@@ -100,10 +106,8 @@ popt, pcov = curve_fit(lin_func, x, y, sigma=Nlinks_stds,
 unc = np.sqrt(np.diag(pcov))
 
 # print the optimal parameter values
-print(f"===============================================================\n\
-        Linear fit coefficients: {round(popt[0],3)} +- {round(unc[0],3)}")
-scale = np.sqrt(rho/(4*np.pi/3*26))
-print(f"\tGradient factor w.r.t \sqrt(rho) = {round(popt[0]/scale,3)} +- {round(unc[0]/scale,3)}")
+print(f"===============================================================")
+print(f"\tGradient factor w.r.t \sqrt(rho) = {round(popt[0],3)} +- {round(unc[0],3)}")
 print(f"===============================================================")
  
 x = np.linspace(min(x),max(x),100)
@@ -112,9 +116,11 @@ plt.plot(x, lin_func(x,*popt), '--', color="red",
 
 plt.legend()
 plt.ylabel(r"Number of links $N$")
-plt.xlabel(r"Area $(4\pi R_s^2)$ [a.u]")
+plt.xlabel(r"Horizon Area [$\ell^2$]")
 plt.grid(alpha=0.3)
 
 figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.png"
+plt.savefig(figname)
+figname = plotsDir+f"Nlinks_vs_Area_4D_Rho={rho}_final.pdf"
 plt.savefig(figname)
 plt.show()

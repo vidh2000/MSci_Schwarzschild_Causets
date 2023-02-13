@@ -447,6 +447,85 @@ void EmbeddedCauset::discard(vector<int> labels,
 }
 
 
+/**
+ * @brief Get the interval between minimal and maximal element
+ *          Essentially recreates the causet, getting rid of all
+ *          the elements that aren't in the interval ->
+ *          -> changes the pasts/futures sets and reduces the cmatrix
+ * 
+ *          The intervals are chosen at random and must contain #elemenets
+ *          larger than min_size.
+ * 
+ * @param min_size - Minimal size of the interval (min # of elements in it) 
+ * @param N_max - max number of tries to find the interval before stopping
+ */
+void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by default
+{
+    bool found = false; 
+    int N_tries = 0;
+
+    std::unordered_set<int> all_indices;
+    for (int i = 0; i < _size; i++) {
+        all_indices.insert(i);
+  }
+
+    while (!found)
+    {
+        // Failsafe
+        if (N_tries > N_max){
+            std::cout << "Couldn't find suitable interval in " << N_max
+                << "tries" << std::endl;
+            break;
+        } 
+
+        // Define mersenne_twister_engine Random Gen. (with random seed)
+        std::random_device rd;
+        int seed = rd();
+        std::mt19937 gen(seed);
+        std::uniform_real_distribution<> dis(0,_size);
+        
+        // Pick two random elements
+        int e1 = (int) dis(gen), e2 =(int) dis(gen);
+        int a; int b;
+        if (e1 == e2){
+            N_tries += 1;
+            continue;
+        }
+        else if (e1 < e2){
+            a = e1;
+            b = e2;
+        }
+        else if (e1>e2){
+            a = e2;
+            b = e1;
+        }
+        else{
+            N_tries += 1;
+            continue;
+        }
+        int n = IntervalCard(a, b);
+        if (n >= min_size && n<= _size)
+        {  
+
+            std::unordered_set<int> interval = set_intersection(
+                        _futures[a], _pasts[b]);
+            std::unordered_set<int> indices_to_remove =
+                        set_diff(all_indices,interval);
+            std::vector<int> to_discard(indices_to_remove.begin(),
+                                        indices_to_remove.end());
+
+            // Assume matrix is created and future and pasts but no links.
+            EmbeddedCauset::discard(to_discard,true,true,false);
+            found = true;
+        }
+        else{
+            N_tries +=1;
+            continue;
+        }
+    }
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 //===========================================================================
@@ -1290,7 +1369,6 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
 {
     if (strcmp(method, "coordinates")==0)
     {
-        std::cout << "Making all futures, no cmatrix\n";
         auto xycausality = this->_spacetime.Causality();
         std::vector<double> st_period = _spacetime._period;
         double mass = _spacetime._mass;
@@ -1646,20 +1724,20 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
         
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_lambdas_from_futlinks(t_f,r_S);
         }
+
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");}
         else
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1722,17 +1800,25 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
-        
         if (_future_links.size() == _size) /*if already defined*/
         {
-            return this->get_lambdas_distr(get_lambdas_sizes(t_f,r_S));
+            std::cout<<"No need for futlinks, straight to counting molecules\n";
+            std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
+            std::cout << "Finished get_lambdas_sizes" << std::endl;
+            std::map<int,double> distr = get_lambdas_distr(sizes); 
+            std::cout << "Finished get_lambdas_distr" << std::endl;
+            return distr;
         }
+
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");
+        }
+        
         else
         {
+            std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
             _future_links.resize(_size);
         
             #pragma omp parallel for schedule(dynamic)
@@ -1763,10 +1849,10 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                     }
                 }
             }
-            std::cout << "Finished done futlinks HIiiYa" << std::endl;
-            auto sizes = get_lambdas_sizes(t_f,r_S);
+            std::cout << "Finished done futlinks" << std::endl;
+            std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
             std::cout << "Finished get_lambdas_sizes" << std::endl;
-            auto distr = get_lambdas_distr(sizes); 
+            std::map<int,double> distr = get_lambdas_distr(sizes); 
             std::cout << "Finished get_lambdas_distr" << std::endl;
             return distr;
         }
@@ -1819,8 +1905,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         else
         {
             _future_links.resize(_size);
-        
-            #pragma omp parallel for schedule(dynamic)
+
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1896,7 +1981,6 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2000,15 +2084,12 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
     std::fstream out;
     out.open(path_file_ext, std::ios::app);
     out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
+    _future_links.resize(0);
 
     if (strcmp(molecule_option, "lambdas")==0)
-    {
-        for (auto xy : count_lambdas(t_f, r_S))
-        {
-            out<<"NLambdas_Sized_"<<xy.first<<","<<xy.second<<std::endl;
-        }
-        
+    {   
         int i = 0;
+        std::cout<<"Getting the lambdas"<<std::endl;
         auto lambdas = get_lambdas(t_f, r_S);
         int N = lambdas.size();
         for (std::pair<int,std::vector<int>> lambda_i : lambdas)
@@ -2027,11 +2108,7 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
     }
 
     else if (strcmp(molecule_option, "HRVs")==0)
-    {
-        auto HRVs_distr = count_HRVs(t_f, r_S);
-        out<<"NHRVs_Open" <<","<<HRVs_distr[0]<<std::endl;
-        out<<"NHRVs_Close"<<","<<HRVs_distr[1]<<std::endl;
-        
+    {        
         int i = 0;
         auto HRVs = get_HRVs(t_f, r_S);
         int N = HRVs.size();
@@ -2103,10 +2180,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
                         if (set_contains(j,_future_links[i])) //i-j is link
                         {
                             lambdas[j].push_back(i);
-                            if (_coords[i][0] < mintime || std::isnan(mintime))
-                            {
-                                mintime = _coords[i][0];
-                            }
                         }
                     }
                 }
@@ -2117,7 +2190,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futlinks
             }
         }
     }
-    std::cout << "t_min for elements in these links = " << mintime << std::endl; 
     return lambdas;
 }
 
@@ -2160,13 +2232,12 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
             lambdas[j] = 0;
             for (int i = j-1; i>-1; --i)
             {
-                //std::cout << "get_lambdas_sizes above if (_coords[j][0]>_coords[i][0])\n";
                 if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
                 {
                     // if i is maximal but one and outside the horizon
                     if (_future_links[i].size()==1 && _coords[i][1]>r_S)
                     {
-                        //i-j is link
+                        // if i-j is link
                         if (_future_links[i].find(j) != _future_links[i].end()) 
                         {
                             lambdas[j] += 1;
@@ -2215,7 +2286,6 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
     // Maps label of maximal element to size of its lambda
     std::map<int, double> lambdas_distr;
 
-    //#pragma omp parallel for //think it doesn't work with this type of for loop
     for (auto pair : lambdas)
     {
         if (pair.first > 0 && pair.second != 0)
