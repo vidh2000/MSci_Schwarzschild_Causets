@@ -52,10 +52,9 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 ///////////////////////////////////////////////////////////////////////////////
 //        PARAMETERS are inputted via COMMAND LINE in BASH script
 //              - param 1 = mass (double)
-//              - param 2 = N_multiplier (int)
+//              - param 2 = Rho(double)
 //              - param 3 = N_reps (int)
 //___________________________________________________________________________//
-//////////////////////// N = N_multiplier*mass^3 //////////////////////////////
 //---------------------------------------------------------------------------//
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,11 +63,12 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 int main(int argc, char* argv[]){
 
 double mass = std::atof(argv[1]); 
-int N_multiplier = std::atoi(argv[2]); //1000;
+double Rho = std::atoi(argv[2]); //1000;
 int N_reps = std::atoi(argv[3]);
 
+
 std::cout << "PARAMETERS used in the causet generation:\n";
-std::cout << "mass="<<mass<<", N_multiplier="<<N_multiplier<<", N_reps="
+std::cout << "mass="<<mass<<", Rho="<<Rho<<", N_reps="
                 <<N_reps<<"\n\n";
                 
 int dim = 4; //want it to be "hard coded = 4"
@@ -81,15 +81,16 @@ std::vector<int> repetitions_arr = {};
 
 
 // Shape Parameters
-double R = 2*mass+1;
-double r = 2*mass-1;
+double scale = std::pow(Rho, -1.0/4.0);
+std::cout << "Scale = " << scale << std::endl;
+double R = 2*mass+3*scale;
+double r = 2*mass-3*scale;
+double T = 4*scale;
 double h = r/R;
-double T = 1;
-int N = N_multiplier/26.0 * (R*R*R-r*r*r) * T; //* (4*3.1415/3)
+int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
 radii.push_back(R);
 hollow_vals.push_back(h);
-durations.push_back(T); // since min(t_min) ~ -3.5, 4 is adequate
-// Keep the same density of points, i.e such that N(M=1)=N_multiplier
+durations.push_back(T); 
 cards.push_back(N);
 // Add # of repetitions for each mass
 repetitions_arr.push_back(N_reps);
@@ -108,7 +109,6 @@ auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
 std::cout << "Doing CMatrix and inferring future links from it\n \n";
-std::cout << "N_multiplier = " << N_multiplier << "\n \n";
 
 // Variables for storage of information from each iteration
 std::map<int, std::vector<double>> all_HRVs_results;
@@ -186,11 +186,11 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
             << " seconds\n" << std::endl;   
 
 
-    /* Save the average and standard deviation of HRVs for current settings
+    /* Save the average and standard deviation of lambdas for current settings
     into a text file to be read afterwards*/
     const char* homeDir = getenv("HOME");
     std::stringstream stream0;
-    stream0 << std::fixed << std::setprecision(2) << N_multiplier;
+    stream0 << std::fixed << std::setprecision(2) << Rho;
     std::string rho_str = stream0.str();
     std::stringstream stream1;
     stream1 << std::fixed << std::setprecision(2) << mass;
@@ -206,15 +206,15 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     std::string hollow_str = stream4.str();
 
     std::string filename = std::string(homeDir) 
-                            + "/MSci_Schwarzschild_Causets/data/HRVs/"
+                            + "/MSci_Schwarzschild_Causets/data/lambdas/"
                             + "M=" + mass_str
-                            + "_Nmult=" + rho_str //tho currently Nmult
+                            + "_Rho=" + rho_str 
                             + "_Card=" + std::to_string(cards[0])
                             + "_r=" + radius_str
                             + "_hollow=" + hollow_str
                             + "_dur=" + dur_str
                             + ".txt";
-
+    std::cout<<"\n==========================================================\n";
     std::cout << "Saving Iteration "<< iteration <<
                 "to the file: " << filename << std::endl;  
     
@@ -283,7 +283,6 @@ std::cout << "\nProgram took in total: "
         << duration/pow(10,6) << " seconds\n" << std::endl;
 
 std::cout << "Parameters used:\n";
-std::cout << "Dim = "<< dim << ", N_multiplier = "<< N_multiplier << std::endl;
 }
 
 

@@ -465,7 +465,7 @@ void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by 
     int N_tries = 0;
 
     std::unordered_set<int> all_indices;
-    for (int i = start; i < end; i++) {
+    for (int i = 0; i < _size; i++) {
         all_indices.insert(i);
   }
 
@@ -482,7 +482,7 @@ void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by 
         std::random_device rd;
         int seed = rd();
         std::mt19937 gen(seed);
-        std::uniform_real_distribution<> dis(0,*N);
+        std::uniform_real_distribution<> dis(0,_size);
         
         // Pick two random elements
         int e1 = (int) dis(gen), e2 =(int) dis(gen);
