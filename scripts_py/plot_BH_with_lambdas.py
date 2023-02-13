@@ -8,22 +8,22 @@ import os
 ## SET PARAMETERS FOR PLOTTING
 #############################################################################
 # Load file
-dim  = 4
-card = 2994
-edge = 4.28 #or radius
+dim  = 3
+card = 3000
+edge = 4.00 #or radius
 h    = 0.00
 
-use_redge_in_name_file = 1
-use_h                  = 1 
+use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
+use_h                  = 0
 centre_cube_in_horizon = 0
 
 #choices: [0->causet, 1->molecules, 2->molecules in horizon, 3->causet+molecul]
-plot_choice = 2
+plot_choice = 0
 molecule = "lambda"
 
-phi0 = 6.29/1#4
+phi0 = 6.29/24#4
 which_phi_interval = 0
-projection = 0
+projection = 1
 ##############################################################################
 ##############################################################################
 
@@ -108,6 +108,7 @@ elif plot_choice == 3:
 
 # #Plot cones inside horizon crossing a point (t0, r0)
 # if dim == 2 or projection == True:
+#     print("adding cones")
 #     rs = [0.72, 1.35, 2.77]
 #     ts = [1.15, 2.66, 1.35]
     
@@ -124,10 +125,11 @@ elif plot_choice == 3:
 #         elif r0 > 2:
 #             rs = np.linspace(r0, edge, 1000)
 #         if i != len(ts) - 1:
-#             ax.plot(rs, upper_null(rs, t0, r0), ls = "--", c = "green", alpha = 0.8)
+#             ax.plot(rs, upper_null(rs, t0, r0), ls = "--", c = "green", 
+#                     alpha = 0.8)
 #         else:
-#             ax.plot(rs, upper_null(rs, t0, r0), ls = "--", c = "green", alpha = 0.8,
+#             ax.plot(rs, upper_null(rs, t0, r0), ls = "--", c = "green", 
+#                     alpha = 0.8,
 #                     label = "Light Cone")
-
 plt.show()
 # %%

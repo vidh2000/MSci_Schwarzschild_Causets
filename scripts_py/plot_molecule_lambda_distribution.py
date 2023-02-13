@@ -14,6 +14,7 @@ molecules = "lambdas" #lambdas, HRVs
 varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Rho"   #variable fixed:   can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
+stef_txt_in_file = 1
 
 plot_boundaries = False
 plot_molecules = True
@@ -63,7 +64,7 @@ for root, dirs, files in os.walk(dataDir):
     for i, file_i in enumerate(files):
         if fixed_string in file_i:
             go_on = False
-            if varying_var+"=" in file_i:
+            if varying_var+"=" in file_i and (stef_txt_in_file) * ("stef.txt" in file_i):
                 go_on = True
                 file_i_path = os.path.join(root, file_i)
                 file_i_pieces = file_i.split("_")
@@ -452,7 +453,6 @@ if plot_molecules:
     ###################################################################
     # Fit to exponential (1-I) * I**n
     ns = np.arange(1, unsafe_start+1)
-    print(unsafe_start)
     popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
                             p0 = 1-lambd_probs[0],
                             sigma=lambd_probs_uncs[:unsafe_start],
@@ -496,12 +496,13 @@ if plot_molecules:
     #################################################################
     # PLot Distribution (all, all in logscale, small)
     plt.figure("n-lambda probability distribution")
-    #plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs)
+    #plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+    #        label = r"$n\mathbf{-}\Lambda$ probability distribution")
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
             label = r"$n\mathbf{-}\Lambda$ probability distribution")
     xs = np.linspace(1, len(lambd_probs)+1,100)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
             label = r"(1-I) $I^{(n-1)}$"+ 
             f", I = {round(I,3)}+-{round(I,3)}")
     plt.xlabel(r"$n$")
