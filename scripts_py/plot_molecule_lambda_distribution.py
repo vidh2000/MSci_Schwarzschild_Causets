@@ -14,7 +14,7 @@ molecules = "lambdas" #lambdas, HRVs
 varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Rho"   #variable fixed:   can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
-stef_txt_in_file = 1
+#stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
 plot_boundaries = False
 plot_molecules = True
@@ -64,7 +64,7 @@ for root, dirs, files in os.walk(dataDir):
     for i, file_i in enumerate(files):
         if fixed_string in file_i:
             go_on = False
-            if varying_var+"=" in file_i and (stef_txt_in_file) * ("stef.txt" in file_i):
+            if varying_var+"=" in file_i: #and (stef_txt_in_file) * ("stef.txt" in file_i):
                 go_on = True
                 file_i_path = os.path.join(root, file_i)
                 file_i_pieces = file_i.split("_")
@@ -452,6 +452,8 @@ if plot_molecules:
 
     ###################################################################
     # Fit to exponential (1-I) * I**n
+
+    unsafe_start = len(noninf_indices[0]) #gets rid of data with bad statistics
     ns = np.arange(1, unsafe_start+1)
     popt, pcov = curve_fit(i_exp, ns, lambd_probs[:unsafe_start], 
                             p0 = 1-lambd_probs[0],
