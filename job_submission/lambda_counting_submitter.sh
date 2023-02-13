@@ -18,7 +18,7 @@ N_reps=50
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
-mem=512
+mem=920
 runtime="08:00:00" #format: "hh:mm:ss"
 
 
