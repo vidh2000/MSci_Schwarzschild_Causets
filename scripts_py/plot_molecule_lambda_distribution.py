@@ -158,7 +158,7 @@ def lin_func(x,a):
     return a*x
 
 # Fitting function2 == corrected-linear through vertex
-def corrected_lin_func(x,a, coeff = - 0.0544):
+def corrected_lin_func(x,a, coeff = - 0.0464):
     " x is A in l units"
     M = np.sqrt(np.array(x)/(16*np.pi))
     return (a + coeff/M)*x
@@ -166,6 +166,11 @@ def corrected_lin_func(x,a, coeff = - 0.0544):
 def i_exp(n, I):
     """ (1-I) * I^(n-1) """
     return (1. - I) * I**(n-1)
+
+def i_exp_on_n(n, I):
+    """ - [ I / ln(1-I) ] * I^(n-1) """
+    A = - I / np.log(1-I)
+    return A * I**(n-1) /n
 
 # Set the right x for the varying-fixed values -> Area in l^2 units
 x = np.array(varying_values)
@@ -429,7 +434,7 @@ if plot_molecules:
     print(f"Curv-Correct Gradient  = {round(popt[0],4)} +- {round(unc[0],4)}")
 
     r, pvalue = pearsonr(x, links)
-    print(f"Linearity of links: Pearson r = {round(r,3)}, p-value = {round(1-pvalue,3)}")
+    print(f"Linearity links: Pearson r = {round(r,3)}, p-val = {round(1-pvalue,3)}")
     # expected = schwarz_lin_func(x, *popt)
     # print(links)
     # print(expected)
@@ -504,7 +509,7 @@ if plot_molecules:
     xs = np.linspace(1, len(lambd_probs)+1,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
             label = r"(1-I) $I^{(n-1)}$"+ 
-            f", I = {round(I,3)}+-{round(I,3)}")
+            f", I = {round(I,3)}+-{round(Iunc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.legend(loc="upper right")
@@ -521,7 +526,7 @@ if plot_molecules:
     xs = np.linspace(1, len(lambd_probs)+1,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
             label = r"(1-I) $I^{(n-1)}$"+ 
-            f", I = {round(I,3)}+-{round(I,3)}")
+            f", I = {round(I,3)}+-{round(Iunc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.yscale("log")

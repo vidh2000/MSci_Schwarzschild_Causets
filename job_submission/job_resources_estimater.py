@@ -4,7 +4,7 @@ import numpy as np
 # Areas in l^2 units
 #areas_ll = 4*np.pi*(2*mass)**2/(scale**2)
 
-areas_ll = np.arange(1000,20001,1000)
+areas_ll = np.arange(1500,21501,1000)
 rhos = np.array([5000])
 int8_t = False
 
@@ -18,6 +18,7 @@ for Rho in rhos:
     masses = np.sqrt(areas_ll/(16*np.pi*np.sqrt(Rho)))
     print("Masses:")
     print(masses, "\n")
+    print([round(mass,2) for mass in masses])
 
     for mass in masses:
 
