@@ -13,18 +13,18 @@ cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 Rho=5000
-N_reps=2
+N_reps=20
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
 mem=920
-runtime="08:00:00" #format: "hh:mm:ss"
+runtime="7:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in 3.0 #$(seq 2.3 .1 2.5)
+for mass in 1.7 #$(seq 1.6 .1 1.9)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

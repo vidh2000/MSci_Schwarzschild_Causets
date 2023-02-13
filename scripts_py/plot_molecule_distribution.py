@@ -11,8 +11,8 @@ from scipy.optimize import curve_fit
 ##############################################################################
 molecules = "lambdas" #lambdas, HRVs
 varying_var = "M"     #variable varying: can be M, Rho, Nmult
-fixed_var = "Nmult"   #variable fixed: can be, M, Rho, Nmult
-fixed_val = 40000     #value of fixed_var
+fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
+fixed_val = 5000     #value of fixed_var
 
 plot_boundaries = True
 plot_molecules = True

@@ -1,0 +1,2 @@
+cp: cannot stat 'count_lambdas.exe': No such file or directory
+/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_2.1_N_multiplier__N_reps_10.sh: line 31: 13655 Bus error               "./executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}.exe" $mass $Rho $N_reps

@@ -1735,7 +1735,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
         {
             _future_links.resize(_size);
         
-            #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2157,7 +2157,6 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
         // if j is maximal and inside the horizon
         if (_future_links[j].size()==0 && _coords[j][1]<r_S) 
         {
-            //std::cout << "get_lambdas_sizes above lambdas[j] = 0;\n";
             lambdas[j] = 0;
             for (int i = j-1; i>-1; --i)
             {
@@ -2165,10 +2164,8 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
                 if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
                 {
                     // if i is maximal but one and outside the horizon
-                    //std::cout<<"get_lambdas_sizes above if (_future_links[i].size()==1 && _coords[i][1]>r_S)\n";
                     if (_future_links[i].size()==1 && _coords[i][1]>r_S)
                     {
-                        //std::cout <<"get_lambdas_sizes above if (_future_links[i].find(j) != _future_links[i].end())\n";
                         //i-j is link
                         if (_future_links[i].find(j) != _future_links[i].end()) 
                         {

@@ -12,19 +12,19 @@ submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
 cpp_file_to_run="'count_HRVs.cpp'"
 
 # CPP VARIABLES
-N_multiplier=10000
-N_reps=50
+Rho=5000
+N_reps=25
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=48
 mem=16
-runtime="02:00:00" #format: "hh:mm:ss"
+runtime="6:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
 counter=0
-for mass in 1.0 #$(seq 4.6 .1 5.0)
+for mass in $(seq 1. .1 1.5)
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
@@ -40,7 +40,7 @@ do
 ###### Write the run_file.sh which compiles and executes the .cpp script #####
 
 
-sh_run_file="${submitted_jobsDir}runfile_files/run_file_HRVcounting_mass_${mass}_N_multiplier_${N_multiplier}_N_reps_${N_reps}.sh"
+sh_run_file="${submitted_jobsDir}runfile_files/run_file_HRVcounting_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}.sh"
 
 
 echo "#!/usr/bin/env bash" > $sh_run_file
@@ -84,7 +84,7 @@ echo "" >> $sh_run_file
 ###############################################################################
 #______________________________________________________________________________
 ##### Write the submit file based on variables used and run_file.sh to submit
-submitfile="${submitted_jobsDir}submit_files/subHRV_mass_${mass}_N_multiplier_${N_multiplier}_N_reps_${N_reps}.pbs"
+submitfile="${submitted_jobsDir}submit_files/subHRV_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}.pbs"
 
 echo "#!/bin/sh" > $submitfile
 echo "#PBS -lselect=1:ncpus=${ncpus}:mem=${mem}gb" >> $submitfile
