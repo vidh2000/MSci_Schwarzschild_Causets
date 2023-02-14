@@ -47,7 +47,7 @@ int main(){
                 
 std::vector<int> dims = {4}; 
 std::vector<int> cards = {100};
-int min_size = 4;  //Minimal size of the interval (min # of elements in it)
+int min_size = 6;  //Minimal size of the inclusive interval (min # of elements in it)
 double mass = 0.01;
 int N_reps = 1;
 
@@ -98,28 +98,28 @@ for (auto dim: dims)
                             make_matrix, special, use_transitivity,
                             make_sets, make_links,sets_type);
 
-            std::cout << "==================================================\n";
+            std::cout << "================================================\n \n";
             std::cout << "N_before = " << C._CMatrix[0].size() << " == "<< C._size << std::endl;
             std::cout << "Full Cmatrix:" << std::endl;
-            //print_vector(C._CMatrix);
-            /* std::cout << "Pasts set:\n";
-            print_vector(C._pasts);
+            print(C._CMatrix);
+             std::cout << "Pasts set:\n";
+            print(C._pasts);
             std::cout << "Futures set:\n";
-            print_vector(C._futures); */
+            print(C._futures); 
 
-            std::cout << "------------------------\n"; 
+            std::cout << "\n-----------------------------------------------\n"; 
             std::cout << "Getting an interval of min. size " << min_size <<
                     " -> cutting cmatrix, and pasts/futures sets\n";
             C.get_interval(min_size, 4*min_size);
 
-            std::cout << "------------------------\n"; 
+            std::cout << "\n-----------------------------------------------\n"; 
             std::cout << "Cut Cmatrix:" << std::endl;
-            print_vector(C._CMatrix);
+            print(C._CMatrix);
             std::cout << "N_after = " << C._CMatrix[0].size() << " == "<< C._size << std::endl;
-            /* std::cout << "Pasts set:\n";
-            print_vector(C._pasts);
+            std::cout << "Pasts set:\n";
+            print(C._pasts);
             std::cout << "Futures set:\n";
-            print_vector(C._futures); */
+            print(C._futures); 
 
             // Create interval          
 

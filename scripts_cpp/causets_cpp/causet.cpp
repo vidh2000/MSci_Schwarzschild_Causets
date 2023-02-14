@@ -588,7 +588,7 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
         return Nintersections;
     }
     // ELSE USE SETS
-    else //if ( _pasts.size() && _futures.size())
+    else //if ( _pasts.size() && _futures.size()) and no cmatrix exists
     {
         if (a<b)
         {

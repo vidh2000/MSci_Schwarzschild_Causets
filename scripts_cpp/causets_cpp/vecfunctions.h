@@ -174,6 +174,31 @@ void print_vector(const std::vector<T> & vec,
         std::cout<<std::endl;  
 }
 
+/** @brief Prints given vector, with given separator.
+*
+*  @param vec The vector to print. Type: std::vector<whatever>.
+*  @param sep Separator to use between entries. Type: Char. Default " , ".
+*  @param brackets Start and end with brackets?. Type: bool. Default true.
+* 
+*  @return Void.
+**/
+template <typename T>
+inline
+void print(const std::vector<T> & vec, 
+                  std::string sep=", ",
+                  bool brackets = true)
+    {   
+        int size = vec.size();
+        if (brackets) {std::cout<<"{";}
+        for(int index = 0; index < size ; index++)
+        {   
+            if (index == 0) {std::cout<<vec[index];}
+            else {std::cout<<sep<<vec[index];}
+        }
+        if (brackets) {std::cout<<"}";}
+        std::cout<<std::endl;  
+}
+
 
 template <typename T>
 inline
@@ -208,6 +233,42 @@ void print_vector(std::vector<std::vector<T>> vec,
         if (brackets) {std::cout<<"}";}
         std::cout<<std::endl;  
 }
+
+
+template <typename T>
+inline
+void print(std::vector<std::vector<T>> vec, 
+                  std::string sep=", ",
+                  bool brackets = true)
+    /** @brief rints given vector, with given separator.
+    *
+    *  @param vec The vector to print. Type: std::vector<vector<whatever>>.
+    *  @param sep Separator to use between entries. Type: Char. Default " , ".
+    *  @param brackets Start and end with brackets?. Type: bool. Default true.
+    * 
+    *  @return Void.
+    **/
+    {   int size = vec.size();
+        if (brackets) {std::cout<<"{";}
+        for(int index = 0; index < size ; index++)
+        {
+            std::vector<T> vind = vec[index];
+            if (index != 0)
+            {std::cout<<" {";}
+            else {std::cout << "{";}
+            for (int j = 0; j < vind.size(); j++)
+            {
+                if (j == 0) {std::cout<<vind[0];}
+                else {std::cout<<sep<<vind[j];}
+            }
+            std::cout << "}";
+
+            if (index != size -1) {std::cout<< sep << std::endl;}
+        }
+        if (brackets) {std::cout<<"}";}
+        std::cout<<std::endl;  
+}
+
 
 
 template <typename T>
@@ -275,6 +336,48 @@ int argmin(std::vector<T1, T2> const& v, int begin = 0, int end = 0)
 }
 
 
+/**
+ * @brief Cuts the Cmatrix to only rows and columns that correspond to
+ *          the indices - elements from the interval
+ * @param matrix : i.e CMatrix 
+ * @param interval: vector which contains the target indices telling which
+ *                  rows and columns not to cut away
+ */
+template <typename T>
+inline
+void remove_indices_fromCmatrix(std::vector<std::vector<T>> &matrix,
+                std::vector<int> interval)
+{
+
+    // Make sure values in the interval are ordered
+    std::sort(interval.begin(),interval.end());
+    
+    int N = matrix.size();
+    std::vector<std::vector<T>> new_matrix;
+
+    for (int i = 0; i<N; i++)
+    {
+        if (std::find(interval.begin(),interval.end(),i) == interval.end()) {
+            continue;
+        }
+        std::vector<T> row;
+        for (int j=0; j<N; j++)
+        {
+            if (std::find(interval.begin(),interval.end(),j) == interval.end()) {
+            continue;
+            }
+
+            row.push_back(matrix[i][j]);        
+        }
+        new_matrix.push_back(row);
+    }
+    matrix = new_matrix;
+}
+
+
+////// idk that doesn't really work, still keeping it here tho
+// Replaced with remove_indices_fromCmatrix above. Used in discard() methods in
+// the embeddedcauset.cpp otherwise
 //From https://codereview.stackexchange.com/questions/206686/removing-by-indices-several-elements-from-a-vector
 template <typename INT, typename T> // INT could be int, unsigned int, char, size_t, etc...
 void remove_indices(std::vector<T>& v, const std::vector<INT>& rm )
