@@ -120,20 +120,39 @@ bool set_contains(obj element, std::unordered_set<obj> s)
 }
 
 
-//for set containing int only here
-template <typename SET> 
+
+template <typename E> 
 inline
-SET set_diff(SET s1, SET s2)
+std::set<E> set_diff(std::set<E> s1, std::set<E> s2)
     /*
     Return set difference i.e events which are only in s1;
     RETURN = s1-s2 (where s2 can have other elements as well)
     */
 {
-    SET result;
+    std::set<E> result;
     std::set_difference(s1.begin(), s1.end(), s2.begin(), s2.end(),
         std::inserter(result, result.end()));
     return result;
 }
+
+
+template <typename E> 
+inline
+std::unordered_set<E> set_diff(std::unordered_set<E> s1,
+                        std::unordered_set<E> s2)
+    /*
+    Return set difference i.e events which are only in s1;
+    RETURN = s1-s2 (where s2 can have other elements as well)
+    */
+{
+    for (const auto& elem : s2) {
+    s1.erase(elem);
+    }
+    return s1;
+}
+
+
+
 
 template <typename SET> 
 inline

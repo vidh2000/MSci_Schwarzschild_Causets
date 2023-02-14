@@ -38,7 +38,7 @@ using namespace std;
 int main(){
 
 std::unordered_set<int> a = {1,2,4,3};
-std::unordered_set<int> b = {4,3};
+std::unordered_set<int> b = {5,1,4,53};
 
 std::unordered_set<int> c = set_diff(a,b);
 print_set(c);

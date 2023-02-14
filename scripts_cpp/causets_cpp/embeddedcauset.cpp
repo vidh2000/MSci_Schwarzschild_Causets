@@ -520,15 +520,18 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
             interval.insert(a);
             interval.insert(b);
 
+
+            std::cout << "There are "<< interval.size()
+                            <<" indices in the interval:" << std::endl;
             print_set(interval);
-            std::cout << "All indeces length=" << all_indices.size() << std::endl;
-            print_set(all_indices);
+            std::cout << "All indices length=" << all_indices.size() << std::endl;
+
 
             // Find indices to remove i.e all but the inclusive interval
-            std::unordered_set<int> indices_to_remove =
-                        set_diff(all_indices,interval);
+            std::unordered_set<int> indices_to_remove = set_diff(
+                                    all_indices,interval);
                     
-            std::cout << "length of indices_to_remove="
+            std::cout << "Length of indices_to_remove="
                         << indices_to_remove.size() << std::endl;
 
             std::vector<int> to_discard(indices_to_remove.begin(),
