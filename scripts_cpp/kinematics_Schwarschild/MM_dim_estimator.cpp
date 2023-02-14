@@ -22,8 +22,10 @@
 #include "../causets_cpp/functions.h"
 #include "../causets_cpp/vecfunctions.h"
 
-#include <boost/range/combine.hpp>
-#include <boost/math/special_functions/gamma.hpp>
+#include "../causets_cpp/kinematics_functions.h"
+
+//#include <boost/range/combine.hpp>
+//#include <boost/math/special_functions/gamma.hpp>
 #include <omp.h>
 
 // $HOME var get
@@ -34,105 +36,6 @@
 using namespace std::chrono;
 using namespace boost::math;
 
-const double pi = 3.1415926535897;
-
-
-
-// Defining constants (functions)
-///////////////////////////////////////////////////////////////////////////////
-
-
-/**
- * @brief Calculate n choose k and return the value as double
- * 
- * @param n Integer
- * @param k Integer
- * @return double 
- */
-double binomialCoefficient(int n, int k)
-{
-    int C[n + 1][k + 1];
-    int i, j;
-
-    // Caculate value of Binomial Coefficient in bottom up manner
-    for (i = 0; i <= n; i++) {
-    for (j = 0; j <= std::min(i, k); j++) {
-        // Base Cases
-        if (j == 0 || j == i) {
-        C[i][j] = 1;
-        } else {
-        // Calculate value using previously stored values
-        C[i][j] = C[i - 1][j - 1] + C[i - 1][j];
-        }
-    }
-    }
-    return (double)C[n][k];
-}
-
-/**
- * @brief Gets the constant chi_k
- * 
- * @param d - number of dimensions of the manifold 
- * @param k - integer
- * @return double: Value of the constant
- */
-double chi_k(double d, double k){
-    return 1/k * pow(tgamma(d+1)/2, k-1) * tgamma(d/2)* tgamma(d)
-    / ( tgamma(k*d/2) * tgamma((k+1)*d/2) );
-}
-
-
-/**
- * @brief 
- * 
- * @param d - Manifold dimension 
- * @param C_k_arr - List of C_ks (Numbers of k-long chains)
- *               for chain lengths k=1,2,3,4.
- * @return double
- */
-double MMdim_eqn(double d, std::vector<double> C_k_arr)
-{
-    // C_k_arr must have length 4
-    if (C_k_arr.size() !=4)
-    {
-        std::cout << "C_k_arr must contain #chains for k=1,2,3,4." << std::endl;
-    }
-    std::vector<double> k_arr = {1.0,2.0,3.0,4.0};
-    double result = 0;
-    
-    for (auto && tup : boost::combine(k_arr, C_k_arr))
-    {
-        double k, C_k;
-        boost::tie(k,C_k) = tup;
-
-        result += std::pow(-1,k)*binomialCoefficient(3,k-1)*
-            (k*d+2)*((k+1)*d+2)*std::pow(C_k, 4/k) /
-            std::pow(chi_k(d,k), 4/k);
-    }
-    return result;
-}
-
-
-/**
- * @brief Yields the estimate of the MM-dimension for curved spacetime
- * 
- * @param d - Dimension of manifold
- * @param C_k_arr - array of chain lengths for 1,2,3,4-chains
- * @return double 
- */
-double estimate_MMd(std::vector<double> C_k_arr)
-{
-    // Define function whose root needs to be found
-    auto MM_to_solve = [C_k_arr](double d){
-        return MMdim_eqn(d,C_k_arr);
-    };
-
-    double dmin = 0.1;
-    double dmax = 10;
-    // Estimate dimension of Causet
-    double dim_estimate = bisection(MM_to_solve,dmin,dmax);
-    return dim_estimate;
-};
 
 int main(){
 
@@ -143,9 +46,10 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {1000};
-double mass = 1;
-int N_reps = 10;
+std::vector<int> cards = {40};
+int min_size = 10;  //Minimal size of the interval (min # of elements in it)
+double mass = 0.25;
+int N_reps = 1;
 
 
 // Sprinkling Parameters
@@ -194,6 +98,24 @@ for (auto dim: dims)
                             make_matrix, special, use_transitivity,
                             make_sets, make_links,sets_type);
 
+            std::cout << "==================================================\n";
+            std::cout << "Full Cmatrix:" << std::endl;
+            print_vector(C._CMatrix);
+            std::cout << "Pasts set:\n";
+            print_vector(C._pasts);
+            std::cout << "Futures set:\n";
+            print_vector(C._futures);
+
+            std::cout << "------------------------\n";
+            std::cout << "Getting an interval of min. size " << min_size <<
+                    " -> cutting cmatrix, and pasts/futures sets\n";
+            C.get_interval(min_size);
+            std::cout << "Full Cmatrix:" << std::endl;
+            print_vector(C._CMatrix);
+            std::cout << "Pasts set:\n";
+            print_vector(C._pasts);
+            std::cout << "Futures set:\n";
+            print_vector(C._futures);
 
             // Create interval          
 

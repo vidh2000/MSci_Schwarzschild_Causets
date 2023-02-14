@@ -82,7 +82,7 @@ class EmbeddedCauset: public Causet
                      bool make_sets = false, bool make_links = true);  
         void discard(std::vector<int> labels, bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
-        void get_interval(int min_size, int N_max = 1000);
+        void get_interval(int min_size, int max_size = 0, int N_max = 1000);
 
         // SAVE
         

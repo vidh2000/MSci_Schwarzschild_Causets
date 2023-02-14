@@ -457,13 +457,20 @@ void EmbeddedCauset::discard(vector<int> labels,
  *          larger than min_size.
  * 
  * @param min_size - Minimal size of the interval (min # of elements in it) 
+ * @param max_size - Max. size of the interval (max # of elements in it
+ *                                              == _size by default)
  * @param N_max - max number of tries to find the interval before stopping
  */
-void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by default
+void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000 max tries by default
 {
+
     bool found = false; 
     int N_tries = 0;
 
+    if (max_size == 0)
+    {
+        max_size = _size;
+    }
     std::unordered_set<int> all_indices;
     for (int i = 0; i < _size; i++) {
         all_indices.insert(i);
@@ -504,17 +511,36 @@ void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by 
             continue;
         }
         int n = IntervalCard(a, b);
-        if (n >= min_size && n<= _size)
+        if (n >= min_size && n<= max_size)
         {  
 
+            // Interval includes a, b and the elements connecting them
             std::unordered_set<int> interval = set_intersection(
                         _futures[a], _pasts[b]);
+            interval.insert(a);
+            interval.insert(b);
+
+            print_set(interval);
+            std::cout << "All indeces length=" << all_indices.size() << std::endl;
+            print_set(all_indices);
+
+            // Find indices to remove i.e all but the inclusive interval
             std::unordered_set<int> indices_to_remove =
                         set_diff(all_indices,interval);
+                    
+            std::cout << "length of indices_to_remove="
+                        << indices_to_remove.size() << std::endl;
+
             std::vector<int> to_discard(indices_to_remove.begin(),
                                         indices_to_remove.end());
 
-            // Assume matrix is created and future and pasts but no links.
+            std::cout << "Removing " << to_discard.size()
+            << " indices:" << std::endl;
+            print_vector(to_discard);
+            std::cout << "Left with " << interval.size() << "indices:\n";
+            print_set(interval);
+
+            // Assumes matrix is created and future and pasts but no links.
             EmbeddedCauset::discard(to_discard,true,true,false);
             found = true;
         }
