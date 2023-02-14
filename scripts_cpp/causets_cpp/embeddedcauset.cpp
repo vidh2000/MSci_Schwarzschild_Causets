@@ -537,11 +537,12 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
             std::cout << "Removing " << to_discard.size()
             << " indices:" << std::endl;
             print_vector(to_discard);
-            std::cout << "Left with " << interval.size() << "indices:\n";
-            print_set(interval);
-
+            
             // Assumes matrix is created and future and pasts but no links.
             EmbeddedCauset::discard(to_discard,true,true,false);
+            
+            std::cout << "Left with " << _size << " indices:\n";
+
             found = true;
         }
         else{
