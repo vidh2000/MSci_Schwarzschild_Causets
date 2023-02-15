@@ -84,6 +84,9 @@ for (auto dim: dims)
     for (auto card : cards)
     {
         std::vector<double> dim_ests = {}; 
+        // Arrays for storing information from intervals
+        std::vector<double> r_avg_arr;
+        std::vector<double> C_k_arr; 
 
         for (int rep=0; rep<N_reps; rep++)
         {
@@ -109,18 +112,7 @@ for (auto dim: dims)
             std::vector<std::pair<std::vector<double>,double>> nchains = 
                         C.get_Nchains_inInterval(N_intervals,min_size,4);
 
-            print("Getting chain lengths successful!");
-            C.get_interval(min_size);
-
             
-
-            std::cout << "Cut Cmatrix:" << std::endl;
-            print(C._CMatrix);
-            std::cout << "Pasts set:\n";
-            print(C._pasts);
-            std::cout << "Futures set:\n";
-            print(C._futures);
-
             // Create interval          
 
             // Estimate dimension of the causet

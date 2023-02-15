@@ -683,7 +683,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             int n = IntervalCard(a, b);
             if (n >= min_size && n<= max_size)
             {  
-
+                // Create set_intersection for cmatrix..
                 // Interval includes a, b and the elements connecting them
                 std::unordered_set<int> interval = set_intersection(
                             _futures[a], _pasts[b]);

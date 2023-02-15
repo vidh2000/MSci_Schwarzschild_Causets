@@ -259,17 +259,17 @@ double estimate_MMd(std::vector<double> C_k_arr)
  * @brief Proper time extension of the interval 
  * 
  * @param d - Manifold dim
- * @param C_k - Number of chains of size k
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
  * @param rho - Density of causet sprinkling
  * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double T(double d, double C_k, double rho, double r)
+double T(double d, std::vector<double> C_k, double rho, double r)
 {
-    double J1 = J_k(1,d, C_k, rho, r);
-    double J2 = J_k(2,d, C_k, rho, r);
-    double J3 = J_k(3,d, C_k, rho, r);
+    double J1 = J_k(1,d, C_k[0], rho, r);
+    double J2 = J_k(2,d, C_k[1], rho, r);
+    double J3 = J_k(3,d, C_k[2], rho, r);
 
     return std::pow(1/(d*d)*(J1-2*J2+J3), 1/d);
 }
@@ -279,17 +279,17 @@ double T(double d, double C_k, double rho, double r)
  * @brief Ricci scalar value at the centre of the interval
  *          (from RSS - Roy, Sinha, Surya 2013 paper)
  * @param d - Manifold dim
- * @param C_k - Number of chains of size k
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
  * @param rho - Density of causet sprinkling
  * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double R_RSS(double d, double C_k, double rho, double r) 
+double R_RSS(double d, std::vector<double> C_k, double rho, double r) 
 {
-    double K1 = K_k(1,d,C_k,rho,r);
-    double K2 = K_k(2,d,C_k,rho,r);
-    double K3 = K_k(3,d,C_k,rho,r);
+    double K1 = K_k(1,d,C_k[0],rho,r);
+    double K2 = K_k(2,d,C_k[1],rho,r);
+    double K3 = K_k(3,d,C_k[2],rho,r);
 
     double J1 = J_k(1,d,K1);
     double J2 = J_k(2,d,K2);
@@ -308,18 +308,18 @@ double R_RSS(double d, double C_k, double rho, double r)
  * @brief (0,0) component of the Ricci tensor at the centre of the interval
  *              (from RSS - Roy, Sinha, Surya 2013 paper)
  * @param d - Manifold dim
- * @param C_k - Number of chains of size k
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
  * @param rho - Density of causet sprinkling
  * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double R_00(double d, double C_k, double rho, double r) 
+double R_00(double d, std::vector<double> C_k, double rho, double r) 
 {
     double T_proper = T(d,C_k,rho,r);
-    double Q1 = Q_k(1,d,C_k,rho,r);
-    double Q2 = Q_k(2,d,C_k,rho,r);
-    double Q3 = Q_k(3,d,C_k,rho,r);
+    double Q1 = Q_k(1,d,C_k[1],rho,r);
+    double Q2 = Q_k(2,d,C_k[2],rho,r);
+    double Q3 = Q_k(3,d,C_k[3],rho,r);
 
     return -4*(2*d+2)*(3*d+2) / (std::pow(d,3) * std::pow(T_proper,3*d+2)) *
     ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
