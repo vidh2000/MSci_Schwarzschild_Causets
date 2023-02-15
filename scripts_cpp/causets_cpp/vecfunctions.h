@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 #include <omp.h>
-#include <functions.h>
+#include "functions.h"
 
 //_____________________________________________________________________
 //
@@ -554,7 +554,7 @@ std::vector<std::vector<T>> matmul(std::vector<std::vector<T>> A,
         print("Want square matrix please.");
         throw std::runtime_error("");
     }
-    if ((B.size()==n) && (B[0].size()==n)) {
+    if ((B.size()!=n) || (B[0].size()!=n)) {
         print("A and B matrix should be of equal sizes!");
         throw std::runtime_error("");
 

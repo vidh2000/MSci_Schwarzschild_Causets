@@ -48,7 +48,7 @@ int main(){
 std::vector<int> dims = {4}; 
 std::vector<int> cards = {100};
 int min_size = 5;  //Minimal size of the interval (min # of elements in it)
-double mass = 0.25;
+double mass = 0.01;
 int N_reps = 10;
 int N_intervals = 10;
 
@@ -66,7 +66,7 @@ const char* name = "cylinder";
 
 // Shape parameters
 double radius = 0.1;
-double height = 0.1;
+double height = 0.3;
 ///////////////////////////////////////////
 
 // Begin program
@@ -87,6 +87,7 @@ for (auto dim: dims)
 
         for (int rep=0; rep<N_reps; rep++)
         {
+            std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
             // Set up shape
             std::vector<double> center = {0.0,0.0,0.0,0.0};
@@ -99,30 +100,26 @@ for (auto dim: dims)
                             make_matrix, special, use_transitivity,
                             make_sets, make_links,sets_type);
 
-            std::cout << "==================================================\n";
-            std::cout << "Full Cmatrix:" << std::endl;
-            print_vector(C._CMatrix);
-            std::cout << "Pasts set:\n";
-            print_vector(C._pasts);
-            std::cout << "Futures set:\n";
-            print_vector(C._futures);
 
             std::cout << "------------------------\n";
             std::cout << "Getting an interval of min. size " << min_size <<
                     " -> cutting cmatrix, and pasts/futures sets\n";
             
-            C.get_interval(min_size);
-
             // Get array of "N_chains" for chain-sizes 1...4
             std::vector<std::pair<std::vector<double>,double>> nchains = 
                         C.get_Nchains_inInterval(N_intervals,min_size,4);
 
-            std::cout << "Full Cmatrix:" << std::endl;
-            print_vector(C._CMatrix);
+            print("Getting chain lengths successful!");
+            C.get_interval(min_size);
+
+            
+
+            std::cout << "Cut Cmatrix:" << std::endl;
+            print(C._CMatrix);
             std::cout << "Pasts set:\n";
-            print_vector(C._pasts);
+            print(C._pasts);
             std::cout << "Futures set:\n";
-            print_vector(C._futures);
+            print(C._futures);
 
             // Create interval          
 
@@ -131,7 +128,6 @@ for (auto dim: dims)
             //dim_ests.push_back(d_i);
 
             
-            std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
 
             //Timing rep
             auto repend = high_resolution_clock::now();
