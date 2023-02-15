@@ -13,17 +13,21 @@
 #include <vector>
 #include <chrono>
 #include <unordered_set>
-#include <chrono>
 
-#include "../../causets_cpp/sprinkledcauset.h"
-#include "../../causets_cpp/shapes.h"
-#include "../../causets_cpp/spacetimes.h"
+#include "../causets_cpp/sprinkledcauset.h"
+#include "../causets_cpp/shapes.h"
+#include "../causets_cpp/spacetimes.h"
 
-#include "../../causets_cpp/functions.h"
-#include "../../causets_cpp/vecfunctions.h"
+#include "../causets_cpp/functions.h"
+#include "../causets_cpp/vecfunctions.h"
 
 #include <boost/range/combine.hpp>
 #include <omp.h>
+
+// $HOME var get
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -65,15 +69,16 @@ int main()
         if (dim == 3) rho *= 150;
         double scale = std::pow(rho, -1.0/dim);
         double mass = r_S /2.;
-        double R = r_S+3*scale;
-        double r = r_S-3*scale;
-        double T = 4*scale;
+        double R = r_S+5*scale;
+        double r = r_S-5*scale;
+        double T = 6*scale;
         double h = (r>0)? r/R : 0.;
         int card = 0;
         if (dim == 4)
         card += rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
         else if (dim == 3)
         card += rho * (3.1415) * (R*R-r*r) * T;
+        card = card/1000 * 1000; //make it multiple of 1000
         std::cout << "\nDim = " << dim << std::endl;
         std::cout << "Rho  = " << rho << std::endl;
         std::cout << "Scal = " << scale << std::endl;
@@ -95,6 +100,7 @@ int main()
                             make_sets, make_links,sets_type);
 
         //Save Lambdas
+        const char* homeDir = getenv("HOME");
         std::stringstream rstream;
         rstream << std::fixed << std::setprecision(2) << R;
         std::string redge_s = rstream.str();
@@ -102,13 +108,14 @@ int main()
         hstream << std::fixed << std::setprecision(2) << h;
         std::string h_s = hstream.str();
 
-        std::string path_file_str = "../../../data/data_for_plotting/blackhole_and_lambdas"
-                                        + std::to_string(dim)
-                                        + "D_N" + std::to_string(card)
-                                        + "_redge" + redge_s
-                                        + "_h" + h_s;
-        path_file_str +=  ".txt";
-        const char* path_file = path_file_str.c_str();
+        std::string filename = std::string(homeDir) 
+                            + "/MSci_Schwarzschild_Causets/data/data_for_plotting/blackhole_and_lambdas"
+                            + std::to_string(dim)
+                            + "D_N" + std::to_string(card)
+                            + "_redge" + redge_s
+                            + "_h" + h_s;
+        filename +=  ".txt";
+        const char* path_file = filename.c_str();
         std::cout<<"Ready to save in\n" << path_file << std::endl;
         C.save_molecules(path_file, "sets", t_f, r_S, "lambdas");
     }

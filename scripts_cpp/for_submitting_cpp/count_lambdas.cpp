@@ -13,7 +13,6 @@
 #include <vector>
 #include <chrono>
 #include <unordered_set>
-#include <chrono>
 
 #include "../causets_cpp/sprinkledcauset.h"
 #include "../causets_cpp/shapes.h"

@@ -9,37 +9,15 @@
 homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
-cpp_file_to_run="'count_HRVs.cpp'"
-
-# CPP VARIABLES
-Rho=5000
-N_reps=10
+cpp_file_to_run="'lambda_saving_hollow_3_or_4D.cpp'"
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=128
-mem=32
+mem=16
 runtime="1:00:00" #format: "hh:mm:ss"
 
-
-# SET MASSES YOU WANT TO SIMULATE
-# FIRST ROUND MASSES - 1k ...
-# [0.53 0.75 0.92 1.06 1.19 
-# 1.30 1.40 1.50 
-# 1.59 1.68 1.76 1.84 1.91 1.98 
-# 2.05  2.12 2.19 2.25 2.31 2.37 2.43 ] 
-# SECOND ROUND MASSES - 1.5k ...
-# [0.65 0.84 0.99 1.13 1.24 1.35 1.45 
-#  1.55 1.63 1.72 1.88 1.95
-#  1.8 
-#  2.02 2.09 2.15 2.22 2.28 2.34
-#  2.4
-#  2.46 ]
-counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 0.53
-#$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
-do 
-
+counter=0
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
 ##############################################################################
@@ -53,7 +31,29 @@ do
 ###### Write the run_file.sh which compiles and executes the .cpp script #####
 
 
-sh_run_file="${submitted_jobsDir}runfile_files/run_file_HRVcounting_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}.sh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sh_run_file="${submitted_jobsDir}runfile_files/run_file_for_plot_BH_lambdas.sh"
 
 
 echo "#!/usr/bin/env bash" > $sh_run_file
@@ -84,20 +84,20 @@ echo 'cd $mainDir$runfileRelativeDir' >> $sh_run_file
 # echo "ls" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "" >> $sh_run_file
-echo "mass=${mass}" >> $sh_run_file
-echo "N_multiplier=${N_multiplier}" >> $sh_run_file
-echo "N_reps=${N_reps}" >> $sh_run_file
+# echo "mass=${mass}" >> $sh_run_file
+# echo "N_multiplier=${N_multiplier}" >> $sh_run_file
+# echo "N_reps=${N_reps}" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# Execute the copy of the created .exe program" >> $sh_run_file
-echo 'cp ${runfilename::-4}".exe" "executables/HRVs_M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
+echo 'cp ${runfilename::-4}".exe" "executables/for_plot_BH_lambdas.exe"' >> $sh_run_file
 #echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
-echo '"./executables/HRVs_M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
+echo '"./executables/for_plot_BH_lambdas.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
 echo "" >> $sh_run_file
 
 ###############################################################################
 #______________________________________________________________________________
 ##### Write the submit file based on variables used and run_file.sh to submit
-submitfile="${submitted_jobsDir}submit_files/subHRV_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}.pbs"
+submitfile="${submitted_jobsDir}submit_files/for_plot_BH_lambdas.pbs"
 
 echo "#!/bin/sh" > $submitfile
 echo "#PBS -lselect=1:ncpus=${ncpus}:mem=${mem}gb" >> $submitfile
@@ -121,9 +121,8 @@ qsub $submitfile
 # Increase counter as job was submitted
 ((counter=counter+1)) 
 
-done
-
 echo "----------------------------------------------------------------------"
+echo "Submitted fro plotting"
 echo "Submitted ${counter} jobs for parameters:"
 echo "N_multiplier = ${N_multiplier}"
 echo "N_reps = ${N_reps}"
