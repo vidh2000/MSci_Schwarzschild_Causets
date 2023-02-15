@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-
+#include <omp.h>
 
 //_____________________________________________________________________
 //
@@ -337,6 +337,47 @@ int argmin(std::vector<T1, T2> const& v, int begin = 0, int end = 0)
 
 
 /**
+ * @brief Produces a copy of a matrix which was cut to
+ *        only rows and columns that correspond to the indices -
+ *        elements from the interval
+ * @param matrix :  NxN matrix
+ * @param interval: vector which contains the target indices telling which
+ *                  rows and columns not to cut away
+ */
+template <typename T>
+inline
+std::vector<std::vector<T>> get_reducedMatrix(std::vector<std::vector<T>> &matrix,
+                std::vector<int> interval)
+{
+
+    // Make sure values in the interval are ordered
+    std::sort(interval.begin(),interval.end());
+    
+    int N = matrix.size();
+    std::vector<std::vector<T>> new_matrix;
+
+    for (int i = 0; i<N; i++)
+    {
+        if (std::find(interval.begin(),interval.end(),i) == interval.end()) {
+            continue;
+        }
+        std::vector<T> row;
+        for (int j=0; j<N; j++)
+        {
+            if (std::find(interval.begin(),interval.end(),j) == interval.end()) {
+            continue;
+            }
+
+            row.push_back(matrix[i][j]);        
+        }
+        new_matrix.push_back(row);
+    }
+    return new_matrix;
+}
+
+
+
+/**
  * @brief Cuts the Cmatrix to only rows and columns that correspond to
  *          the indices - elements from the interval
  * @param matrix : i.e CMatrix 
@@ -490,6 +531,58 @@ double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
 }
 
 
+/**
+ * @brief Matrix multiplication A*B = C
+ * 
+ * @tparam T - any number type
+ * @param A - matrix A
+ * @param B  - matrix B
+ * @return std::vector<std::vector<T>> 
+ */
+template <typename T>
+inline
+std::vector<std::vector<T>> matmul(std::vector<std::vector<T>> A,
+                                   std::vector<std::vector<T>> B)
+{
+    // Create matrix of correct size to be filled in with results
+    std::vector<std::vector<T>> C;
+    int rows = A.size();
+    int columns = B[0].size();
+    C.resize(rows, std::vector<T>(columns));
+
+    //#pragma omp parallel for schedule(dynamic)
+    //#pragma omp parallel for private(i,j,k) shared(A,B,C)    
+    for(int i = 0; i < n; i++) {        
+        for(int k = 0; k < n; k++) {       
+            for(int j = 0; j < n; j++) {                
+                C[i][j] += A[i][k] * B[k][j];  
+            }
+        }
+    }
+    return C;
+}
+
+/**
+ * @brief Sum of all elements in the matrix (assuming a rectangular matrix!)
+ * 
+ * @tparam T - any real number type
+ * @param M matrix to be summed over
+ * @return double 
+ */
+template <typename T>
+inline
+double sumMatrix(std::vector<std::vector<T>> M)
+{
+    double sum = 0;
+    int N = M.size();
+    int K = M[0].size();
+    for (i=0; i<N; i++){
+        for (j=0; j<K; j++) {
+            sum = sum + M[i][j];
+        }
+    }
+    return sum;
+}
 
 // CTRL+K+C to comment out multiple lines of code
 // CTRL+K+U to uncomment out multiple lines of code

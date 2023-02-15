@@ -83,10 +83,18 @@ class EmbeddedCauset: public Causet
         void discard(std::vector<int> labels, std::vector<int> ordered_interval, 
                      bool make_matrix = true, 
                      bool make_sets = false, bool make_links = true);
-        void get_interval(int min_size, int max_size = 0, int N_max = 1000);
 
-        // SAVE
         
+        // Get intervals and stuff for kinematics calculations
+        std::vector<vector<int>> getIntervalCmatrix(
+                                std::vector<int> ordered_interval);
+        void get_interval(int min_size, int max_size = 0, int N_max = 1000);
+        std::vector<std::pair<int,double>> EmbeddedCauset::get_Nchains_inInterval(
+                 int N_intervals, int min_size, int k_max,
+                 int max_size=0, int N_max=1000);
+        
+        
+        // SAVE
         void save_causet(const char* path_file_ext,
                          const char* storage_option = "sets");
 
