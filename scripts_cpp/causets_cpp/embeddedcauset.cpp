@@ -1821,7 +1821,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
             _future_links.resize(_size);
         
-            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1893,14 +1893,14 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
-        
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_HRVs_from_futlinks(t_f,r_S);
+        }
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");
         }
         else
         {
@@ -1968,19 +1968,21 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
-        
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_HRVs_distr_from_futlinks(t_f,r_S);
         }
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");
+        }
         else
         {
+            std::cout<<"Starting doing futlinks in count_HRVs"<<std::endl;
             _future_links.resize(_size);
         
+            #pragma omp parallel
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
