@@ -19,6 +19,7 @@
 #include <iterator>
 #include <omp.h>
 #include <stdint.h>
+#include <utility>
 
 #include "functions.h"
 #include "vecfunctions.h"
@@ -477,7 +478,7 @@ std::vector<vector<int>> EmbeddedCauset::getIntervalCmatrix(
 {
     if (_CMatrix.size())
     {
-        get_reducedMatrix(_CMatrix, ordered_interval);
+        return get_reducedMatrix(_CMatrix, ordered_interval);
     } 
     else 
     {
@@ -601,19 +602,29 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
  *        in an interval of size (min_size and max_size) in a causet
  *        over "N_intervals" random intervals.
  * 
- * 
+ * @param N_intervals - Number of intervals
  * @param min_size - Minimal size of the interval (min # of elements in it) 
+ * @param k_max - maximal (included) length of chain we care about
  * @param max_size - Max. size of the interval (max # of elements in it
  *                                              == _size by default)
- * @param k_max - maximal (included) length of chain we care about
- * @param N_intervals - Number of intervals
  * @param N_max - max number of tries to find the interval before stopping
+ * @return Returns a vector of length N_intervals:
+ *         - for each interval there's a pair <N_chains_k,r_avg>
+ *              - N_chains_k: 
+ *                  a vector with "k_max" entries for chains of length 1..k    
+ *                  storing the number of such chains in the interval
+ *              - r_avg:     
+ *                  an average r value of the interval
+ *              
+ *         i.e for each interval, for each chain of length k
+ *          you have information about the number of such chains
+ *          and what was the average r-value for the interval
+ *          (to be able to check if it varies w.r.t r in Schwarzschild) 
  */
-vector<std::pair<int,double>> EmbeddedCauset::get_Nchains_inInterval(
+vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                     int N_intervals, int min_size, int k_max,
                     int max_size, int N_max) //==0, 1000
 {
-
     if (min_size <=2){
         std::cout << "min_size>2 required!" << std::endl;
         throw std::runtime_error("");
@@ -624,12 +635,17 @@ vector<std::pair<int,double>> EmbeddedCauset::get_Nchains_inInterval(
         max_size = _size;
     }
 
+    // Define vars and outcome vars
     int N_intervals_found = 0;
+    vector<std::pair<vector<double>,double>> results;
 
     while (N_intervals_found<N_intervals)
     {
         int N_tries = 0;
         bool found = false; 
+        vector<double> chain_arr;
+        double r_avg = 0;
+
         while (!found)
         {
             // Failsafe
@@ -686,17 +702,22 @@ vector<std::pair<int,double>> EmbeddedCauset::get_Nchains_inInterval(
                 
                 // Get the number of chains up to including size k
                 // where k=1 == _size
-                double C1 = _size;
+                double C1 = (double)_size;
                 double C2 = sumMatrix(M);
 
                if (k_max >=3) { 
                     vector<vector<int>> M2 = matmul(M,M);
                     double C3 = sumMatrix(M2);
+                    chain_arr.push_back(C1);
+                    chain_arr.push_back(C2);
+                    chain_arr.push_back(C3);
+
+                    if (k_max == 4){
+                        vector<vector<int>> M3 = matmul(M2,M);
+                        double C4 = sumMatrix(M3);
+                        chain_arr.push_back(C4);
+                    }
                }
-                if (k_max == 4){
-                    vector<vector<int>> M3 = matmul(M2,M);
-                    double C4 = sumMatrix(M3);
-                }
                 else if (k_max>4) {
                     print("Haven't implemented this for k>4!");
                     throw std::runtime_error("");
@@ -707,10 +728,14 @@ vector<std::pair<int,double>> EmbeddedCauset::get_Nchains_inInterval(
                     throw std::runtime_error("");
                 }
 
-                //to be continued after gym
-                 
-                
+                // Find the average r value in the interval
+                for (auto index : interval) {
+                    r_avg += _coords[index][1];
+                }
+                r_avg = r_avg/(double)n;
+        
 
+                // Found the suitable interval in the causet
                 found = true;
             }
             else{
@@ -718,8 +743,16 @@ vector<std::pair<int,double>> EmbeddedCauset::get_Nchains_inInterval(
                 continue;
             }
         }
+
+        //Create the pair of <N_chainK vector, r_avg>
+        std::pair<vector<double>,double> interval_result = {chain_arr,r_avg};
+        results.push_back(interval_result);
+
         N_intervals_found++;
     }
+
+    // Found number of (1...k_max)-sized chains for N_intervals
+    return results;  
 }
 
 

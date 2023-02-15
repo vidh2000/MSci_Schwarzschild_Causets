@@ -46,10 +46,11 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {40};
-int min_size = 10;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {100};
+int min_size = 5;  //Minimal size of the interval (min # of elements in it)
 double mass = 0.25;
-int N_reps = 1;
+int N_reps = 10;
+int N_intervals = 10;
 
 
 // Sprinkling Parameters
@@ -64,8 +65,8 @@ const char* sets_type = "all";
 const char* name = "cylinder";
 
 // Shape parameters
-double radius = 1;
-double height = 2;
+double radius = 0.1;
+double height = 0.1;
 ///////////////////////////////////////////
 
 // Begin program
@@ -109,7 +110,13 @@ for (auto dim: dims)
             std::cout << "------------------------\n";
             std::cout << "Getting an interval of min. size " << min_size <<
                     " -> cutting cmatrix, and pasts/futures sets\n";
+            
             C.get_interval(min_size);
+
+            // Get array of "N_chains" for chain-sizes 1...4
+            std::vector<std::pair<std::vector<double>,double>> nchains = 
+                        C.get_Nchains_inInterval(N_intervals,min_size,4);
+
             std::cout << "Full Cmatrix:" << std::endl;
             print_vector(C._CMatrix);
             std::cout << "Pasts set:\n";
