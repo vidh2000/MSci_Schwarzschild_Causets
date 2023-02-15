@@ -55,10 +55,10 @@ int main(){
                 
 std::vector<int> dims = {4}; 
 std::vector<int> cards = {1000};
-int min_size = 50;  //Minimal size of the interval (min # of elements in it)
+int min_size = 10;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0; //if 0 -> ==_size of the causet
 double mass = 0.025;
-int N_reps = 20;
+int N_reps = 10;
 int N_intervals = 200; // Number of intervals per causet realisation
 
 
@@ -166,8 +166,8 @@ for (auto dim: dims)
 
         for (auto item : C_k_arr) {
             // item == <array of Nchains_k, r_avg>
-            R_scalar += R_RSS(dim, item.first, density, radius/30);
-            R_tensor00 += R_00(dim, item.first, density, radius/10); 
+            R_scalar += R_RSS(dim, item.first, density);
+            R_tensor00 += R_00(dim, item.first, density); 
         } 
         
         R_scalar = R_scalar / (double)(N_reps*N_intervals);
