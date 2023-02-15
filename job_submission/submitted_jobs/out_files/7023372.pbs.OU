@@ -179,3 +179,7 @@ Finished get_lambdas_sizes
 Finished get_lambdas_distr
 Update distr starting to run now..
 Time taken in count_lambdas for N = 325163: 405.669 seconds
+M=1.95, 13/25
+Time taken generating for N = 325337: 97.6522 seconds
+Count lambdas starting to run now..
+Starting doing futlinks in count_lambdas
