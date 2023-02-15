@@ -88,6 +88,24 @@ void print_set(std::set<obj> set)
 
 template <typename obj>  
 inline
+void print(std::set<obj> set)
+{
+    
+    std::string beginstr = "{ ";
+    std::cout << beginstr;
+    for (obj e : set)
+    {
+        std::string separator = " ";
+        std::cout << e << separator;
+    }
+    std::string endstr = "}";
+    std::cout << endstr;
+    std::cout << std::endl;
+}
+
+
+template <typename obj>  
+inline
 void print_set(std::unordered_set<obj> set)
 {
     
@@ -102,6 +120,62 @@ void print_set(std::unordered_set<obj> set)
     std::cout << endstr;
     std::cout << std::endl;
 }
+
+template <typename obj>  
+inline
+void print(std::unordered_set<obj> set)
+{
+    
+    std::string beginstr = "{ ";
+    std::cout << beginstr;
+    for (obj e : set)
+    {
+        std::string separator = " ";
+        std::cout << e << separator;
+    }
+    std::string endstr = "}";
+    std::cout << endstr;
+    std::cout << std::endl;
+}
+
+
+inline
+void print(std::string str)
+{
+    std::cout << str << std::endl;
+}
+
+template <typename obj>  
+inline
+void print(std::vector<std::unordered_set<obj>> vec)
+{
+    bool brackets = true;
+    int size = vec.size();
+    if (brackets) {std::cout<<"{";}
+    for(int index = 0; index < size ; index++)
+    {
+        std::unordered_set<obj> set = vec[index];
+        if (index != 0){
+            std::cout<<" {";
+        }
+        else {
+            std::cout << "{";
+        }
+        for (auto e : set)
+        {
+            std::string separator = " ";
+            std::cout << e << separator;
+        }
+        std::cout << "}";
+
+        if (index != size -1) {std::cout<< ", " << std::endl;}
+    }
+    if (brackets) {
+        std::cout<<"}";
+    }
+    std::cout<<std::endl;
+}
+
 
 template <typename obj>  
 inline
@@ -120,20 +194,38 @@ bool set_contains(obj element, std::unordered_set<obj> s)
 }
 
 
-//for set containing int only here
-template <typename SET> 
+
+template <typename E> 
 inline
-SET set_diff(SET s1, SET s2)
+std::set<E> set_diff(std::set<E> s1, std::set<E> s2)
     /*
     Return set difference i.e events which are only in s1;
     RETURN = s1-s2 (where s2 can have other elements as well)
     */
 {
-    SET result;
+    std::set<E> result;
     std::set_difference(s1.begin(), s1.end(), s2.begin(), s2.end(),
         std::inserter(result, result.end()));
     return result;
 }
+
+
+template <typename E> 
+inline
+std::unordered_set<E> set_diff(std::unordered_set<E> s1,
+                        std::unordered_set<E> s2)
+    /*
+    Return set difference i.e events which are only in s1;
+    RETURN = s1-s2 (where s2 can have other elements as well)
+    */
+{
+    for (const auto& elem : s2) {
+    s1.erase(elem);
+    }
+    return s1;
+}
+
+
 
 template <typename SET> 
 inline
@@ -180,36 +272,12 @@ std::unordered_set<obj> set_intersection(std::unordered_set<obj> s1,
                                          std::unordered_set<obj> s2)
 {
     // Require sorted object...
-    // std::set<obj> v1;
-    // std::set<obj> v2;
-    // for (auto it = s1.begin(); it != s1.end(); ) {
-    //     v1.insert(std::move(s1.extract(it++).value()));
-    // }
-    // for (auto it2 = s2.begin(); it2 != s2.end(); ) {
-    //     v2.insert(std::move(s2.extract(it2++).value()));
-    // }
 
-    // // Find and return intersection of s1, s2
-    // std::unordered_set<obj> result;
-    // std::set_intersection(v1.begin(), v1.end(),v2.begin(), v2.end(),
-    //                       std::inserter(result,result.end()));
     std::unordered_set<obj> result;
-    if (s1.size() < s2.size())
+    for (int element : s1)
     {
-        for (obj a_i : s1)
-        {
-            auto found_iterator = s2.find(a_i);
-            if (found_iterator != s2.end())
-                {result.insert(a_i);}
-        }
-    }
-    else
-    {
-        for (obj a_i : s2)
-        {
-            auto found_iterator = s1.find(a_i);
-            if (found_iterator != s1.end())
-                {result.insert(a_i);}
+        if (s2.count(element) > 0) {
+        result.insert(element);
         }
     }
     return result;
@@ -286,6 +354,88 @@ void discard_from_set(std::unordered_set<m> &myset, std::vector<int> labels)
     myset = buffer;
 }
 
+
+/**
+ * @brief Replaces the values in the vector of (unordered) sets
+ *        with indices corresponding to the position where those
+ *        values appear in the "interval" vector
+ * @param sets : i.e futures/pasts. Vector of sets which contain ints etc.
+ * @param interval: vector which contains the target values and which will 
+ *                  be used to get the indices corresponding to their loc in it
+ */
+template<typename T>
+inline
+void replace_indices(std::vector<std::unordered_set<T>> &sets,
+                std::vector<T> interval)
+{
+    print("Inside 'replace_indices' method in functions.h");
+    // Make sure values in the interval are ordered
+    std::sort(interval.begin(),interval.end());
+    std::vector<std::unordered_set<T>> new_sets;
+    print("Updated sets:");
+    for (int i = 0; i<sets.size(); i++)
+    {
+        if (std::find(interval.begin(),interval.end(),i) == interval.end()) {
+            continue;
+        }
+    
+        std::unordered_set<T> new_set = {};
+        for (const auto& value : sets[i])
+        {
+            auto it = std::find(interval.begin(), interval.end(), value);
+            if (it != interval.end()) {
+                new_set.insert(std::distance(interval.begin(), it));
+            }
+        }
+        new_sets.push_back(new_set);
+        print(new_set);
+          
+    }
+    sets = new_sets;
+} 
+
+
+/**
+ * @brief Replaces the values in the set
+ *        with indices corresponding to the position where those
+ *        values appear in the "interval" vector
+ * @param sets : i.e future/past. Set which contain ints etc.
+ * @param interval: vector which contains the target values and which will 
+ *                  be used to get the indices corresponding to their loc in it
+ */
+template<typename T>
+inline
+void replace_indices(std::unordered_set<T> &set,
+                std::vector<T> interval)
+{
+
+    // Make sure values in the interval are ordered
+    std::sort(interval.begin(),interval.end());
+    
+    std::unordered_set<T> new_set = {};
+    for (const auto& value : set)
+    {
+        auto it = std::find(interval.begin(), interval.end(), value);
+        if (it != interval.end()) {
+            new_set.insert(std::distance(interval.begin(), it));
+        }
+    }
+    set = new_set;
+}
+         
+
+
+
+
+/**
+ * @brief The same as np.arange
+ * 
+ * @tparam T - any value integer, float...
+ * @param start Smallest value
+ * @param stop  Up to where the interval should be
+ * @param step  Step between values in the interval [start,stop)
+ * @return std::vector<T> 
+ */
 template<typename T>
 std::vector<T> arange(T start, T stop, T step = 1) {
     std::vector<T> values;

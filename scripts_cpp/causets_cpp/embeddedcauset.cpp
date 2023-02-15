@@ -396,38 +396,43 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
 
 
 void EmbeddedCauset::discard(vector<int> labels,
+                             vector<int> ordered_interval,
                              bool make_matrix, // = true, 
                              bool make_sets, // = false,
                              bool make_links) // = true)
 {
+    print("Discarding labels that have to be ordered:");
+    print(labels);
     remove_indices(_coords, labels);
+
 
     if (make_matrix)
     {
         if (_CMatrix.size())
         {
-            remove_indices(_CMatrix, labels);
-            for (vector<int> row : _CMatrix)
-                {remove_indices(row, labels);}
+            remove_indices_fromCmatrix(_CMatrix, ordered_interval);
+            //for (vector<int> row : _CMatrix)
+            //    {remove_indices(row, labels);}
         } 
     }
     if (make_sets)
     {
         if (_pasts.size())
         {
-            remove_indices(_pasts, labels);
-            for (unordered_set<int> past_i : _pasts)
-                {discard_from_set(past_i, labels);}
+            replace_indices(_pasts, ordered_interval);
+            //for (unordered_set<int> past_i : _pasts)
+            //    {discard_from_set(past_i, labels);}
         } 
         if (_futures.size())
         {
-            remove_indices(_futures, labels);
-            for (unordered_set<int> fut_i : _futures)
-                {discard_from_set(fut_i, labels);}
+            replace_indices(_futures, ordered_interval);
+            //for (unordered_set<int> fut_i : _futures)
+            //    {discard_from_set(fut_i, labels);}
         }   
     }
     if (make_links)
     {
+        print("NOTE: Discarding links is not yet implemented properly!");
         if (_past_links.size())
         {
             remove_indices(_past_links, labels);
@@ -457,17 +462,29 @@ void EmbeddedCauset::discard(vector<int> labels,
  *          larger than min_size.
  * 
  * @param min_size - Minimal size of the interval (min # of elements in it) 
+ * @param max_size - Max. size of the interval (max # of elements in it
+ *                                              == _size by default)
  * @param N_max - max number of tries to find the interval before stopping
  */
-void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by default
+void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000 max tries by default
 {
+
+    if (min_size <=2){
+        std::cout << "min_size>2 required!" << std::endl;
+        throw std::runtime_error("");
+    }
+
     bool found = false; 
     int N_tries = 0;
 
+    if (max_size == 0)
+    {
+        max_size = _size;
+    }
     std::unordered_set<int> all_indices;
     for (int i = 0; i < _size; i++) {
         all_indices.insert(i);
-  }
+    }
 
     while (!found)
     {
@@ -504,18 +521,49 @@ void EmbeddedCauset::get_interval(int min_size, int N_max) //=1000 max tries by 
             continue;
         }
         int n = IntervalCard(a, b);
-        if (n >= min_size && n<= _size)
+        if (n >= min_size && n<= max_size)
         {  
+             std::cout << "Found " << n <<
+            " elements in the inclusive interval between "
+            << a <<" and " << b << std::endl;
+            //print("Futures of a:");
+            //print(_futures[a]);
+            //print("Past of b:");
+            //print(_pasts[b]);
 
+            // Interval includes a, b and the elements connecting them
             std::unordered_set<int> interval = set_intersection(
                         _futures[a], _pasts[b]);
-            std::unordered_set<int> indices_to_remove =
-                        set_diff(all_indices,interval);
+            interval.insert(a);
+            interval.insert(b);
+
+            // Find indices to remove i.e all but the inclusive interval
+            std::unordered_set<int> indices_to_remove = set_diff(
+                                    all_indices,interval);
+                    
+            // Create a sorted vector of indices to discard
             std::vector<int> to_discard(indices_to_remove.begin(),
                                         indices_to_remove.end());
+            std::sort(to_discard.begin(),to_discard.end());
 
-            // Assume matrix is created and future and pasts but no links.
-            EmbeddedCauset::discard(to_discard,true,true,false);
+            std::cout << "Removing " << to_discard.size()
+            << " indices:" << std::endl;
+            print(to_discard);
+            
+            // Create a sorted vector of remaining indices (the interval)
+            
+            std::vector<int> ordered_interval(interval.begin(),
+                                              interval.end());
+            std::sort(ordered_interval.begin(),ordered_interval.end());              
+            
+
+            // Assumes matrix is created and future and pasts but no links.
+            EmbeddedCauset::discard(to_discard,ordered_interval,
+                                                true,true,false);
+            
+            std::cout << "Left with " << _size << " ordered indices.\n";
+            print(ordered_interval);
+
             found = true;
         }
         else{

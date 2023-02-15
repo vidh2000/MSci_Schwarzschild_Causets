@@ -36,10 +36,51 @@ void print_ints_map(std::map<int, int> const &map)
 using namespace std::chrono;
 using namespace std;
 int main(){
+
+
+
+//////////////////////////////////////////////////////////////////
+// Testing code for replacing unordered_set with indices of 
+// corresponding elements in a vector
+//////////////////////////////////////////////////////////////////
+
+std::vector<int> vec = {1,4,7,11,53};
+std::unordered_set<int> s = {4, 11, 2, 5, 8, 53, 10, 1, 24, 25, 26};
+
+
+std::unordered_set<int> new_set;
+for (const auto& value : s) {
+    auto it = std::find(vec.begin(), vec.end(), value);
+    if (it != vec.end()) {
+        new_set.insert(std::distance(vec.begin(), it));
+    }
+}
+
+s = std::move(new_set);
+
+
+// print the updated set
+print("Updated set is:");
+print(s);
+print("\n");
+
+print("Vector testing insertion...");
+print(vec);
+
+for (int i = 0; i < vec.size(); i++)
+{
+    int a = i;
+    vec[i] = a;
+}
+
+print(vec);
+
+
+
     auto start = high_resolution_clock::now();
 
  
-    cout<<"\n===============TESTING MAPS METHODS===========\n";
+    // cout<<"\n===============TESTING MAPS METHODS===========\n";
     // std::map<const char*, double> mymap = {{"a", 1},{"b",2}, {"c",3}};
 
     // mymap["c"] = 10;
@@ -60,7 +101,7 @@ int main(){
     // mymap["d"] = 5;
     // std::cout<< "After 'mymap['d'] = 5', the size is "<<mymap.size()<<endl;
 
-    std::map<int, int> mymap;
+   /*  std::map<int, int> mymap;
     mymap[1] += 1;
     cout<<"\nAfter 'mymap[1] += 1', mymap is"<<endl;
     print_ints_map(mymap);
@@ -72,7 +113,7 @@ int main(){
     print_ints_map(mymap);
     mymap[2] += 1;
     cout<<"\nAfter 'mymap[2] += 1' we have mymap[1] = "<<endl;
-    print_ints_map(mymap);
+    print_ints_map(mymap); */
 
     
     ////////////////////////////////
