@@ -464,8 +464,8 @@ void EmbeddedCauset::discard(vector<int> labels, //get rid of this?
 
 
 /**
- * @brief Yields a copy of the "reduced" cmatrix obtained by removing
- *          labels/keeping the interval specified from the causet.
+ * @brief Yields a copy of the interval's cmatrix obtained by removing
+ *          labels of elements not belonging to said interval.
  * 
  * @param labels Discard labels (get rid of this? not used now)
  * @param ordered_interval Interval (vector) of elements that remain
@@ -495,13 +495,13 @@ std::vector<vector<int>> EmbeddedCauset::getIntervalCmatrix(
  *          the elements that aren't in the interval ->
  *          -> changes the pasts/futures sets and reduces the cmatrix
  * 
- *          The intervals are chosen at random and must contain #elemenets
+ *          The intervals are chosen at random and must contain #elements
  *          larger than min_size.
  * 
- * @param min_size - Minimal size of the interval (min # of elements in it) 
- * @param max_size - Max. size of the interval (max # of elements in it
- *                                              == _size by default)
- * @param N_max - max number of tries to find the interval before stopping
+ * @param min_size : int. Minimal size of the interval (2 is default) 
+ * @param max_size : int.  Max. size of the interval (size of causet is default)
+ * @param N_max : int. Max number of tries to find the interval before stopping.
+ *                (1000 is default).
  */
 void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000 max tries by default
 {
@@ -601,6 +601,7 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
  *        including size k_max,
  *        in an interval of size (min_size and max_size) in a causet
  *        over "N_intervals" random intervals.
+ *        REQUIRES CMATRIX, AND PAST AND FUTURE SETS 
  * 
  * @param N_intervals - Number of intervals
  * @param min_size - Minimal size of the interval (min # of elements in it) 
@@ -680,6 +681,13 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                 N_tries += 1;
                 continue;
             }
+
+            // to have an interval require a prec b, so skip if not
+            if (_CMatrix[a][b] == 0){
+                N_tries += 1;
+                continue;
+            }
+
             int n = IntervalCard(a, b);
             if (n >= min_size && n<= max_size)
             {  
@@ -702,7 +710,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                 
                 // Get the number of chains up to including size k
                 // where k=1 == _size
-                double C1 = (double)_size;
+                double C1 = (double)n;
                 double C2 = sumMatrix(M);
 
                if (k_max >=3) { 
@@ -723,7 +731,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                     throw std::runtime_error("");
                 }
                 else {
-                    print("What the hell did you choose for k?");
+                    print("What did you choose for k?");
                     print("k<=4 required!");
                     throw std::runtime_error("");
                 }

@@ -179,7 +179,7 @@ for (auto rho : densities)
         hollow_vals.push_back(0);
         durations.push_back(dur);
         // Keep the same density of points, i.e such that N(M=1)=N_multiplier
-        int card = rho*4/3*pi*(r_out*r_out*r_out-r_in*r_in*r_in)*dur;
+        int card = rho*4./3.*pi*(r_out*r_out*r_out-r_in*r_in*r_in)*dur;
         cards.push_back(card);
         std::cout << "Cardinality = " << card << std::endl;
         // Add # of repetitions for each mass
