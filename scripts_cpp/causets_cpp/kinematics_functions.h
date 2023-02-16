@@ -31,16 +31,22 @@ const double pi = 3.141592653589793238462643383279502884;
 ///////////////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// FROM ROY, SINHA, SURYA (2013). Discrete geometry of a small causal diamond.
+//////////////////////////////////////////////////////////////////////////////
+
 /**
- * @brief Gets the constant chi_k
+ * @brief Gets the constant chi_k, as of Roy, Sinha, Surya 2013.
  * 
- * @param d - number of dimensions of the manifold 
- * @param k - integer
+ * @param d - int, number of dimensions of the manifold 
+ * @param k - int
  * @return double: Value of the constant
  */
 inline
-double chi_k(double d, double k){
-    return 1/k * pow(tgamma(d+1)/2, k-1) * tgamma(d/2)* tgamma(d)
+double chi_k(double d, double k)
+{
+    return 1/k * pow( tgamma(d+1)/2 , k-1) * tgamma(d/2)* tgamma(d)
     / ( tgamma(k*d/2) * tgamma((k+1)*d/2) );
 }
 
@@ -48,25 +54,23 @@ double chi_k(double d, double k){
 /**
  * @brief Gets the constant \xi_0
  * 
- * @param d - dimensions of the manifold 
- * @param r - radius of the (d-2)sphere
+ * @param d - double. Dimension of the manifold. 3 or 4.
  * @return double: coefficient value
  */
 inline
-double xi_0(double d, double r)
+double xi_0(double d)
 {
-    
     double vol;
     if ((int)d==3){
-        vol = 1;
+        vol = 2.*pi;
     }
-    else if (d==4){
-        vol = pi*r*r;
+    else if ((int)d==4){
+        vol = 4.0*pi;
     }
     else{
-        std::cout << "Dimension must be 2,3 or 4!\n";
+        std::cout << "Dimension must be 3 or 4!\n";
     } 
-    return vol/(d*(d-1)*std::pow(2,d-1));
+    return vol / (d*(d-1)*std::pow(2,d-1)) ;
 }
 
 
@@ -76,15 +80,14 @@ double xi_0(double d, double r)
  * 
  * @param k Size of chains
  * @param d Dimensions of the manifold
- * @param C_k Number of chains of size k between two points 
+ * @param C_k Number of chains of size k
  * @param rho Number density of causet
- * @param r Radius of the d-2 dimensional sphere?
  * @return double
  */
 inline
-double Q_k(double k, double d, double C_k, double rho, double r)
+double Q_k(double k, double d, double C_k, double rho)
 {
-    return 1/std::pow(xi_0(d,r)*rho,3) * std::pow(C_k/chi_k(d,k), 3/k);
+    return 1/std::pow(xi_0(d)*rho,3) * std::pow(C_k/chi_k(d,k), 3/k);
 }
 
 /**
@@ -98,25 +101,23 @@ double Q_k(double k, double d, double C_k, double rho, double r)
 inline
 double K_k(double k, double d, double Q_k)
 {
-    return ((k+1)*d+2)*Q_k;
+    return ((k+1)*d + 2)*Q_k;
 }
 
 
 /**
- * @brief Overridden: Calculates value of K_k without knowledge of Q_k
+ * @brief Calculates value of K_k without knowledge of Qk
  * 
- * @param k Size of chains
- * @param d Dimensions of the manifold
- * @param C_k Number of chains of size k between two points 
+ * @param k - Chain size 
+ * @param d - Dimensions of the manifold
+ * @param C_k Number of chains of size k
  * @param rho Number density of causet
- * @param r Radius of the d-2 dimensional sphere?
  * @return double
- * @return double 
  */
 inline
-double K_k(double k, double d, double C_k, double rho, double r)
+double K_k(double k, double d, double C_k, double rho)
 {
-    return ((k+1)*d+2)*Q_k(k,d,C_k,rho,r);
+    return ((k+1)*d + 2)*Q_k(k, d, C_k, rho);
 }
 
 
@@ -143,13 +144,12 @@ double J_k(double k, double d, double K_k)
  * @param d - Manifold dim
  * @param C_k - Number of chains of size k
  * @param rho - Density of causet sprinkling
- * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double J_k(double k, double d, double C_k, double rho, double r)
+double J_k(double k, double d, double C_k, double rho)
 {
-    return K_k(k, d, Q_k(k, d, C_k, rho, r))*(k*d+2);
+    return K_k(k, d, Q_k(k, d, C_k, rho))*(k*d+2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -247,31 +247,27 @@ double estimate_MMd(std::vector<double> C_k_arr)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Functions for finding the Ricci scalar and tensor and proper time T
+// Functions for finding the Ricci scalar and tensor 00 and proper time T
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
-
-
 
 
 /**
  * @brief Proper time extension of the interval 
  * 
  * @param d - Manifold dim
- * @param C_k - Number of chains of size k
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
  * @param rho - Density of causet sprinkling
- * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double T(double d, double C_k, double rho, double r)
+double T(double d, std::vector<double> C_k, double rho)
 {
-    double J1 = J_k(1,d, C_k, rho, r);
-    double J2 = J_k(2,d, C_k, rho, r);
-    double J3 = J_k(3,d, C_k, rho, r);
+    double J1 = J_k(1,d, C_k[0], rho);
+    double J2 = J_k(2,d, C_k[1], rho);
+    double J3 = J_k(3,d, C_k[2], rho);
 
-    return std::pow(1/(d*d)*(J1-2*J2+J3), 1/d);
+    return std::pow(1/(d*d)*(J1-2*J2+J3), 1/(3*d));
 }
 
 
@@ -279,17 +275,16 @@ double T(double d, double C_k, double rho, double r)
  * @brief Ricci scalar value at the centre of the interval
  *          (from RSS - Roy, Sinha, Surya 2013 paper)
  * @param d - Manifold dim
- * @param C_k - Number of chains of size k
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
  * @param rho - Density of causet sprinkling
- * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double R_RSS(double d, double C_k, double rho, double r) 
+double R_RSS(double d, std::vector<double> C_k, double rho) 
 {
-    double K1 = K_k(1,d,C_k,rho,r);
-    double K2 = K_k(2,d,C_k,rho,r);
-    double K3 = K_k(3,d,C_k,rho,r);
+    double K1 = K_k(1,d,C_k[0],rho);
+    double K2 = K_k(2,d,C_k[1],rho);
+    double K3 = K_k(3,d,C_k[2],rho);
 
     double J1 = J_k(1,d,K1);
     double J2 = J_k(2,d,K2);
@@ -308,18 +303,18 @@ double R_RSS(double d, double C_k, double rho, double r)
  * @brief (0,0) component of the Ricci tensor at the centre of the interval
  *              (from RSS - Roy, Sinha, Surya 2013 paper)
  * @param d - Manifold dim
- * @param C_k - Number of chains of size k
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
  * @param rho - Density of causet sprinkling
- * @param r - Radius of d-2 dim sphere?
  * @return double 
  */
 inline
-double R_00(double d, double C_k, double rho, double r) 
+double R_00(double d, std::vector<double> C_k, double rho) 
 {
-    double T_proper = T(d,C_k,rho,r);
-    double Q1 = Q_k(1,d,C_k,rho,r);
-    double Q2 = Q_k(2,d,C_k,rho,r);
-    double Q3 = Q_k(3,d,C_k,rho,r);
+    double T_proper = T(d,C_k,rho);
+    print(T_proper);
+    double Q1 = Q_k(1,d,C_k[1],rho);
+    double Q2 = Q_k(2,d,C_k[2],rho);
+    double Q3 = Q_k(3,d,C_k[3],rho);
 
     return -4*(2*d+2)*(3*d+2) / (std::pow(d,3) * std::pow(T_proper,3*d+2)) *
     ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
@@ -330,9 +325,10 @@ double R_00(double d, double C_k, double rho, double r)
 /**
  * @brief Ricci scalar as calculated via Benincasa-Dowker action
  * 
- * @param l - discreteness length
+ * @param x - int. Label of element at which compute BD Ricci Scalar. 
+ * @param l - discreteness length of causet.
  * @param N_arr - array (N1, N2, N3, N4) where
- *          N_i: Number of i-chains in the interval
+ *          N_i: Number of y in causet such that |I(y,x)|=N_i-1
  * @return double 
  */
 inline

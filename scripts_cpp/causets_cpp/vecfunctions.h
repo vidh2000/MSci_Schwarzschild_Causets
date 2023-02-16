@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 #include <omp.h>
+#include "functions.h"
 
 //_____________________________________________________________________
 //
@@ -532,7 +533,7 @@ double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
 
 
 /**
- * @brief Matrix multiplication A*B = C
+ * @brief Matrix multiplication A*B = C. SQUARE MATRIX PLEASE
  * 
  * @tparam T - any number type
  * @param A - matrix A
@@ -547,7 +548,17 @@ std::vector<std::vector<T>> matmul(std::vector<std::vector<T>> A,
     // Create matrix of correct size to be filled in with results
     std::vector<std::vector<T>> C;
     int rows = A.size();
-    int columns = B[0].size();
+    int columns = A[0].size();
+    int n = rows;
+    if (rows != columns) {
+        print("Want square matrix please.");
+        throw std::runtime_error("");
+    }
+    if ((B.size()!=n) || (B[0].size()!=n)) {
+        print("A and B matrix should be of equal sizes!");
+        throw std::runtime_error("");
+
+    }
     C.resize(rows, std::vector<T>(columns));
 
     //#pragma omp parallel for schedule(dynamic)
@@ -576,8 +587,8 @@ double sumMatrix(std::vector<std::vector<T>> M)
     double sum = 0;
     int N = M.size();
     int K = M[0].size();
-    for (i=0; i<N; i++){
-        for (j=0; j<K; j++) {
+    for (int i=0; i<N; i++){
+        for (int j=0; j<K; j++) {
             sum = sum + M[i][j];
         }
     }
