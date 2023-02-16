@@ -36,7 +36,7 @@ runtime="08:00:00" #format: "hh:mm:ss"
 #  2.4
 #  2.46 ]
 counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 2.46
+for mass in 2.46 2.46
 #$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
 do 
 

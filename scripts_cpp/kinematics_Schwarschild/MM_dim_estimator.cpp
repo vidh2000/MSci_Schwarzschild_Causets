@@ -48,9 +48,10 @@ int main(){
 std::vector<int> dims = {4}; 
 std::vector<int> cards = {100};
 int min_size = 5;  //Minimal size of the interval (min # of elements in it)
+int max_size = 0;
 double mass = 0.01;
 int N_reps = 10;
-int N_intervals = 10;
+int N_intervals = 100;
 
 
 // Sprinkling Parameters
@@ -83,10 +84,8 @@ for (auto dim: dims)
     
     for (auto card : cards)
     {
+        // Array for storing dimension estimate values
         std::vector<double> dim_ests = {}; 
-        // Arrays for storing information from intervals
-        std::vector<double> r_avg_arr;
-        std::vector<double> C_k_arr; 
 
         for (int rep=0; rep<N_reps; rep++)
         {
@@ -109,16 +108,15 @@ for (auto dim: dims)
                     " -> cutting cmatrix, and pasts/futures sets\n";
             
             // Get array of "N_chains" for chain-sizes 1...4
-            std::vector<std::pair<std::vector<double>,double>> nchains = 
-                        C.get_Nchains_inInterval(N_intervals,min_size,4);
+            std::vector<std::pair<std::vector<double>,double>> nchains_arr = 
+                        C.get_Nchains_inInterval(N_intervals,
+                            min_size,4, max_size);
 
+            for (auto item : nchains_arr) {
+                double d_i = estimate_MMd(item.first);
+                dim_ests.push_back(d_i);
+            }
             
-            // Create interval          
-
-            // Estimate dimension of the causet
-            //double d_i = estimate_MMd(C_k_arr);
-            //dim_ests.push_back(d_i);
-
             
 
             //Timing rep
@@ -136,6 +134,13 @@ for (auto dim: dims)
                 << " causets in D=" << dim << " with N = " << card << ": "  
                 << duration/pow(10,6)/N_reps
                 << " seconds\n" << std::endl;
+
+        // Getting the dimension estimate mean and std
+        double d_avg = mymean(dim_ests);
+        double d_std = mystd(dim_ests);
+
+        std::cout << "MMd estimate = "<<d_avg<<"+-"<<d_std<<
+                    ". D="<<dim<<", N=" << card << std::endl; 
     }   
 }
 

@@ -628,7 +628,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             if (N_tries > N_max){
                 std::cout << "Couldn't find suitable interval in " << N_max
                     << "tries" << std::endl;
-                throw std::runtime_error("");
+                break;
             } 
 
             // Define mersenne_twister_engine Random Gen. (with random seed)
@@ -720,6 +720,13 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
 
                 // Found the suitable interval in the causet
                 found = true;
+
+                //Create the pair of <N_chainK vector, r_avg>
+                std::pair<vector<double>,double> interval_result =
+                                                        {chain_arr,r_avg};
+                results.push_back(interval_result);
+
+                N_intervals_found++;
             }
             else{
                 N_tries +=1;
@@ -727,11 +734,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             }
         }
 
-        //Create the pair of <N_chainK vector, r_avg>
-        std::pair<vector<double>,double> interval_result = {chain_arr,r_avg};
-        results.push_back(interval_result);
-
-        N_intervals_found++;
+        
     }
 
     // Found number of (1...k_max)-sized chains for N_intervals
