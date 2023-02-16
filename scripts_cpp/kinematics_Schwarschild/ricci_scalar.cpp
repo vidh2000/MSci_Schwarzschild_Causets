@@ -54,10 +54,10 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {100};
+std::vector<int> cards = {1000};
 int min_size = 5;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0; //if 0 -> ==_size of the causet
-double mass = 0.025;
+double mass = 0.25;
 int N_reps = 10;
 int N_intervals = 100; // Number of intervals per causet realisation
 
@@ -74,8 +74,8 @@ const char* sets_type = "all";
 const char* name = "cylinder";
 
 // Shape parameters
-double radius = 0.1;
-double height = 0.3; 
+double radius = 0.5;
+double height = 1; 
 
 ///////////////////////////////////////////
 
@@ -112,7 +112,8 @@ for (auto dim: dims)
                             make_matrix, special, use_transitivity,
                             make_sets, make_links,sets_type);
 
-
+            double nRels = sumMatrix(C._CMatrix);
+            std::cout<<"Number of relations:" << nRels << std::endl;
             // Get array of "N_chains" for chain-sizes 1...4
             std::vector<std::pair<std::vector<double>,double>> nchains_arr = 
                         C.get_Nchains_inInterval(N_intervals,

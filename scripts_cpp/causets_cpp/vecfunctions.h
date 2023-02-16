@@ -531,6 +531,30 @@ double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
     return (double) mean / sumw;
 }
 
+template <typename T>
+inline
+double mystd(const std::vector<T>& v) {
+    // Calculate the mean of the vector
+    double mean = 0.0;
+    for (auto x : v) {
+        mean += (double)x;
+    }
+    mean /= v.size();
+
+    // Calculate the sum of the squared differences from the mean
+    double squaredDifferencesSum = 0.0;
+    for (double x : v) {
+        squaredDifferencesSum += std::pow(x - mean, 2);
+    }
+
+    // Calculate the variance and standard deviation
+    double variance = squaredDifferencesSum / v.size();
+    double stdDeviation = std::sqrt(variance);
+
+    return stdDeviation;
+}
+
+
 
 /**
  * @brief Matrix multiplication A*B = C. SQUARE MATRIX PLEASE
