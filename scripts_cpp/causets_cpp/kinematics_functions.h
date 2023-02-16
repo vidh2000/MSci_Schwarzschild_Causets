@@ -31,16 +31,22 @@ const double pi = 3.141592653589793238462643383279502884;
 ///////////////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// FROM ROY, SINHA, SURYA (2013). Discrete geometry of a small causal diamond.
+//////////////////////////////////////////////////////////////////////////////
+
 /**
- * @brief Gets the constant chi_k
+ * @brief Gets the constant chi_k, as of Roy, Sinha, Surya 2013.
  * 
- * @param d - number of dimensions of the manifold 
- * @param k - integer
+ * @param d - int, number of dimensions of the manifold 
+ * @param k - int
  * @return double: Value of the constant
  */
 inline
-double chi_k(double d, double k){
-    return 1/k * pow(tgamma(d+1)/2, k-1) * tgamma(d/2)* tgamma(d)
+double chi_k(double d, double k)
+{
+    return 1/k * pow( tgamma(d+1)/2 , k-1) * tgamma(d/2)* tgamma(d)
     / ( tgamma(k*d/2) * tgamma((k+1)*d/2) );
 }
 
@@ -48,13 +54,12 @@ double chi_k(double d, double k){
 /**
  * @brief Gets the constant \xi_0
  * 
- * @param d - dimensions of the manifold 
+ * @param d - int. Dimension of the manifold. 3 or 4.
  * @return double: coefficient value
  */
 inline
 double xi_0(double d)
 {
-    
     double vol;
     if ((int)d==3){
         vol = pi;
@@ -65,7 +70,7 @@ double xi_0(double d)
     else{
         std::cout << "Dimension must be 3 or 4!\n";
     } 
-    return vol/(d*(d-1)*std::pow(2,d-1));
+    return vol / (d*(d-1)*std::pow(2,d-1)) ;
 }
 
 
@@ -75,7 +80,7 @@ double xi_0(double d)
  * 
  * @param k Size of chains
  * @param d Dimensions of the manifold
- * @param C_k Number of chains of size k between two points 
+ * @param C_k Number of chains of size k
  * @param rho Number density of causet
  * @return double
  */
@@ -96,24 +101,23 @@ double Q_k(double k, double d, double C_k, double rho)
 inline
 double K_k(double k, double d, double Q_k)
 {
-    return ((k+1)*d+2)*Q_k;
+    return ((k+1)*d + 2)*Q_k;
 }
 
 
 /**
- * @brief Overridden: Calculates value of K_k without knowledge of Q_k
+ * @brief Calculates value of K_k without knowledge of Qk
  * 
- * @param k Size of chains
- * @param d Dimensions of the manifold
- * @param C_k Number of chains of size k between two points 
+ * @param k - Chain size 
+ * @param d - Dimensions of the manifold
+ * @param C_k Number of chains of size k
  * @param rho Number density of causet
  * @return double
- * @return double 
  */
 inline
 double K_k(double k, double d, double C_k, double rho)
 {
-    return ((k+1)*d+2)*Q_k(k,d,C_k,rho);
+    return ((k+1)*d + 2)*Q_k(k, d, C_k, rho);
 }
 
 
@@ -243,7 +247,7 @@ double estimate_MMd(std::vector<double> C_k_arr)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Functions for finding the Ricci scalar and tensor and proper time T
+// Functions for finding the Ricci scalar and tensor 00 and proper time T
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
