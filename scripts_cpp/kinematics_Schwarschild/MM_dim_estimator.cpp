@@ -46,12 +46,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {100};
-int min_size = 5;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {5000};
+int min_size = 50;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0;
-double mass = 0.01;
-int N_reps = 10;
-int N_intervals = 100;
+double mass = 0.25;
+int N_reps = 100;
+int N_intervals = 50;
 
 
 // Sprinkling Parameters
@@ -66,8 +66,8 @@ const char* sets_type = "all";
 const char* name = "cylinder";
 
 // Shape parameters
-double radius = 0.1;
-double height = 0.3;
+double radius = 0.5;
+double height = 1;
 ///////////////////////////////////////////
 
 // Begin program
@@ -86,8 +86,9 @@ for (auto dim: dims)
     {
         // Array for storing dimension estimate values
         std::vector<double> dim_ests = {}; 
-
-        for (int rep=0; rep<N_reps; rep++)
+        
+        int rep=0;
+        while (rep<N_reps)
         {
             std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
@@ -111,6 +112,11 @@ for (auto dim: dims)
             std::vector<std::pair<std::vector<double>,double>> nchains_arr = 
                         C.get_Nchains_inInterval(N_intervals,
                             min_size,4, max_size);
+
+            if (nchains_arr.size() < N_intervals){
+                continue;
+            }
+            rep++;
 
             for (auto item : nchains_arr) {
                 double d_i = estimate_MMd(item.first);

@@ -653,7 +653,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             if (N_tries > N_max){
                 std::cout << "Couldn't find suitable interval in " << N_max
                     << "tries" << std::endl;
-                break;
+                throw std::runtime_error("");
             } 
 
             // Define mersenne_twister_engine Random Gen. (with random seed)
@@ -691,6 +691,9 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             int n = IntervalCard(a, b);
             if (n >= min_size && n<= max_size)
             {  
+
+                /*          //OLD WAY WITH SET INTERSECTION
+
                 // Create set_intersection for cmatrix..
                 // Interval includes a, b and the elements connecting them
                 std::unordered_set<int> interval = set_intersection(
@@ -698,11 +701,27 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                 interval.insert(a);
                 interval.insert(b);
 
-                // Create a sorted vector of remaining indices (the interval)
+                // Create a sorted vector of the interval (remaining indices)
                 std::vector<int> ordered_interval(interval.begin(),
                                                 interval.end());
                 std::sort(ordered_interval.begin(),ordered_interval.end());              
+                */
                 
+
+                // Create set_intersection for cmatrix..
+                // Interval includes a, b and the elements connecting them
+                vector<int> ordered_interval = {a};
+                for (int i=a+1; i<b; i++) {
+                    if(_CMatrix[a][i] && _CMatrix[i][b]) {
+                        ordered_interval.push_back(i);
+                    }
+                }
+                ordered_interval.push_back(b);
+
+                if(ordered_interval.size() != n) {
+                    std::cout << "n="<<n<<", interval size="<<
+                    ordered_interval.size()<<std::endl;
+                }
 
                 // Create a copy of the (cut) interval "reduced" cmatrix
                 vector<vector<int>> M =
@@ -737,7 +756,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                 }
 
                 // Find the average r value in the interval
-                for (auto index : interval) {
+                for (int index : ordered_interval) {
                     r_avg += _coords[index][1];
                 }
                 r_avg = r_avg/(double)n;
@@ -752,16 +771,16 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                 results.push_back(interval_result);
 
                 N_intervals_found++;
+                std::cout << "Found "<<
+                    (N_intervals_found) << "/" << N_intervals <<
+                    " intervals" << std::endl;
             }
             else{
                 N_tries +=1;
                 continue;
             }
-        }
-
-        
+        }   
     }
-
     // Found number of (1...k_max)-sized chains for N_intervals
     return results;  
 }

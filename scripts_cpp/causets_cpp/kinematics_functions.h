@@ -230,6 +230,7 @@ double MMdim_eqn(double d, std::vector<double> C_k_arr)
 inline
 double estimate_MMd(std::vector<double> C_k_arr)
 {
+    print(C_k_arr);
     // Define function whose root needs to be found
     auto MM_to_solve = [C_k_arr](double d){
         return MMdim_eqn(d,C_k_arr);
@@ -310,7 +311,6 @@ double R_RSS(double d, std::vector<double> C_k, double rho)
 inline
 double R_00(double d, std::vector<double> C_k, double rho) 
 {
-    print(C_k);
     double T_proper = T(d,C_k,rho);
     double Q1 = Q_k(1,d,C_k[1],rho);
     double Q2 = Q_k(2,d,C_k[2],rho);

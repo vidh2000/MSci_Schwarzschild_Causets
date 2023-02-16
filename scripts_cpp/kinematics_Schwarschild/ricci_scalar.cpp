@@ -54,12 +54,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {1000};
-int min_size = 5;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {4000};
+int min_size = 40;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0; //if 0 -> ==_size of the causet
 double mass = 0.25;
-int N_reps = 10;
-int N_intervals = 100; // Number of intervals per causet realisation
+int N_reps = 30;
+int N_intervals = 30; // Number of intervals per causet realisation
 
 
 // Sprinkling Parameters
@@ -68,9 +68,9 @@ bool poisson = true;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
-bool make_sets = true;
+bool make_sets = false;
 bool make_links = false; 
-const char* sets_type = "all";
+const char* sets_type = "future";
 const char* name = "cylinder";
 
 // Shape parameters
@@ -97,7 +97,8 @@ for (auto dim: dims)
 
         // Generate causets and find intervals and number of k-chains...
         ////////////////////////////////////////////////////////////////////
-        for (int rep=0; rep<N_reps; rep++)
+        int rep=0;
+        while (rep<N_reps)
         {
             std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
@@ -114,13 +115,20 @@ for (auto dim: dims)
 
             double nRels = sumMatrix(C._CMatrix);
             std::cout<<"Number of relations:" << nRels << std::endl;
-            // Get array of "N_chains" for chain-sizes 1...4
-            std::vector<std::pair<std::vector<double>,double>> nchains_arr = 
-                        C.get_Nchains_inInterval(N_intervals,
+            
+            // Get array of "N_chains" for chain-sizes 1...4.
+            std::vector<std::pair<std::vector<double>,double>> nchains_arr;
+            try {
+                nchains_arr = C.get_Nchains_inInterval(N_intervals,
                                             min_size, 4, max_size);
+            } catch (std::runtime_error& e) {
+                continue;
+            }
 
+            
             // Store Nchain_k vectors and r_avg values 
             for (auto item : nchains_arr) {
+                print(item.first);
                 C_k_arr.push_back(item);
             }
 
@@ -129,6 +137,10 @@ for (auto dim: dims)
             double duration = duration_cast<microseconds>(repend - repstart).count();
             std::cout << "Rep finished, N = " << C._size
             << ": " << duration/pow(10,6) << " seconds" << std::endl;
+
+            // Add to counter of repetitions
+            rep++;
+
         }
     
         auto mid = high_resolution_clock::now();
@@ -160,23 +172,37 @@ for (auto dim: dims)
             throw std::runtime_error("");
         }
         density = card/volume;
-        std::cout << "Density = " << density << std::endl;
 
         // Find values of causet kinematics-related variables
-        double R_scalar = 0;
-        double R_tensor00 = 0;
+        std::vector<double> R_scalar_arr;
+        std::vector<double> R_tensor00_arr;
 
         for (auto item : C_k_arr) {
             // item == <array of Nchains_k, r_avg>
-            R_scalar += R_RSS(dim, item.first, density);
-            R_tensor00 += R_00(dim, item.first, density); 
+            R_scalar_arr.push_back(R_RSS(dim, item.first, density));
+            R_tensor00_arr.push_back(R_00(dim, item.first, density)); 
         } 
         
-        R_scalar = R_scalar / (double)(N_reps*N_intervals);
-        std::cout << "Rscalar = " << R_scalar << std::endl;
-        R_tensor00 = R_tensor00 / (double)(N_reps*N_intervals);
-        std::cout << "R_tensor (00th component)  = " << R_tensor00
-                                        << std::endl;
+        print("\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
+        std::cout << "Density = " << density << std::endl;
+        print("Using units of discreteness scale");
+
+        double R_RSS_scalar_avg = mymean(R_scalar_arr)/std::sqrt(density);
+        double R_RSS_scalar_std = mystd(R_scalar_arr)/std::sqrt(density);
+        
+        double R_RSS_tensor00_avg = mymean(R_tensor00_arr)/std::sqrt(density);
+        double R_RSS_tensor00_std = mystd(R_tensor00_arr)/std::sqrt(density);
+        
+
+        std::cout << "Dim="<<dim<<". Card="<<card << std::endl;
+        
+
+        std::cout << "Rscalar = " << R_RSS_scalar_avg
+            << "+-" << R_RSS_scalar_std << std::endl;
+        
+        std::cout << "R_tensor (00th component)  = "
+            << R_RSS_tensor00_avg << "+-"
+            << R_RSS_tensor00_std << std::endl;
 
         // Finished for that Dimension and Cardinality value
     }   
