@@ -92,6 +92,11 @@ class Causet
                         int size_min = 100,
                         double size_max = 1e9,
                         bool from_matrix = true);   
+
+        std::vector<std::vector<int>> getIntervalCmatrix(
+                                std::vector<int> ordered_interval);
+                                
+        std::vector<double> Nk_BD (int x, int kmax, int kmin = 1);
         
 
 

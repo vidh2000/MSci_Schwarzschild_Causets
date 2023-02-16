@@ -1,5 +1,5 @@
-#ifndef SCHWARZSCHILD_KINEMATICS_H
-#define SCHWARZSCHILD_KINEMATICS_H
+#ifndef KINEMATICS_FUNCTIONS_H
+#define KINEMATICS_FUNCTIONS_H
 
 #include <algorithm>
 #include <cmath>
@@ -14,6 +14,7 @@
 #include <set>
 #include <unordered_set>
 
+#include "causet.h"
 #include "functions.h"
 #include "vecfunctions.h"
 
@@ -23,18 +24,84 @@
 using namespace boost::math;
 
 const double pi = 3.141592653589793238462643383279502884;
-                  
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-// Defining constants (functions) to be used later in various kin. calculations
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////////////
 // FROM ROY, SINHA, SURYA (2013). Discrete geometry of a small causal diamond.
 //////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief Proper time extension of the interval 
+ * 
+ * @param d - Manifold dim
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
+ * @param rho - Density of causet sprinkling
+ * @return double 
+ */
+inline
+double T(double d, std::vector<double> C_k, double rho)
+{
+    double J1 = J_k(1,d, C_k[0], rho);
+    double J2 = J_k(2,d, C_k[1], rho);
+    double J3 = J_k(3,d, C_k[2], rho);
+
+    return std::pow(1/(d*d)*(J1-2*J2+J3), 1/(3*d));
+}
+
+
+/**
+ * @brief Ricci scalar value at the centre of the interval
+ *          (from RSS - Roy, Sinha, Surya 2013 paper)
+ * @param d - Manifold dim
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
+ * @param rho - Density of causet sprinkling
+ * @return double 
+ */
+inline
+double R_RSS(double d, std::vector<double> C_k, double rho) 
+{
+    double K1 = K_k(1,d,C_k[0],rho);
+    double K2 = K_k(2,d,C_k[1],rho);
+    double K3 = K_k(3,d,C_k[2],rho);
+
+    double J1 = J_k(1,d,K1);
+    double J2 = J_k(2,d,K2);
+    double J3 = J_k(3,d,K3);
+
+    return -4*(d+2)*(2*d+2)*(3*d+2) *
+        std::pow(2,2/(3*d)) *
+        std::pow(d,(4/(3*d)-1)) * 
+        (K1-2*K2+K3) / std::pow(J1-2*J2+J3, 1+2/(3*d));
+}
+
+
+/**
+ * @brief (0,0) component of the Ricci tensor at the centre of the interval
+ *              (from RSS - Roy, Sinha, Surya 2013 paper)
+ * @param d - Manifold dim
+ * @param C_k - Vector of: Number of chains of size k for k=1,2,3
+ * @param rho - Density of causet sprinkling
+ * @return double 
+ */
+inline
+double R_00(double d, std::vector<double> C_k, double rho) 
+{
+    double T_proper = T(d,C_k,rho);
+    print(T_proper);
+    double Q1 = Q_k(1,d,C_k[1],rho);
+    double Q2 = Q_k(2,d,C_k[2],rho);
+    double Q3 = Q_k(3,d,C_k[3],rho);
+
+    return -4*(2*d+2)*(3*d+2) / (std::pow(d,3) * std::pow(T_proper,3*d+2)) *
+    ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// FROM ROY, SINHA, SURYA (2013). Discrete geometry of a small causal diamond.
+// Helpers - Intermediate Coefficients
 
 /**
  * @brief Gets the constant chi_k, as of Roy, Sinha, Surya 2013.
@@ -49,6 +116,7 @@ double chi_k(double d, double k)
     return 1/k * pow( tgamma(d+1)/2 , k-1) * tgamma(d/2)* tgamma(d)
     / ( tgamma(k*d/2) * tgamma((k+1)*d/2) );
 }
+
 
 
 /**
@@ -152,6 +220,7 @@ double J_k(double k, double d, double C_k, double rho)
     return K_k(k, d, Q_k(k, d, C_k, rho))*(k*d+2);
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // MM_dim estimator for curved spacetimes
@@ -248,96 +317,45 @@ double estimate_MMd(std::vector<double> C_k_arr)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Functions for finding the Ricci scalar and tensor 00 and proper time T
+// Benincasa Dowker
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 
 /**
- * @brief Proper time extension of the interval 
+ * @brief Ricci scalar as calculated from Benincasa-Dowker operator. It is 
+ * already in discreteness units. 
  * 
- * @param d - Manifold dim
- * @param C_k - Vector of: Number of chains of size k for k=1,2,3
- * @param rho - Density of causet sprinkling
- * @return double 
- */
-inline
-double T(double d, std::vector<double> C_k, double rho)
-{
-    double J1 = J_k(1,d, C_k[0], rho);
-    double J2 = J_k(2,d, C_k[1], rho);
-    double J3 = J_k(3,d, C_k[2], rho);
-
-    return std::pow(1/(d*d)*(J1-2*J2+J3), 1/(3*d));
-}
-
-
-/**
- * @brief Ricci scalar value at the centre of the interval
- *          (from RSS - Roy, Sinha, Surya 2013 paper)
- * @param d - Manifold dim
- * @param C_k - Vector of: Number of chains of size k for k=1,2,3
- * @param rho - Density of causet sprinkling
- * @return double 
- */
-inline
-double R_RSS(double d, std::vector<double> C_k, double rho) 
-{
-    double K1 = K_k(1,d,C_k[0],rho);
-    double K2 = K_k(2,d,C_k[1],rho);
-    double K3 = K_k(3,d,C_k[2],rho);
-
-    double J1 = J_k(1,d,K1);
-    double J2 = J_k(2,d,K2);
-    double J3 = J_k(3,d,K3);
-
-    return -4*(d+2)*(2*d+2)*(3*d+2) *
-        std::pow(2,2/(3*d)) *
-        std::pow(d,(4/(3*d)-1)) * 
-        (K1-2*K2+K3) / std::pow(J1-2*J2+J3, 1+2/(3*d));
-}
-
-
-
-
-/**
- * @brief (0,0) component of the Ricci tensor at the centre of the interval
- *              (from RSS - Roy, Sinha, Surya 2013 paper)
- * @param d - Manifold dim
- * @param C_k - Vector of: Number of chains of size k for k=1,2,3
- * @param rho - Density of causet sprinkling
- * @return double 
- */
-inline
-double R_00(double d, std::vector<double> C_k, double rho) 
-{
-    double T_proper = T(d,C_k,rho);
-    double Q1 = Q_k(1,d,C_k[1],rho);
-    double Q2 = Q_k(2,d,C_k[2],rho);
-    double Q3 = Q_k(3,d,C_k[3],rho);
-
-    return -4*(2*d+2)*(3*d+2) / (std::pow(d,3) * std::pow(T_proper,3*d+2)) *
-    ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
-}
-
-
-
-/**
- * @brief Ricci scalar as calculated via Benincasa-Dowker action
+ * @param x int : Label of element at which compute BD Ricci Scalar. 
+ * @param C Causet : Causet to which x belongs.
  * 
- * @param x - int. Label of element at which compute BD Ricci Scalar. 
- * @param l - discreteness length of causet.
- * @param N_arr - array (N1, N2, N3, N4) where
- *          N_i: Number of y in causet such that |I(y,x)|=N_i-1
  * @return double 
  */
 inline
-double R_BD(double l, std::vector<double> N_arr)
+double R_BD(int x, Causet & C)
 {
-    return 4*std::pow(2,0.5)/(std::pow(3,0.5)*l*l) *
+    std::vector<double> N_arr = C.Nk_BD(x, 4, 1);
+    return 4*std::pow(2./3.,0.5) *
+            (1 - (N_arr[0] - 9*N_arr[1] + 16*N_arr[2] - 8*N_arr[3]) );
+}
+
+
+/**
+ * @brief Ricci scalar as calculated from Benincasa-Dowker operator. It is
+ * already in discreteness units.
+ * 
+ * @param x int : Label of element at which compute BD Ricci Scalar. 
+ * @param N_arr vector<double> : {N1, N2, N3, N4} where
+ *          N_k: Number of y in causet such that |I(y,x)|= k + 1
+ * @return double 
+ */
+inline
+double R_BD(int x,  std::vector<double> N_arr)
+{
+    return 4*std::pow(2,0.5)/(std::pow(3,0.5)) *
             (1-(N_arr[0]-9*N_arr[1]+16*N_arr[2]-8*N_arr[3]));
 }
 
 
 
-#endif /* SCHWARZSCHILD_KINEMATICS_H */
+#endif /* KINEMATICS_FUNCTIONS_H */

@@ -534,6 +534,67 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
 }   
 
 
+/**
+ * @brief Yields a copy of the interval's cmatrix obtained by removing
+ *          labels of elements not belonging to said interval.
+ * 
+ * @param ordered_interval Interval (vector) of elements that remain
+ * @param make_matrix, make_sets, make_links are booleans saying
+ *          what type of causet was created (what exists -> to know what
+ *                                                          to update)
+ */
+std::vector<vector<int>> Causet::getIntervalCmatrix(
+                                    vector<int> ordered_interval)
+{
+    if (_CMatrix.size())
+    {
+        return get_reducedMatrix(_CMatrix, ordered_interval);
+    } 
+    else 
+    {
+        print("Require existing CMatrix! It doesn't exist.");
+        throw std::runtime_error("");
+    }
+}
+
+
+/**
+ * @brief Given an element x of the causet, compute N_k(x), i.e. the number of
+ * y in causet such that |I(y,x)|= k + 1. Return an array of N_k(x) for 
+ * k in [kmin, kmax].
+ * 
+ * @param x int : label of element with respect to which find size of layers.
+ * @param kmax int : k of the maximum k-past-layer to count.
+ * @param kmin int : k of the minimum k-past-layer to count. Default is 1, which
+ * corresponds to the count of past links.
+ * 
+ * @return std::vector<double> Nk_BD : vector of Nk_s(x) for k in [kmin, kmax].
+ */
+std::vector<double> Causet::Nk_BD (int x, int kmax, int kmin)
+{
+    // Define vector where to store values
+    std::vector<double> Nk_s (kmax-kmin+1);
+
+    // Loop over elements y potentially in past of x
+    for (int y = x-1; y>-1; y--)
+    {
+        // if i prec x, get size of interval
+        // if size in [kmin, kmax], update count
+        if (_CMatrix[y][x] != 0)
+        {
+            int n_yx = IntervalCard(y, x);
+            int k_yx = n_yx - 1;
+            if (kmin <= k_yx && k_yx <= kmax)
+            {
+                Nk_s[k_yx] += 1;
+            }
+        } 
+    }
+
+    return Nk_s;
+}
+
+
 //=============================================================================
 //=============================================================================
 //REP & SAVE  //===============================================================
