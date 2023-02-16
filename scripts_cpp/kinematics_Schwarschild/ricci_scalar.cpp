@@ -54,12 +54,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {1000};
-int min_size = 10;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {100};
+int min_size = 5;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0; //if 0 -> ==_size of the causet
 double mass = 0.025;
 int N_reps = 10;
-int N_intervals = 200; // Number of intervals per causet realisation
+int N_intervals = 100; // Number of intervals per causet realisation
 
 
 // Sprinkling Parameters
@@ -159,6 +159,7 @@ for (auto dim: dims)
             throw std::runtime_error("");
         }
         density = card/volume;
+        std::cout << "Density = " << density << std::endl;
 
         // Find values of causet kinematics-related variables
         double R_scalar = 0;
