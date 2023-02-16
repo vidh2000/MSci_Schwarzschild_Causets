@@ -54,7 +54,7 @@ double chi_k(double d, double k)
 /**
  * @brief Gets the constant \xi_0
  * 
- * @param d - int. Dimension of the manifold. 3 or 4.
+ * @param d - double. Dimension of the manifold. 3 or 4.
  * @return double: coefficient value
  */
 inline
@@ -62,10 +62,10 @@ double xi_0(double d)
 {
     double vol;
     if ((int)d==3){
-        vol = pi;
+        vol = 2.*pi;
     }
-    else if (d==4){
-        vol = 4.0/3.0*pi;
+    else if ((int)d==4){
+        vol = 4.0*pi;
     }
     else{
         std::cout << "Dimension must be 3 or 4!\n";
@@ -252,9 +252,6 @@ double estimate_MMd(std::vector<double> C_k_arr)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
 /**
  * @brief Proper time extension of the interval 
  * 
@@ -270,7 +267,7 @@ double T(double d, std::vector<double> C_k, double rho)
     double J2 = J_k(2,d, C_k[1], rho);
     double J3 = J_k(3,d, C_k[2], rho);
 
-    return std::pow(1/(d*d)*(J1-2*J2+J3), 1/d);
+    return std::pow(1/(d*d)*(J1-2*J2+J3), 1/(3*d));
 }
 
 
@@ -327,9 +324,10 @@ double R_00(double d, std::vector<double> C_k, double rho)
 /**
  * @brief Ricci scalar as calculated via Benincasa-Dowker action
  * 
- * @param l - discreteness length
+ * @param x - int. Label of element at which compute BD Ricci Scalar. 
+ * @param l - discreteness length of causet.
  * @param N_arr - array (N1, N2, N3, N4) where
- *          N_i: Number of i-chains in the interval
+ *          N_i: Number of y in causet such that |I(y,x)|=N_i-1
  * @return double 
  */
 inline
