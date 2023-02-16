@@ -463,31 +463,6 @@ void EmbeddedCauset::discard(vector<int> labels, //get rid of this?
 }
 
 
-/**
- * @brief Yields a copy of the interval's cmatrix obtained by removing
- *          labels of elements not belonging to said interval.
- * 
- * @param labels Discard labels (get rid of this? not used now)
- * @param ordered_interval Interval (vector) of elements that remain
- * @param make_matrix, make_sets, make_links are booleans saying
- *          what type of causet was created (what exists -> to know what
- *                                                          to update)
- */
-std::vector<vector<int>> EmbeddedCauset::getIntervalCmatrix(
-                             vector<int> ordered_interval)
-{
-    if (_CMatrix.size())
-    {
-        return get_reducedMatrix(_CMatrix, ordered_interval);
-    } 
-    else 
-    {
-        print("Require existing CMatrix! It doesn't exist.");
-        throw std::runtime_error("");
-    }
-}
-
-
 
 /**
  * @brief Get the interval between minimal and maximal element
@@ -764,8 +739,6 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 // SAVE 
@@ -774,7 +747,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
 
 /**
  * @brief Save causet attributes in file (ideally txt or csv)
- * =================================================================================
+ * ===========================================================================
  * [0,1] -> Storage Option
  * [1,1] -> size; 
  * [2,1] -> spacetime dimension;

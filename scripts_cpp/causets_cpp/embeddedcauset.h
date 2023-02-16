@@ -87,8 +87,7 @@ class EmbeddedCauset: public Causet
 
         
         // Get intervals and stuff for kinematics calculations
-        std::vector<std::vector<int>> getIntervalCmatrix(
-                                std::vector<int> ordered_interval);
+
         void get_interval(int min_size, int max_size = 0, int N_max = 1000);
         std::vector<std::pair<std::vector<double>,double>> get_Nchains_inInterval(
                  int N_intervals, int min_size, int k_max,
