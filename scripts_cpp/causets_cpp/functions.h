@@ -86,6 +86,16 @@ void print_set(std::set<obj> set)
     std::cout << std::endl;
 }
 
+
+
+template <typename nb>  
+inline
+void print(nb x) {
+    std::cout << x << std::endl;
+}
+
+
+
 template <typename obj>  
 inline
 void print(std::set<obj> set)

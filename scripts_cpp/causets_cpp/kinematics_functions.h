@@ -310,6 +310,7 @@ inline
 double R_00(double d, std::vector<double> C_k, double rho) 
 {
     double T_proper = T(d,C_k,rho);
+    print(T_proper);
     double Q1 = Q_k(1,d,C_k[1],rho);
     double Q2 = Q_k(2,d,C_k[2],rho);
     double Q3 = Q_k(3,d,C_k[3],rho);
