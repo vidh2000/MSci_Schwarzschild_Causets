@@ -15,6 +15,8 @@
 #include <unordered_set>
 
 #include "causet.h"
+#include "embeddedcauset.h"
+#include "kinematics_coeffs.h"
 #include "functions.h"
 #include "vecfunctions.h"
 
@@ -23,12 +25,264 @@
 
 using namespace boost::math;
 
-const double pi = 3.141592653589793238462643383279502884;
 
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// Causet Sampling Functions for Curvature Information
+/////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief Sample Ricci scalar and R00 values in DISCRETEENSS UNITS 
+ * Nsamples times in the causet 
+ * by using the estimator from RSS - Roy, Sinha, Surya 2013 paper - 
+ * at the centre of various intervals. 
+ * It assumes that coord[1] is some radial distance.
+ * 
+ * @param Causet EmbeddedCauset : Causet to be sampled.
+ * @param Nsamples int : number of samples to analyse.
+ * @param interval_sizemin int : minimum size of intervals to take into
+ * consideration.
+ * @param interval_sizemax int : maximum size of intervals to take into 
+ * account. Default is 0, meaning the causet's size.
+ * 
+ * @exception std::runtime_error - if does not find suitable interval in N_max 
+ * tries.
+ * 
+ * @return std::vector<std::vector <double> > (Nsamples, 3): vector of 3-vectors
+ * with Ricci Scalar, Ricci 00 (as of RSS 2013) and radial distance.
+ */
+inline
+std::vector<std::vector <double>> Riccis_RSS_radial_sample
+(EmbeddedCauset & Causet, int Nsamples, 
+int interval_sizemin, int interval_sizemax = 0) 
+{
+    std::vector<std::vector <double>> vector_of_Ricci_Ricci00_radius
+    (Nsamples);
+
+    int d = Causet._spacetime._dim;
+    double rho = 1.;
+
+    std::vector< std::pair< std::vector<double>, double> > 
+    intervals_chains_and_r = 
+    Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
+                                    4, interval_sizemax);
+    
+    #pragma omp paraller for
+    for (int n = 0; n<Nsamples; n++)
+    {
+        std::vector<double> C_k = intervals_chains_and_r[n].first;
+
+        double Q1 = Q_k(1,d,C_k[1],rho);
+        double Q2 = Q_k(2,d,C_k[2],rho);
+        double Q3 = Q_k(3,d,C_k[3],rho);
+
+        double K1 = K_k(1,d,Q1);
+        double K2 = K_k(2,d,Q2);
+        double K3 = K_k(3,d,Q3);
+
+        double J1 = J_k(1,d,K1);
+        double J2 = J_k(2,d,K2);
+        double J3 = J_k(3,d,K3);
+
+        double T_proper = std::pow(1/(d*d)*(J1-2*J2+J3), 1/(3*d));
+        
+        double R00_n =-4*(2*d+2)*(3*d+2) /
+        (std::pow(d,3) * std::pow(T_proper,3*d+2)) *
+        ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
+
+        double R_RSS_n = -4*(d+2)*(2*d+2)*(3*d+2) *
+                            std::pow(2,2/(3*d)) *
+                            std::pow(d,(4/(3*d)-1)) * 
+                            (K1-2*K2+K3) / std::pow(J1-2*J2+J3, 1+2/(3*d));
+        
+        vector_of_Ricci_Ricci00_radius[n] =
+                            {R_RSS_n, R00_n, intervals_chains_and_r[n].second};   
+    }
+    return vector_of_Ricci_Ricci00_radius;
+}
+
+
+/**
+ * @brief Sample Ricci scalar value Nsamples times in the causet by using the 
+ * estimator from RSS - Roy, Sinha, Surya 2013 paper - 
+ * at the centre of various intervals. 
+ * It assumes that coord[1] is some radial distance.
+ * 
+ * @param Causet EmbeddedCauset : Causet to be sampled.
+ * @param Nsamples int : number of samples to analyse.
+ * @param interval_sizemin int : minimum size of intervals to take into
+ * consideration.
+ * @param interval_sizemax int : maximum size of intervals to take into 
+ * account. Default is 0, meaning the causet's size.
+ * 
+ * @exception std::runtime_error - if does not find suitable interval in N_max 
+ * tries.
+ * 
+ * @return std::vector<std::pair <double, double> > : vector of pairs 
+ * Ricci Scalar (as of RSS 2013) and radial distance 
+ */
+inline
+std::vector<std::pair <double, double> > R_RSS_radial_sample
+(EmbeddedCauset & Causet, int Nsamples, 
+int interval_sizemin, int interval_sizemax = 0) 
+{
+    std::vector <std::pair <double, double > >
+    vector_of_pairs_of_RicciScalar_and_radius = {};
+
+    int d = Causet._spacetime._dim;
+
+    std::vector< std::pair< std::vector<double>, double> > 
+    intervals_chains_and_r = 
+    Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
+                                    4, interval_sizemax);
+    for (int n = 0; n<Nsamples; n++)
+    {
+        std::vector<double> C_k = intervals_chains_and_r[n].first;
+
+        double K1 = K_k(1,d,C_k[0],1.);
+        double K2 = K_k(2,d,C_k[1],1.);
+        double K3 = K_k(3,d,C_k[2],1.);
+
+        double J1 = J_k(1,d,K1);
+        double J2 = J_k(2,d,K2);
+        double J3 = J_k(3,d,K3);
+
+        double R_RSS_n = -4*(d+2)*(2*d+2)*(3*d+2) *
+                            std::pow(2,2/(3*d)) *
+                            std::pow(d,(4/(3*d)-1)) * 
+                            (K1-2*K2+K3) / std::pow(J1-2*J2+J3, 1+2/(3*d));
+        
+        vector_of_pairs_of_RicciScalar_and_radius.push_back(
+                                {R_RSS_n, intervals_chains_and_r[n].second});   
+    }
+    
+    return vector_of_pairs_of_RicciScalar_and_radius;
+}
+
+
+/**
+ * @brief Sample Ricci Tensor 00 value Nsample times in the causet by using the 
+ * estimator from RSS - Roy, Sinha, Surya 2013 paper - 
+ * at the centre of various intervals. 
+ * It assumes that coord[1] is some radial distance.
+ * 
+ * @param Causet EmbeddedCauset : Causet to be sampled.
+ * @param Nsamples int : number of samples to analyse.
+ * @param interval_sizemin int : minimum size of intervals to take into
+ * consideration.
+ * @param interval_sizemax int : maximum size of intervals to take into 
+ * account. Default is 0, meaning the causet's size.
+ * 
+ * @exception std::runtime_error - if does not find suitable interval in N_max 
+ * tries.
+ * 
+ * @return std::vector<std::pair <double, double> > : vector of pairs 
+ * Ricci Scalar (as of RSS 2013) and radial distance 
+ */
+inline
+std::vector<std::pair <double, double> > R00_RSS_radial_sample
+(EmbeddedCauset & Causet, int Nsamples, 
+int interval_sizemin, int interval_sizemax = 0) 
+{
+    std::vector <std::pair <double, double > >
+    vector_of_pairs_of_Ricci00_and_radius = {};
+
+    int d = Causet._spacetime._dim;
+    double rho = 1.;  // in discreteness units
+
+    std::vector< std::pair< std::vector<double>, double> > 
+    intervals_chains_and_r = 
+    Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
+                                    4, interval_sizemax);
+    for (int n = 0; n<Nsamples; n++)
+    {
+        std::vector<double> C_k = intervals_chains_and_r[n].first;
+        
+        double Q1 = Q_k(1,d,C_k[1],rho);
+        double Q2 = Q_k(2,d,C_k[2],rho);
+        double Q3 = Q_k(3,d,C_k[3],rho);
+
+        double K1 = K_k(1,d,Q1);
+        double K2 = K_k(2,d,Q2);
+        double K3 = K_k(3,d,Q3);
+
+        double J1 = J_k(1,d,K1);
+        double J2 = J_k(2,d,K2);
+        double J3 = J_k(3,d,K3);
+
+        double T_proper = std::pow(1/(d*d)*(J1-2*J2+J3), 1/(3*d));
+
+        double R00_n =-4*(2*d+2)*(3*d+2) /
+        (std::pow(d,3) * std::pow(T_proper,3*d+2)) *
+        ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
+        
+        vector_of_pairs_of_Ricci00_and_radius.push_back(
+                                {R00_n, intervals_chains_and_r[n].second});   
+    }
+    
+    return vector_of_pairs_of_Ricci00_and_radius;
+}
+
+
+/**
+ * @brief Sample causet for Ricci scalar as from Benincasa-Dowker operator, 
+ * in DISCRETENESS UNITS. 
+ * Assumes natural labelling, with coords[1] being some sort of radial 
+ * coordinate from origin and only samples in central two quartiles 
+ * of time and space to avoid boundaries effects. 
+ * 
+ * @param Causet EmbeddedCauset to be sampled.
+ * @param Nsamples int : number of samples.
+ * @return std::vector<std::pair <double, double> > : vector of pairs 
+ * {RicciScalar, radial distance}.
+ */
+inline
+std::vector<std::pair <double, double> > R_BD_sample
+(EmbeddedCauset & Causet, int Nsamples)
+{
+    std::vector<std::pair <double, double> > vec_of_pair_R_r(Nsamples);
+
+    std::vector<double> center = Causet._shape._center; 
+    double duration = Causet._shape._params.find("duration")->second;
+    double radius   = Causet._shape._params.find( "radius" )->second;
+    double tmin = center[0] - 0.25*duration;
+    double tmax = center[0] + 0.25*duration;
+    double rmin = 0.25*radius;
+    double rmax = 0.75*radius;
+
+    // Define mersenne_twister_engine Random Gen. (with random seed)
+    std::random_device rd;
+    int seed = rd();
+    std::mt19937 gen(seed);
+    std::uniform_real_distribution<> dis(0, Causet._size);
+
+    #pragma omp paraller for
+    for (int rep = 0; rep < Nsamples; rep ++)
+    {
+        int xi = (int) dis(gen);
+        double ri = Causet._coords[xi][1];
+        double ti = Causet._coords[xi][0];
+
+        while (!(tmin <= ti && ti <= tmax && rmin <= ri && ri <= rmax)){
+            xi += (int) dis(gen) - xi;
+            ri += Causet._coords[xi][1] + ri ;
+            ti += Causet._coords[xi][0] - ti;
+        }
+        
+        std::vector<double> N_arr = Causet.Nk_BD(xi, 4, 1);
+        double Ri = 4*std::pow(2./3.,0.5) *
+                (1 - (N_arr[0] - 9*N_arr[1] + 16*N_arr[2] - 8*N_arr[3]) );
+        
+        vec_of_pair_R_r[rep] = {Ri*1., ri*1.};
+    }
+
+    return vec_of_pair_R_r;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
 // FROM ROY, SINHA, SURYA (2013). Discrete geometry of a small causal diamond.
+// Single Interval Functions
 //////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -97,163 +351,6 @@ double R_00(double d, std::vector<double> C_k, double rho)
     ( (d+2)*Q1 - (5*d+4)*Q2 + (4*d+2)*Q3 );
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////////
-// FROM ROY, SINHA, SURYA (2013). Discrete geometry of a small causal diamond.
-// Helpers - Intermediate Coefficients
-
-/**
- * @brief Gets the constant chi_k, as of Roy, Sinha, Surya 2013.
- * 
- * @param d - int, number of dimensions of the manifold 
- * @param k - int
- * @return double: Value of the constant
- */
-inline
-double chi_k(double d, double k)
-{
-    return 1/k * pow( tgamma(d+1)/2 , k-1) * tgamma(d/2)* tgamma(d)
-    / ( tgamma(k*d/2) * tgamma((k+1)*d/2) );
-}
-
-
-
-/**
- * @brief Gets the constant \xi_0
- * 
- * @param d - double. Dimension of the manifold. 3 or 4.
- * @return double: coefficient value
- */
-inline
-double xi_0(double d)
-{
-    double vol;
-    if ((int)d==3){
-        vol = 2.*pi;
-    }
-    else if ((int)d==4){
-        vol = 4.0*pi;
-    }
-    else{
-        std::cout << "Dimension must be 3 or 4!\n";
-    } 
-    return vol / (d*(d-1)*std::pow(2,d-1)) ;
-}
-
-
-
-/**
- * @brief Calculates Q_k constant value
- * 
- * @param k Size of chains
- * @param d Dimensions of the manifold
- * @param C_k Number of chains of size k
- * @param rho Number density of causet
- * @return double
- */
-inline
-double Q_k(double k, double d, double C_k, double rho)
-{
-    return 1/std::pow(xi_0(d)*rho,3) * std::pow(C_k/chi_k(d,k), 3/k);
-}
-
-/**
- * @brief Calculates value of K_k
- * 
- * @param k - Chain size 
- * @param d - Dimensions of the manifold
- * @param Q_k - Constant value defined above
- * @return double 
- */
-inline
-double K_k(double k, double d, double Q_k)
-{
-    return ((k+1)*d + 2)*Q_k;
-}
-
-
-/**
- * @brief Calculates value of K_k without knowledge of Qk
- * 
- * @param k - Chain size 
- * @param d - Dimensions of the manifold
- * @param C_k Number of chains of size k
- * @param rho Number density of causet
- * @return double
- */
-inline
-double K_k(double k, double d, double C_k, double rho)
-{
-    return ((k+1)*d + 2)*Q_k(k, d, C_k, rho);
-}
-
-
-/**
- * @brief Calculates value of J_k
- * 
- * @param k - Chain size
- * @param d - Dimensions of the manifold
- * @param K_k - Constant value defined above
- * @return double 
- */
-inline
-double J_k(double k, double d, double K_k)
-{
-    return K_k*(k*d+2);
-}
-
-
-/**
- * @brief Overridden J_k calculating the value from without the knowledge
- *          of the values of other constants
- * 
- * @param k - Chain size
- * @param d - Manifold dim
- * @param C_k - Number of chains of size k
- * @param rho - Density of causet sprinkling
- * @return double 
- */
-inline
-double J_k(double k, double d, double C_k, double rho)
-{
-    return K_k(k, d, Q_k(k, d, C_k, rho))*(k*d+2);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-// MM_dim estimator for curved spacetimes
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * @brief Calculate n choose k and return the value as double
- * 
- * @param n Integer
- * @param k Integer
- * @return double 
- */
-inline
-double binomialCoefficient(int n, int k)
-{
-    int C[n + 1][k + 1];
-    int i, j;
-
-    // Caculate value of Binomial Coefficient in bottom up manner
-    for (i = 0; i <= n; i++) {
-    for (j = 0; j <= std::min(i, k); j++) {
-        // Base Cases
-        if (j == 0 || j == i) {
-        C[i][j] = 1;
-        } else {
-        // Calculate value using previously stored values
-        C[i][j] = C[i - 1][j - 1] + C[i - 1][j];
-        }
-    }
-    }
-    return (double)C[n][k];
-}
 
 
 

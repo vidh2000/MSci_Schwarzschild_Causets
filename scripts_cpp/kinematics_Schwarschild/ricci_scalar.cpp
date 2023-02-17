@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -11,9 +12,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <chrono>
 #include <unordered_set>
-#include <chrono>
 
 #include "../causets_cpp/sprinkledcauset.h"
 #include "../causets_cpp/shapes.h"
@@ -56,7 +55,7 @@ int main(){
 std::vector<int> dims = {4}; 
 std::vector<int> cards = {4000};
 int min_size = 40;  //Minimal size of the interval (min # of elements in it)
-int max_size = 0; //if 0 -> ==_size of the causet
+int max_size = 0;   //if 0 -> ==_size of the causet
 double mass = 0.25;
 int N_reps = 30;
 int N_intervals = 30; // Number of intervals per causet realisation
@@ -74,7 +73,7 @@ const char* sets_type = "future";
 const char* name = "cylinder";
 
 // Shape parameters
-double radius = 0.5;
+double radius = 4*mass;
 double height = 1; 
 
 ///////////////////////////////////////////
@@ -124,7 +123,6 @@ for (auto dim: dims)
             } catch (std::runtime_error& e) {
                 continue;
             }
-
             
             // Store Nchain_k vectors and r_avg values 
             for (auto item : nchains_arr) {

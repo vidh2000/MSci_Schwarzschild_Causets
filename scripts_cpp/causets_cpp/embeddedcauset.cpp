@@ -584,6 +584,10 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max)
  * @param max_size - Max. size of the interval (max # of elements in it
  *                                              == _size by default)
  * @param N_max - max number of tries to find the interval before stopping
+ * 
+ * @exception std::runtime_error - if does not find suitable interval in N_max 
+ * tries.
+ * 
  * @return Returns a vector of length N_intervals:
  *         - for each interval there's a pair <N_chains_k,r_avg>
  *              - N_chains_k: 

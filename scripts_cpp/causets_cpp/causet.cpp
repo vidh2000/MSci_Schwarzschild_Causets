@@ -170,7 +170,7 @@ bool Causet::is_Cij_special()
  * @return  Ordering fraction of Alexandrov Interval. 
  * This is nrelations / (N choose 2)
  */
-double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
+double Causet::ord_fr(Causet & A, const char* denominator) // = "choose"
 {
     if (A._CMatrix.size())
     {
@@ -196,7 +196,7 @@ double Causet::ord_fr(Causet A, const char* denominator) // = "choose"
  * @brief   Ordering fraction determined from a CMatrix.
  *          See above description above all ord_fr definitions
  */
-double Causet::ord_fr(vector<vector<int>> M,
+double Causet::ord_fr(vector<vector<int>>  & M,
                         const char* denominator)// = "choose",
 {
     if (strcmp(denominator, "choose")!=0 || strcmp(denominator, "n2")!=0)
@@ -223,7 +223,7 @@ double Causet::ord_fr(vector<vector<int>> M,
  *          See above description above all ord_fr definitions. 
  */
 template<typename SET>
-double Causet::ord_fr(vector<SET> A_pasts,
+double Causet::ord_fr(vector<SET> & A_pasts,
                 const char* denominator)// = "choose",
 {
     if (strcmp(denominator,"choose")!=0 || strcmp(denominator,"n2")!=0)
@@ -323,6 +323,19 @@ double Causet::ord_fr(int a, int b,
 // Dimension estimator
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+double Causet::MM_drelation(double d)
+    /*
+    Dimension function to be solved for with
+    order fraction for MM-dimension estimation.
+    */
+{
+    double a = std::tgamma(d+1);
+    double b = std::tgamma(d/2);
+    double c = 4* std::tgamma(3*d/2);
+    return a*b/c;
+}
+
 /**
  * @brief Use Myrheim-Meyers dimensional estimator to compute the 
           fractal dimension (not necesseraly int).
@@ -355,19 +368,6 @@ double Causet::ord_fr(int a, int b,
         - dimension estimate: float
         - dimension std: float
  */
-
-double Causet::MM_drelation(double d)
-    /*
-    Dimension function to be solved for with
-    order fraction for MM-dimension estimation.
-    */
-{
-    double a = std::tgamma(d+1);
-    double b = std::tgamma(d/2);
-    double c = 4* std::tgamma(3*d/2);
-    return a*b/c;
-}
-
 vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 int Nsamples,// = 20,
                                 int size_min,// = vecmin({1000,_size/2})
