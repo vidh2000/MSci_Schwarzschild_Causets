@@ -54,12 +54,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {4000};
-int min_size = 40;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {1000};
+int min_size = 5;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0;   //if 0 -> ==_size of the causet
 double mass = 0.25;
-int N_reps = 30;
-int N_intervals = 30; // Number of intervals per causet realisation
+int N_reps = 5;
+int N_intervals = 10; // Number of intervals per causet realisation
 
 
 // Sprinkling Parameters
@@ -98,22 +98,24 @@ for (auto dim: dims)
         std::vector<double> vec_of_RicciBD      (N_reps*N_intervals);
         std::vector<double> vec_of_radiiBD      (N_reps*N_intervals);
 
-        // Generate causets and find intervals and number of k-chains...
+         // Set up shape for repetitions
+        std::vector<double> center (dim, 0.);
+        CoordinateShape shape(dim,name,center,radius,height);
+
+        // Set up spacetime for repetitions
+        Spacetime S = Spacetime();
+        S.BlackHoleSpacetime(dim,mass);
+
+        // Generate causets and find values
         ////////////////////////////////////////////////////////////////////
         int rep=0;
         while (rep<N_reps)
         {
-            std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
+            std::cout << "Dim="<< dim 
+                      <<", Card="<< card<<", "
+                      <<"Minsize="<<min_size<<", "
+                      <<"Rep: "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
-
-            // Set up shape
-            std::vector<double> center (dim, 0.);
-            CoordinateShape shape(dim,name,center,radius,height);
-
-            // Set up spacetime
-            Spacetime S = Spacetime();
-
-            S.BlackHoleSpacetime(dim,mass);
 
             // Sprinkle the causet
             SprinkledCauset C(card, S, shape, poisson,
@@ -121,16 +123,19 @@ for (auto dim: dims)
                               make_sets,   make_links, sets_type);
             
             // Get result - N_intervals RicciScalars, Ricci00s, radii - 
-            // of nth repetition
+            // of nth repetition, with RSS model
             std::vector<std::vector<double>> nresults;
             try {
+                std::cout<<"\nDoing RSS now";
                 nresults = Riccis_RSS_radial_sample(C, N_intervals,
                                                      min_size, max_size);
             } catch (std::runtime_error& e) {
                 continue;
             }  
 
-            std::vector<std::pair<double,double>> nBDresults 
+            // and with BD model
+            std::cout<<"\nDoing BD now";
+            std::vector<std::vector<double>> nBDresults 
             = R_BD_sample(C, N_intervals);
 
             // Add to all results
@@ -142,9 +147,9 @@ for (auto dim: dims)
                 vec_of_Ricci00s    [rep*N_intervals+i] = nresults[i][1];
                 vec_of_radii       [rep*N_intervals+i] = nresults[i][2];
 
-                vec_of_RicciBD     [rep*N_intervals+i] = nBDresults[i].first;
-                vec_of_radiiBD     [rep*N_intervals+i] = nBDresults[i].second;
-                std::cout<<nBDresults[i].second<< ", ";
+                vec_of_RicciBD     [rep*N_intervals+i] = nBDresults[i][0];
+                vec_of_radiiBD     [rep*N_intervals+i] = nBDresults[i][1];
+                std::cout<<nBDresults[i][1]<< ", ";
             }
 
             //Timing rep
@@ -194,6 +199,7 @@ for (auto dim: dims)
         double iqr = q3 - q1;
         double bin_width = 2 * iqr * pow((double)N, -1.0/3.0);
         int n_rad_bins = (sorted_rs[N] - sorted_rs[0])/bin_width;
+        std::cout<<"FD rule"<<std::endl;
 
         // get average R and R00 per bin
         std::vector<double> avg_R (n_rad_bins);
@@ -205,9 +211,11 @@ for (auto dim: dims)
         std::vector<double> std_RBD (n_rad_bins);
 
         std::vector<int>    bin_counts (n_rad_bins);
+        std::cout<<"\nbins first start";
         for (int i = 0; i < N; i++)
         {
             int bin = (vec_of_radii[i] - sorted_rs[0])/bin_width;
+            std::cout<<bin<<std::endl;
             avg_R[bin]      += vec_of_RicciScalars[i];
             std_R[bin]      += vec_of_RicciScalars[i]*vec_of_RicciScalars[i];
             avg_R00[bin]    += vec_of_Ricci00s[i];
@@ -218,6 +226,7 @@ for (auto dim: dims)
 
             bin_counts[bin] += 1;
         }
+        std::cout<<"\nbins first";
         printf( "| %11s | %19s | %19s | %19s \n", 
             "Bin","Ricci Scalar (RSS)","Ricci Scalar (BD)","Ricci 00 (RSS)");
         for (int bin = 0; bin < n_rad_bins; bin++)
