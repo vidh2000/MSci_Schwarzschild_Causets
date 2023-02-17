@@ -299,6 +299,7 @@ double MMdim_eqn(double d, std::vector<double> C_k_arr)
 inline
 double estimate_MMd(std::vector<double> C_k_arr)
 {
+    print(C_k_arr);
     // Define function whose root needs to be found
     auto MM_to_solve = [C_k_arr](double d){
         return MMdim_eqn(d,C_k_arr);
