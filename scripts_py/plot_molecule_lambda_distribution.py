@@ -16,7 +16,7 @@ fixed_var = "Rho"   #variable fixed:   can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
-plot_boundaries = False
+plot_boundaries = 1
 plot_molecules = True
 
 
@@ -182,7 +182,7 @@ if varying_var=="M":
     elif fixed_var == "Rho":
         Rho = fixed_val
     x /= Rho**(-1/2)
-    
+r_S_norm = np.sqrt(x / 4 / np.pi)   
     # x_A = x/divide by fund units
 
 print(f"Rho = {Rho:.0f}")
@@ -193,8 +193,15 @@ fixed_string = rf"Rho = {Rho:.0f}"
 ###########################################################################
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
-    rc = 3; c = 1; r = 3
-    figsize = (c * 6, r * 2.3)
+    mintimes       = np.array(mintimes)      * Rho**(1/4)
+    mintimes_std   = np.array(mintimes_std)  * Rho**(1/4)
+    innermosts     = np.array(innermosts)    * Rho**(1/4)
+    innermosts_std = np.array(innermosts_std)* Rho**(1/4)
+    outermosts     = np.array(outermosts)    * Rho**(1/4)
+    outermosts_std = np.array(outermosts_std)* Rho**(1/4)
+
+    rc = 2; c = 1; r = 2
+    figsize = (6 * c, 14 / r)
     plt.figure(f'Boundaries for {fixed_string}',
                 figsize = figsize, tight_layout = True)
 
@@ -202,75 +209,56 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 1)
     plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
+    plt.errorbar(x, mintimes, mintimes_std, 
+                fmt = '.', capsize = 2, color = "black",
+                zorder = 10, label = r"$t_{min}$ (with 1$\sigma$)")
+    plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
+                fmt = '.', capsize = 4,
+                zorder = 5, label = r"$t_{min}$ (with 3$\sigma$)")
+    # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
+    #             ls = '', alpha=0.2)
+    # ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", 
+    #         transform=ax.transAxes, fontsize=10,  #text==fixed_string
+    #         va='bottom', ha = 'left', bbox=props)
     if varying_var == "M":
-        plt.errorbar(2*np.array(varying_values), mintimes,
-                mintimes_std, fmt = '.', capsize = 4, 
-                zorder = 5)
-    else:
-        plt.errorbar(np.array(varying_values), mintimes, mintimes_std, 
-                fmt = '.', capsize = 4, 
-                zorder = 5)
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
-    ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", 
-            transform=ax.transAxes, fontsize=10,  #text==fixed_string
-            va='bottom', ha = 'left', bbox=props)
-    if varying_var == "M":
-        plt.xlabel(r'$r_S$ [a.u.]')
+        plt.xlabel(r'Horizon Area $[\ell]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel("Oldest Molecule's Time")
+    plt.ylabel(r"Molecules' $t_{min}$ $[\ell]$")
+    plt.legend()
     plt.grid(alpha = 0.4) 
 
     # INNERMOST #######################################################
     ax = plt.subplot(r, c, 2)
     plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
-    if varying_var == "M":
-        plt.errorbar(2*np.array(varying_values), innermosts,
-                innermosts_std, fmt = '.', capsize = 4, 
-                zorder = 5)
-    else:
-        plt.errorbar(np.array(varying_values), innermosts, innermosts_std, 
-                fmt = '.', capsize = 4, 
-                zorder = 5)
+    plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
+                fmt = '.', capsize = 2, color = "black",
+                zorder = 10, label = r"Innermost (with 1$\sigma$)")
+    plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
+                fmt = '.', capsize = 4, color = "blue",
+                zorder = 5, label = r"Innermost (with 3$\sigma$)")
+    plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
+                fmt = '.', capsize = 2, color = "red",
+                zorder = 10, label = r"Outermost (with 1$\sigma$)")
+    plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
+                fmt = '.', capsize = 4, color = "orange",
+                zorder = 5, label = r"Outermost (with 5$\sigma$)")
 
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
-    ax.text(0.95, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, fontsize=10, 
-            va='bottom', ha = 'right', bbox=props)
+    # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
+    #             ls = '', alpha=0.2)
+    # ax.text(0.95, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, 
+    # fontsize=10, va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
-        plt.xlabel(r'$r_S$ [a.u.]')
+        plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel("Innermost Molecule's r")
+    plt.ylabel(r"r-Distance from Horizon $[\ell]$")
     plt.grid(alpha = 0.4) 
+    plt.legend()
 
-    # OUTERMOST #######################################################
-    ax = plt.subplot(r, c, 3)
-    plt.annotate ("c)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
-    if varying_var == "M":
-        plt.errorbar(2*np.array(varying_values), outermosts,
-                outermosts_std, fmt = '.', capsize = 4, 
-                zorder = 5)
-    else:
-        plt.errorbar(np.array(varying_values), outermosts, outermosts_std, 
-                fmt = '.', capsize = 4, 
-                zorder = 5)
-    props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-                ls = '', alpha=0.2)
-    ax.text(0.95, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, fontsize=10, 
-            va='bottom', ha = 'right', bbox=props)
-    if varying_var == "M":
-        plt.xlabel(r'$r_S$ [a.u.]')
-    else:
-        plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel("Outermost Molecule's r")
-    plt.grid(alpha = 0.4) 
-
-    plt.savefig(plotsDir + f"{fixed_string}_Boundaries.png")
-    plt.savefig(plotsDir + f"{fixed_string}_Boundaries.pdf")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_to_rs_in_l.png")
+    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_to_rs_in_l.pdf")
     plt.show()
 
 
@@ -345,7 +333,7 @@ if plot_molecules:
 
 
     plt.figure(f"Large molecules for {fixed_string}")
-    for n in range(3, len(molecules_distr)):
+    for n in range(4, len(molecules_distr)):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
         label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
@@ -484,7 +472,8 @@ if plot_molecules:
     #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
     ###################################################################
-    # Do numerical calculation rather than fit
+    # Do numerical calculation rather than fit for exponential 
+
     r1 = grad_sum/coefsum
     r1unc = grad_sum_unc/coefsum
     I = 1 - r1
@@ -498,10 +487,26 @@ if plot_molecules:
     print(f" - x = {round(chi,4)} +- {round(chiunc,4)}")
     print(f"p1 = {round(lambd_probs[0],4)} == gradsum/a_links = {round(r1,4)} ?")
 
+
+    ###################################################################
+    # Do numerical calculation rather than fit for exponential - linear fall
+
+    r0 = gradients[0]/coefsum
+    r0unc = gradients_unc[0]/coefsum
+    I2 = 1 - r0
+    I2unc = r0unc
+    chi2 = - np.log(I2)
+    chi2unc = I2unc/I2
+    print("\nPLAIN NUMERICAL RESULTS")
+    print(f"Exponential-LinearFall model 1/ln[1/(1-I)] I^(n)/n has:")
+    print(f" - I = {round(I2,4)} +- {round(I2unc,4)}")
+    print(f"With e^-x rather than I, it has:")
+    print(f" - x = {round(chi2,4)} +- {round(chi2unc,4)}")
+
     
 
     #################################################################
-    # PLot Distribution (all, all in logscale, small)
+    # PLot Distribution (all, all in logscale, small in logscale)
     plt.figure("n-lambda probability distribution")
     #plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
     #        label = r"$n\mathbf{-}\Lambda$ probability distribution")
@@ -529,6 +534,9 @@ if plot_molecules:
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
             label = r"(1-I) $I^{(n-1)}$"+ 
             f", I = {round(I,3)}+-{round(Iunc,3)}")
+    plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
+             label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
+             f" I = {round(I2,3)}+-{round(I2unc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.yscale("log")

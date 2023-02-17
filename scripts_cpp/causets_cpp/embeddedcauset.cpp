@@ -478,7 +478,7 @@ void EmbeddedCauset::discard(vector<int> labels, //get rid of this?
  * @param N_max : int. Max number of tries to find the interval before stopping.
  *                (1000 is default).
  */
-void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000 max tries by default
+void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) 
 {
 
     if (min_size <=2){
@@ -2236,6 +2236,8 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
         throw std::invalid_argument("Wrong spacetime");
     }
 }
+
+
 
 
 /**
