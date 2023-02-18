@@ -13,18 +13,31 @@ cpp_file_to_run="'count_HRVs.cpp'"
 
 # CPP VARIABLES
 Rho=5000
-N_reps=25
+N_reps=10
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
-ncpus=48
-mem=16
-runtime="6:00:00" #format: "hh:mm:ss"
+ncpus=128
+mem=32
+runtime="1:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
-counter=0
-for mass in $(seq 1. .1 1.5)
+# FIRST ROUND MASSES - 1k ...
+# [0.53 0.75 0.92  
+# 1.06 1.19 1.30 1.40 1.50 
+# 1.59 1.68 1.76 1.84 1.91 1.98 
+# 2.05  2.12 2.19 2.25 2.31 2.37 2.43 ] 
+# SECOND ROUND MASSES - 1.5k ...
+# [0.65 0.84 0.99 1.13 1.24 1.35 1.45 
+#  1.55 1.63 1.72 1.88 1.95
+#  1.8 
+#  2.02 2.09 2.15 2.22 2.28 2.34
+#  2.4
+#  2.46 ]
+counter=0 #2.05 mass took 3300sec for 5 reps.
+for mass in 0.53
+#$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
@@ -66,9 +79,9 @@ echo "echo Finished building the executable" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "echo Go into the directory of the executable file:" >> $sh_run_file
 echo 'cd $mainDir$runfileRelativeDir' >> $sh_run_file
-echo "pwd" >> $sh_run_file
-echo "Files in the directory:"
-echo "ls" >> $sh_run_file
+# echo "pwd" >> $sh_run_file
+# echo "Files in the directory:"
+# echo "ls" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "mass=${mass}" >> $sh_run_file
@@ -76,9 +89,9 @@ echo "N_multiplier=${N_multiplier}" >> $sh_run_file
 echo "N_reps=${N_reps}" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# Execute the copy of the created .exe program" >> $sh_run_file
-echo 'cp ${runfilename::-4}".exe" "executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
+echo 'cp ${runfilename::-4}".exe" "executables/HRVs_M${mass}_rho${N_multiplier}_reps${N_reps}.exe"' >> $sh_run_file
 #echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
-echo '"./executables/M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
+echo '"./executables/HRVs_M${mass}_rho${N_multiplier}_reps${N_reps}.exe" $mass $N_multiplier $N_reps' >> $sh_run_file
 echo "" >> $sh_run_file
 
 ###############################################################################

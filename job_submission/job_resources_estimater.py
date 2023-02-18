@@ -40,4 +40,16 @@ for Rho in rhos:
         
         # Print require information
         print(f"Rho={Rho}, M={mass:.2f}, Area={4*np.pi*(2*mass)**2/(scale**2):.0f} l^2, N={N:.0f} \
-        RAM={mem:.0f}GB") #add time later
+    RAM={mem:.0f}GB") #add time later
+
+
+print("\nGET N FOR RHO=",rhos[0]," and M=1")
+mass = 1
+scale = rhos[0] **(-1/4)
+R = 2*mass+3*scale
+r = 2*mass-3*scale
+T = 4*scale
+N = rhos[0] * (4*3.1415/3) * (R*R*R-r*r*r) * T
+mem = N**2 * 4 / 1073741824 #in GB
+print(f"Area={4*np.pi*(2*mass)**2/(scale**2):.0f} l^2, N={N:.0f} \
+    RAM={mem:.0f}GB")

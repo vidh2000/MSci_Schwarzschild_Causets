@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from . import causet_helpers as ch
 
+
 def dr_dtstar (r, M, eta, pm = -1):
     """
     dr/dtstar (EF-original coords) for a black hole with mass M at position r.
@@ -32,14 +33,14 @@ def dphi_dtstar (r, M, eta, pm_r = +1):
     d = eta * r**2 + pm_r * 2*M*b
     return a / d
 
-def BH_lightcone (x0, M):
-    t0, r0, phi0 = x0
-    if r0 > 2*M:
-        do stuff
-    elif r0 <= 2*M:
-       pm = -1
+# def BH_lightcone (x0, M):
+#     t0, r0, phi0 = x0
+#     if r0 > 2*M:
+#         do stuff
+#     elif r0 <= 2*M:
+#        pm = -1
         
-    return points
+#     return points
 
 
 

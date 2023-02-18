@@ -19,6 +19,7 @@
 #include <iterator>
 #include <omp.h>
 #include <stdint.h>
+#include <utility>
 
 #include "functions.h"
 #include "vecfunctions.h"
@@ -349,6 +350,7 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
                              bool make_sets, // = false,
                              bool make_links) // = true)
 {
+    print("Don't think this one works tbf, needs to be tested if needed");
     _coords.erase(_coords.begin() + label);
 
     if (make_matrix)
@@ -391,18 +393,27 @@ void EmbeddedCauset::discard(int label, bool make_matrix, // = true,
         }   
     }
     _size--;
-    _dim = 0;
+    //_dim = 0;
 }
 
 
-void EmbeddedCauset::discard(vector<int> labels,
+/**
+ * @brief Cuts the cmatrix and relabels the futures(links) and pasts(links)
+ *        to reduce the whole causet to a smaller interval/removes certain
+ *        labels
+ * 
+ * @param labels Discard labels (get rid of this? not used now)
+ * @param ordered_interval Interval (vector) of elements that remain
+ * @param make_matrix, make_sets, make_links are booleans saying
+ *          what type of causet was created (what exists -> to know what
+ *                                                          to update)
+ */
+void EmbeddedCauset::discard(vector<int> labels, //get rid of this?
                              vector<int> ordered_interval,
                              bool make_matrix, // = true, 
                              bool make_sets, // = false,
                              bool make_links) // = true)
 {
-    print("Discarding labels that have to be ordered:");
-    print(labels);
     remove_indices(_coords, labels);
 
 
@@ -432,24 +443,25 @@ void EmbeddedCauset::discard(vector<int> labels,
     }
     if (make_links)
     {
-        print("NOTE: Discarding links is not yet implemented properly!");
+        print("NOTE: Discarding links is not yet checked (but updated)!");
         if (_past_links.size())
         {
-            remove_indices(_past_links, labels);
-            for (unordered_set<int> plinks_i : _past_links)
-                {discard_from_set(plinks_i, labels);}
+            replace_indices(_past_links, ordered_interval);
+            //for (unordered_set<int> plinks_i : _past_links)
+            //    {discard_from_set(plinks_i, labels);}
         } 
         if (_future_links.size())
         {
-            remove_indices(_future_links, labels);
-            for (unordered_set<int> flinks_i : _future_links)
-                {discard_from_set(flinks_i, labels);}
+            replace_indices(_future_links, ordered_interval);
+            //for (unordered_set<int> flinks_i : _future_links)
+            //    {discard_from_set(flinks_i, labels);}
         }   
     }
 
     _size -= labels.size();
-    _dim = 0;
+    //_dim = 0;
 }
+
 
 
 /**
@@ -458,15 +470,15 @@ void EmbeddedCauset::discard(vector<int> labels,
  *          the elements that aren't in the interval ->
  *          -> changes the pasts/futures sets and reduces the cmatrix
  * 
- *          The intervals are chosen at random and must contain #elemenets
+ *          The intervals are chosen at random and must contain #elements
  *          larger than min_size.
  * 
- * @param min_size - Minimal size of the interval (min # of elements in it) 
- * @param max_size - Max. size of the interval (max # of elements in it
- *                                              == _size by default)
- * @param N_max - max number of tries to find the interval before stopping
+ * @param min_size : int. Minimal size of the interval (2 is default) 
+ * @param max_size : int.  Max. size of the interval (size of causet is default)
+ * @param N_max : int. Max number of tries to find the interval before stopping.
+ *                (1000 is default).
  */
-void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000 max tries by default
+void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) 
 {
 
     if (min_size <=2){
@@ -523,13 +535,6 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
         int n = IntervalCard(a, b);
         if (n >= min_size && n<= max_size)
         {  
-             std::cout << "Found " << n <<
-            " elements in the inclusive interval between "
-            << a <<" and " << b << std::endl;
-            //print("Futures of a:");
-            //print(_futures[a]);
-            //print("Past of b:");
-            //print(_pasts[b]);
 
             // Interval includes a, b and the elements connecting them
             std::unordered_set<int> interval = set_intersection(
@@ -545,13 +550,8 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
             std::vector<int> to_discard(indices_to_remove.begin(),
                                         indices_to_remove.end());
             std::sort(to_discard.begin(),to_discard.end());
-
-            std::cout << "Removing " << to_discard.size()
-            << " indices:" << std::endl;
-            print(to_discard);
             
             // Create a sorted vector of remaining indices (the interval)
-            
             std::vector<int> ordered_interval(interval.begin(),
                                               interval.end());
             std::sort(ordered_interval.begin(),ordered_interval.end());              
@@ -560,9 +560,6 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
             // Assumes matrix is created and future and pasts but no links.
             EmbeddedCauset::discard(to_discard,ordered_interval,
                                                 true,true,false);
-            
-            std::cout << "Left with " << _size << " ordered indices.\n";
-            print(ordered_interval);
 
             found = true;
         }
@@ -574,6 +571,228 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
 }
 
 
+/**
+ * @brief Get the average number of chains of size k, up to 
+ *        including size k_max,
+ *        in an interval of size (min_size and max_size) in a causet
+ *        over "N_intervals" random intervals.
+ *        REQUIRES CMATRIX, AND PAST AND FUTURE SETS 
+ * 
+ * @param N_intervals - Number of intervals
+ * @param min_size - Minimal size of the interval (min # of elements in it) 
+ * @param k_max - maximal (included) length of chain we care about
+ * @param max_size - Max. size of the interval (max # of elements in it
+ *                                              == _size by default)
+ * @param N_max - max number of tries to find the interval before stopping
+ * @param avoid_boundaries bool : True (Not-default) implies that the extremi
+ * of the intervals are within 25 and 75 % of space interval to avoid boundary
+ * effects.
+ * It assumes coords[1] is a radial distance from origin.
+ * 
+ * @exception std::runtime_error - if does not find suitable interval in N_max 
+ * tries.
+ * 
+ * @return Returns a vector of length N_intervals:
+ *         - for each interval there's a pair <N_chains_k,r_avg>
+ *              - N_chains_k: 
+ *                  a vector with "k_max" entries for chains of length 1..k    
+ *                  storing the number of such chains in the interval
+ *              - r_avg:     
+ *                  an average r value of the interval
+ *              
+ *         i.e for each interval, for each chain of length k
+ *          you have information about the number of such chains
+ *          and what was the average r-value for the interval
+ *          (to be able to check if it varies w.r.t r in Schwarzschild) 
+ */
+vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
+                    int N_intervals, int min_size, int k_max,
+                    int max_size, int N_max, bool avoid_boundaries)
+                     //==0, 1000
+{
+    if (min_size <=2){
+        std::cout << "min_size>2 required!" << std::endl;
+        throw std::runtime_error("");
+    }
+
+    if (max_size == 0)
+    {
+        max_size = _size;
+    }
+
+    // Define vars and outcome vars
+    int N_intervals_found = 0;
+    vector<std::pair<vector<double>,double>> results;
+
+    // Define limits if avoid_boundaries
+    double rmin, rmax;
+    if (avoid_boundaries)
+    {
+        std::vector<double> center = _shape._center; 
+        double duration = _shape._params.find("duration")->second;
+        double radius   = _shape._params.find( "radius" )->second;
+        double hollow   = _shape._params.find( "hollow" )->second;
+        rmin = (hollow != 0.)? radius*hollow + 0.25*radius*(1-hollow) : 0.;
+        rmax = 0.75*radius;
+    }
+    
+
+    while (N_intervals_found<N_intervals)
+    {
+        int N_tries = 0;
+        bool found = false; 
+        vector<double> chain_arr;
+        double r_avg = 0;
+
+        while (!found)
+        {
+            // Failsafe
+            if (N_tries > N_max){
+                std::cout << "Couldn't find suitable interval in " << N_max
+                    << "tries" << std::endl;
+                throw std::runtime_error("");
+            } 
+
+            // Define mersenne_twister_engine Random Gen. (with random seed)
+            std::random_device rd;
+            int seed = rd();
+            std::mt19937 gen(seed);
+            std::uniform_real_distribution<> dis(0,_size);
+            
+            // Pick two random elements
+            int e1 = (int) dis(gen), e2 =(int) dis(gen);
+
+            int a; int b;
+            if (e1 == e2){
+                N_tries += 1;
+                continue;
+            }
+            else if (e1<e2){
+                a = e1;
+                b = e2;
+            }
+            else if (e1>e2){
+                a = e2;
+                b = e1;
+            }
+            else{
+                N_tries += 1;
+                continue;
+            }
+
+            // to have an interval require a prec b, so skip if not
+            if (_CMatrix[a][b] == 0){
+                N_tries += 1;
+                continue;
+            }
+
+            // Check they respect boundaries, if that ise demanded
+            if (avoid_boundaries){
+                double r1 = _coords[e1][1];
+                double r2 = _coords[e2][1];
+                if (!(rmin <= r1 && r1 <= rmax && rmin <= r2 && r2 <= rmax)){
+                    N_tries += 1;
+                    continue;
+                }
+            }
+
+            int n = IntervalCard(a, b);
+            if (n >= min_size && n<= max_size)
+            {  
+
+                /*          //OLD WAY WITH SET INTERSECTION
+
+                // Create set_intersection for cmatrix..
+                // Interval includes a, b and the elements connecting them
+                std::unordered_set<int> interval = set_intersection(
+                            _futures[a], _pasts[b]);
+                interval.insert(a);
+                interval.insert(b);
+
+                // Create a sorted vector of the interval (remaining indices)
+                std::vector<int> ordered_interval(interval.begin(),
+                                                interval.end());
+                std::sort(ordered_interval.begin(),ordered_interval.end());              
+                */
+                
+
+                // Create set_intersection for cmatrix..
+                // Interval includes a, b and the elements connecting them
+                vector<int> ordered_interval = {a};
+                for (int i=a+1; i<b; i++) {
+                    if(_CMatrix[a][i] && _CMatrix[i][b]) {
+                        ordered_interval.push_back(i);
+                    }
+                }
+                ordered_interval.push_back(b);
+
+                if(ordered_interval.size() != n) {
+                    std::cout << "n="<<n<<", interval size="<<
+                    ordered_interval.size()<<std::endl;
+                }
+
+                // Create a copy of the (cut) interval "reduced" cmatrix
+                vector<vector<int>> M =
+                            EmbeddedCauset::getIntervalCmatrix(ordered_interval);
+                
+                // Get the number of chains up to including size k
+                // where k=1 == _size
+                double C1 = (double)n;
+                double C2 = sumMatrix(M);
+
+               if (k_max >=3) { 
+                    vector<vector<int>> M2 = matmul(M,M);
+                    double C3 = sumMatrix(M2);
+                    chain_arr.push_back(C1);
+                    chain_arr.push_back(C2);
+                    chain_arr.push_back(C3);
+
+                    if (k_max == 4){
+                        vector<vector<int>> M3 = matmul(M2,M);
+                        double C4 = sumMatrix(M3);
+                        chain_arr.push_back(C4);
+                    }
+               }
+                else if (k_max>4) {
+                    print("Haven't implemented this for k>4!");
+                    throw std::runtime_error("");
+                }
+                else {
+                    print("What did you choose for k?");
+                    print("k<=4 required!");
+                    throw std::runtime_error("");
+                }
+
+                // Find the average r value in the interval
+                for (int index : ordered_interval) {
+                    r_avg += _coords[index][1];
+                }
+                r_avg = r_avg/(double)n;
+        
+
+                // Found the suitable interval in the causet
+                found = true;
+
+                //Create the pair of <N_chainK vector, r_avg>
+                std::pair<vector<double>,double> interval_result =
+                                                        {chain_arr,r_avg};
+                results.push_back(interval_result);
+
+                N_intervals_found++;
+                std::cout << "Found "<<
+                    (N_intervals_found) << "/" << N_intervals <<
+                    " intervals" << std::endl;
+            }
+            else{
+                N_tries +=1;
+                continue;
+            }
+        }   
+    }
+    // Found number of (1...k_max)-sized chains for N_intervals
+    return results;  
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //===========================================================================
@@ -583,7 +802,7 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max) //=1000
 
 /**
  * @brief Save causet attributes in file (ideally txt or csv)
- * =================================================================================
+ * ===========================================================================
  * [0,1] -> Storage Option
  * [1,1] -> size; 
  * [2,1] -> spacetime dimension;
@@ -1869,7 +2088,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
             _future_links.resize(_size);
         
-            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -1941,14 +2160,14 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
-        
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_HRVs_from_futlinks(t_f,r_S);
+        }
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");
         }
         else
         {
@@ -2016,19 +2235,21 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_CMatrix.size()==0)
-        {
-            std::cout << "To create future link matrix, CMatrix must exist";
-            throw std::invalid_argument("No CMatrix");}
-        
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_HRVs_distr_from_futlinks(t_f,r_S);
         }
+        else if (_CMatrix.size()==0)
+        {
+            std::cout << "To create future link matrix, CMatrix must exist";
+            throw std::invalid_argument("No CMatrix");
+        }
         else
         {
+            std::cout<<"Starting doing futlinks in count_HRVs"<<std::endl;
             _future_links.resize(_size);
         
+            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2067,6 +2288,8 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
         throw std::invalid_argument("Wrong spacetime");
     }
 }
+
+
 
 
 /**

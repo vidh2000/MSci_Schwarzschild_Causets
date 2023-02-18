@@ -206,7 +206,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     std::string hollow_str = stream4.str();
 
     std::string filename = std::string(homeDir) 
-                            + "/MSci_Schwarzschild_Causets/data/lambdas/"
+                            + "/MSci_Schwarzschild_Causets/data/HRVs/"
                             + "M=" + mass_str
                             + "_Rho=" + rho_str 
                             + "_Card=" + std::to_string(cards[0])

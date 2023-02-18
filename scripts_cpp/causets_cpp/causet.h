@@ -74,12 +74,12 @@ class Causet
 
         // KINEMATICS
 
-        static double ord_fr(Causet A,
+        static double ord_fr(Causet & A,
                       const char* denominator = "choose");
-        static double ord_fr(std::vector<std::vector<int>> A,
+        static double ord_fr(std::vector<std::vector<int>> & A,
                       const char* denominator = "choose");
         template<typename SET>
-        static double ord_fr(std::vector<SET> A_pasts,
+        static double ord_fr(std::vector<SET> & A_pasts,
                       const char* denominator = "choose");
         double ord_fr(int a, int b,
                       const char* denominator = "choose",
@@ -92,6 +92,11 @@ class Causet
                         int size_min = 100,
                         double size_max = 1e9,
                         bool from_matrix = true);   
+
+        std::vector<std::vector<int>> getIntervalCmatrix(
+                                std::vector<int> ordered_interval);
+                                
+        std::vector<double> Nk_BD (int x, int kmax, int kmin = 1);
         
 
 

@@ -46,10 +46,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {40};
-int min_size = 10;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {5000};
+int min_size = 50;  //Minimal size of the interval (min # of elements in it)
+int max_size = 0;
 double mass = 0.25;
-int N_reps = 1;
+int N_reps = 100;
+int N_intervals = 50;
 
 
 // Sprinkling Parameters
@@ -64,8 +66,8 @@ const char* sets_type = "all";
 const char* name = "cylinder";
 
 // Shape parameters
-double radius = 1;
-double height = 2;
+double radius = 0.5;
+double height = 1;
 ///////////////////////////////////////////
 
 // Begin program
@@ -82,10 +84,13 @@ for (auto dim: dims)
     
     for (auto card : cards)
     {
+        // Array for storing dimension estimate values
         std::vector<double> dim_ests = {}; 
-
-        for (int rep=0; rep<N_reps; rep++)
+        
+        int rep=0;
+        while (rep<N_reps)
         {
+            std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
             // Set up shape
             std::vector<double> center = {0.0,0.0,0.0,0.0};
@@ -98,33 +103,27 @@ for (auto dim: dims)
                             make_matrix, special, use_transitivity,
                             make_sets, make_links,sets_type);
 
-            std::cout << "==================================================\n";
-            std::cout << "Full Cmatrix:" << std::endl;
-            print_vector(C._CMatrix);
-            std::cout << "Pasts set:\n";
-            print_vector(C._pasts);
-            std::cout << "Futures set:\n";
-            print_vector(C._futures);
 
             std::cout << "------------------------\n";
             std::cout << "Getting an interval of min. size " << min_size <<
                     " -> cutting cmatrix, and pasts/futures sets\n";
-            C.get_interval(min_size);
-            std::cout << "Full Cmatrix:" << std::endl;
-            print_vector(C._CMatrix);
-            std::cout << "Pasts set:\n";
-            print_vector(C._pasts);
-            std::cout << "Futures set:\n";
-            print_vector(C._futures);
-
-            // Create interval          
-
-            // Estimate dimension of the causet
-            //double d_i = estimate_MMd(C_k_arr);
-            //dim_ests.push_back(d_i);
-
             
-            std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
+            // Get array of "N_chains" for chain-sizes 1...4
+            std::vector<std::pair<std::vector<double>,double>> nchains_arr = 
+                        C.get_Nchains_inInterval(N_intervals,
+                            min_size,4, max_size);
+
+            if (nchains_arr.size() < N_intervals){
+                continue;
+            }
+            rep++;
+
+            for (auto item : nchains_arr) {
+                double d_i = estimate_MMd(item.first);
+                dim_ests.push_back(d_i);
+            }
+            
+            
 
             //Timing rep
             auto repend = high_resolution_clock::now();
@@ -141,6 +140,13 @@ for (auto dim: dims)
                 << " causets in D=" << dim << " with N = " << card << ": "  
                 << duration/pow(10,6)/N_reps
                 << " seconds\n" << std::endl;
+
+        // Getting the dimension estimate mean and std
+        double d_avg = mymean(dim_ests);
+        double d_std = mystd(dim_ests);
+
+        std::cout << "MMd estimate = "<<d_avg<<"+-"<<d_std<<
+                    ". D="<<dim<<", N=" << card << std::endl; 
     }   
 }
 

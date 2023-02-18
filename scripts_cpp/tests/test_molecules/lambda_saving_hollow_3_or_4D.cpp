@@ -37,7 +37,7 @@ using namespace std::chrono;
 vector<int> dims = {3, 4};
 double t_f = 0;
 double r_S = 2;
-std::vector<double> rhos = {0.2, 1, 3}; 
+std::vector<double> rhos = {100}; 
 
 // Sprinkle Parameters
 bool poisson          = true;

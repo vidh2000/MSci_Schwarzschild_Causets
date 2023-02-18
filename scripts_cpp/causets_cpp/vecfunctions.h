@@ -16,7 +16,8 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-
+#include <omp.h>
+#include "functions.h"
 
 //_____________________________________________________________________
 //
@@ -337,6 +338,47 @@ int argmin(std::vector<T1, T2> const& v, int begin = 0, int end = 0)
 
 
 /**
+ * @brief Produces a copy of a matrix which was cut to
+ *        only rows and columns that correspond to the indices -
+ *        elements from the interval
+ * @param matrix :  NxN matrix
+ * @param interval: vector which contains the target indices telling which
+ *                  rows and columns not to cut away
+ */
+template <typename T>
+inline
+std::vector<std::vector<T>> get_reducedMatrix(std::vector<std::vector<T>> &matrix,
+                std::vector<int> interval)
+{
+
+    // Make sure values in the interval are ordered
+    std::sort(interval.begin(),interval.end());
+    
+    int N = matrix.size();
+    std::vector<std::vector<T>> new_matrix;
+
+    for (int i = 0; i<N; i++)
+    {
+        if (std::find(interval.begin(),interval.end(),i) == interval.end()) {
+            continue;
+        }
+        std::vector<T> row;
+        for (int j=0; j<N; j++)
+        {
+            if (std::find(interval.begin(),interval.end(),j) == interval.end()) {
+            continue;
+            }
+
+            row.push_back(matrix[i][j]);        
+        }
+        new_matrix.push_back(row);
+    }
+    return new_matrix;
+}
+
+
+
+/**
  * @brief Cuts the Cmatrix to only rows and columns that correspond to
  *          the indices - elements from the interval
  * @param matrix : i.e CMatrix 
@@ -489,7 +531,134 @@ double mymean(std::vector <T1> x, F func, std::vector <T2> w = {1})
     return (double) mean / sumw;
 }
 
+template <typename T>
+inline
+double mystd(const std::vector<T>& v) {
+    // Calculate the mean of the vector
+    double mean = 0.0;
+    for (auto x : v) {
+        mean += (double)x;
+    }
+    mean /= v.size();
 
+    // Calculate the sum of the squared differences from the mean
+    double squaredDifferencesSum = 0.0;
+    for (double x : v) {
+        squaredDifferencesSum += std::pow(x - mean, 2);
+    }
+
+    // Calculate the variance and standard deviation
+    double variance = squaredDifferencesSum / v.size();
+    double stdDeviation = std::sqrt(variance);
+
+    return stdDeviation;
+}
+
+
+inline
+std::pair<double, double> combine_meass(const std::vector<int>& Ns,
+                                      const std::vector<double>& mus, 
+                                      const std::vector<double>& stds) 
+{
+    if (mus.size() != stds.size()) {
+        return std::make_pair(0.0f, 0.0f); 
+    }
+
+    std::vector<double> coeffs;
+    size_t M = Ns.size();
+    size_t N = 0;
+    for (int i = 0; i < M; i++) {N += Ns[i];}
+
+    for (int i = 0; i < M; i++) {
+        int Ni = Ns[i];
+        double mui = mus[i];
+        double stdi = stds[i];
+        double term_i = (Ni-1)/(N-1)*stdi*stdi;
+        coeffs.push_back(term_i);
+        for (int j = i; j < M; j++) {
+            int Nj = Ns[j];
+            double muj = mus[j];
+            double term_mixed = Ni*Nj/(N*(N-1)) * std::pow(mui - muj, 2);
+            coeffs.push_back(term_mixed);
+        }
+    }
+    double mu = 0.0;
+    double sum_coeffs = 0.0;
+    for (int i = 0; i < M; i++) {
+        mu += mus[i];
+    }
+    mu /= M;
+    for (double coeff : coeffs) {
+        sum_coeffs += coeff;
+    }
+    double std = std::sqrt(sum_coeffs);
+    return std::make_pair(mu, std);
+}
+
+
+
+/**
+ * @brief Matrix multiplication A*B = C. SQUARE MATRIX PLEASE
+ * 
+ * @tparam T - any number type
+ * @param A - matrix A
+ * @param B  - matrix B
+ * @return std::vector<std::vector<T>> 
+ */
+template <typename T>
+inline
+std::vector<std::vector<T>> matmul(std::vector<std::vector<T>> A,
+                                   std::vector<std::vector<T>> B)
+{
+    // Create matrix of correct size to be filled in with results
+    std::vector<std::vector<T>> C;
+    int rows = A.size();
+    int columns = A[0].size();
+    int n = rows;
+    if (rows != columns) {
+        print("Want square matrix please.");
+        throw std::runtime_error("");
+    }
+    if ((B.size()!=n) || (B[0].size()!=n)) {
+        print("A and B matrix should be of equal sizes!");
+        throw std::runtime_error("");
+
+    }
+    C.resize(rows, std::vector<T>(columns));
+
+    //#pragma omp parallel for schedule(dynamic)
+    //#pragma omp parallel for private(i,j,k) shared(A,B,C)    
+    for(int i = 0; i < n; i++) {        
+        for(int k = 0; k < n; k++) {       
+            for(int j = 0; j < n; j++) {                
+                C[i][j] += A[i][k] * B[k][j];  
+            }
+        }
+    }
+    return C;
+}
+
+/**
+ * @brief Sum of all elements in the matrix (assuming a rectangular matrix!)
+ * 
+ * @tparam T - any real number type
+ * @param M matrix to be summed over
+ * @return double 
+ */
+template <typename T>
+inline
+double sumMatrix(std::vector<std::vector<T>> M)
+{
+    double sum = 0;
+    int N = M.size();
+    int K = M[0].size();
+    for (int i=0; i<N; i++){
+        for (int j=0; j<K; j++) {
+            sum = sum + M[i][j];
+        }
+    }
+    return sum;
+}
 
 // CTRL+K+C to comment out multiple lines of code
 // CTRL+K+U to uncomment out multiple lines of code

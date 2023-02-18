@@ -86,6 +86,16 @@ void print_set(std::set<obj> set)
     std::cout << std::endl;
 }
 
+
+
+template <typename nb>  
+inline
+void print(nb x) {
+    std::cout << x << std::endl;
+}
+
+
+
 template <typename obj>  
 inline
 void print(std::set<obj> set)
@@ -368,7 +378,6 @@ inline
 void replace_indices(std::vector<std::unordered_set<T>> &sets,
                 std::vector<T> interval)
 {
-    print("Inside 'replace_indices' method in functions.h");
     // Make sure values in the interval are ordered
     std::sort(interval.begin(),interval.end());
     std::vector<std::unordered_set<T>> new_sets;
