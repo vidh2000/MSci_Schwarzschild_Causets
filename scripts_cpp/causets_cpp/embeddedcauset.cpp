@@ -584,6 +584,10 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max)
  * @param max_size - Max. size of the interval (max # of elements in it
  *                                              == _size by default)
  * @param N_max - max number of tries to find the interval before stopping
+ * @param avoid_boundaries bool : True (Not-default) implies that the extremi
+ * of the intervals are within 25 and 75 % of space interval to avoid boundary
+ * effects.
+ * It assumes coords[1] is a radial distance from origin.
  * 
  * @exception std::runtime_error - if does not find suitable interval in N_max 
  * tries.
@@ -603,7 +607,8 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max)
  */
 vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                     int N_intervals, int min_size, int k_max,
-                    int max_size, int N_max) //==0, 1000
+                    int max_size, int N_max, bool avoid_boundaries)
+                     //==0, 1000
 {
     if (min_size <=2){
         std::cout << "min_size>2 required!" << std::endl;
@@ -618,6 +623,19 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
     // Define vars and outcome vars
     int N_intervals_found = 0;
     vector<std::pair<vector<double>,double>> results;
+
+    // Define limits if avoid_boundaries
+    double rmin, rmax;
+    if (avoid_boundaries)
+    {
+        std::vector<double> center = _shape._center; 
+        double duration = _shape._params.find("duration")->second;
+        double radius   = _shape._params.find( "radius" )->second;
+        double hollow   = _shape._params.find( "hollow" )->second;
+        rmin = (hollow != 0.)? radius*hollow + 0.25*radius*(1-hollow) : 0.;
+        rmax = 0.75*radius;
+    }
+    
 
     while (N_intervals_found<N_intervals)
     {
@@ -643,12 +661,13 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             
             // Pick two random elements
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
+
             int a; int b;
             if (e1 == e2){
                 N_tries += 1;
                 continue;
             }
-            else if (e1 < e2){
+            else if (e1<e2){
                 a = e1;
                 b = e2;
             }
@@ -665,6 +684,16 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             if (_CMatrix[a][b] == 0){
                 N_tries += 1;
                 continue;
+            }
+
+            // Check they respect boundaries, if that ise demanded
+            if (avoid_boundaries){
+                double r1 = _coords[e1][1];
+                double r2 = _coords[e2][1];
+                if (!(rmin <= r1 && r1 <= rmax && rmin <= r2 && r2 <= rmax)){
+                    N_tries += 1;
+                    continue;
+                }
             }
 
             int n = IntervalCard(a, b);

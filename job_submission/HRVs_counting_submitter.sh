@@ -24,8 +24,8 @@ runtime="1:00:00" #format: "hh:mm:ss"
 
 # SET MASSES YOU WANT TO SIMULATE
 # FIRST ROUND MASSES - 1k ...
-# [0.53 0.75 0.92 1.06 1.19 
-# 1.30 1.40 1.50 
+# [0.53 0.75 0.92  
+# 1.06 1.19 1.30 1.40 1.50 
 # 1.59 1.68 1.76 1.84 1.91 1.98 
 # 2.05  2.12 2.19 2.25 2.31 2.37 2.43 ] 
 # SECOND ROUND MASSES - 1.5k ...

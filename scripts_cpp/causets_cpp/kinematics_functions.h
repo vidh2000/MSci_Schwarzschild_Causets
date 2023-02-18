@@ -36,7 +36,9 @@ using namespace boost::math;
  * Nsamples times in the causet 
  * by using the estimator from RSS - Roy, Sinha, Surya 2013 paper - 
  * at the centre of various intervals. 
- * It assumes that coord[1] is some radial distance.
+ * Assumes natural labelling, with coords[1] being some sort of radial 
+ * coordinate from origin. Doesn't sample in last quartile 
+ * space to avoid boundaries effects. 
  * 
  * @param Causet EmbeddedCauset : Causet to be sampled.
  * @param Nsamples int : number of samples to analyse.
@@ -65,7 +67,7 @@ int interval_sizemin, int interval_sizemax = 0)
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax);
+                                    4, interval_sizemax, true);
     
     //#pragma omp parallel for
     for (int n = 0; n<Nsamples; n++)
@@ -135,7 +137,7 @@ int interval_sizemin, int interval_sizemax = 0)
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax);
+                                    4, interval_sizemax, true);
     
     for (int n = 0; n<Nsamples; n++)
     {
@@ -197,7 +199,7 @@ int interval_sizemin, int interval_sizemax = 0)
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax);
+                                    4, interval_sizemax, true);
     for (int n = 0; n<Nsamples; n++)
     {
         std::vector<double> C_k = intervals_chains_and_r[n].first;
@@ -233,7 +235,7 @@ int interval_sizemin, int interval_sizemax = 0)
  * @brief Sample causet for Ricci scalar as from Benincasa-Dowker operator, 
  * in DISCRETENESS UNITS. 
  * Assumes natural labelling, with coords[1] being some sort of radial 
- * coordinate from origin and only samples in central two quartiles 
+ * coordinate from origin and doesn't sample in last quartile 
  * of time and space to avoid boundaries effects. 
  * 
  * @param Causet EmbeddedCauset to be sampled.
@@ -286,6 +288,8 @@ std::vector<std::vector<double> > R_BD_sample
 
     return vec_of_pair_R_r;
 }
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -361,7 +365,6 @@ double R_00(double d, std::vector<double> C_k, double rho)
 
 
 
-
 /**
  * @brief 
  * 
@@ -397,7 +400,6 @@ double MMdim_eqn(double d, std::vector<double> C_k_arr)
 /**
  * @brief Yields the estimate of the MM-dimension for curved spacetime
  * 
- * @param d - Dimension of manifold
  * @param C_k_arr - array of chain lengths for 1,2,3,4-chains
  * @return double 
  */
@@ -410,11 +412,68 @@ double estimate_MMd(std::vector<double> C_k_arr)
         return MMdim_eqn(d,C_k_arr);
     };
 
-    double dmin = 0.1;
+    double dmin = 1;
     double dmax = 10;
+
     // Estimate dimension of Causet
     double dim_estimate = bisection(MM_to_solve,dmin,dmax);
     return dim_estimate;
+};
+
+
+/**
+ * @brief Find dimension of curved spacetime
+ * by using the estimator from RSS - Roy, Sinha, Surya 2013 paper - 
+ * by sampling various intervals. 
+ * Assumes natural labelling, with coords[1] being some sort of radial 
+ * coordinate from origin. Doesn't sample in last quartile of
+ * space to avoid boundaries effects. 
+ * 
+ * @param Causet EmbeddedCauset : Causet to be sampled.
+ * @param Nsamples int : number of samples to analyse.
+ * @param interval_sizemin int : minimum size of intervals to take into
+ * consideration.
+ * @param interval_sizemax int : maximum size of intervals to take into 
+ * account. Default is 0, meaning the causet's size.
+ * 
+ * @exception std::runtime_error - if does not find suitable interval in N_max 
+ * tries.
+ * 
+ * @return std::vector<double> (2) : mean dimension, standard deviation
+ * */
+inline
+std::vector<double> RSSMMdim_sample(EmbeddedCauset Causet, int Nsamples,
+                        int interval_sizemin, int interval_sizemax)
+{
+    double dmin = 0.1;
+    double dmax = 10;
+    std::vector<double> estimates (Nsamples);
+
+    std::vector< std::pair< std::vector<double>, double> > 
+    intervals_chains_and_r = 
+    Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
+                                    4, interval_sizemax, true);
+
+    double dim_avg = 0;
+    double dim_std = 0;
+    for (int n = 0; n < Nsamples; n++){
+
+        // Define function whose root needs to be found
+        auto MM_to_solve = [&intervals_chains_and_r, n](double d){
+        return MMdim_eqn(d,intervals_chains_and_r[n].first);
+        };
+
+        // Estimate dimension of Causet
+        double dim_estimate = bisection(MM_to_solve,dmin,dmax);
+
+        dim_avg += dim_estimate;
+        dim_std += dim_estimate*dim_estimate; //currently sum of squares
+    };    
+    
+    dim_avg /= Nsamples;
+    dim_std = std::pow(( dim_std/Nsamples - dim_avg*dim_avg), 0.5);
+
+    return {dim_avg, dim_std};
 };
 
 

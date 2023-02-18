@@ -74,7 +74,7 @@ const char* sets_type = "future";
 const char* name      = "cylinder";
 
 // Shape parameters
-double radius = 4*mass;
+double radius = 5*mass;
 double height = 1; 
 
 ///////////////////////////////////////////
@@ -94,6 +94,8 @@ for (auto dim: dims)
         std::vector<double> vec_of_RicciScalars (N_reps*N_intervals);
         std::vector<double> vec_of_Ricci00s     (N_reps*N_intervals); 
         std::vector<double> vec_of_radii        (N_reps*N_intervals);
+        std::vector<double> vec_of_RSSMMdim     (N_reps);
+        std::vector<double> vec_of_RSSMMstd     (N_reps);
 
         std::vector<double> vec_of_RicciBD      (N_reps*N_intervals);
         std::vector<double> vec_of_radiiBD      (N_reps*N_intervals);
@@ -125,9 +127,12 @@ for (auto dim: dims)
             // Get result - N_intervals RicciScalars, Ricci00s, radii - 
             // of nth repetition, with RSS model
             std::vector<std::vector<double>> nresults;
+            std::vector<double> RSSMMdim;
             try {
                 std::cout<<"\nDoing RSS now";
                 nresults = Riccis_RSS_radial_sample(C, N_intervals,
+                                                     min_size, max_size);
+                RSSMMdim = RSSMMdim_sample(C, N_intervals,
                                                      min_size, max_size);
             } catch (std::runtime_error& e) {
                 continue;
@@ -151,6 +156,8 @@ for (auto dim: dims)
                 vec_of_radiiBD     [rep*N_intervals+i] = nBDresults[i][1];
                 std::cout<<nBDresults[i][1]<< ", ";
             }
+            vec_of_RSSMMdim[rep] = RSSMMdim[0];
+            vec_of_RSSMMstd[rep] = RSSMMdim[1];
 
             //Timing rep
             auto repend = high_resolution_clock::now();
@@ -200,6 +207,15 @@ for (auto dim: dims)
         double bin_width = 2 * iqr * pow((double)N, -1.0/3.0);
         int n_rad_bins = (sorted_rs[N] - sorted_rs[0])/bin_width;
         std::cout<<"FD rule"<<std::endl;
+
+        // get average of RSSMMdim
+        std::vector<int> Ns (N_reps, (int)N_intervals);
+        std::pair<double, double>  RSSMMdimfinal = combine_meass(
+                                Ns, vec_of_RSSMMdim, vec_of_RSSMMstd);
+        double MMdim_avg = RSSMMdimfinal.first;
+        double MMdim_est = RSSMMdimfinal.second;
+        std::cout<<"\nDIMENSION ESTIMATES IS :"<<MMdim_avg<<" +- "<<MMdim_est
+                 <<std::endl;
 
         // get average R and R00 per bin
         std::vector<double> avg_R (n_rad_bins);

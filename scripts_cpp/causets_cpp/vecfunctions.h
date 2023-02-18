@@ -555,6 +555,47 @@ double mystd(const std::vector<T>& v) {
 }
 
 
+inline
+std::pair<double, double> combine_meass(const std::vector<int>& Ns,
+                                      const std::vector<double>& mus, 
+                                      const std::vector<double>& stds) 
+{
+    if (mus.size() != stds.size()) {
+        return std::make_pair(0.0f, 0.0f); 
+    }
+
+    std::vector<double> coeffs;
+    size_t M = Ns.size();
+    size_t N = 0;
+    for (int i = 0; i < M; i++) {N += Ns[i];}
+
+    for (int i = 0; i < M; i++) {
+        int Ni = Ns[i];
+        double mui = mus[i];
+        double stdi = stds[i];
+        double term_i = (Ni-1)/(N-1)*stdi*stdi;
+        coeffs.push_back(term_i);
+        for (int j = i; j < M; j++) {
+            int Nj = Ns[j];
+            double muj = mus[j];
+            double term_mixed = Ni*Nj/(N*(N-1)) * std::pow(mui - muj, 2);
+            coeffs.push_back(term_mixed);
+        }
+    }
+    double mu = 0.0;
+    double sum_coeffs = 0.0;
+    for (int i = 0; i < M; i++) {
+        mu += mus[i];
+    }
+    mu /= M;
+    for (double coeff : coeffs) {
+        sum_coeffs += coeff;
+    }
+    double std = std::sqrt(sum_coeffs);
+    return std::make_pair(mu, std);
+}
+
+
 
 /**
  * @brief Matrix multiplication A*B = C. SQUARE MATRIX PLEASE
