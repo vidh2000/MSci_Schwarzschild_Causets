@@ -211,10 +211,10 @@ if plot_boundaries:
                     va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"$t_{min}$ (with 1$\sigma$)")
+                zorder = 10, label = r"$t_{min}$ (1$\sigma$)")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
                 fmt = '.', capsize = 4,
-                zorder = 5, label = r"$t_{min}$ (with 3$\sigma$)")
+                zorder = 5, label = r"$t_{min}$ (3$\sigma$)")
     # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
     #             ls = '', alpha=0.2)
     # ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", 
@@ -234,10 +234,10 @@ if plot_boundaries:
                     va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"1$\sigma$)")
+                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
                 fmt = '.', capsize = 4, color = "blue",
-                zorder = 5, label = r"3$\sigma$)")
+                zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
@@ -534,9 +534,9 @@ if plot_molecules:
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
             label = r"(1-I) $I^{(n-1)}$"+ 
             f", I = {round(I,3)}+-{round(Iunc,3)}")
-    plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
-             label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
-             f" I = {round(I2,3)}+-{round(I2unc,3)}")
+    # plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
+    #          label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
+    #          f" I = {round(I2,3)}+-{round(I2unc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.yscale("log")
