@@ -1,3 +1,0 @@
-python: can't open file '/var/tmp/pbs.6852306.pbs/run_cpp_file.py': [Errno 2] No such file or directory
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh: line 41: cd: /var/tmp/scripts_cpp/for_submitting_cpp/: No such file or directory
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh: line 46: ./boundaries_vs_density_test.exe: No such file or directory

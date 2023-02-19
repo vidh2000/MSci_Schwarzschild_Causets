@@ -180,7 +180,6 @@ def combine_meass(Ns, mus, stds):
         for j in range(i, M):
             Nj = Ns[j]
             muj = mus[j]
-            stdj = stds[j]
             term_mixed = Ni*Nj/(N*(N-1)) * (mui - muj)**2
             coeffs.append(term_mixed)
     return np.mean(mus), np.sqrt(sum(coeffs))

@@ -1,4 +1,0 @@
-g++: error: /var/tmp/scripts_cpp/for_submitting_cpp/boundaries_vs_density_test.cpp: No such file or directory
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh: line 43: cd: /var/tmp/scripts_cpp/for_submitting_cpp/: No such file or directory
-cp: cannot stat 'boundaries_vs_density_test.exe': No such file or directory
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_file.sh: line 48: ./executables/boundaries_vs_density_test.exe: No such file or directory

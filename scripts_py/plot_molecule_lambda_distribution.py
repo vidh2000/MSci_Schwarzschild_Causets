@@ -11,9 +11,11 @@ from scipy.stats import chisquare, pearsonr
 # 0. SET USER VARIABLES
 ##############################################################################
 molecules = "lambdas" #lambdas, HRVs
-varying_var = "M"     #variable varying: can be M, Rho, Nmult
-fixed_var = "Rho"   #variable fixed:   can be, M, Rho, Nmult
-fixed_val = 5000     #value of fixed_var
+varying_var = "M"     #variable varying: can be M, Rho, Nmult (M best)
+fixed_var = "Rho"     #variable fixed:   can be, M, Rho, Nmult (Rho best)
+fixed_val = 5000     #value of fixed_var 
+use_selected_masses = True #gives equal spacing
+
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
 plot_boundaries = 1
@@ -40,6 +42,17 @@ else:
     fixed_string = f"{fixed_var}={fixed_val}"
 
 
+selected_masses = np.array([0.53, 0.75, 0.92, 1.06, 1.19, 
+                            1.30, 1.40, 1.50, 
+                            1.59, 1.68, 1.76, 1.84, 1.91, 1.98, 
+                            2.05, 2.12, 2.19, 2.25, 2.31, 2.37, 2.43,
+                            0.65, 0.84, 0.99, 1.13, 1.24, 1.35, 1.45,
+                            1.55, 1.63, 1.72, 1.88, 1.95,
+                            1.8,
+                            2.02, 2.09, 2.15, 2.22, 2.28, 2.34, 
+                            2.4, 2.46 ])
+
+
 ##############################################################################
 # 2. GET INFO FROM FILES
 ##############################################################################
@@ -64,7 +77,7 @@ for root, dirs, files in os.walk(dataDir):
     for i, file_i in enumerate(files):
         if fixed_string in file_i:
             go_on = False
-            if varying_var+"=" in file_i: #and (stef_txt_in_file) * ("stef.txt" in file_i):
+            if varying_var+"=" in file_i:
                 go_on = True
                 file_i_path = os.path.join(root, file_i)
                 file_i_pieces = file_i.split("_")
@@ -72,6 +85,10 @@ for root, dirs, files in os.walk(dataDir):
                 for piece_j in file_i_pieces:
                     if varying_var+"=" in piece_j:
                         varying_var_i = float(piece_j.split("=")[1])
+                        if use_selected_masses \
+                            and varying_var_i not in selected_masses:
+                            go_on = False
+                            break #j loop
                         if varying_var_i not in varying_values:
                             print(varying_var+"=", varying_var_i)
                             varying_values.append(varying_var_i)
@@ -189,7 +206,9 @@ print(f"Rho = {Rho:.0f}")
 fixed_string = rf"Rho = {Rho:.0f}"
 
 
-
+###########################################################################
+###########################################################################
+###########################################################################
 ###########################################################################
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
@@ -211,15 +230,10 @@ if plot_boundaries:
                     va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"$t_{min}$ (with 1$\sigma$)")
+                zorder = 10, label = r"$t_{min}$ (1$\sigma$)")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
                 fmt = '.', capsize = 4,
-                zorder = 5, label = r"$t_{min}$ (with 3$\sigma$)")
-    # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-    #             ls = '', alpha=0.2)
-    # ax.text(0.80, 0.05, rf"$\rho \: = \: {Rho:.0f}$", 
-    #         transform=ax.transAxes, fontsize=10,  #text==fixed_string
-    #         va='bottom', ha = 'left', bbox=props)
+                zorder = 5, label = r"$t_{min}$ (3$\sigma$)")
     if varying_var == "M":
         plt.xlabel(r'Horizon Area $[\ell]$')
     else:
@@ -228,22 +242,22 @@ if plot_boundaries:
     plt.legend()
     plt.grid(alpha = 0.4) 
 
-    # INNERMOST #######################################################
+    # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
     plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"Innermost (with 1$\sigma$)")
+                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
                 fmt = '.', capsize = 4, color = "blue",
-                zorder = 5, label = r"Innermost (with 3$\sigma$)")
+                zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
-                fmt = '.', capsize = 2, color = "red",
-                zorder = 10, label = r"Outermost (with 1$\sigma$)")
+                fmt = '.', capsize = 2, color = "black",
+                zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
-                fmt = '.', capsize = 4, color = "orange",
-                zorder = 5, label = r"Outermost (with 5$\sigma$)")
+                fmt = '.', capsize = 4, color = "blue",
+                zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
     # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
     #             ls = '', alpha=0.2)
@@ -263,6 +277,9 @@ if plot_boundaries:
 
 
 
+###########################################################################
+###########################################################################
+###########################################################################
 #############################################################################
 # 2.1 MOLECULES'S DISTRIBUTION ##############################################
 print("")
@@ -332,8 +349,8 @@ if plot_molecules:
     plt.show()
 
 
-    plt.figure(f"Large molecules for {fixed_string}")
-    for n in range(4, len(molecules_distr)):
+    plt.figure(f"Medium molecules for {fixed_string}")
+    for n in range(3, min(6, len(molecules_distr))):
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
         label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
@@ -341,16 +358,30 @@ if plot_molecules:
         plt.errorbar(x, y, yerr, 
                     fmt = '.', capsize = 4, 
                     label = label)
-    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
-                ls = '-', alpha=1)
-    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
-            fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
     plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
+    plt.show()
+
+
+    plt.figure(f"Large molecules for {fixed_string}")
+    for n in range(min(6, len(molecules_distr)), len(molecules_distr)):
+        y    = molecules_distr[n]
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else str(n+1) + r"$\mathbf{-}\Lambda$"
+        plt.errorbar(x, y, yerr, 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+    plt.legend()
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+    plt.grid(alpha = 0.2)
+    plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.png")
+    plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.pdf") 
     plt.show()
 
 
@@ -363,10 +394,6 @@ if plot_molecules:
         plt.errorbar(x, yerr, 
                     fmt = '.', capsize = 4, 
                     label = label)
-    props = dict(boxstyle='round', facecolor='white', edgecolor = 'black', 
-                ls = '-', alpha=1)
-    plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
-            fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(r"Uncertainty of $n\mathbf{-}\Lambda$")
@@ -465,7 +492,7 @@ if plot_molecules:
             [round(lambd_probs[n]/lambd_probs[n+1],5) 
             for n in range(len(lambd_probs)-1)])
     print("\nFIT RESULTS")
-    print(f"Exponential fit (1-I) I^(n-1) has:")
+    print("Exponential fit (1-I) I^(n-1) has:")
     print(f" - I = {round(popt[0],4)} +- {round(unc[0],4)}")
     print(f"With e^-x rather than I, it has:")
     print(f" - x = {-round(np.log(popt[0]),4)} +- {round(unc[0]/popt[0],4)}")
@@ -515,7 +542,7 @@ if plot_molecules:
             label = r"$n\mathbf{-}\Lambda$ probability distribution")
     xs = np.linspace(1, len(lambd_probs)+1,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
-            label = r"(1-I) $I^{(n-1)}$"+ 
+            label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
             f", I = {round(I,3)}+-{round(Iunc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
@@ -532,11 +559,11 @@ if plot_molecules:
             label = r"$n\mathbf{-}\Lambda$ distribution")
     xs = np.linspace(1, len(lambd_probs)+1,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
-            label = r"(1-I) $I^{(n-1)}$"+ 
+            label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
             f", I = {round(I,3)}+-{round(Iunc,3)}")
-    plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
-             label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
-             f" I = {round(I2,3)}+-{round(I2unc,3)}")
+    # plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
+    #          label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
+    #          f" I = {round(I2,3)}+-{round(I2unc,3)}")
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.yscale("log")

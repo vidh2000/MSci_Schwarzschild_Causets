@@ -13,7 +13,7 @@ cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 Rho=5000
-N_reps=10
+N_reps=5
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
@@ -27,16 +27,15 @@ runtime="08:00:00" #format: "hh:mm:ss"
 # [0.53 0.75 0.92 1.06 1.19 
 # 1.30 1.40 1.50 
 # 1.59 1.68 1.76 1.84 1.91 1.98 
-# 2.05  2.12 2.19 2.25 2.31 2.37 2.43 ] 
+# 2.05 2.12 2.19 2.25 2.31 2.37 2.43 ] 
 # SECOND ROUND MASSES - 1.5k ...
 # [0.65 0.84 0.99 1.13 1.24 1.35 1.45 
 #  1.55 1.63 1.72 1.88 1.95
 #  1.8 
-#  2.02 2.09 2.15 2.22 2.28 2.34
-#  2.4
-#  2.46 ]
+#  2.02 2.09 2.15 2.22 2.28 2.34 
+#  2.4 2.46 ]
 counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 2.46 2.46
+for mass in 2.4
 #$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
 do 
 

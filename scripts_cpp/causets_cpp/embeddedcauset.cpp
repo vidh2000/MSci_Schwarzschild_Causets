@@ -584,6 +584,10 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max)
  * @param max_size - Max. size of the interval (max # of elements in it
  *                                              == _size by default)
  * @param N_max - max number of tries to find the interval before stopping
+ * @param avoid_boundaries bool : True (Not-default) implies that the extremi
+ * of the intervals are within 25 and 75 % of space interval to avoid boundary
+ * effects.
+ * It assumes coords[1] is a radial distance from origin.
  * 
  * @exception std::runtime_error - if does not find suitable interval in N_max 
  * tries.
@@ -603,7 +607,8 @@ void EmbeddedCauset::get_interval(int min_size, int max_size, int N_max)
  */
 vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
                     int N_intervals, int min_size, int k_max,
-                    int max_size, int N_max) //==0, 1000
+                    int max_size, int N_max, bool avoid_boundaries)
+                     //==0, 1000
 {
     if (min_size <=2){
         std::cout << "min_size>2 required!" << std::endl;
@@ -618,6 +623,19 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
     // Define vars and outcome vars
     int N_intervals_found = 0;
     vector<std::pair<vector<double>,double>> results;
+
+    // Define limits if avoid_boundaries
+    double rmin, rmax;
+    if (avoid_boundaries)
+    {
+        std::vector<double> center = _shape._center; 
+        double duration = _shape._params.find("duration")->second;
+        double radius   = _shape._params.find( "radius" )->second;
+        double hollow   = _shape._params.find( "hollow" )->second;
+        rmin = (hollow != 0.)? radius*hollow + 0.25*radius*(1-hollow) : 0.;
+        rmax = 0.75*radius;
+    }
+    
 
     while (N_intervals_found<N_intervals)
     {
@@ -643,12 +661,13 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             
             // Pick two random elements
             int e1 = (int) dis(gen), e2 =(int) dis(gen);
+
             int a; int b;
             if (e1 == e2){
                 N_tries += 1;
                 continue;
             }
-            else if (e1 < e2){
+            else if (e1<e2){
                 a = e1;
                 b = e2;
             }
@@ -665,6 +684,16 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
             if (_CMatrix[a][b] == 0){
                 N_tries += 1;
                 continue;
+            }
+
+            // Check they respect boundaries, if that ise demanded
+            if (avoid_boundaries){
+                double r1 = _coords[e1][1];
+                double r2 = _coords[e2][1];
+                if (!(rmin <= r1 && r1 <= rmax && rmin <= r2 && r2 <= rmax)){
+                    N_tries += 1;
+                    continue;
+                }
             }
 
             int n = IntervalCard(a, b);
@@ -2109,7 +2138,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
 
 /**
  * @brief First, creates from causal matrix _CMatrix KIND OF a set of 
- * future_links vectors such that if an element has 2 or more future links, 
+ * future_links vectors such that if an element has 3 or more future links, 
  * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
  * (as that is enough to see if an element is maximal but 2).
  * Then get Hawking's radiation molecules apb:
@@ -2185,18 +2214,23 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix a kind of a set of 
- * future_links vectors such that if an element has one or more future links, 
- * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
- * (as that is enough to see if an element is maximal).
- * Then counts lambdas between maximal elements -below t_f and inside r_S- 
- * and maximal_but_one elements outside r_S. 
+ * @brief First, creates from causal matrix _CMatrix a kind of a set of  
+ * future_links vectors such that if an element has 3 or more future links, 
+ * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
+ * (as that is enough to see if an element is maximal but 2).
+ * Then get Hawking's radiation molecules apb:
+ * - p maximal but two below t_f and outside the horizon
+ * - a maximal below t_f and outside the horizon
+ * - b maximal below t_f and inside the hoizon
+ * Note: 
+ * - if a<b the molecule is "close";
+ * - if b spacelike a the molecule is "open".
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
 
- * @return map<int, int> : key is lambdas' size, value is number of
-           such lambdas.
+ * @return map<int, int> : key is HRV's type (0 open, 1 close), value is number of
+           such molecules.
  *         Also, note, we also keep:
  *         result[-1] = mintime;
  *         result[-2] = innermost;
@@ -2543,9 +2577,9 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
 
 
 /**
- * @brief   Finds HRVs in the causet.
- *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
- *          could be expanded if needed in the future. 
+ * @brief  Finds HRVs in the causet.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
@@ -2590,7 +2624,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
                     // or maximal but one and only connected to b
                     if (_future_links[a].size()==0 ||
                         (_future_links[a].size()==1 && 
-                         set_contains(b,_future_links[a]))
+                         _future_links[a].count(a)==1)
                         ) 
                     {
                         HRVs[p] = {a,b};
@@ -2643,7 +2677,7 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
-    for (int p = 1; p<_size; p++)
+    for (int p = 0; p<_size; p++)
     {
         // if j is maximal and inside the horizon
         if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
@@ -2653,6 +2687,7 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                      _future_links[p].begin(), _future_links[p].end());
             int a = (ab[0] < ab[1])? ab[0] : ab[1];
             int b = (ab[0] < ab[1])? ab[1] : ab[0];
+
             if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
             {
                 //the one inside is maximal
@@ -2663,9 +2698,9 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                     {
                         HRVs_distr[0] += 1;
                     }
-                    // the one outside is only connected to a -> close
+                    // the one outside is only connected to b -> close
                     else if (_future_links[a].size()==1 && 
-                             set_contains(b,_future_links[a]))
+                            _future_links[a].count(b)==1)
                     {
                         HRVs_distr[1] += 1;
                     }

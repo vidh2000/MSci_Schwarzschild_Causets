@@ -1,6 +1,0 @@
-/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.cpp: In function ‘int main(int, char**)’:
-/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.cpp:113:35: error: ‘N_multiplier’ was not declared in this scope
- std::cout << "N_multiplier = " << N_multiplier << "\n \n";
-                                   ^~~~~~~~~~~~
-cp: cannot stat 'count_HRVs.exe': No such file or directory
-/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_1.1_N_multiplier__N_reps_25.sh: line 33: ./executables/M1.1_rho_reps25.exe: No such file or directory
