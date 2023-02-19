@@ -228,22 +228,22 @@ if plot_boundaries:
     plt.legend()
     plt.grid(alpha = 0.4) 
 
-    # INNERMOST #######################################################
+    # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
     plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
                     va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"Innermost (with 1$\sigma$)")
+                zorder = 10, label = r"1$\sigma$)")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
                 fmt = '.', capsize = 4, color = "blue",
-                zorder = 5, label = r"Innermost (with 3$\sigma$)")
+                zorder = 5, label = r"3$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
-                fmt = '.', capsize = 2, color = "red",
-                zorder = 10, label = r"Outermost (with 1$\sigma$)")
+                fmt = '.', capsize = 2, color = "black",
+                zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
-                fmt = '.', capsize = 4, color = "orange",
-                zorder = 5, label = r"Outermost (with 5$\sigma$)")
+                fmt = '.', capsize = 4, color = "blue",
+                zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
     # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
     #             ls = '', alpha=0.2)

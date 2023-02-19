@@ -122,7 +122,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
 
     // Store N_links for each repetition in a single iteration
     std::map<int, std::vector<double>> all_iter_HRVs_results;
-    std::vector<int> iter_pastkeys = {-3, -2, -1, 1};
+    std::vector<int> HRV_keys = {-3, -2, -1, 0, 1};
     
     // Define params for causet generation
     int card,repetitions;
@@ -232,46 +232,54 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     }
     prev_file.close();
 
-    // 2.1 If file didn't exist, write for first time
+    // 2 If file didn't exist, write for first time
     if (previous_lines.size()==0)
     {
         std::ofstream out(filename);
-        out<<"Nreps,"<<repetitions<<","<<std::endl;
-        for (int key : iter_pastkeys)
-        {
-            out<<key<<"avg,"<<iter_avgs[key]<<","<<std::endl;
-            out<<key<<"std,"<<iter_stds[key]<<","<<std::endl;
-        }
+        // First line: labels
+        out<<std::left<<std::setw(11);
+        out<<"Nreps,";
+        out<<std::left<<std::setw(11);
+        out<<"outer_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"outer_std,";
+        out<<std::left<<std::setw(11);
+        out<<"inner_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"inner_std,";
+        out<<std::left<<std::setw(11);
+        out<<"mintm_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"mintm_std,";
+        out<<std::left<<std::setw(11);
+        out<<"open_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"open_std,";
+        out<<std::left<<std::setw(11);
+        out<<"close_avg,";
+        out<<std::left<<std::setw(11);
+        out<<"close_std,";
+        out<<std::endl;
         out.close();   
     }
 
-    // 2.2 If file existed, rewrite file with old and new info
-    else
+    // 3 Append new info
+    std::ofstream out(filename, std::ios::app);
+    out<<std::left<<std::setw(11);
+    out<<repetitions<<",";
+    for (int key : HRV_keys)
     {
-        std::ofstream out(filename);
-
-        for (int i = 0; i < previous_lines.size(); i++)
-        {
-            std::string line_i = previous_lines[i];
-            if (i == 0)//Nreps line
-            {
-                out<<line_i<<repetitions<<","<<std::endl;
-            }
-            else if (i % 2) //odd i -> avg line
-            {
-                int key_index = i/2;
-                int key = iter_pastkeys[key_index];
-                out<<line_i<<iter_avgs[key]<<","<<std::endl;
-            }
-            else //Even i -> std line
-            {
-                int key_index = i/2 -1;
-                int key = iter_pastkeys[key_index];
-                out<<line_i<<iter_stds[key]<<","<<std::endl;
-            }
-        }
-        out.close();
+        out<<std::left<<std::setw(10);
+        std::stringstream stream0;
+        stream0 << std::fixed << std::setprecision(6) << iter_avgs[key];
+        out<<stream0.str()<<",";
+        out<<std::left<<std::setw(10);
+        std::stringstream stream1;
+        stream1 << std::fixed << std::setprecision(6) << iter_stds[key];
+        out<<stream1.str()<<",";
     }
+    out<<std::endl;
+    out.close();
 }
 
 
@@ -313,11 +321,11 @@ template <typename num>
 void update_distr(std::map<int, std::vector<num>> &all_results, 
                   std::map<int, num> &newresults)
 {                
-        //Update past results with new ones
-        for (int key : {-3, -2, -1, 0, 1})
-        {
-            all_results[key].push_back(newresults[key]);
-        }
+    //Update past results with new ones
+    for (int key : {-3, -2, -1, 0, 1})
+    {
+        all_results[key].push_back(newresults[key]);
+    }
 }
 
 

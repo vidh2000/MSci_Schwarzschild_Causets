@@ -2138,7 +2138,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
 
 /**
  * @brief First, creates from causal matrix _CMatrix KIND OF a set of 
- * future_links vectors such that if an element has 2 or more future links, 
+ * future_links vectors such that if an element has 3 or more future links, 
  * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
  * (as that is enough to see if an element is maximal but 2).
  * Then get Hawking's radiation molecules apb:
@@ -2214,18 +2214,23 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix a kind of a set of 
- * future_links vectors such that if an element has one or more future links, 
- * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
- * (as that is enough to see if an element is maximal).
- * Then counts lambdas between maximal elements -below t_f and inside r_S- 
- * and maximal_but_one elements outside r_S. 
+ * @brief First, creates from causal matrix _CMatrix a kind of a set of  
+ * future_links vectors such that if an element has 3 or more future links, 
+ * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
+ * (as that is enough to see if an element is maximal but 2).
+ * Then get Hawking's radiation molecules apb:
+ * - p maximal but two below t_f and outside the horizon
+ * - a maximal below t_f and outside the horizon
+ * - b maximal below t_f and inside the hoizon
+ * Note: 
+ * - if a<b the molecule is "close";
+ * - if b spacelike a the molecule is "open".
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
 
- * @return map<int, int> : key is lambdas' size, value is number of
-           such lambdas.
+ * @return map<int, int> : key is HRV's type (0 open, 1 close), value is number of
+           such molecules.
  *         Also, note, we also keep:
  *         result[-1] = mintime;
  *         result[-2] = innermost;
@@ -2571,9 +2576,9 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
 
 
 /**
- * @brief   Finds HRVs in the causet.
- *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
- *          could be expanded if needed in the future. 
+ * @brief  Finds HRVs in the causet.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
@@ -2618,7 +2623,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
                     // or maximal but one and only connected to b
                     if (_future_links[a].size()==0 ||
                         (_future_links[a].size()==1 && 
-                         set_contains(b,_future_links[a]))
+                         _future_links[a].count(a)==1)
                         ) 
                     {
                         HRVs[p] = {a,b};
@@ -2671,7 +2676,7 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
-    for (int p = 1; p<_size; p++)
+    for (int p = 0; p<_size; p++)
     {
         // if j is maximal and inside the horizon
         if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
@@ -2681,6 +2686,7 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                      _future_links[p].begin(), _future_links[p].end());
             int a = (ab[0] < ab[1])? ab[0] : ab[1];
             int b = (ab[0] < ab[1])? ab[1] : ab[0];
+
             if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
             {
                 //the one inside is maximal
@@ -2691,9 +2697,9 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
                     {
                         HRVs_distr[0] += 1;
                     }
-                    // the one outside is only connected to a -> close
+                    // the one outside is only connected to b -> close
                     else if (_future_links[a].size()==1 && 
-                             set_contains(b,_future_links[a]))
+                            _future_links[a].count(b)==1)
                     {
                         HRVs_distr[1] += 1;
                     }

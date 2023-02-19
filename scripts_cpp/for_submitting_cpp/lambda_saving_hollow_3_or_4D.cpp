@@ -41,7 +41,8 @@ using namespace std::chrono;
 vector<int> dims = {3, 4};
 double t_f = 0;
 double r_S = 2;
-std::vector<double> rhos = {100}; 
+bool do_hollow = 0;
+std::vector<double> rhos = {5, 10, 25, 50}; 
 
 // Sprinkle Parameters
 bool poisson          = true;
@@ -72,7 +73,7 @@ int main()
         double R = r_S+5*scale;
         double r = r_S-5*scale;
         double T = 6*scale;
-        double h = (r>0)? r/R : 0.;
+        double h = (do_hollow)? ((r>0)? r/R : 0.) : 0.;
         int card = 0;
         if (dim == 4)
         card += rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
