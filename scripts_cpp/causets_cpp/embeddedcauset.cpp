@@ -1862,7 +1862,9 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
                             break;} //breaks k loop
                     }
                     if (!has_broken){
+                        #pragma omp atomic
                         _future_links[i].insert(j);
+                        #pragma omp atomic
                         n_links_of_i += 1;
                         if (n_links_of_i > 1)
                             {break;} /*breaks j loop, hence goes to next i*/
@@ -2088,7 +2090,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
             _future_links.resize(_size);
         
-            #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2108,7 +2110,9 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                         }
                         if (!has_broken)
                         {
+                            #pragma omp atomic
                             n_links_of_i += 1;
+                            #pragma omp atomic
                             _future_links[i].insert(j);
                             if (n_links_of_i - 1 > 0)
                                 {break;} /*breaks j loop, hence goes to next i*/
@@ -2274,6 +2278,7 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
                         }
                         if (!has_broken)
                         {
+                            #pragma omp atomic
                             n_links_of_i += 1;
                             #pragma omp atomic
                             _future_links[i].insert(j);
