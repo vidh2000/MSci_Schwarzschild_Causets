@@ -1,0 +1,72 @@
+Using 256 cores
+Using 920GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_2.19_N_multiplier__N_reps_10.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+PARAMETERS used in the causet generation:
+mass=2.19, Rho=5000, N_reps=10
+
+Scale = 0.118921
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+======================================================
+Main interation count: 1/1
+N = 410016. r_S = 4.38. Radius = 4.73676. Hollow = 0.849365. Dimension = 4. Height = 0.475683. Centered at t = -0.237841.
+M=2.19, 1/10
+Time taken generating for N = 410055: 265.961 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.343311
+r_min for elements in the HRVs = 4.16782
+r_max for elements in the HRVs = 4.59891
+Time taken in count_HRVs for N = 410055: 428.662 seconds
+M=2.19, 2/10
+Time taken generating for N = 410275: 306.347 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.353666
+r_min for elements in the HRVs = 4.20715
+r_max for elements in the HRVs = 4.59235
+Time taken in count_HRVs for N = 410275: 320.527 seconds
+M=2.19, 3/10
+Time taken generating for N = 410274: 227.238 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.313543
+r_min for elements in the HRVs = 4.20818
+r_max for elements in the HRVs = 4.60194
+Time taken in count_HRVs for N = 410274: 310.554 seconds
+M=2.19, 4/10
+Time taken generating for N = 409493: 193.814 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.315811
+r_min for elements in the HRVs = 4.19538
+r_max for elements in the HRVs = 4.58118
+Time taken in count_HRVs for N = 409493: 320.039 seconds
+M=2.19, 5/10
+Time taken generating for N = 409855: 197.212 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.447409
+r_min for elements in the HRVs = 4.19566
+r_max for elements in the HRVs = 4.59752
+Time taken in count_HRVs for N = 409855: 317.946 seconds
+M=2.19, 6/10
+Time taken generating for N = 410242: 198.52 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.373422
+r_min for elements in the HRVs = 4.171
+r_max for elements in the HRVs = 4.6015
+Time taken in count_HRVs for N = 410242: 315.471 seconds
+M=2.19, 7/10
+Time taken generating for N = 410394: 197.605 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.35625
+r_min for elements in the HRVs = 4.18585
+r_max for elements in the HRVs = 4.60273
+Time taken in count_HRVs for N = 410394: 315.17 seconds
