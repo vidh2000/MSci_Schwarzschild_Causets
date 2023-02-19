@@ -234,3 +234,7 @@ Time taken in count_HRVs for N = 48971: 3.13713 seconds
 M=0.75, 31/100
 Time taken generating for N = 48942: 4.19853 seconds
 Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.306484
+r_min for elements in the HRVs = 1.35359
+r_max for elements in the HRVs = 1.67586
+Time taken in count_HRVs for N = 48942: 3.19965 seconds
