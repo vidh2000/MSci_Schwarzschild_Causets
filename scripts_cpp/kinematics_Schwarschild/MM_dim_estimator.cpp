@@ -46,11 +46,11 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {5000};
-int min_size = 50;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {7000};
+int min_size = 30;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0;
 double mass = 0.25;
-int N_reps = 100;
+int N_reps = 20;
 int N_intervals = 50;
 
 
@@ -60,14 +60,15 @@ bool poisson = true;
 bool make_matrix = true;
 bool special = false;
 bool use_transitivity = false;
-bool make_sets = true;
+bool make_sets = false;
 bool make_links = false; 
-const char* sets_type = "all";
+const char* sets_type = "future";
 const char* name = "cylinder";
 
 // Shape parameters
-double radius = 0.5;
+double radius = 4*mass;
 double height = 1;
+double hollow = 0.5;
 ///////////////////////////////////////////
 
 // Begin program
@@ -94,7 +95,7 @@ for (auto dim: dims)
             auto repstart = high_resolution_clock::now();
             // Set up shape
             std::vector<double> center = {0.0,0.0,0.0,0.0};
-            CoordinateShape shape(dim,name,center,radius,height);
+            CoordinateShape shape(dim,name,center,radius,height,hollow);
             // Set up spacetime
             Spacetime S = Spacetime();
             S.BlackHoleSpacetime(dim,mass);
@@ -108,12 +109,12 @@ for (auto dim: dims)
             std::cout << "Getting an interval of min. size " << min_size <<
                     " -> cutting cmatrix, and pasts/futures sets\n";
             
-            // Get array of "N_chains" for chain-sizes 1...4
-            std::vector<std::pair<std::vector<double>,double>> nchains_arr = 
-                        C.get_Nchains_inInterval(N_intervals,
-                            min_size,4, max_size);
-
-            if (nchains_arr.size() < N_intervals){
+            // Get array of "N_chains" for chain-sizes 1...4.
+            std::vector<std::pair<std::vector<double>,double>> nchains_arr;
+            try {
+                nchains_arr = C.get_Nchains_inInterval(N_intervals,
+                                            min_size, 4, max_size);
+            } catch (std::runtime_error& e) {
                 continue;
             }
             rep++;

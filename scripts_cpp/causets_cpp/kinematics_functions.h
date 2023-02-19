@@ -32,7 +32,7 @@ using namespace boost::math;
 /////////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief Sample Ricci scalar and R00 values in DISCRETEENSS UNITS 
+ * @brief Sample Ricci scalar and R00 values in DISCRETENESS UNITS 
  * Nsamples times in the causet 
  * by using the estimator from RSS - Roy, Sinha, Surya 2013 paper - 
  * at the centre of various intervals. 
@@ -67,7 +67,7 @@ int interval_sizemin, int interval_sizemax = 0)
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
                                     4, interval_sizemax);
     
-    #pragma omp paraller for
+    #pragma omp parallel for
     for (int n = 0; n<Nsamples; n++)
     {
         std::vector<double> C_k = intervals_chains_and_r[n].first;

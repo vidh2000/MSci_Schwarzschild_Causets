@@ -2220,7 +2220,7 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_HRVs"<<std::endl;
             _future_links.resize(_size);
         
-            #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2241,6 +2241,7 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
                         if (!has_broken)
                         {
                             n_links_of_i += 1;
+                            #pragma omp atomic
                             _future_links[i].insert(j);
                             if (n_links_of_i - 2 > 0) //n links of i == 3
                                 {break;} /*breaks j loop, hence goes to next i*/

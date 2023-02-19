@@ -53,12 +53,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {4000};
-int min_size = 40;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {5000};
+int min_size = 25;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0;   //if 0 -> ==_size of the causet
 double mass = 0.25;
-int N_reps = 30;
-int N_intervals = 30; // Number of intervals per causet realisation
+int N_reps = 50;
+int N_intervals = 10; // Number of intervals per causet realisation
 
 
 // Sprinkling Parameters
@@ -75,7 +75,7 @@ const char* name = "cylinder";
 // Shape parameters
 double radius = 4*mass;
 double height = 1; 
-
+double hollow = 0.2;
 ///////////////////////////////////////////
 
 // Begin program
@@ -103,7 +103,7 @@ for (auto dim: dims)
             auto repstart = high_resolution_clock::now();
             // Set up shape
             std::vector<double> center = {0.0,0.0,0.0,0.0};
-            CoordinateShape shape(dim,name,center,radius,height);
+            CoordinateShape shape(dim,name,center,radius,height,hollow);
             // Set up spacetime
             Spacetime S = Spacetime();
             S.BlackHoleSpacetime(dim,mass);
