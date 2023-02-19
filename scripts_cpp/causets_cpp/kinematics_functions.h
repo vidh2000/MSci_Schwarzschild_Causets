@@ -69,7 +69,7 @@ int interval_sizemin, int interval_sizemax = 0)
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
                                     4, interval_sizemax, true);
     
-    //#pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic)
     for (int n = 0; n<Nsamples; n++)
     {
         std::vector<double> C_k = intervals_chains_and_r[n].first;
@@ -96,7 +96,7 @@ int interval_sizemin, int interval_sizemax = 0)
                             std::pow(2,2/(3*d)) *
                             std::pow(d,(4/(3*d)-1)) * 
                             (K1-2*K2+K3) / std::pow(J1-2*J2+J3, 1+2/(3*d));
-        
+        #pragma omp atomic
         vector_of_Ricci_Ricci00_radius[n] =
                             {R_RSS_n, R00_n, intervals_chains_and_r[n].second};   
     }
@@ -265,7 +265,7 @@ std::vector<std::vector<double> > R_BD_sample
     std::mt19937 gen(seed);
     std::uniform_real_distribution<> dis(0, Causet._size);
 
-    //#pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic)
     for (int rep = 0; rep < Nsamples; rep++)
     {
         int xi = (int) dis(gen);
@@ -281,9 +281,11 @@ std::vector<std::vector<double> > R_BD_sample
         std::vector<double> N_arr = Causet.Nk_BD(xi, 4, 1);
         double Ri = 4*std::pow(2./3.,0.5) *
                 (1 - (N_arr[0] - 9*N_arr[1] + 16*N_arr[2] - 8*N_arr[3]) );
+        
+        #pragma omp atomic
         vec_of_pair_R_r[rep][0] += Ri;
+        #pragma omp atomic
         vec_of_pair_R_r[rep][1] += ri;
-        std::cout<<"\nend BD loop";
     }
 
     return vec_of_pair_R_r;
@@ -456,6 +458,8 @@ std::vector<double> RSSMMdim_sample(EmbeddedCauset Causet, int Nsamples,
 
     double dim_avg = 0;
     double dim_std = 0;
+
+    #pragma omp parallel for schedule(dynamic)
     for (int n = 0; n < Nsamples; n++){
 
         // Define function whose root needs to be found
@@ -466,7 +470,9 @@ std::vector<double> RSSMMdim_sample(EmbeddedCauset Causet, int Nsamples,
         // Estimate dimension of Causet
         double dim_estimate = bisection(MM_to_solve,dmin,dmax);
 
+        #pragma omp atomic
         dim_avg += dim_estimate;
+        #pragma omp atomic
         dim_std += dim_estimate*dim_estimate; //currently sum of squares
     };    
     
