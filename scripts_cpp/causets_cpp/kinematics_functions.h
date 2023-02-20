@@ -67,9 +67,9 @@ int interval_sizemin, int interval_sizemax = 0)
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax, true);
+                                    4, interval_sizemax, 1e6, true);
     
-    #pragma omp parallel for schedule(dynamic)
+    //#pragma omp parallel for schedule(dynamic)
     for (int n = 0; n<Nsamples; n++)
     {
         std::vector<double> C_k = intervals_chains_and_r[n].first;
@@ -96,7 +96,7 @@ int interval_sizemin, int interval_sizemax = 0)
                             std::pow(2,2/(3*d)) *
                             std::pow(d,(4/(3*d)-1)) * 
                             (K1-2*K2+K3) / std::pow(J1-2*J2+J3, 1+2/(3*d));
-        #pragma omp atomic
+        //#pragma omp atomic
         vector_of_Ricci_Ricci00_radius[n] =
                             {R_RSS_n, R00_n, intervals_chains_and_r[n].second};   
     }
@@ -137,7 +137,7 @@ int interval_sizemin, int interval_sizemax = 0)
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax, true);
+                                    4, interval_sizemax, 1e6, true);
     
     for (int n = 0; n<Nsamples; n++)
     {
@@ -199,7 +199,7 @@ int interval_sizemin, int interval_sizemax = 0)
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax, true);
+                                    4, interval_sizemax, 1e6, true);
     for (int n = 0; n<Nsamples; n++)
     {
         std::vector<double> C_k = intervals_chains_and_r[n].first;
@@ -247,9 +247,11 @@ inline
 std::vector<std::vector<double> > R_BD_sample
 (EmbeddedCauset & Causet, int Nsamples)
 {
-    std::vector<std::vector<double> > vec_of_pair_R_r(Nsamples,
-    {0., 0.});
+    std::cout<<"\nBD: initialising vector"<<std::endl;
+    std::vector<std::vector<double> > vec_of_pair_R_r
+    ;//(Nsamples,{0., 0.});
 
+    std::cout<<"BD: setting limits"<<std::endl;
     std::vector<double> center = Causet._shape._center; 
     double duration = Causet._shape._params.find("duration")->second;
     double radius   = Causet._shape._params.find( "radius" )->second;
@@ -260,32 +262,39 @@ std::vector<std::vector<double> > R_BD_sample
     double rmax = 0.75*radius;
 
     // Define mersenne_twister_engine Random Gen. (with random seed)
+    std::cout<<"BD: defining random"<<std::endl;
     std::random_device rd;
     int seed = rd();
     std::mt19937 gen(seed);
     std::uniform_real_distribution<> dis(0, Causet._size);
 
-    #pragma omp parallel for schedule(dynamic)
+    std::cout<<"BD: starting loop"<<std::endl;
+    //#pragma omp parallel for schedule(dynamic)
     for (int rep = 0; rep < Nsamples; rep++)
     {
+        std::cout<<"rep : "<<rep<<std::endl;
         int xi = (int) dis(gen);
         double ri = Causet._coords[xi][1];
         double ti = Causet._coords[xi][0];
 
         while (!(tmin <= ti && ti <= tmax && rmin <= ri && ri <= rmax)){
+            std::cout<<xi<<",";
             xi = (int) dis(gen);
             ri = Causet._coords[xi][1];
             ti = Causet._coords[xi][0];
+            if (tmin <= ti && ti <= tmax && rmin <= ri && ri <= rmax)
+            break;
         }
-        
+        std::cout<<"\nDone While, exit with xi = "<<xi<<std::endl;
         std::vector<double> N_arr = Causet.Nk_BD(xi, 4, 1);
-        double Ri = 4*std::pow(2./3.,0.5) *
-                (1 - (N_arr[0] - 9*N_arr[1] + 16*N_arr[2] - 8*N_arr[3]) );
-        
-        #pragma omp atomic
-        vec_of_pair_R_r[rep][0] += Ri;
-        #pragma omp atomic
-        vec_of_pair_R_r[rep][1] += ri;
+        print_vector(N_arr);
+        double Ri = 4.*std::pow(2./3.,0.5) *
+                (1. - (N_arr[0] - 9.*N_arr[1] + 16.*N_arr[2] - 8.*N_arr[3]) );
+        print(Ri);
+        print(ri);
+        vec_of_pair_R_r.push_back({Ri, ri});
+        // vec_of_pair_R_r[rep][0] += Ri;
+        // vec_of_pair_R_r[rep][1] += ri;
     }
 
     return vec_of_pair_R_r;
@@ -444,7 +453,7 @@ double estimate_MMd(std::vector<double> C_k_arr)
  * @return std::vector<double> (2) : mean dimension, standard deviation
  * */
 inline
-std::vector<double> RSSMMdim_sample(EmbeddedCauset Causet, int Nsamples,
+std::vector<double> RSSMMdim_sample(EmbeddedCauset & Causet, int Nsamples,
                         int interval_sizemin, int interval_sizemax)
 {
     double dmin = 0.1;
@@ -454,12 +463,12 @@ std::vector<double> RSSMMdim_sample(EmbeddedCauset Causet, int Nsamples,
     std::vector< std::pair< std::vector<double>, double> > 
     intervals_chains_and_r = 
     Causet.get_Nchains_inInterval(Nsamples, interval_sizemin, 
-                                    4, interval_sizemax, true);
+                                    4, interval_sizemax, 1e6, true);
 
     double dim_avg = 0;
     double dim_std = 0;
 
-    #pragma omp parallel for schedule(dynamic)
+    //#pragma omp parallel for schedule(dynamic)
     for (int n = 0; n < Nsamples; n++){
 
         // Define function whose root needs to be found
@@ -470,9 +479,9 @@ std::vector<double> RSSMMdim_sample(EmbeddedCauset Causet, int Nsamples,
         // Estimate dimension of Causet
         double dim_estimate = bisection(MM_to_solve,dmin,dmax);
 
-        #pragma omp atomic
+        //#pragma omp atomic
         dim_avg += dim_estimate;
-        #pragma omp atomic
+        //#pragma omp atomic
         dim_std += dim_estimate*dim_estimate; //currently sum of squares
     };    
     

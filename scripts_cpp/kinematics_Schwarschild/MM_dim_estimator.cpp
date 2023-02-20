@@ -85,6 +85,9 @@ for (auto dim: dims)
     
     for (auto card : cards)
     {
+        double scale = std::pow(Rho, -1.0/4.0);
+        std::cout << "Scale = " << scale << std::endl;
+
         // Array for storing dimension estimate values
         std::vector<double> dim_ests = {}; 
         
