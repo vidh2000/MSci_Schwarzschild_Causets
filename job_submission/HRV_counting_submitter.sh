@@ -14,7 +14,7 @@ cpp_file_to_run="'count_HRVs.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 Rho=5000
-N_reps=10
+N_reps=30
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS

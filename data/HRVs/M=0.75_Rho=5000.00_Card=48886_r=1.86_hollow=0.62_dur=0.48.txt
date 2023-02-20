@@ -1,0 +1,2 @@
+Nreps,     outer_avg, outer_std, inner_avg, inner_std, mintm_avg, mintm_std, open_avg,  open_std,  close_avg, close_std, 
+100        ,1.693202  ,0.018162  ,1.350129  ,0.021884  ,-0.302863 ,0.025518  ,109.000000,11.574964 ,0.000000  ,0.000000  ,
