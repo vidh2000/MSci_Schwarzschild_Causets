@@ -1862,10 +1862,10 @@ int EmbeddedCauset::count_links_fromCMatrix(double& t_f, double r_S)
                             break;} //breaks k loop
                     }
                     if (!has_broken){
-                        #pragma omp atomic
-                        _future_links[i].insert(j);
+                        
                         #pragma omp atomic
                         n_links_of_i += 1;
+                        _future_links[i].insert(j);
                         if (n_links_of_i > 1)
                             {break;} /*breaks j loop, hence goes to next i*/
                     }
@@ -2110,10 +2110,11 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
                         }
                         if (!has_broken)
                         {
-                            #pragma omp atomic
-                            n_links_of_i += 1;
-                            #pragma omp atomic
-                            _future_links[i].insert(j);
+                            #pragma omp critical
+                            {
+                                n_links_of_i += 1;
+                                _future_links[i].insert(j);
+                            }
                             if (n_links_of_i - 1 > 0)
                                 {break;} /*breaks j loop, hence goes to next i*/
                         }
@@ -2196,8 +2197,8 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
                         }
                         if (!has_broken)
                         {
-                            n_links_of_i += 1;
                             _future_links[i].insert(j);
+                            n_links_of_i += 1;
                             if (n_links_of_i - 2 > 0)
                                 {break;} /*breaks j loop, hence goes to next i*/
                         }
@@ -2278,14 +2279,14 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
                         }
                         if (!has_broken)
                         {
-                            #pragma omp atomic
-                            n_links_of_i += 1;
-
-                            #pragma omp atomic
-                            _future_links[i].insert(j);
-                            
+                            #pragma omp critical
+                            {
+                                _future_links[i].insert(j);
+                                n_links_of_i += 1;
+                            }
                             if (n_links_of_i - 2 > 0) //n links of i == 3
                                 {break;} /*breaks j loop, hence goes to next i*/
+                            
                         }
                     }
                 }

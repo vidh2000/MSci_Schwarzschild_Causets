@@ -1,0 +1,12 @@
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp: In member function ‘int EmbeddedCauset::count_links_fromCMatrix(double&, double)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:1866:51: error: invalid operator for ‘#pragma omp atomic’ before ‘;’ token
+                         _future_links[i].insert(j);
+                                                   ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp: In member function ‘std::map<int, double> EmbeddedCauset::count_lambdas(double&, double)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:2116:55: error: invalid operator for ‘#pragma omp atomic’ before ‘;’ token
+                             _future_links[i].insert(j);
+                                                       ^
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp: In member function ‘std::map<int, double> EmbeddedCauset::count_HRVs(double&, double)’:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp:2284:55: error: invalid operator for ‘#pragma omp atomic’ before ‘;’ token
+                             _future_links[i].insert(j);
+                                                       ^
