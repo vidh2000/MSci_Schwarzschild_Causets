@@ -2280,8 +2280,10 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
                         {
                             #pragma omp atomic
                             n_links_of_i += 1;
+
                             #pragma omp atomic
                             _future_links[i].insert(j);
+                            
                             if (n_links_of_i - 2 > 0) //n links of i == 3
                                 {break;} /*breaks j loop, hence goes to next i*/
                         }
