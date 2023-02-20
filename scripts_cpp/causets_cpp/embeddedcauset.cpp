@@ -2090,7 +2090,7 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
             _future_links.resize(_size);
         
-            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
@@ -2259,7 +2259,7 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
             std::cout<<"Starting doing futlinks in count_HRVs"<<std::endl;
             _future_links.resize(_size);
         
-            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
                 int n_links_of_i = 0;
