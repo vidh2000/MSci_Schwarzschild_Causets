@@ -14,13 +14,13 @@ cpp_file_to_run="'count_HRVs.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 Rho=5000
-N_reps=30
+N_reps=10
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
 mem=920
-runtime="08:00:00" #format: "hh:mm:ss"
+runtime="04:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
@@ -42,7 +42,7 @@ counter=0
 #2.05 2.12 2.19 2.25 2.31 2.37 2.43
 #$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
 
-for mass in 2.05 2.12 2.19 2.25 2.31 2.37 2.43
+for mass in 2.37 2.12
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

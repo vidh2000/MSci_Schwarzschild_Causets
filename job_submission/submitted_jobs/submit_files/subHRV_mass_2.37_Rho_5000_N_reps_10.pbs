@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -lselect=1:ncpus=256:mem=920gb
-#PBS -lwalltime=05:00:00
+#PBS -lwalltime=04:00:00
 #PBS -o /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/out_files
 #PBS -e /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/err_files
 
