@@ -1,0 +1,246 @@
+Using 256 cores
+Using 920GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_2.12_N_multiplier__N_reps_30.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+PARAMETERS used in the causet generation:
+mass=2.12, Rho=5000, N_reps=30
+
+Scale = 0.118921
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+======================================================
+Main interation count: 1/1
+N = 384280. r_S = 4.24. Radius = 4.59676. Hollow = 0.844777. Dimension = 4. Height = 0.475683. Centered at t = -0.237841.
+M=2.12, 1/30
+Time taken generating for N = 383090: 224.178 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.317156
+r_min for elements in the HRVs = 4.06204
+r_max for elements in the HRVs = 4.46047
+Time taken in count_HRVs for N = 383090: 288.099 seconds
+M=2.12, 2/30
+Time taken generating for N = 384727: 218.033 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.317034
+r_min for elements in the HRVs = 4.03367
+r_max for elements in the HRVs = 4.43744
+Time taken in count_HRVs for N = 384727: 274.308 seconds
+M=2.12, 3/30
+Time taken generating for N = 384697: 225.626 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.357094
+r_min for elements in the HRVs = 4.00583
+r_max for elements in the HRVs = 4.4807
+Time taken in count_HRVs for N = 384697: 273.959 seconds
+M=2.12, 4/30
+Time taken generating for N = 385406: 212.025 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.323274
+r_min for elements in the HRVs = 4.06636
+r_max for elements in the HRVs = 4.48134
+Time taken in count_HRVs for N = 385406: 240.815 seconds
+M=2.12, 5/30
+Time taken generating for N = 384223: 182.252 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.325967
+r_min for elements in the HRVs = 4.04498
+r_max for elements in the HRVs = 4.47736
+Time taken in count_HRVs for N = 384223: 283.684 seconds
+M=2.12, 6/30
+Time taken generating for N = 384263: 176.266 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.334047
+r_min for elements in the HRVs = 4.0353
+r_max for elements in the HRVs = 4.44059
+Time taken in count_HRVs for N = 384263: 282.627 seconds
+M=2.12, 7/30
+Time taken generating for N = 384883: 172.701 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.401074
+r_min for elements in the HRVs = 4.06278
+r_max for elements in the HRVs = 4.47758
+Time taken in count_HRVs for N = 384883: 283.073 seconds
+M=2.12, 8/30
+Time taken generating for N = 385190: 177.752 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.302913
+r_min for elements in the HRVs = 4.03341
+r_max for elements in the HRVs = 4.45362
+Time taken in count_HRVs for N = 385190: 284.609 seconds
+M=2.12, 9/30
+Time taken generating for N = 384345: 167.808 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.38801
+r_min for elements in the HRVs = 4.05935
+r_max for elements in the HRVs = 4.45817
+Time taken in count_HRVs for N = 384345: 284.75 seconds
+M=2.12, 10/30
+Time taken generating for N = 384840: 172.027 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.343783
+r_min for elements in the HRVs = 4.05988
+r_max for elements in the HRVs = 4.45298
+Time taken in count_HRVs for N = 384840: 281.184 seconds
+M=2.12, 11/30
+Time taken generating for N = 383881: 172.046 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.350598
+r_min for elements in the HRVs = 4.07818
+r_max for elements in the HRVs = 4.48046
+Time taken in count_HRVs for N = 383881: 282.813 seconds
+M=2.12, 12/30
+Time taken generating for N = 385033: 173.452 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.311753
+r_min for elements in the HRVs = 4.05926
+r_max for elements in the HRVs = 4.47029
+Time taken in count_HRVs for N = 385033: 282.529 seconds
+M=2.12, 13/30
+Time taken generating for N = 384219: 173.111 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.337683
+r_min for elements in the HRVs = 4.04109
+r_max for elements in the HRVs = 4.47042
+Time taken in count_HRVs for N = 384219: 279.464 seconds
+M=2.12, 14/30
+Time taken generating for N = 383741: 165.156 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.383127
+r_min for elements in the HRVs = 4.06544
+r_max for elements in the HRVs = 4.50059
+Time taken in count_HRVs for N = 383741: 202.124 seconds
+M=2.12, 15/30
+Time taken generating for N = 384458: 167.56 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.36624
+r_min for elements in the HRVs = 3.99383
+r_max for elements in the HRVs = 4.48509
+Time taken in count_HRVs for N = 384458: 286.095 seconds
+M=2.12, 16/30
+Time taken generating for N = 384290: 167.71 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.335147
+r_min for elements in the HRVs = 4.06586
+r_max for elements in the HRVs = 4.46049
+Time taken in count_HRVs for N = 384290: 285.495 seconds
+M=2.12, 17/30
+Time taken generating for N = 383489: 166.269 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.316052
+r_min for elements in the HRVs = 4.03451
+r_max for elements in the HRVs = 4.45121
+Time taken in count_HRVs for N = 383489: 285.258 seconds
+M=2.12, 18/30
+Time taken generating for N = 384431: 166.539 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.310125
+r_min for elements in the HRVs = 4.0435
+r_max for elements in the HRVs = 4.44317
+Time taken in count_HRVs for N = 384431: 285.194 seconds
+M=2.12, 19/30
+Time taken generating for N = 383778: 165.626 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.386735
+r_min for elements in the HRVs = 4.0516
+r_max for elements in the HRVs = 4.45756
+Time taken in count_HRVs for N = 383778: 283.847 seconds
+M=2.12, 20/30
+Time taken generating for N = 384073: 166.024 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.32539
+r_min for elements in the HRVs = 4.0607
+r_max for elements in the HRVs = 4.46006
+Time taken in count_HRVs for N = 384073: 283.828 seconds
+M=2.12, 21/30
+Time taken generating for N = 384784: 166.761 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.318405
+r_min for elements in the HRVs = 4.02733
+r_max for elements in the HRVs = 4.46316
+Time taken in count_HRVs for N = 384784: 281.726 seconds
+M=2.12, 22/30
+Time taken generating for N = 384395: 168.122 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.378745
+r_min for elements in the HRVs = 4.01892
+r_max for elements in the HRVs = 4.4556
+Time taken in count_HRVs for N = 384395: 285.973 seconds
+M=2.12, 23/30
+Time taken generating for N = 384406: 166.679 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.354398
+r_min for elements in the HRVs = 4.04055
+r_max for elements in the HRVs = 4.45561
+Time taken in count_HRVs for N = 384406: 284.824 seconds
+M=2.12, 24/30
+Time taken generating for N = 384235: 169.078 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.411201
+r_min for elements in the HRVs = 4.04136
+r_max for elements in the HRVs = 4.45619
+Time taken in count_HRVs for N = 384235: 286.469 seconds
+M=2.12, 25/30
+Time taken generating for N = 385421: 171.109 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.380888
+r_min for elements in the HRVs = 4.05911
+r_max for elements in the HRVs = 4.46436
+Time taken in count_HRVs for N = 385421: 287.904 seconds
+M=2.12, 26/30
+Time taken generating for N = 384169: 167.811 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.360615
+r_min for elements in the HRVs = 4.08944
+r_max for elements in the HRVs = 4.46742
+Time taken in count_HRVs for N = 384169: 287.031 seconds
+M=2.12, 27/30
+Time taken generating for N = 384114: 162.677 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.316627
+r_min for elements in the HRVs = 4.04471
+r_max for elements in the HRVs = 4.48772
+Time taken in count_HRVs for N = 384114: 278.867 seconds
+M=2.12, 28/30
+Time taken generating for N = 384639: 166.738 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.314719
+r_min for elements in the HRVs = 4.06939
+r_max for elements in the HRVs = 4.4398
+Time taken in count_HRVs for N = 384639: 284.237 seconds
+M=2.12, 29/30
+Time taken generating for N = 384607: 166.046 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.307036
+r_min for elements in the HRVs = 4.0661
+r_max for elements in the HRVs = 4.4591
+Time taken in count_HRVs for N = 384607: 281.873 seconds
+M=2.12, 30/30
+Time taken generating for N = 384199: 164.687 seconds
+Starting doing futlinks in count_HRVs
+t_min for elements in the HRVs = -0.331481
+r_min for elements in the HRVs = 4.06067
+r_max for elements in the HRVs = 4.45566
+Time taken in count_HRVs for N = 384199: 284.51 seconds
+Average time taken for generating 30 causets with N = 384280:
+462.24 seconds
+
+
+==========================================================
+Saving Iteration 1to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/HRVs/M=2.12_Rho=5000.00_Card=384280_r=4.60_hollow=0.84_dur=0.48.txt
+
+=============================================================
+===============================================================
+
+Program took in total: 13867.2 seconds
+
+Parameters used:
