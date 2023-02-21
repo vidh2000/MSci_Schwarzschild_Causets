@@ -54,11 +54,11 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {1000};
-int min_size = 5;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {2500};
+int min_size = 8;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0;   //if 0 -> ==_size of the causet
 double mass = 0.25;
-int N_reps = 5;
+int N_reps = 10;
 int N_intervals = 10; // Number of intervals per causet realisation
 
 
@@ -91,22 +91,14 @@ for (auto dim: dims)
     for (auto card : cards)
     {
         /*Vectors where to store results*/
-        std::vector<double> vec_of_RicciScalars (N_reps*N_intervals);
-        std::vector<double> vec_of_Ricci00s     (N_reps*N_intervals); 
-        std::vector<double> vec_of_radii        (N_reps*N_intervals);
-        std::vector<double> vec_of_RSSMMdim     (N_reps);
-        std::vector<double> vec_of_RSSMMstd     (N_reps);
+        std::vector<double> vec_of_RicciScalars (N_reps*N_intervals,0.);
+        std::vector<double> vec_of_Ricci00s     (N_reps*N_intervals,0.); 
+        std::vector<double> vec_of_radii        (N_reps*N_intervals,0.);
+        std::vector<double> vec_of_RSSMMdim     (N_reps,0.);
+        std::vector<double> vec_of_RSSMMstd     (N_reps,0.);
 
-        std::vector<double> vec_of_RicciBD      (N_reps*N_intervals);
-        std::vector<double> vec_of_radiiBD      (N_reps*N_intervals);
-
-         // Set up shape for repetitions
-        std::vector<double> center (dim, 0.);
-        CoordinateShape shape(dim,name,center,radius,height);
-
-        // Set up spacetime for repetitions
-        Spacetime S = Spacetime();
-        S.BlackHoleSpacetime(dim,mass);
+        std::vector<double> vec_of_RicciBD      (N_reps*N_intervals,0.);
+        std::vector<double> vec_of_radiiBD      (N_reps*N_intervals,0.);
 
         // Generate causets and find values
         ////////////////////////////////////////////////////////////////////
@@ -118,6 +110,14 @@ for (auto dim: dims)
                       <<"Minsize="<<min_size<<", "
                       <<"Rep: "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
+
+            // Set up shape for repetitions
+            std::vector<double> center (dim, 0.);
+            CoordinateShape shape(dim,name,center,radius,height);
+
+            // Set up spacetime for repetitions
+            Spacetime S = Spacetime();
+            S.BlackHoleSpacetime(dim,mass);
 
             // Sprinkle the causet
             SprinkledCauset C(card, S, shape, poisson,
@@ -134,7 +134,8 @@ for (auto dim: dims)
                                                      min_size, max_size);
                 RSSMMdim = RSSMMdim_sample(C, N_intervals,
                                                      min_size, max_size);
-            } catch (std::runtime_error& e) {
+            } catch (std::runtime_error& e) /*no interval of approp size*/
+            {
                 continue;
             }  
 
@@ -148,16 +149,16 @@ for (auto dim: dims)
                         " from BD are : ";
             for (int i = 0; i<N_intervals; i++)
             {
-                vec_of_RicciScalars[rep*N_intervals+i] = nresults[i][0];
-                vec_of_Ricci00s    [rep*N_intervals+i] = nresults[i][1];
-                vec_of_radii       [rep*N_intervals+i] = nresults[i][2];
+                vec_of_RicciScalars[rep*N_intervals+i] += nresults[i][0];
+                vec_of_Ricci00s    [rep*N_intervals+i] += nresults[i][1];
+                vec_of_radii       [rep*N_intervals+i] += nresults[i][2];
 
-                vec_of_RicciBD     [rep*N_intervals+i] = nBDresults[i][0];
-                vec_of_radiiBD     [rep*N_intervals+i] = nBDresults[i][1];
+                vec_of_RicciBD     [rep*N_intervals+i] += nBDresults[i][0];
+                vec_of_radiiBD     [rep*N_intervals+i] += nBDresults[i][1];
                 std::cout<<nBDresults[i][1]<< ", ";
             }
-            vec_of_RSSMMdim[rep] = RSSMMdim[0];
-            vec_of_RSSMMstd[rep] = RSSMMdim[1];
+            vec_of_RSSMMdim[rep] += RSSMMdim[0];
+            vec_of_RSSMMstd[rep] += RSSMMdim[1];
 
             //Timing rep
             auto repend = high_resolution_clock::now();
@@ -210,6 +211,9 @@ for (auto dim: dims)
 
         // get average of RSSMMdim
         std::vector<int> Ns (N_reps, (int)N_intervals);
+        std::cout<<"MMdim estimates and stds: "<<std::endl;
+        print_vector(vec_of_RSSMMdim);
+        print_vector(vec_of_RSSMMstd);
         std::pair<double, double>  RSSMMdimfinal = combine_meass(
                                 Ns, vec_of_RSSMMdim, vec_of_RSSMMstd);
         double MMdim_avg = RSSMMdimfinal.first;
@@ -218,15 +222,15 @@ for (auto dim: dims)
                  <<std::endl;
 
         // get average R and R00 per bin
-        std::vector<double> avg_R (n_rad_bins);
-        std::vector<double> std_R (n_rad_bins);
-        std::vector<double> avg_R00 (n_rad_bins);
-        std::vector<double> std_R00 (n_rad_bins);
+        std::vector<double> avg_R   (n_rad_bins,0.);
+        std::vector<double> std_R   (n_rad_bins,0.);
+        std::vector<double> avg_R00 (n_rad_bins,0.);
+        std::vector<double> std_R00 (n_rad_bins,0.);
 
-        std::vector<double> avg_RBD (n_rad_bins);
-        std::vector<double> std_RBD (n_rad_bins);
+        std::vector<double> avg_RBD (n_rad_bins,0.);
+        std::vector<double> std_RBD (n_rad_bins,0.);
 
-        std::vector<int>    bin_counts (n_rad_bins);
+        std::vector<int>    bin_counts (n_rad_bins,0);
         std::cout<<"\nbins first start";
         for (int i = 0; i < N; i++)
         {
@@ -237,8 +241,8 @@ for (auto dim: dims)
             avg_R00[bin]    += vec_of_Ricci00s[i];
             std_R00[bin]    += vec_of_Ricci00s[i]*vec_of_Ricci00s[i];
 
-            avg_RBD[bin]      += vec_of_RicciBD[i];
-            std_RBD[bin]      += vec_of_RicciBD[i]*vec_of_RicciBD[i];
+            avg_RBD[bin]    += vec_of_RicciBD[i];
+            std_RBD[bin]    += vec_of_RicciBD[i]*vec_of_RicciBD[i];
 
             bin_counts[bin] += 1;
         }
