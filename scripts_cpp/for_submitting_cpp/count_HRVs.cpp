@@ -83,11 +83,11 @@ std::vector<int> repetitions_arr = {};
 // Shape Parameters
 double scale = std::pow(Rho, -1.0/4.0);
 std::cout << "Scale = " << scale << std::endl;
-double R = 2*mass+4*scale;
+double R = 2*mass+3*scale;
 std::cout << "R done"<< std::endl;
-double r = 2*mass-4*scale;
+double r = 2*mass-3*scale;
 std::cout << "r done"<< std::endl;
-double T = 6*scale;
+double T = 4*scale;
 std::cout << "T done"<< std::endl;
 double h = r/R;
 std::cout << "h done"<< std::endl;
