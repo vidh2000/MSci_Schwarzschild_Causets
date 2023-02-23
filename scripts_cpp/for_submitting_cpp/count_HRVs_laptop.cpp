@@ -63,7 +63,7 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 int main(int argc, char* argv[]){
 
 double mass = 0.5;
-double Rho = 4000./2.; //1000;
+double Rho = 6000./2.; //1000;
 int N_reps = 2;
 
 std::cout << "PARAMETERS used in the causet generation:\n";
