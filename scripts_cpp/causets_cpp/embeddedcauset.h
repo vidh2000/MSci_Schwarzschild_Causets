@@ -169,6 +169,8 @@ class EmbeddedCauset: public Causet
                                                               double r_S=2);
         std::map<int,double> get_HRVs_distr_from_futlinks(double& t_f, 
                                                           double r_S = 2);
+        std::map<int,double> get_HRVs_distr_from_futs(double& t_f, 
+                                                        double r_S = 2);
 
 
 
