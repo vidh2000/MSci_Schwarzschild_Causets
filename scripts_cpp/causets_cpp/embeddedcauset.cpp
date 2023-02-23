@@ -1999,7 +1999,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
             return this->get_lambdas_from_futlinks(t_f,r_S);
         }
 
-        else if (futures.size() == _size)
+        else if (_futures.size() == _size)
         {
             return this->get_lambdas_from_futs(t_f, r_S);
         }
@@ -2230,6 +2230,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         {
             return this->get_HRVs_from_futlinks(t_f,r_S);
         }
+        else if (_futures.size() == _size){
+            return this->get_HRVs_from_futs(t_f,r_S);
+        }
         else if (_CMatrix.size()==0)
         {
             std::cout << "To create future link matrix, CMatrix must exist";
@@ -2237,36 +2240,28 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         }
         else
         {
-            _future_links.resize(_size);
-
-            for (int i=0; i<_size; i++)
+            std::cout<<"Starting capped futures in count_HRVs"<<std::endl;
+            _futures.resize(_size, {});
+        
+            //#pragma omp parallel for
+            for (int i=0; i<_size-1; i++)
             {
-                int n_links_of_i = 0;
+                if (i==_size-2) std::cout<<"-"<<i<<"/"<<_size<<"-";
+                int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[i][j] == 0) {
-                        continue;
+                    //#pragma omp critical
+                    if (_CMatrix[i][j] == 1) {
+                        _futures[i].insert(j);
+                        n_futs_of_i += 1;
                     }
-                    else
-                    {
-                        bool has_broken = false;
-                        for (int k=i+1; k<j;k++)
-                        {
-                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                                has_broken = true;
-                                break;}
-                        }
-                        if (!has_broken)
-                        {
-                            _future_links[i].insert(j);
-                            n_links_of_i += 1;
-                            if (n_links_of_i - 2 > 0)
-                                {break;} /*breaks j loop, hence goes to next i*/
-                        }
+
+                    if (n_futs_of_i - 2 > 0){ //n futs of i == 3
+                        break; /*break j loop, go to next i*/
                     }
                 }
             }
-            return this->get_HRVs_from_futlinks(t_f,r_S);
+            return this->get_HRVs_from_futs(t_f,r_S);
         }
     }
     else /*Spacetime name not BlackHole*/
