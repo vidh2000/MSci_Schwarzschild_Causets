@@ -504,8 +504,8 @@ bool Spacetime::BH_causal3D (const std::vector<double>& xvec,
     
     else
     {
-        const std::vector<double> xvec4D = {xvec[0], xvec[1], M_PI, xvec[2]};
-        const std::vector<double> yvec4D = {yvec[0], yvec[1], M_PI, yvec[2]};
+        const std::vector<double> xvec4D = {xvec[0], xvec[1], M_PI/2., xvec[2]};
+        const std::vector<double> yvec4D = {yvec[0], yvec[1], M_PI/2., yvec[2]};
         return BH_causal4D(xvec4D, yvec4D, period, mass);
     }
 
@@ -655,8 +655,8 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
     if (varphi2 < 0)
         {varphi2 += 2*M_PI;}
     
-    vector<double> transf_xvec = {xvec[0], xvec[1], M_PI / 2, 0};
-    vector<double> transf_yvec = {yvec[0], yvec[1], M_PI / 2, varphi2};
+    vector<double> transf_xvec = {xvec[0], xvec[1], M_PI/2., 0};
+    vector<double> transf_yvec = {yvec[0], yvec[1], M_PI/2., varphi2};
     
     // Section 2.2: Radially separated pairs and radial null geodesics
     if (varphi2<1e-6) //should be ==zero, but leave room for some error
@@ -777,7 +777,8 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
 /**
  * @brief Integral last step in He, Rideout Algorithm for EForig causality. 
  * An upper bound was added to account for the impossibility of a stationary
- * object inside the Horizon.
+ * object inside the Horizon. Uses eta = E_S/L, not eta = E^{*}/L 
+ * (which would have its sign inverted).
  * 
  * @param xvec vector<double> : EF coordinates of x 
  * @param yvec vector<double> : EF coordinates of y
@@ -790,6 +791,7 @@ bool Spacetime::BH_last_resort(const vector<double>& xvec,
                                 double mass)
 {
     double eta = Spacetime::BH_eta_solver(1./xvec[1],1./yvec[1],yvec[3], mass);
+    //no sol found
     if (eta<0)
     {
         //std::cout<<"   eta^2          is :"<<-1      <<std::endl;
@@ -797,13 +799,15 @@ bool Spacetime::BH_last_resort(const vector<double>& xvec,
     }
     else
     {
+        // note as eta = E_S/L rather than E^{*}/L, positive eta gives lower
+        // bound
         double geo_time1 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], eta, 
                                                     mass);
         bool x_prec_y;
         if (xvec[1] < 2*mass && yvec[1] < 2*mass) /*both inside*/
         {
-            double geo_time2 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1], -eta, 
-                                                    mass);
+            double geo_time2 = Spacetime::BH_int_dt_du (1./xvec[1],1./yvec[1],
+                                                         -eta, mass);
             x_prec_y =  geo_time1 <= yvec[0] - xvec[0]
                        && yvec[0] - xvec[0] <= geo_time2;
         }
@@ -988,7 +992,8 @@ void Spacetime::BH_dt_du_minus (double&dtdu, double u, double eta, double M)
 
 
 /**
- * @brief Integral of dt/du for a BH as of He and Rideout (Eq.15).
+ * @brief Integral of dt/du for a BH as of He and Rideout (Eq.15). Uses 
+ * eta = E_S/L, not eta = E^{*}/L (which would have its sign inverted)
  * 
  * @param u1 double : u=1/r1
  * @param u2 double : u = 1/r2.
@@ -998,7 +1003,7 @@ void Spacetime::BH_dt_du_minus (double&dtdu, double u, double eta, double M)
 double Spacetime::BH_int_dt_du (double u1, double u2, double eta, double M)
 {
     double t = 0;
-    if (u2>=u1) 
+    if (u2>=u1) //du>0
     {
         auto BH_dt_du_forint_plus = [M, eta]
                                 (const double& t, double& dtdu, const double u)
@@ -1016,7 +1021,7 @@ double Spacetime::BH_int_dt_du (double u1, double u2, double eta, double M)
         boost::numeric::odeint::integrate(BH_dt_du_forint_plus, t, 
                                               u1, u2, (u2-u1)/20.);
     }
-    else /* u1>u2 */
+    else /* u1>u2, //du<0 */
     {
         auto BH_dt_du_forint_minus = [M, eta]
                                 (const double& t, double& dtdu, const double u)

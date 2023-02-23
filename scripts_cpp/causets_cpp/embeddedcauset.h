@@ -161,14 +161,22 @@ class EmbeddedCauset: public Causet
 
         std::map<int,std::vector<int>> get_lambdas_from_futlinks(double& t_f,
                                                                  double r_S=2);
+        std::map<int,std::vector<int>> get_lambdas_from_futs(double& t_f,
+                                                            double r_S=2);
+        std::map<int,double> get_lambdas_sizes_from_futs(double& t_f, 
+                                                        double r_S = 2);
         std::map<int,double> get_lambdas_sizes(double& t_f, double r_S = 2);
         std::map<int,double> get_lambdas_distr(const std::map<int, double> 
                                                 & lambdas);
 
         std::map<int,std::vector<int>> get_HRVs_from_futlinks(double& t_f,
                                                               double r_S=2);
+        std::map<int,std::vector<int>> get_HRVs_from_futs(double& t_f,
+                                                        double r_S=2);
         std::map<int,double> get_HRVs_distr_from_futlinks(double& t_f, 
                                                           double r_S = 2);
+        std::map<int,double> get_HRVs_distr_from_futs(double& t_f, 
+                                                        double r_S = 2);
 
 
 

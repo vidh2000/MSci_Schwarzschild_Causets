@@ -62,9 +62,9 @@ void update_distr(std::map<int, std::vector<num>> &all_results,
 
 int main(int argc, char* argv[]){
 
-double mass = 0.25;
-double Rho = 1014.24/2; //1000;
-int N_reps = 15;
+double mass = 0.5;
+double Rho = 6000./2.; //1000;
+int N_reps = 2;
 
 std::cout << "PARAMETERS used in the causet generation:\n";
 std::cout << "mass="<<mass<<", Rho="<<Rho<<", N_reps="
@@ -80,9 +80,10 @@ std::vector<int> repetitions_arr = {};
 
 
 // Shape parameters
-double R = 4*mass;
-double r = 4/5*mass;
-double T = 0.625;
+double scale = 1/std::sqrt(std::sqrt(Rho));
+double R = 1.5*2*mass;
+double r = 0.5*2*mass;
+double T = mass;
 double h = r/R;
 int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T; 
 radii.push_back(R);
@@ -107,7 +108,8 @@ auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
 std::cout << "Doing CMatrix and inferring future links from it\n \n";
-std::cout << "Rho = " << Rho << "\n \n";
+std::cout << "Rho = " << Rho << "\n";
+std::cout << "Scale = " << scale << "\n";
 
 // Variables for storage of information from each iteration
 std::map<int, std::vector<double>> all_HRVs_results;

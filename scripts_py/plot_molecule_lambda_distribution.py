@@ -232,7 +232,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"$t_{min}$ (1$\sigma$)")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
-                fmt = '.', capsize = 4,
+                fmt = '.', capsize = 4, color = "lightblue",
                 zorder = 5, label = r"$t_{min}$ (3$\sigma$)")
     if varying_var == "M":
         plt.xlabel(r'Horizon Area $[\ell]$')
@@ -250,7 +250,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
-                fmt = '.', capsize = 4, color = "blue",
+                fmt = '.', capsize = 4, color = "lightblue",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
@@ -271,8 +271,8 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
     plt.legend()
 
-    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_to_rs_in_l.png")
-    plt.savefig(plotsDir + f"{fixed_string}_Boundaries_to_rs_in_l.pdf")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Boundaries_to_rs_in_l.png")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Boundaries_to_rs_in_l.pdf")
     plt.show()
 
 
@@ -535,8 +535,6 @@ if plot_molecules:
     #################################################################
     # PLot Distribution (all, all in logscale, small in logscale)
     plt.figure("n-lambda probability distribution")
-    #plt.bar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-    #        label = r"$n\mathbf{-}\Lambda$ probability distribution")
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
             label = r"$n\mathbf{-}\Lambda$ probability distribution")

@@ -1999,42 +1999,67 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
             return this->get_lambdas_from_futlinks(t_f,r_S);
         }
 
+        else if (_futures.size() == _size)
+        {
+            return this->get_lambdas_from_futs(t_f, r_S);
+        }
+
         else if (_CMatrix.size()==0)
         {
             std::cout << "To create future link matrix, CMatrix must exist";
             throw std::invalid_argument("No CMatrix");}
         else
         {
-            _future_links.resize(_size);
+            // _future_links.resize(_size);
         
+            // for (int i=0; i<_size; i++)
+            // {
+            //     int n_links_of_i = 0;
+            //     for (int j=i+1; j<_size; j++)
+            //     {
+            //         if (_CMatrix[i][j] == 0) {
+            //             continue;
+            //         }
+            //         else
+            //         {
+            //             bool has_broken = false;
+            //             for (int k=i+1; k<j;k++)
+            //             {
+            //                 if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+            //                     has_broken = true;
+            //                     break;}
+            //             }
+            //             if (!has_broken)
+            //             {
+            //                 n_links_of_i += 1;
+            //                 _future_links[i].insert(j);
+            //                 if (n_links_of_i - 1 > 0)
+            //                     {break;} /*breaks j loop, hence goes to next i*/
+            //             }
+            //         }
+            //     }
+            // }
+            std::cout<<"Starting doing capped futs in count_lambdas"<<std::endl;
+            _futures.resize(_size);
+        
+            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
-                int n_links_of_i = 0;
+                int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[i][j] == 0) {
-                        continue;
+                    #pragma omp critical
+                    if (_CMatrix[i][j] == 1) {
+                        _futures[i].insert(j);
+                        n_futs_of_i += 1;
                     }
-                    else
-                    {
-                        bool has_broken = false;
-                        for (int k=i+1; k<j;k++)
-                        {
-                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                                has_broken = true;
-                                break;}
-                        }
-                        if (!has_broken)
-                        {
-                            n_links_of_i += 1;
-                            _future_links[i].insert(j);
-                            if (n_links_of_i - 1 > 0)
-                                {break;} /*breaks j loop, hence goes to next i*/
-                        }
+
+                    if (n_futs_of_i - 1 > 0){
+                        break; /*break j loop, go to next i*/
                     }
                 }
             }
-            return this->get_lambdas_from_futlinks(t_f,r_S);
+            return this->get_lambdas_from_futs(t_f,r_S);
         }
     }
     else /*Spacetime name not BlackHole*/
@@ -2048,8 +2073,8 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix a kind of a set of 
- * future_links vectors such that if an element has one or more future links, 
+ * @brief First, creates from causal matrix _CMatrix a vector of capped
+ * futures sets such that if an element has one or more future elements, 
  * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
  * (as that is enough to see if an element is maximal).
  * Then counts lambdas between maximal elements -below t_f and inside r_S- 
@@ -2079,50 +2104,86 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             return distr;
         }
 
+        else if (_futures.size() == _size) /*if already defined*/
+        {
+            std::cout<<"No need for futs, straight to counting molecules\n";
+            std::map<int,double> sizes = get_lambdas_sizes_from_futs(t_f,r_S);
+            std::cout << "Finished get_lambdas_sizes" << std::endl;
+            std::map<int,double> distr = get_lambdas_distr(sizes); 
+            std::cout << "Finished get_lambdas_distr" << std::endl;
+            return distr;
+        }
+
         else if (_CMatrix.size()==0)
         {
-            std::cout << "To create future link matrix, CMatrix must exist";
+            std::cout << "To create future, CMatrix must exist";
             throw std::invalid_argument("No CMatrix");
         }
         
         else
         {
-            std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
-            _future_links.resize(_size);
+            // std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
+            // _future_links.resize(_size);
+        
+            // #pragma omp parallel for
+            // for (int i=0; i<_size; i++)
+            // {
+            //     int n_links_of_i = 0;
+            //     for (int j=i+1; j<_size; j++)
+            //     {
+            //         if (_CMatrix[i][j] == 0) {
+            //             continue;
+            //         }
+            //         else
+            //         {
+            //             bool has_broken = false;
+            //             for (int k=i+1; k<j;k++)
+            //             {
+            //                 if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+            //                     has_broken = true;
+            //                     break;}
+            //             }
+            //             if (!has_broken)
+            //             {
+            //                 #pragma omp critical
+            //                 {
+            //                     n_links_of_i += 1;
+            //                     _future_links[i].insert(j);
+            //                 }
+            //                 if (n_links_of_i - 1 > 0)
+            //                     {break;} /*breaks j loop, hence goes to next i*/
+            //             }
+            //         }
+            //     }
+            // }
+            // std::cout << "Finished done futlinks" << std::endl;
+            // std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
+            // std::cout << "Finished get_lambdas_sizes" << std::endl;
+            // std::map<int,double> distr = get_lambdas_distr(sizes); 
+            // std::cout << "Finished get_lambdas_distr" << std::endl;
+            // return distr;
+            std::cout<<"Starting doing capped futs in count_lambdas"<<std::endl;
+            _futures.resize(_size);
         
             #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
-                int n_links_of_i = 0;
+                int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[i][j] == 0) {
-                        continue;
+                    #pragma omp critical
+                    if (_CMatrix[i][j] == 1) {
+                        _futures[i].insert(j);
+                        n_futs_of_i += 1;
                     }
-                    else
-                    {
-                        bool has_broken = false;
-                        for (int k=i+1; k<j;k++)
-                        {
-                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                                has_broken = true;
-                                break;}
-                        }
-                        if (!has_broken)
-                        {
-                            #pragma omp critical
-                            {
-                                n_links_of_i += 1;
-                                _future_links[i].insert(j);
-                            }
-                            if (n_links_of_i - 1 > 0)
-                                {break;} /*breaks j loop, hence goes to next i*/
-                        }
+
+                    if (n_futs_of_i - 1 > 0){
+                        break; /*break j loop, go to next i*/
                     }
                 }
             }
-            std::cout << "Finished done futlinks" << std::endl;
-            std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
+            std::cout << "Finished done futs" << std::endl;
+            std::map<int,double> sizes = get_lambdas_sizes_from_futs(t_f,r_S);
             std::cout << "Finished get_lambdas_sizes" << std::endl;
             std::map<int,double> distr = get_lambdas_distr(sizes); 
             std::cout << "Finished get_lambdas_distr" << std::endl;
@@ -2169,6 +2230,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         {
             return this->get_HRVs_from_futlinks(t_f,r_S);
         }
+        else if (_futures.size() == _size){
+            return this->get_HRVs_from_futs(t_f,r_S);
+        }
         else if (_CMatrix.size()==0)
         {
             std::cout << "To create future link matrix, CMatrix must exist";
@@ -2176,36 +2240,28 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         }
         else
         {
-            _future_links.resize(_size);
-
-            for (int i=0; i<_size; i++)
+            std::cout<<"Starting capped futures in count_HRVs"<<std::endl;
+            _futures.resize(_size, {});
+        
+            //#pragma omp parallel for
+            for (int i=0; i<_size-1; i++)
             {
-                int n_links_of_i = 0;
+                if (i==_size-2) std::cout<<"-"<<i<<"/"<<_size<<"-";
+                int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[i][j] == 0) {
-                        continue;
+                    //#pragma omp critical
+                    if (_CMatrix[i][j] == 1) {
+                        _futures[i].insert(j);
+                        n_futs_of_i += 1;
                     }
-                    else
-                    {
-                        bool has_broken = false;
-                        for (int k=i+1; k<j;k++)
-                        {
-                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                                has_broken = true;
-                                break;}
-                        }
-                        if (!has_broken)
-                        {
-                            _future_links[i].insert(j);
-                            n_links_of_i += 1;
-                            if (n_links_of_i - 2 > 0)
-                                {break;} /*breaks j loop, hence goes to next i*/
-                        }
+
+                    if (n_futs_of_i - 2 > 0){ //n futs of i == 3
+                        break; /*break j loop, go to next i*/
                     }
                 }
             }
-            return this->get_HRVs_from_futlinks(t_f,r_S);
+            return this->get_HRVs_from_futs(t_f,r_S);
         }
     }
     else /*Spacetime name not BlackHole*/
@@ -2219,7 +2275,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix a kind of a set of  
+ * @brief First, creates from causal matrix _CMatrix a list of capped kind of  
  * future_links vectors such that if an element has 3 or more future links, 
  * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
  * (as that is enough to see if an element is maximal but 2).
@@ -2245,9 +2301,9 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        if (_future_links.size() == _size) /*if already defined*/
+        if (_futures.size() == _size) /*if already defined*/
         {
-            return this->get_HRVs_distr_from_futlinks(t_f,r_S);
+            return this->get_HRVs_distr_from_futs(t_f,r_S);
         }
         else if (_CMatrix.size()==0)
         {
@@ -2255,43 +2311,72 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
             throw std::invalid_argument("No CMatrix");
         }
         else
-        {
-            std::cout<<"Starting doing futlinks in count_HRVs"<<std::endl;
-            _future_links.resize(_size);
+        // {
+        //     std::cout<<"Starting now doing futlinks in count_HRVs"<<std::endl;
+        //     _future_links.resize(_size, {});
         
-            #pragma omp parallel for
-            for (int i=0; i<_size; i++)
+        //     //#pragma omp parallel for
+        //     for (int i=0; i<_size-1; i++)
+        //     {
+        //         if (i==_size-2) std::cout<<"-"<<i<<"/"<<_size<<"-";
+        //         int n_links_of_i = 0;
+        //         for (int j=i+1; j<_size; j++)
+        //         {
+        //             //std::cout<<"2269";
+        //             if (_CMatrix[i][j] == 0) {
+        //                 continue;
+        //             }
+        //             else
+        //             {
+        //                 //std::cout<<"2274";
+        //                 bool has_broken = false;
+        //                 for (int k=i+1; k<j;k++)
+        //                 {
+        //                     //std::cout<<"2278";
+        //                     if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+        //                         has_broken = true;
+        //                         break;}
+        //                 }
+        //                 if (!has_broken)
+        //                 {
+        //                     //#pragma omp critical
+        //                     _future_links[i].insert(j);
+        //                     n_links_of_i += 1;
+                            
+        //                     if (n_links_of_i - 2 > 0) //n links of i == 3
+        //                         {break;} /*breaks j loop, hence goes to next i*/   
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     std::cout<<"2314-";
+        //     return this->get_HRVs_distr_from_futlinks(t_f,r_S);
+        // }
+        {
+            // instead of futlinks, just do future, capped at 3 elements
+            std::cout<<"Starting capped futures in count_HRVs"<<std::endl;
+            _futures.resize(_size, {});
+        
+            //#pragma omp parallel for
+            for (int i=0; i<_size-1; i++)
             {
-                int n_links_of_i = 0;
+                if (i==_size-2) std::cout<<"-"<<i<<"/"<<_size<<"-";
+                int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[i][j] == 0) {
-                        continue;
+                    //#pragma omp critical
+                    if (_CMatrix[i][j] == 1) {
+                        _futures[i].insert(j);
+                        n_futs_of_i += 1;
                     }
-                    else
-                    {
-                        bool has_broken = false;
-                        for (int k=i+1; k<j;k++)
-                        {
-                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                                has_broken = true;
-                                break;}
-                        }
-                        if (!has_broken)
-                        {
-                            #pragma omp critical
-                            {
-                                _future_links[i].insert(j);
-                                n_links_of_i += 1;
-                            }
-                            if (n_links_of_i - 2 > 0) //n links of i == 3
-                                {break;} /*breaks j loop, hence goes to next i*/
-                            
-                        }
+
+                    if (n_futs_of_i - 2 > 0){ //n futs of i == 3
+                        break; /*break j loop, go to next i*/
                     }
                 }
             }
-            return this->get_HRVs_distr_from_futlinks(t_f,r_S);
+            std::cout<<"2314-";
+            return this->get_HRVs_distr_from_futs(t_f,r_S);
         }
     }
     else /*Spacetime name not BlackHole*/
@@ -2418,7 +2503,75 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
 
 
 
+
+
+
+
+
+
+
+
+
+
 // Counting Behind the Scenes
+
+/**
+ * @brief   Finds lambdas in the causet connecting maximal elements 
+ * below t_f and inside the horizon with maximal-but-one elements
+ * outside the horizon.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of maximal element, 
+    value is vector of labels of maximal but one elements associated with it.
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futs
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> lambdas;
+
+    for (int j = 1; j<_size; j++)
+    {
+        // if j is maximal and inside the horizon
+        if (_futures[j].size()==0 && _coords[j][1]<r_S) 
+        {
+            lambdas[j] = {};
+            for (int i = j-1; i>-1; i--)
+            {
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                {
+                    // if i is maximal but one and outside the horizon
+                    if (_futures[i].size()==1 && _coords[i][1]>r_S)
+                    {
+                         //i-j is link
+                        if (_futures[i].find(j) != _futures[i].end())
+                        {
+                            lambdas[j].push_back(i);
+                        }
+                    }
+                }
+                else /* t_j<t_i */
+                {
+                    std::cout << "ERROR: t_j < t_i\n";
+                }
+            }
+        }
+    }
+    return lambdas;
+}
+
+
 
 /**
  * @brief   Finds lambdas in the causet connecting maximal elements 
@@ -2553,6 +2706,80 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
 
 
 /**
+ * @brief   Finds lambdas in the causet connecting maximal elements 
+ *          below t_f and inside the horizon with maximal-but-one elements
+ *          outside the horizon.
+ *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ *          could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, double> : key is label of maximal element, value is number of
+           maximal but one elements associated with it.
+ */
+std::map<int,double> EmbeddedCauset::get_lambdas_sizes_from_futs(double& t_f, 
+                                                                double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, double> lambdas;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    std::vector<double> mintime_vec;
+    std::vector<double> innermost_vec;
+    std::vector<double> outermost_vec;
+ 
+    for (int j = 1; j<_size; ++j)
+    {
+        // if j is maximal and inside the horizon
+        if (_futures[j].size()==0 && _coords[j][1]<r_S) 
+        {
+            lambdas[j] = 0;
+            for (int i = j-1; i>-1; --i)
+            {
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                {
+                    // if i is maximal but one and outside the horizon
+                    if (_futures[i].size()==1 && _coords[i][1]>r_S)
+                    {
+                        // if i-j is link
+                        if (_futures[i].find(j) != _futures[i].end()) 
+                        {
+                            lambdas[j] += 1;
+                            mintime_vec  .push_back(_coords[i][0]);
+                            innermost_vec.push_back(_coords[j][1]);
+                            outermost_vec.push_back(_coords[i][1]);
+                        }
+                    }
+                }
+                else /* t_j<t_i */
+                {
+                    std::cout << "ERROR: t_j < t_i\n";
+                }
+            }
+        }
+    }
+    double mintime   = vecmin(mintime_vec);
+    double innermost = vecmin(innermost_vec);
+    double outermost = vecmax(outermost_vec);
+    std::cout << "\nt_min for elements in lambdas = " << mintime << std::endl; 
+    std::cout << "r_min for elements in lambdas = " << innermost<<std::endl; 
+    std::cout << "r_max for elements in lambdas = " << outermost<<std::endl; 
+    lambdas[-1] = mintime;
+    lambdas[-2] = innermost;
+    lambdas[-3] = outermost;
+    return lambdas;
+}
+
+
+/**
  * @brief   Finds DISTRIBUTION of lambdas connecting maximal elements 
  *          below t_f and inside the horizon with maximal-but-one elements
  *          outside the horizon.
@@ -2585,7 +2812,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_distr(
 
 
 /**
- * @brief  Finds HRVs in the causet.
+ * @brief  IS WRONG!!!!!!!!!!!!!!!!!! Finds HRVs in the causet.
  * Currently works only for spacetime "Schwarzschild" in EForig coords, but
  * could be expanded if needed in the future. 
  * 
@@ -2655,6 +2882,179 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
 }
 
 
+
+/**
+ * @brief  IS WRONG!!!!!!!!!!!!!!!!!! Finds HRVs in the causet.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of minimal element, 
+    value is pair of labels of [a,b].
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futs
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> HRVs;
+    
+    for (int p = 0; p<_size; p++)
+    {
+        // if p is maximal but 2 outside the horizon
+        if (_futures[p].size()==2 && _coords[p][1]>r_S) 
+        {
+            // p<a<b (number wise, not necessarily causality wise for a and b)
+            std::vector<int> ab;
+            ab.insert(ab.end(),
+                     _futures[p].begin(), _futures[p].end());
+            int a = (ab[0] < ab[1])? ab[0] : ab[1];
+            int b = (ab[0] < ab[1])? ab[1] : ab[0];
+
+            HRVs[p] = {a,b};
+        }
+    }
+    return HRVs;
+}
+
+
+
+/**
+ * @brief  Finds distribution of HRVs in the causet (how many open and close).
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, int> : key is 0 for open and 1 for close 
+    value is pair of labels of [a,b]. Also, -3, -2, -1 for outermost, innermost
+    and mintime.
+ */
+std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f, 
+                                                                   double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps type of HRV to its number
+    std::map<int, double> HRVs_distr;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    std::vector<double> mintime_vec;
+    std::vector<double> innermost_vec;
+    std::vector<double> outermost_vec;
+ 
+    for (int p = 0; p<_size-2; p++)
+    {
+        // if p has exactly 2 links: these are a and b, one in and one out.
+        // If both are maximal we have open HRV 
+        if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
+        {
+            // set a<b
+            std::vector<int> ab;
+            ab.insert(ab.end(),
+                     _future_links[p].begin(), _future_links[p].end());
+            int a = (ab[0] < ab[1])? ab[0] : ab[1];
+            int b = (ab[0] < ab[1])? ab[1] : ab[0];
+
+            // both a and b must be maximal
+            if (_future_links[b].size()==0 && _future_links[a].size()==0) 
+            {
+                // if b in and a is out, we got our opn HRV
+                if ((_coords[b][1]<=r_S && _coords[a][1]>r_S))
+                {
+                    HRVs_distr[0] += 1;
+                    mintime_vec  .push_back(_coords[p][0]);
+                    innermost_vec.push_back(_coords[b][1]);
+                    outermost_vec.push_back(_coords[p][1]);
+                    outermost_vec.push_back(_coords[a][1]);
+                }
+                // if b out and a in, we got our opn HRV
+                else if (_coords[a][1]<=r_S && _coords[b][1]>r_S)
+                {
+                    HRVs_distr[0] += 1;
+                    mintime_vec  .push_back(_coords[p][0]);
+                    innermost_vec.push_back(_coords[a][1]);
+                    outermost_vec.push_back(_coords[p][1]);
+                    outermost_vec.push_back(_coords[b][1]);
+                }
+            }
+        }
+
+        // if p has exactly 1 link, this is a
+        // If a is out and has exactly one link to b, maximal inside,
+        // we have close HRV 
+        else if (_future_links[p].size()==1 && _coords[p][1]>r_S) 
+        {
+            // get a
+            std::vector<int> avec;
+            avec.insert(avec.end(),
+                     _future_links[p].begin(), _future_links[p].end());
+            int a = avec[0];
+
+            // if a is out and has exactly one link
+            if ( _coords[a][1]>r_S && _future_links[a].size()==1)
+            {
+                // get b
+                std::vector<int> bvec;
+                avec.insert(bvec.end(),
+                        _future_links[a].begin(), _future_links[a].end());
+                int b = bvec[0];
+
+                // if b is in and maximal we got close HRV
+                if (_coords[b][1]<=r_S && _future_links[b].size()==0) 
+                {
+                    HRVs_distr[1] += 1;
+                    mintime_vec  .push_back(_coords[p][0]);
+                    innermost_vec.push_back(_coords[b][1]);
+                    outermost_vec.push_back(_coords[p][1]);
+                    outermost_vec.push_back(_coords[a][1]);
+                }
+            }
+        }
+    }
+    double mintime   = 0;
+    double innermost = 0;
+    double outermost = 0;
+    if (mintime_vec.size()>0){
+    auto mintime_iter   = std::min_element(mintime_vec.begin(), 
+                                           mintime_vec.end());
+    mintime = *mintime_iter;
+    }
+    if (innermost_vec.size()>0){
+    auto innermost_iter = std::min_element(innermost_vec.begin(), 
+                                         innermost_vec.end());
+    innermost = *innermost_iter;
+    }
+    if (outermost_vec.size()>0){
+    auto outermost_iter = std::max_element(outermost_vec.begin(), 
+                                         outermost_vec.end());
+    outermost = *outermost_iter;
+    }
+    std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
+    std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
+    std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
+    HRVs_distr[-1] = mintime;
+    HRVs_distr[-2] = innermost;
+    HRVs_distr[-3] = outermost;
+    return HRVs_distr;
+}
+
+
+
 /**
  * @brief   Finds distribution of HRVs in the causet (how many open and close).
  *          Currently works only for spacetime "Schwarzschild" in EForig coords, but
@@ -2667,7 +3067,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
     value is pair of labels of [a,b]. Also, -3, -2, -1 for outermost, innermost
     and mintime.
  */
-std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f, 
+std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futs(double& t_f, 
                                                                double r_S)
 {
     if (!strcmp(_spacetime._name, "BlackHole")==0)
@@ -2687,38 +3087,52 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
  
     for (int p = 0; p<_size; p++)
     {
-        // if j is maximal and inside the horizon
-        if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
+        // if p is maximal but 2 outside the horizon
+        if (_futures[p].size()==2 && _coords[p][1]>r_S) 
         {
+            // p<a<b (number wise, not necessarily causality wise for a and b)
             std::vector<int> ab;
             ab.insert(ab.end(),
-                     _future_links[p].begin(), _future_links[p].end());
+                     _futures[p].begin(), _futures[p].end());
             int a = (ab[0] < ab[1])? ab[0] : ab[1];
             int b = (ab[0] < ab[1])? ab[1] : ab[0];
 
-            if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
+            // b in and a out
+            if (_coords[b][1] <= r_S && _coords[a][1] > r_S)
             {
-                //the one inside is maximal
-                if (_future_links[b].size()==0) 
+                // the one inside is authomatically maximal
+                // if a is maximal
+                // -> open HRV
+                if (_futures[a].size()==0)
                 {
-                    //the one outside is maximal -> open
-                    if (_future_links[a].size()==0)
-                    {
-                        HRVs_distr[0] += 1;
-                    }
-                    // the one outside is only connected to b -> close
-                    else if (_future_links[a].size()==1 && 
-                            _future_links[a].count(b)==1)
-                    {
-                        HRVs_distr[1] += 1;
-                    }
-                    
-                    //update
+                    HRVs_distr[0] += 1;
                     mintime_vec  .push_back(_coords[p][0]);
                     innermost_vec.push_back(_coords[b][1]);
                     outermost_vec.push_back(_coords[p][1]);
                     outermost_vec.push_back(_coords[a][1]);
                 }
+                // if a not maximal, it can only be connected to b
+                // -> close HRV 
+                else
+                {
+                    HRVs_distr[1] += 1;
+                    mintime_vec  .push_back(_coords[p][0]);
+                    innermost_vec.push_back(_coords[b][1]);
+                    outermost_vec.push_back(_coords[p][1]);
+                    outermost_vec.push_back(_coords[a][1]);
+                }
+            }
+
+            // b out and a in
+            if (_coords[a][1] <= r_S && _coords[b][1] > r_S)
+            {
+                //the one inside is maximal (authomatically implied)
+                // b is larger and out, so can only be open
+                HRVs_distr[0] += 1;
+                mintime_vec  .push_back(_coords[p][0]);
+                innermost_vec.push_back(_coords[a][1]);
+                outermost_vec.push_back(_coords[p][1]);
+                outermost_vec.push_back(_coords[b][1]);
             }
         }
     }
@@ -2733,6 +3147,18 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futlinks(double& t_f,
     HRVs_distr[-3] = outermost;
     return HRVs_distr;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
