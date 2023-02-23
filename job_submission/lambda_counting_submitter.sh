@@ -13,13 +13,13 @@ cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 Rho=5000
-N_reps=3
+N_reps=5
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
 mem=920
-runtime="04:00:00" #format: "hh:mm:ss"
+runtime="06:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
@@ -35,7 +35,7 @@ runtime="04:00:00" #format: "hh:mm:ss"
 #  2.02 2.09 2.15 2.22 2.28 2.34 
 #  2.4 2.46 ]
 counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 2.43 2.4 
+for mass in 2.4 2.43
 #$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
 do 
 
@@ -51,9 +51,15 @@ do
 #__________________________________________________________________
 ###### Write the run_file.sh which compiles and executes the .cpp script #####
 
+sh_run_file="${submitted_jobsDir}runfile_files/run_file_lambdacounting_mass_${mass}_Rho${Rho}_N_reps_${N_reps}.sh"
 
-sh_run_file="${submitted_jobsDir}runfile_files/run_file_lambdacounting_mass_${mass}_N_multiplier_${N_multiplier}_N_reps_${N_reps}.sh"
-
+sh_run_file_root="${submitted_jobsDir}runfile_files/run_file_lambdacounting_mass_${mass}_Rho${Rho}_N_reps_${N_reps}"
+counter_file=0
+while [ -e "$sh_run_file" ]
+do
+    ((counter_file=counter_file+1)) 
+    sh_run_file="${sh_run_file_root}_Nth${counter_file}.sh"
+done
 
 echo "#!/usr/bin/env bash" > $sh_run_file
 echo "" >> $sh_run_file
@@ -86,11 +92,12 @@ echo "" >> $sh_run_file
 echo "mass=${mass}" >> $sh_run_file
 echo "Rho=${Rho}" >> $sh_run_file
 echo "N_reps=${N_reps}" >> $sh_run_file
+echo "Nth=${counter_file}" >> $sh_run_file
 echo "" >> $sh_run_file
 echo "# Execute the copy of the created .exe program" >> $sh_run_file
-echo 'cp ${runfilename::-4}".exe" "executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}.exe"' >> $sh_run_file
+echo 'cp ${runfilename::-4}".exe" "executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}_Nth${Nth}.exe"' >> $sh_run_file
 #echo './${runfilename::-4}".exe" $mass $N_multiplier $N_reps' >> $sh_run_file
-echo '"./executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}.exe" $mass $Rho $N_reps' >> $sh_run_file
+echo '"./executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}_Nth${Nth}.exe" $mass $Rho $N_reps' >> $sh_run_file
 echo "" >> $sh_run_file
 
 ###############################################################################

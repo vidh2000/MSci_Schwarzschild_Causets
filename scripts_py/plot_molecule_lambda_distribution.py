@@ -574,6 +574,27 @@ if plot_molecules:
     plt.show()
 
 
+    plt.figure("n-lambda exp probability distribution (logscale)")
+    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
+            label = r"$n\mathbf{-}\Lambda$ distribution")
+    xs = np.linspace(1, len(lambd_probs)+0.2,100)
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+            label = r"$(1-e^{-\chi})$ $e^{-\chi (n-1)}$, $\chi$"+ 
+            f" = {round(chi,3)}+-{round(chiunc,3)}")
+    # plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
+    #          label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
+    #          f" I = {round(I2,3)}+-{round(I2unc,3)}")
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
+    plt.yscale("log")
+    plt.legend(loc="upper right")
+    plt.grid(alpha=0.2)
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_exp_logy.png")
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_exp_logy.pdf")
+    plt.show()
+
+
     plt.figure("n-lambda probability distribution (safe)")
     # plt.bar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
     #         lambd_probs[:unsafe_start],

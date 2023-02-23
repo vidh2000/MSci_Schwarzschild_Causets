@@ -8,27 +8,39 @@ import os
 ## SET PARAMETERS FOR PLOTTING
 #############################################################################
 # Load file
-dim  = 3
-card = 3000
-edge = 4.00 #or radius
-h    = 0.00
+dim  = 4
+card = 73000
+edge = 3.06 #or radius
+h    = 0.31
+want_save_file = 1 #see line 31 for saving name
 
 use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
-use_h                  = 0
+use_h                  = 1 #there is the bit _ha.bd before .txt
 centre_cube_in_horizon = 0
 
 #choices: [0->causet, 1->molecules, 2->molecules in horizon, 3->causet+molecul]
-plot_choice = 0
+plot_choice = 2
 molecule = "lambda"
 
-phi0 = 6.29/24#4
+# Only plotting the <which_phi_interval>th interval of size phi0
+# If plot_choice = 0 and 3D and project, project data in interval in 2D r-t
+phi0 = 6.29/1#64#
 which_phi_interval = 0
 projection = 1
+
 ##############################################################################
 ##############################################################################
+plot_choice_string = ["causet","molecules","horizon","all"]
+if want_save_file:
+    savefile_ext = "data/BHplotting/"\
+                 f"BH_{molecule}_plot{plot_choice_string[plot_choice]}_"
+    if plot_choice == 0 and projection:
+        savefile_ext += f"proj{round(phi0,2)}_"
+    savefile_ext += f"{dim}D_N{card}_redge{edge}_h{h}.png"
+else:
+    savefile_ext = 0
 
-
-ps = {"text.usetex": True,
+ps = {#"text.usetex": True,
       "font.size" : 16,
       "font.family" : "Times New Roman",
       "axes.labelsize": 16,
@@ -54,6 +66,9 @@ if phi0 < 6.28:
 #%%### GET FILE
 ###################################################################
 path = os.getcwd() # folder path
+if "scripts_py" in path:
+    path = path[:-11]
+print("PATH")
 print(path)
 file_name = "data/data_for_plotting/"
 file_name += "blackhole_and_"
@@ -85,7 +100,15 @@ if (centre_cube_in_horizon):
         file_name += "_horizon_centred"
 
 file_name += ".txt"
+print("FILE NAME")
 print(file_name)
+
+print("SAVEFILE")
+if savefile_ext:
+    savefile_ext = path+"/"+savefile_ext
+    print(savefile_ext)
+else:
+    print("savefile is 0")
 
 
 ###################################################################
@@ -93,15 +116,26 @@ print(file_name)
 ###################################################################
 #choices: [0->causet, 1->molecules, 2->molecules in horizon, 3->causet+molecul]
 if plot_choice == 0:
-    ax = cplt.plot_causet(file_name, phi_limits = phi_limits, 
+    if projection:
+        print(f"Plotting 0 with projection of deltaphi = {round(phi0,2)}")
+    else:
+        print(f"Plotting 0")
+    ax = cplt.plot_causet(file_name, savefile_ext = savefile_ext,
+                        phi_limits = phi_limits, 
                         projection=projection)
 elif plot_choice == 1:
-    ax = cplt.plot_lambdas(file_name, phi_limits = phi_limits)
+    print("Plotting 1")
+    ax = cplt.plot_lambdas(file_name, savefile_ext = savefile_ext,
+                            phi_limits = phi_limits)
 elif plot_choice == 2:
-    ax = cplt.plot_lambdas_horizon(file_name, phi_limits = phi_limits,
+    print("Plotting 2")
+    ax = cplt.plot_lambdas_horizon(file_name, savefile_ext = savefile_ext,
+                                    phi_limits = phi_limits,
                                     figsize = (7,7))
 elif plot_choice == 3:
-    ax = cplt.plot_causet_and_lambdas(file_name, phi_limits = phi_limits)
+    print("Plotting 3")
+    ax = cplt.plot_causet_and_lambdas(file_name,savefile_ext = savefile_ext,
+                                    phi_limits = phi_limits)
 # ax = cplt.plot_causet_and_lambdas(file_name, 
 #                                   phi_limits = phi_limits)
 

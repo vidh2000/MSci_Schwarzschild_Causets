@@ -17,8 +17,7 @@ my_kwargs = {
             "link_lw"   :0.5,
             "markersize":5,
             "std_color" : "#002147",
-            "lambdas_colors": ["red", 
-                                "orange", 
+            "lambdas_colors": ["darkorange", 
                                 "gold", 
                                 "limegreen", 
                                 "dodgerblue", 
@@ -576,8 +575,9 @@ def plot_lambdas_horizon(causetfile_ext, savefile_ext = 0,
         ax.set_zlim(downmin, upmax)
 
         #ax.legend()
-
+    print(savefile_ext)
     if savefile_ext:
+        print("Saving")
         plt.savefig(savefile_ext)
     plt.show()
 

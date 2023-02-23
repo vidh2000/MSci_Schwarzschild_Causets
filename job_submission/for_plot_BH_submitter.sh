@@ -9,13 +9,13 @@
 homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
-cpp_file_to_run="'lambda_saving_hollow_3_or_4D.cpp'"
+cpp_file_to_run="'lambda_saving_hollow_3_or_4D.cpp'" #or without hollow
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
-mem=256
-runtime="6:00:00" #format: "hh:mm:ss"
+mem=512
+runtime="8:00:00" #format: "hh:mm:ss"
 
 counter=0
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

@@ -117,7 +117,9 @@ bool make_sets = false;
 bool make_links = false; 
 const char* sets_type = "future"; 
 const char* name = "cylinder";
+std::cout << "Sprinkling Parameters Set"<< std::endl;
 auto beginning = high_resolution_clock::now();
+std::cout << "Clock Begun"<< std::endl;
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
 std::cout << "Doing CMatrix and inferring future links from it\n \n";
