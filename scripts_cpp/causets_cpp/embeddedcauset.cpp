@@ -1999,42 +1999,67 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
             return this->get_lambdas_from_futlinks(t_f,r_S);
         }
 
+        else if (futures.size() == _size)
+        {
+            return this->get_lambdas_from_futs(t_f, r_S);
+        }
+
         else if (_CMatrix.size()==0)
         {
             std::cout << "To create future link matrix, CMatrix must exist";
             throw std::invalid_argument("No CMatrix");}
         else
         {
-            _future_links.resize(_size);
+            // _future_links.resize(_size);
         
+            // for (int i=0; i<_size; i++)
+            // {
+            //     int n_links_of_i = 0;
+            //     for (int j=i+1; j<_size; j++)
+            //     {
+            //         if (_CMatrix[i][j] == 0) {
+            //             continue;
+            //         }
+            //         else
+            //         {
+            //             bool has_broken = false;
+            //             for (int k=i+1; k<j;k++)
+            //             {
+            //                 if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
+            //                     has_broken = true;
+            //                     break;}
+            //             }
+            //             if (!has_broken)
+            //             {
+            //                 n_links_of_i += 1;
+            //                 _future_links[i].insert(j);
+            //                 if (n_links_of_i - 1 > 0)
+            //                     {break;} /*breaks j loop, hence goes to next i*/
+            //             }
+            //         }
+            //     }
+            // }
+            std::cout<<"Starting doing capped futs in count_lambdas"<<std::endl;
+            _futures.resize(_size);
+        
+            #pragma omp parallel for
             for (int i=0; i<_size; i++)
             {
-                int n_links_of_i = 0;
+                int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
-                    if (_CMatrix[i][j] == 0) {
-                        continue;
+                    #pragma omp critical
+                    if (_CMatrix[i][j] == 1) {
+                        _futures[i].insert(j);
+                        n_futs_of_i += 1;
                     }
-                    else
-                    {
-                        bool has_broken = false;
-                        for (int k=i+1; k<j;k++)
-                        {
-                            if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-                                has_broken = true;
-                                break;}
-                        }
-                        if (!has_broken)
-                        {
-                            n_links_of_i += 1;
-                            _future_links[i].insert(j);
-                            if (n_links_of_i - 1 > 0)
-                                {break;} /*breaks j loop, hence goes to next i*/
-                        }
+
+                    if (n_futs_of_i - 1 > 0){
+                        break; /*break j loop, go to next i*/
                     }
                 }
             }
-            return this->get_lambdas_from_futlinks(t_f,r_S);
+            return this->get_lambdas_from_futs(t_f,r_S);
         }
     }
     else /*Spacetime name not BlackHole*/
@@ -2483,7 +2508,75 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
 
 
 
+
+
+
+
+
+
+
+
+
+
 // Counting Behind the Scenes
+
+/**
+ * @brief   Finds lambdas in the causet connecting maximal elements 
+ * below t_f and inside the horizon with maximal-but-one elements
+ * outside the horizon.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of maximal element, 
+    value is vector of labels of maximal but one elements associated with it.
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas_from_futs
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> lambdas;
+
+    for (int j = 1; j<_size; j++)
+    {
+        // if j is maximal and inside the horizon
+        if (_futures[j].size()==0 && _coords[j][1]<r_S) 
+        {
+            lambdas[j] = {};
+            for (int i = j-1; i>-1; i--)
+            {
+                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                {
+                    // if i is maximal but one and outside the horizon
+                    if (_futures[i].size()==1 && _coords[i][1]>r_S)
+                    {
+                         //i-j is link
+                        if (_futures[i].find(j) != _futures[i].end())
+                        {
+                            lambdas[j].push_back(i);
+                        }
+                    }
+                }
+                else /* t_j<t_i */
+                {
+                    std::cout << "ERROR: t_j < t_i\n";
+                }
+            }
+        }
+    }
+    return lambdas;
+}
+
+
 
 /**
  * @brief   Finds lambdas in the causet connecting maximal elements 
@@ -2792,6 +2885,51 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
     std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
     return HRVs;
 }
+
+
+
+/**
+ * @brief  IS WRONG!!!!!!!!!!!!!!!!!! Finds HRVs in the causet.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
+
+ * @return map<int, vector<int>> : key is label of minimal element, 
+    value is pair of labels of [a,b].
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futs
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> HRVs;
+    
+    for (int p = 0; p<_size; p++)
+    {
+        // if p is maximal but 2 outside the horizon
+        if (_futures[p].size()==2 && _coords[p][1]>r_S) 
+        {
+            // p<a<b (number wise, not necessarily causality wise for a and b)
+            std::vector<int> ab;
+            ab.insert(ab.end(),
+                     _futures[p].begin(), _futures[p].end());
+            int a = (ab[0] < ab[1])? ab[0] : ab[1];
+            int b = (ab[0] < ab[1])? ab[1] : ab[0];
+
+            HRVs[p] = {a,b};
+        }
+    }
+    return HRVs;
+}
+
 
 
 /**
