@@ -3,7 +3,7 @@
 
 # .cpp file you want to run in
 
-runfilename='lambda_saving_3_or_4D.cpp'
+runfilename='lambda_saving_hollow_3_or_4D.cpp'
 
 ### Specify relative path from MSci_Schwarzschild_Causets
 # to the .cpp file you want to compile/execute
