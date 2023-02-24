@@ -38,11 +38,11 @@ using namespace std::chrono;
 
 
 ////////////////////////////////
-vector<int> dims = {3};
+vector<int> dims = {4};
 double t_f = 0;
 double r_S = 2;
 bool do_hollow = 1;
-std::vector<double> rhos = {100, 200, 500, 1000}; 
+std::vector<double> rhos = {1000, 1500}; 
 
 // Sprinkle Parameters
 bool poisson          = true;
