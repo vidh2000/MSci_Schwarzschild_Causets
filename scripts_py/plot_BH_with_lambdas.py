@@ -9,9 +9,9 @@ import os
 #############################################################################
 # Load file
 dim  = 4
-card = 73000
-edge = 3.06 #or radius
-h    = 0.31
+card = 101000
+edge = 2.89 #or radius
+h    = 0.38
 want_save_file = 1 #see line 31 for saving name
 
 use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
