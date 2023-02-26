@@ -20,6 +20,7 @@ use_selected_masses = True #gives equal spacing
 
 plot_boundaries = 1
 plot_molecules = True
+do_also_not_main_plots = False #those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
@@ -31,7 +32,10 @@ params = {'text.usetex' : True,
           'legend.fontsize': 20,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
-          'figure.figsize': [9.5,7.5/1.2], #7.5,7.5/1.2  , 9.5 for outside legend
+          'figure.figsize': [8.5, 6.5], 
+          'axes.prop_cycle':plt.cycler(color=
+                            plt.rcParams['axes.prop_cycle'].by_key()['color']
+                            +['magenta'])
           }
 plt.rcParams.update(params)
 
@@ -235,9 +239,8 @@ if plot_boundaries:
     outermosts_std = np.array(outermosts_std)* Rho**(1/4)
 
     rc = 2; c = 1; r = 2
-    figsize = (8 * c, 8 / r)
     plt.figure(f'Boundaries for {fixed_string}',
-                figsize = figsize, tight_layout = True)
+                tight_layout = True)
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
@@ -245,16 +248,12 @@ if plot_boundaries:
     #                va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"$t_{min}$ (1$\sigma$)")
+                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
-                fmt = '.', capsize = 4, color = "dodgerblue",
-                zorder = 5, label = r"$t_{min}$ (3$\sigma$)")
-    #if varying_var == "M":
-    #    plt.xlabel(r'Horizon Area $[\ell]$')
-    #else:
-    #    plt.xlabel(f'{varying_var} [a.u.]')
+                fmt = '.', capsize = 4, color = "C0",
+                zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r"$t_{min}$ $[\ell]$")
+    plt.ylabel(r"$t_{Min}$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -266,13 +265,13 @@ if plot_boundaries:
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
-                fmt = '.', capsize = 4, color = "dodgerblue",
+                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
-                fmt = '.', capsize = 4, color = "dodgerblue",
+                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
     # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
@@ -283,7 +282,7 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"$\Delta r_{Smax}$ $[\ell]$")
+    plt.ylabel(r"$\Delta r_{Max}$ $[\ell]$")
     plt.grid(alpha = 0.4) 
     plt.legend()
     plt.tight_layout()
@@ -356,8 +355,8 @@ if plot_molecules:
                 ls = '-', alpha=1)
     #plt.annotate(rf"$\rho \: = \: {Rho:.0f}$", (0.95, 0.5), xycoords = "axes fraction",
     #        fontsize=12, va='center', ha = 'right', bbox=props)
-    plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.legend(ncol = 2)
+    plt.xlabel(r'Horizon Area $[\ell^2]$')
     plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
@@ -365,62 +364,62 @@ if plot_molecules:
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
     #plt.show()
 
-
-    plt.figure(f"Medium molecules for {fixed_string}")
-    for n in range(3, min(6, len(molecules_distr))):
-        y    = molecules_distr[n]
-        yerr = molecules_distr_std[n]
-        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                else str(n+1) + r"$\mathbf{-}\Lambda$"
-        plt.errorbar(x, y, yerr, 
-                    fmt = '.', capsize = 4, 
-                    label = label)
-    plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
-    plt.grid(alpha = 0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
-    plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
-    #plt.show()
-
-
-    plt.figure(f"Large molecules for {fixed_string}")
-    for n in range(min(6, len(molecules_distr)), len(molecules_distr)):
-        y    = molecules_distr[n]
-        yerr = molecules_distr_std[n]
-        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                else str(n+1) + r"$\mathbf{-}\Lambda$"
-        plt.errorbar(x, y, yerr, 
-                    fmt = '.', capsize = 4, 
-                    label = label)
-    plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
-    plt.grid(alpha = 0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.png")
-    plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.pdf") 
-    #plt.show()
+    if do_also_not_main_plots:
+        plt.figure(f"Medium molecules for {fixed_string}")
+        for n in range(3, min(6, len(molecules_distr))):
+            y    = molecules_distr[n]
+            yerr = molecules_distr_std[n]
+            label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                    else str(n+1) + r"$\mathbf{-}\Lambda$"
+            plt.errorbar(x, y, yerr, 
+                        fmt = '.', capsize = 4, 
+                        label = label)
+        plt.legend()
+        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+        plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+        plt.grid(alpha = 0.2)
+        plt.tight_layout()
+        plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
+        plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
+        plt.show()
 
 
+        plt.figure(f"Large molecules for {fixed_string}")
+        for n in range(min(6, len(molecules_distr)), len(molecules_distr)):
+            y    = molecules_distr[n]
+            yerr = molecules_distr_std[n]
+            label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                    else str(n+1) + r"$\mathbf{-}\Lambda$"
+            plt.errorbar(x, y, yerr, 
+                        fmt = '.', capsize = 4, 
+                        label = label)
+        plt.legend()
+        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+        plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+        plt.grid(alpha = 0.2)
+        plt.tight_layout()
+        plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.png")
+        plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.pdf") 
+        #plt.show()
 
-    plt.figure(f"Small molecules uncertainty for {fixed_string}")
-    for n in range(0, 4):
-        yerr = molecules_distr_std[n]
-        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                else str(n+1) + r"$\mathbf{-}\Lambda$"
-        plt.errorbar(x, yerr, 
-                    fmt = '.', capsize = 4, 
-                    label = label)
-    plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(r"Uncertainty of $n\mathbf{-}\Lambda$")
-    plt.grid(alpha = 0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir + f"{fixed_string}_uncertainty_small_{molecules}.png")
-    plt.savefig(plotsDir + f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
-    #plt.show()
+
+
+        plt.figure(f"Small molecules uncertainty for {fixed_string}")
+        for n in range(0, 4):
+            yerr = molecules_distr_std[n]
+            label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                    else str(n+1) + r"$\mathbf{-}\Lambda$"
+            plt.errorbar(x, yerr, 
+                        fmt = '.', capsize = 4, 
+                        label = label)
+        plt.legend()
+        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+        plt.ylabel(r"Uncertainty of $n\mathbf{-}\Lambda$")
+        plt.grid(alpha = 0.2)
+        plt.tight_layout()
+        plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.png")
+        plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
+        #plt.show()
 
 
     ##########################################################################
@@ -456,9 +455,6 @@ if plot_molecules:
                             absolute_sigma=True)
     unc = np.sqrt(np.diag(pcov))
     print(f"Gradient of Links      = {round(popt[0],4)} +- {round(unc[0],4)}")
-    # expected = lin_func(x, *popt)
-    # Chi2, pvalue = chisquare(links, expected, len(popt))
-    # print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
     # Fit to corrected linear fit
     def schwarz_lin_func(x, a):
@@ -470,11 +466,6 @@ if plot_molecules:
 
     r, pvalue = pearsonr(x, links)
     print(f"Linearity links: Pearson r = {round(r,3)}, p-val = {round(1-pvalue,3)}")
-    # expected = schwarz_lin_func(x, *popt)
-    # print(links)
-    # print(expected)
-    # Chi2, pvalue = chisquare(links, expected, len(popt))
-    # print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
 
     
@@ -537,7 +528,7 @@ if plot_molecules:
     print(f" - I = {round(I,4)} +- {round(Iunc,4)}")
     print(f"With e^-x rather than I, it has:")
     print(f" - x = {round(chi,4)} +- {round(chiunc,4)}")
-    print(f"p1 = {round(lambd_probs[0],4)} == gradsum/a_links = {round(r1,4)} ?")
+    print(f"p1 = {round(lambd_probs[0],4)} == gradsum/a_links = {round(r1,4)}?")
 
 
     ###################################################################
@@ -559,43 +550,63 @@ if plot_molecules:
 
     #################################################################
     # PLot Distribution (all, all in logscale, small in logscale)
-    plt.figure("n-lambda probability distribution")
-    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
-            label = r"$n\mathbf{-}\Lambda$ probability distribution")
-    xs = np.linspace(1, len(lambd_probs)+1,100)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
-            label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
-            f", I = {round(I,3)}+-{round(Iunc,3)}")
-    plt.xlabel(r"$n$")
-    plt.ylabel("Probability")
-    plt.legend(loc="upper right")
-    plt.grid(alpha=0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
-    plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
-    #plt.show()
+    if do_also_not_main_plots:
+        plt.figure("n-lambda probability distribution")
+        plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+                yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
+                label = r"$n\mathbf{-}\Lambda$ probability distribution")
+        xs = np.linspace(1, len(lambd_probs)+1,100)
+        plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
+                label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
+                f", I = {round(I,3)}+-{round(Iunc,3)}")
+        plt.xlabel(r"$n$")
+        plt.ylabel("Probability")
+        plt.legend(loc="upper right")
+        plt.grid(alpha=0.2)
+        plt.tight_layout()
+        plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
+        plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
+        plt.show()
 
 
-    plt.figure("n-lambda probability distribution (logscale)")
-    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
-            label = r"$n\mathbf{-}\Lambda$ distribution")
-    xs = np.linspace(1, len(lambd_probs)+1,100)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
-            label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
-            f", I = {round(I,3)}+-{round(Iunc,3)}")
-    # plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
-    #          label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
-    #          f" I = {round(I2,3)}+-{round(I2unc,3)}")
-    plt.xlabel(r"$n$")
-    plt.ylabel("Probability")
-    plt.yscale("log")
-    plt.legend(loc="upper right")
-    plt.grid(alpha=0.2)
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.png")
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.pdf")
-    plt.show()
+        plt.figure("n-lambda probability distribution (logscale)")
+        plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+                yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
+                label = r"$n\mathbf{-}\Lambda$ distribution")
+        xs = np.linspace(1, len(lambd_probs)+1,100)
+        plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+                label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
+                f", I = {round(I,3)}+-{round(Iunc,3)}")
+        # plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
+        #          label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
+        #          f" I = {round(I2,3)}+-{round(I2unc,3)}")
+        plt.xlabel(r"$n$")
+        plt.ylabel("Probability")
+        plt.yscale("log")
+        plt.legend(loc="upper right")
+        plt.grid(alpha=0.2)
+        plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.png")
+        plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.pdf")
+        plt.show()
+
+        plt.figure("n-lambda probability distribution (safe)")
+        plt.errorbar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
+                lambd_probs[:unsafe_start],
+                yerr=lambd_probs_uncs[:unsafe_start],
+                capsize=7,fmt="",ls="",ecolor="red")
+        xs = np.linspace(1, len(lambd_probs[:unsafe_start])+1,50)
+        plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
+                label = r"(1-$e^{- \chi (n-1)}$) $e^{- \chi (n-1)}$"+ 
+                r", $\chi$"+ 
+                f" = {round(chi,3)}+-{round(chiunc,3)}")
+        plt.xlabel(r"$n$")
+        plt.ylabel(r"Probability $p_n$")
+        plt.legend(loc="upper right")
+        plt.grid(alpha=0.2)
+        plt.tight_layout()
+        plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
+        plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
+        plt.show()
 
 
     plt.figure("n-lambda exp probability distribution (logscale)")
@@ -603,45 +614,23 @@ if plot_molecules:
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
             label = r"$n\mathbf{-}\Lambda$ distribution")
     xs = np.linspace(1, len(lambd_probs)+0.2,100)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
-            label = r"$(1-e^{-\chi})$ $e^{-\chi (n-1)}$, $\chi$"+ 
+    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "darkorange",
+            label = r"$(e^{\chi}-1)$ $e^{-\chi n}$, $\chi$"+ 
             f" = {round(chi,chi_ord)}"+
             f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
-    # plt.plot(xs, i_exp_on_n(xs, I2), ls = "--", color = "green",
-    #          label = r"$\frac{-I}{1-I} \frac{I^{n-1}}{n}$"+
-    #          f" I = {round(I2,3)}+-{round(I2unc,3)}")
-    plt.xlabel(r"$n$")
-    plt.ylabel("Probability")
+    plt.xlabel(r"$n$", fontsize = 24)
+    plt.ylabel("Probability", fontsize = 24)
     plt.yscale("log")
-    plt.legend(loc="upper right")
+    plt.legend(loc="upper right", fontsize = 24)
     plt.grid(alpha=0.2)
+    plt.xticks(np.arange(1,len(lambd_probs)+1,1))
+    plt.tight_layout()
     plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
     plt.show()
 
 
-    plt.figure("n-lambda probability distribution (safe)")
-    # plt.bar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
-    #         lambd_probs[:unsafe_start],
-    #         label = r"$n\mathbf{-}\Lambda$ probability distribution",
-    #         alpha = 0.7)
-    plt.errorbar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
-            lambd_probs[:unsafe_start],
-            yerr=lambd_probs_uncs[:unsafe_start],
-            capsize=7,fmt="",ls="",ecolor="red")
-    xs = np.linspace(1, len(lambd_probs[:unsafe_start])+1,50)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
-            label = r"(1-$e^{- \chi (n-1)}$) $e^{- \chi (n-1)}$"+ 
-            r", $\chi$"+ 
-            f" = {round(chi,3)}+-{round(chiunc,3)}")
-    plt.xlabel(r"$n$")
-    plt.ylabel(r"Probability $p_n$")
-    plt.legend(loc="upper right")
-    plt.grid(alpha=0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
-    plt.show()
+    
 
 
     ##########################################################################

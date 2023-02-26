@@ -11,7 +11,7 @@ from . import causet_helpers as ch
 
 
 my_kwargs = {
-            "figsize"   :(7.5, 15), 
+            "figsize"   :(6, 12), 
             "lambda_link_alpha": 1,
             "link_alpha":0.5, 
             "link_lw"   :0.5,
@@ -132,8 +132,8 @@ def plot_causet(causetfile_ext, savefile_ext = 0,
     ax = plt.axes()
     
     if dim == 2:
-        plt.ylabel("t*")
-        plt.xlabel("r")        
+        plt.ylabel(r"$t^{*}$ [$M$]")
+        plt.xlabel(r"$r$ [$M$]")     
 
         for i in range(size):
             ti = coords[i][0]
@@ -145,22 +145,30 @@ def plot_causet(causetfile_ext, savefile_ext = 0,
                             marker = "o", markersize = markersize, 
                             markeredgecolor = "black", 
                             markerfacecolor = std_color,
-                            ls = "solid", color = std_color, 
+                            lw = 0,
+                            zorder = 2)
+                plt.plot([xi, xj], [ti, tj], 
+                            marker = "o", markersize = markersize, 
+                            markeredgecolor = "black", 
+                            markerfacecolor = std_color,
+                            ls = "solid", color = "C0", 
                             alpha = link_alpha, lw = link_lw,
-                            zorder = 5)
+                            zorder = 1)
         
         #FINALLY MARK THE HORIZON
-        ys = plt.ylim()
-        plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
-        
-        if min(np.array(coords)[:,1]) < 0:
-            plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
-        plt.ylim(ys)
+        if r_S > 0:
+            ys = plt.ylim()
+            print(r_S)
+            plt.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
+            
+            if min(np.array(coords)[:,1]) < 0:
+                plt.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
+            plt.ylim(ys)
     
     if dim == 3 and projection:
         coords, fut_links = take_projection(coords, fut_links, phi_limits)
-        ax.set_xlabel("x")
-        ax.set_ylabel("t*")
+        ax.set_xlabel("r [a.u]")
+        ax.set_ylabel("t* [a.u.]")
 
         for i in range(len(coords)):
             ti   = coords[i][0]

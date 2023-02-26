@@ -1993,7 +1993,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_lambdas_from_futlinks(t_f,r_S);

@@ -35,9 +35,11 @@ def get_causet_attrs (lambdasfile_ext):
 
     - r_S : float (#6)
     
-    - molecules : list<list<int>> (#7)
+    - molecules : list<list<int>> (#7) /not all files have that,
+    so might return empty list if molecules are not saved.
 
-    - distribution : list<list<int>> (#8)
+    - distribution : list<list<int>> (#8) /not implemented anymore,
+    should return empty list
     """
     with open(lambdasfile_ext, 'r') as fl: 
             f = fl.readlines() 
@@ -55,6 +57,7 @@ def get_causet_attrs (lambdasfile_ext):
             coords = []
             r_S = 0
 
+            #start reading file from last line
             go = -1
             while go < 0:
                 row = f[go].split(",")
