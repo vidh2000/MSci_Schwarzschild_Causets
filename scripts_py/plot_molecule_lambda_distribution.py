@@ -27,7 +27,7 @@ params = {'text.usetex' : True,
           'font.size' : 20,
           'font.family' : 'lmodern',
           #'text.latex.unicode': True,
-          'axes.labelsize':22,
+          'axes.labelsize':24,
           'legend.fontsize': 20,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
@@ -235,7 +235,7 @@ if plot_boundaries:
     outermosts_std = np.array(outermosts_std)* Rho**(1/4)
 
     rc = 2; c = 1; r = 2
-    figsize = (6 * c, 14 / r)
+    figsize = (8 * c, 8 / r)
     plt.figure(f'Boundaries for {fixed_string}',
                 figsize = figsize, tight_layout = True)
 
@@ -254,7 +254,7 @@ if plot_boundaries:
     #else:
     #    plt.xlabel(f'{varying_var} [a.u.]')
     ax.set_xticklabels([])
-    plt.ylabel(r"Molecules' $t_{min}$ $[\ell]$")
+    plt.ylabel(r"$t_{min}$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -283,7 +283,7 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"Max distance from $r_S$ $[\ell]$")
+    plt.ylabel(r"$\Delta r_{Smax}$ $[\ell]$")
     plt.grid(alpha = 0.4) 
     plt.legend()
     plt.tight_layout()

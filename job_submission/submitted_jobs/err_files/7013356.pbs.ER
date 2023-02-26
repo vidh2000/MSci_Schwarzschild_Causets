@@ -1,1 +1,0 @@
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_2.31_N_multiplier__N_reps_15.sh: line 31: 620180 Bus error               "./executables/lambdas_M${mass}_Rho${Rho}_reps${N_reps}.exe" $mass $Rho $N_reps
