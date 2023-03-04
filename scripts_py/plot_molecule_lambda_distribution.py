@@ -28,7 +28,7 @@ params = {'text.usetex' : True,
           'font.size' : 20,
           'font.family' : 'lmodern',
           #'text.latex.unicode': True,
-          'axes.labelsize':24,
+          'axes.labelsize':34,
           'legend.fontsize': 18,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
@@ -253,7 +253,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r"$t_{Min}$ $[\ell]$")
+    plt.ylabel(r"$t_{\text{min}}$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -282,7 +282,7 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"$\Delta r_{Max}$ $[\ell]$")
+    plt.ylabel(r"$\Delta r_{\text{max}}$ $[\ell]$")
     plt.grid(alpha = 0.4) 
     plt.legend()
     plt.tight_layout()
@@ -608,7 +608,7 @@ if plot_molecules:
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
         plt.show()
 
-
+    x = 8
     plt.figure("n-lambda exp probability distribution (logscale)")
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
@@ -618,8 +618,8 @@ if plot_molecules:
             label = r"$(e^{\chi}-1)$ $e^{-\chi n}$, $\chi$"+ 
             f" = {round(chi,chi_ord)}"+
             f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
-    plt.xlabel(r"$n$", fontsize = 24)
-    plt.ylabel("Probability", fontsize = 24)
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
     plt.yscale("log")
     plt.legend(loc="upper right", fontsize = 24)
     plt.grid(alpha=0.2)

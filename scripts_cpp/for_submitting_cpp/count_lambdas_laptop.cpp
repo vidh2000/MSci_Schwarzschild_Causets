@@ -70,8 +70,8 @@ int main(int argc, char* argv[]){
 // int N_reps = std::atoi(argv[3]);
 
 double mass = 0.25;
-double Rho = 1014.24/2; //1000;
-int N_reps = 15;
+double Rho = 1000.24/2; //1000;
+int N_reps = 2;
 
 std::cout << "PARAMETERS used in the causet generation:\n";
 std::cout << "mass="<<mass<<", Rho="<<Rho<<", N_reps="
@@ -176,7 +176,15 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
                                     countend - countstart).count();
             std::cout << "Time taken in count_lambdas for N = "
             << C._size << ": " << durationlinks/pow(10,6) << " seconds"
-            << std::endl;     
+            << std::endl;  
+
+            std::cout<< "OVERALL MEMORY CONSUMPTION\n";
+            std::cout<< (sizeof(C) + sizeof(lambdas_distr) 
+                      + sizeof(S) + sizeof(shape)
+                      + sizeof(all_iter_lambda_results)
+                      + sizeof(iter_pastkeys))*8
+                      <<" bits"
+                      <<std::endl;   
     }
 
     //GET RESULT OF REPETITIONS
