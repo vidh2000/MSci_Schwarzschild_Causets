@@ -1,0 +1,256 @@
+Using 256 cores
+Using 920GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_2.12_N_multiplier__N_reps_30.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/count_HRVs.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+PARAMETERS used in the causet generation:
+mass=2.12, Rho=5000, N_reps=30
+
+Scale = 0.118921
+R done
+r done
+T done
+h done
+N done
+r pushed back
+h pushed back
+T pushed back
+N pushed back
+N_reps pushed back
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+======================================================
+Main interation count: 1/1
+N = 384280. r_S = 4.24. Radius = 4.59676. Hollow = 0.844777. Dimension = 4. Height = 0.475683. Centered at t = -0.237841.
+M=2.12, 1/30
+Time taken generating for N = 383835: 220.762 seconds
+Starting capped futures in count_HRVs
+-383833/383835-2314-t_min for elements in the HRVs = -0.308477
+r_min for elements in the HRVs = 4.05128
+r_max for elements in the HRVs = 4.47627
+Time taken in count_HRVs for N = 383835: 64.243 seconds
+M=2.12, 2/30
+Time taken generating for N = 384070: 193.626 seconds
+Starting capped futures in count_HRVs
+-384068/384070-2314-t_min for elements in the HRVs = -0.315495
+r_min for elements in the HRVs = 4.05042
+r_max for elements in the HRVs = 4.44006
+Time taken in count_HRVs for N = 384070: 110.711 seconds
+M=2.12, 3/30
+Time taken generating for N = 385457: 195.237 seconds
+Starting capped futures in count_HRVs
+-385455/385457-2314-t_min for elements in the HRVs = -0.299524
+r_min for elements in the HRVs = 4.07522
+r_max for elements in the HRVs = 4.48263
+Time taken in count_HRVs for N = 385457: 121.167 seconds
+M=2.12, 4/30
+Time taken generating for N = 385181: 202.248 seconds
+Starting capped futures in count_HRVs
+-385179/385181-2314-t_min for elements in the HRVs = -0.301275
+r_min for elements in the HRVs = 4.08236
+r_max for elements in the HRVs = 4.45626
+Time taken in count_HRVs for N = 385181: 61.2466 seconds
+M=2.12, 5/30
+Time taken generating for N = 384882: 160.294 seconds
+Starting capped futures in count_HRVs
+-384880/384882-2314-t_min for elements in the HRVs = -0.296084
+r_min for elements in the HRVs = 4.04951
+r_max for elements in the HRVs = 4.45438
+Time taken in count_HRVs for N = 384882: 77.1097 seconds
+M=2.12, 6/30
+Time taken generating for N = 384170: 180.046 seconds
+Starting capped futures in count_HRVs
+-384168/384170-2314-t_min for elements in the HRVs = -0.309722
+r_min for elements in the HRVs = 4.06799
+r_max for elements in the HRVs = 4.46666
+Time taken in count_HRVs for N = 384170: 131.806 seconds
+M=2.12, 7/30
+Time taken generating for N = 384312: 185.706 seconds
+Starting capped futures in count_HRVs
+-384310/384312-2314-t_min for elements in the HRVs = -0.302333
+r_min for elements in the HRVs = 4.03657
+r_max for elements in the HRVs = 4.47406
+Time taken in count_HRVs for N = 384312: 154.93 seconds
+M=2.12, 8/30
+Time taken generating for N = 383625: 187.985 seconds
+Starting capped futures in count_HRVs
+-383623/383625-2314-t_min for elements in the HRVs = -0.30966
+r_min for elements in the HRVs = 4.07715
+r_max for elements in the HRVs = 4.44968
+Time taken in count_HRVs for N = 383625: 150.769 seconds
+M=2.12, 9/30
+Time taken generating for N = 384633: 179.013 seconds
+Starting capped futures in count_HRVs
+-384631/384633-2314-t_min for elements in the HRVs = -0.306634
+r_min for elements in the HRVs = 4.04667
+r_max for elements in the HRVs = 4.48063
+Time taken in count_HRVs for N = 384633: 137.884 seconds
+M=2.12, 10/30
+Time taken generating for N = 383942: 179.6 seconds
+Starting capped futures in count_HRVs
+-383940/383942-2314-t_min for elements in the HRVs = -0.312934
+r_min for elements in the HRVs = 4.09376
+r_max for elements in the HRVs = 4.4346
+Time taken in count_HRVs for N = 383942: 125.792 seconds
+M=2.12, 11/30
+Time taken generating for N = 384595: 185.504 seconds
+Starting capped futures in count_HRVs
+-384593/384595-2314-t_min for elements in the HRVs = -0.299049
+r_min for elements in the HRVs = 4.09287
+r_max for elements in the HRVs = 4.4423
+Time taken in count_HRVs for N = 384595: 117.54 seconds
+M=2.12, 12/30
+Time taken generating for N = 383415: 187.771 seconds
+Starting capped futures in count_HRVs
+-383413/383415-2314-t_min for elements in the HRVs = -0.312775
+r_min for elements in the HRVs = 4.07288
+r_max for elements in the HRVs = 4.45255
+Time taken in count_HRVs for N = 383415: 141.307 seconds
+M=2.12, 13/30
+Time taken generating for N = 383944: 184.044 seconds
+Starting capped futures in count_HRVs
+-383942/383944-2314-t_min for elements in the HRVs = -0.296831
+r_min for elements in the HRVs = 4.07725
+r_max for elements in the HRVs = 4.46771
+Time taken in count_HRVs for N = 383944: 137.673 seconds
+M=2.12, 14/30
+Time taken generating for N = 384177: 182.164 seconds
+Starting capped futures in count_HRVs
+-384175/384177-2314-t_min for elements in the HRVs = -0.29125
+r_min for elements in the HRVs = 4.07516
+r_max for elements in the HRVs = 4.43784
+Time taken in count_HRVs for N = 384177: 157.925 seconds
+M=2.12, 15/30
+Time taken generating for N = 383944: 182.37 seconds
+Starting capped futures in count_HRVs
+-383942/383944-2314-t_min for elements in the HRVs = -0.297804
+r_min for elements in the HRVs = 4.06528
+r_max for elements in the HRVs = 4.45523
+Time taken in count_HRVs for N = 383944: 86.3831 seconds
+M=2.12, 16/30
+Time taken generating for N = 383970: 183.155 seconds
+Starting capped futures in count_HRVs
+-383968/383970-2314-t_min for elements in the HRVs = -0.304151
+r_min for elements in the HRVs = 4.04649
+r_max for elements in the HRVs = 4.45741
+Time taken in count_HRVs for N = 383970: 110.006 seconds
+M=2.12, 17/30
+Time taken generating for N = 384551: 166.803 seconds
+Starting capped futures in count_HRVs
+-384549/384551-2314-t_min for elements in the HRVs = -0.293909
+r_min for elements in the HRVs = 4.04885
+r_max for elements in the HRVs = 4.45117
+Time taken in count_HRVs for N = 384551: 86.3509 seconds
+M=2.12, 18/30
+Time taken generating for N = 384256: 165.984 seconds
+Starting capped futures in count_HRVs
+-384254/384256-2314-t_min for elements in the HRVs = -0.317072
+r_min for elements in the HRVs = 4.06585
+r_max for elements in the HRVs = 4.4806
+Time taken in count_HRVs for N = 384256: 70.1378 seconds
+M=2.12, 19/30
+Time taken generating for N = 383813: 158.67 seconds
+Starting capped futures in count_HRVs
+-383811/383813-2314-t_min for elements in the HRVs = -0.304767
+r_min for elements in the HRVs = 4.06058
+r_max for elements in the HRVs = 4.46625
+Time taken in count_HRVs for N = 383813: 110.968 seconds
+M=2.12, 20/30
+Time taken generating for N = 384567: 163.702 seconds
+Starting capped futures in count_HRVs
+-384565/384567-2314-t_min for elements in the HRVs = -0.301121
+r_min for elements in the HRVs = 4.08585
+r_max for elements in the HRVs = 4.44322
+Time taken in count_HRVs for N = 384567: 57.5929 seconds
+M=2.12, 21/30
+Time taken generating for N = 384800: 159.843 seconds
+Starting capped futures in count_HRVs
+-384798/384800-2314-t_min for elements in the HRVs = -0.315551
+r_min for elements in the HRVs = 4.05564
+r_max for elements in the HRVs = 4.45566
+Time taken in count_HRVs for N = 384800: 150.131 seconds
+M=2.12, 22/30
+Time taken generating for N = 383197: 183.482 seconds
+Starting capped futures in count_HRVs
+-383195/383197-2314-t_min for elements in the HRVs = -0.316903
+r_min for elements in the HRVs = 4.05061
+r_max for elements in the HRVs = 4.48308
+Time taken in count_HRVs for N = 383197: 136.98 seconds
+M=2.12, 23/30
+Time taken generating for N = 383680: 181.085 seconds
+Starting capped futures in count_HRVs
+-383678/383680-2314-t_min for elements in the HRVs = -0.298112
+r_min for elements in the HRVs = 4.04367
+r_max for elements in the HRVs = 4.44698
+Time taken in count_HRVs for N = 383680: 76.5851 seconds
+M=2.12, 24/30
+Time taken generating for N = 384126: 177.021 seconds
+Starting capped futures in count_HRVs
+-384124/384126-2314-t_min for elements in the HRVs = -0.306345
+r_min for elements in the HRVs = 4.05502
+r_max for elements in the HRVs = 4.45018
+Time taken in count_HRVs for N = 384126: 85.0023 seconds
+M=2.12, 25/30
+Time taken generating for N = 383839: 181.552 seconds
+Starting capped futures in count_HRVs
+-383837/383839-2314-t_min for elements in the HRVs = -0.301675
+r_min for elements in the HRVs = 4.05646
+r_max for elements in the HRVs = 4.45728
+Time taken in count_HRVs for N = 383839: 87.9838 seconds
+M=2.12, 26/30
+Time taken generating for N = 383615: 170.915 seconds
+Starting capped futures in count_HRVs
+-383613/383615-2314-t_min for elements in the HRVs = -0.303888
+r_min for elements in the HRVs = 4.06065
+r_max for elements in the HRVs = 4.44569
+Time taken in count_HRVs for N = 383615: 125.508 seconds
+M=2.12, 27/30
+Time taken generating for N = 384736: 181.903 seconds
+Starting capped futures in count_HRVs
+-384734/384736-2314-t_min for elements in the HRVs = -0.315142
+r_min for elements in the HRVs = 4.07389
+r_max for elements in the HRVs = 4.45936
+Time taken in count_HRVs for N = 384736: 143.302 seconds
+M=2.12, 28/30
+Time taken generating for N = 384154: 181.705 seconds
+Starting capped futures in count_HRVs
+-384152/384154-2314-t_min for elements in the HRVs = -0.312192
+r_min for elements in the HRVs = 4.07264
+r_max for elements in the HRVs = 4.45111
+Time taken in count_HRVs for N = 384154: 139.105 seconds
+M=2.12, 29/30
+Time taken generating for N = 385603: 184.876 seconds
+Starting capped futures in count_HRVs
+-385601/385603-2314-t_min for elements in the HRVs = -0.303068
+r_min for elements in the HRVs = 4.07873
+r_max for elements in the HRVs = 4.45637
+Time taken in count_HRVs for N = 385603: 119.527 seconds
+M=2.12, 30/30
+Time taken generating for N = 385499: 168.609 seconds
+Starting capped futures in count_HRVs
+-385497/385499-2314-t_min for elements in the HRVs = -0.298567
+r_min for elements in the HRVs = 4.05563
+r_max for elements in the HRVs = 4.44808
+Time taken in count_HRVs for N = 385499: 69.3988 seconds
+Average time taken for generating 30 causets with N = 384280:
+292.451 seconds
+
+
+==========================================================
+Saving Iteration 1to the file: /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/HRVs/M=2.12_Rho=5000.00_Card=384280_r=4.60_hollow=0.84_dur=0.48.txt
+
+=============================================================
+===============================================================
+
+Program took in total: 8773.56 seconds
+
+Parameters used:
