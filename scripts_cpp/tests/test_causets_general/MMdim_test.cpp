@@ -15,12 +15,12 @@
 #include <unordered_set>
 #include <chrono>
 
-#include "../causets_cpp/sprinkledcauset.h"
-#include "../causets_cpp/shapes.h"
-#include "../causets_cpp/spacetimes.h"
+#include "../../causets_cpp/sprinkledcauset.h"
+#include "../../causets_cpp/shapes.h"
+#include "../../causets_cpp/spacetimes.h"
 
-#include "../causets_cpp/functions.h"
-#include "../causets_cpp/vecfunctions.h"
+#include "../../causets_cpp/functions.h"
+#include "../../causets_cpp/vecfunctions.h"
 
 using namespace std::chrono;
 using std::cout;
@@ -43,7 +43,7 @@ using std::vector;
 
 
 // Sprinkled causet parameters
-int card = 1000;
+int card = 10000;
 int dim = 4;
 std::vector<double> center (dim, 0.0);
 double radius = 4.0;
@@ -124,7 +124,8 @@ int main(){
     cout<<"\n========================================================\n";
     CoordinateShape shape(dim,"bicone",center,radius);
     Spacetime S = Spacetime();
-    S.BlackHoleSpacetime(dim);
+    //S.BlackHoleSpacetime(dim);
+    S.FlatSpacetime(dim);
     SprinkledCauset Cs(card, S, shape, poisson,
                         make_matrix, special, use_transitivity,
                         make_sets, make_links, sets_type);
@@ -132,11 +133,11 @@ int main(){
 
     cout << "\n1. CHECK MATRIX AND SETS REPRESENTATIONS ARE EQUIVALENT\n";
     vector<double> MMd_result = Cs.MMdim_est("big", 20, card/4, card, true);
-    cout << "MM estimation with CMatrix (mean, std):";
+    cout << "MM estimation with CMatrix (mean, std): ";
     print_vector(MMd_result);
-    MMd_result = Cs.MMdim_est("big", 20, card/4, card, false);
-    cout << "MM estimation with SETS   (mean, std):";
-    print_vector(MMd_result);
+    //MMd_result = Cs.MMdim_est("big", 20, card/4, card, false);
+    //cout << "MM estimation with SETS   (mean, std):";
+    //print_vector(MMd_result);
 
 
     auto stop = high_resolution_clock::now();
