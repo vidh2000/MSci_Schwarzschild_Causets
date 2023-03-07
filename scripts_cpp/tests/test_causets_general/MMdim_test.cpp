@@ -24,6 +24,8 @@
 
 #include "../../causets_cpp/functions.h"
 #include "../../causets_cpp/vecfunctions.h"
+#include "../../causets_cpp/functions.h"
+#include "../../causets_cpp/vecfunctions.h"
 
 using namespace std::chrono;
 using std::cout;
