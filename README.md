@@ -53,23 +53,26 @@ Also, if you lack the mutex C++ module, which is possible on Windows, it is advi
 
 Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'. It is specified whether functions have been tested.
 
-## Examples
+## Example Results
 
 The following is a plot of a 150-events Causet embedded in a cubic region of a 2D Schwarzschild spacetime, in EF-t^* coordinates. Light cones on the manifold of three points are also explicitly shown.
-![Example plot for a sprinkle in 2D Schwarzschild spacetime](figures/Schwarzschild/N50_2D_r=4_lcones.pdf)
+![Example plot for a sprinkle in 2D Schwarzschild spacetime](figures/Schwarzschild/N100_2D_r=4.png)
 
 Then, the main results of our work: the distribution of n-lambda molecules across the horizon of a 3+1D Schwarzschild black hole. We studied up to 750k-elements causet and we saw the number of lambdas scales proportional with area, and the distribution of the n-lambdas follows an exponential fall (like thermodynamic molecules).
 ![n-Lambdas scale linearly with hoirzon area](figures/Nlambdas_vs_Area/Rho%20%3D%205000_lambdas.png)
 
-![n-Lambdas distribution is a falling exponential](figures/NLambdas_vs_Area/n_lambda_probability_distribution_exp_logy.png)
+![n-Lambdas distribution is a falling exponential](figures/NLambdas_vs_Area/n_lambda_probability_distribution_expx_logy.png)
 
 ## Use and License
 
 If you wish to contribute to the project, please get in contact via email:
+
 <stefano.veroni19@imperial.ac.uk>
+
 <vid.homsak19@imperial.ac.uk>
 
 If you use the code for your project, please cite:
+
 "Homsak V, Veroni S. Framework for Causet Coding. 2022."
 
 The source code is published under the BSD 3-Clause License, see [license file](LICENSE.md).
