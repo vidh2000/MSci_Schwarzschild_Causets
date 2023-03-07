@@ -60,14 +60,17 @@ The following is a plot of a 150-events Causet embedded in a cubic region of a 2
 
 Then, the main results of our work: the distribution of n-lambda molecules across the horizon of a 3+1D Schwarzschild black hole. We studied up to 750k-elements causet and we saw the number of lambdas scales proportional with area, and the distribution of the n-lambdas follows an exponential fall (like thermodynamic molecules).
 ![n-Lambdas scale linearly with hoirzon area](figures/Nlambdas_vs_Area/Rho%20%3D%205000_lambdas.png)
+
 ![n-Lambdas distribution is a falling exponential](figures/NLambdas_vs_Area/n_lambda_probability_distribution_exp_logy.png)
 
 ## Use and License
 
 If you wish to contribute to the project, please get in contact via email:
-<stefano(dot)veroni19[at]imperial(dot)ac(dot)uk>
 <stefano.veroni19@imperial.ac.uk>
-<vid(dot)homsak19[at]imperial(dot)ac(dot)uk>
+<vid.homsak19@imperial.ac.uk>
+
+If you use the code for your project, please cite:
+"Homsak V, Veroni S. Framework for Causet Coding. 2022."
 
 The source code is published under the BSD 3-Clause License, see [license file](LICENSE.md).
 Copyright (c) 2020-2022, Stefano Veroni, Vid Homsak
