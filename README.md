@@ -68,7 +68,7 @@ Then, the main results of our work: the distribution of n-lambda molecules acros
 ## Use and License
 
 If you wish to contribute to the project, please get in contact via email:
-<stefano.veroni19@imperial.ac.uk>
+<stefano.veroni19@imperial.ac.uk>,
 <vid.homsak19@imperial.ac.uk>
 
 If you use the code for your project, please cite:
