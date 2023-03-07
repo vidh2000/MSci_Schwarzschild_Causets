@@ -347,10 +347,6 @@ double Causet::MM_drelation(double d)
             - 'random': randomly sample.
             - 'big': take all events with no past, all with no future
                      and apply estimator ro their combinations.
- *  
- * @param d0: float 
-            Initial guess for dimension.
-            Default is 2.
  * 
  * @param Nsamples: int 
             Times to iterate procedure to then average on if method "random".
@@ -381,7 +377,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     // Variables to be used
     int* N = &_size;
     vector<double> destimates;
-    
 
     if (strcmp(method,"random")==0)
     {
@@ -389,10 +384,10 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
         int successes = 0;
         while (Nsamples>0)
         {
-            if (fails>= 1000 && successes == 0)
+            if (fails>= 100000 && successes == 0)
             {
-                std::cout << "Found 0/1000 OK Alexandrov intervals. \
-                Causet portion too small. Returning {-1,-1} values.";
+                std::cout << "Found 0/100000 OK Alexandrov intervals. \
+Causet portion too small. Returning {-1,-1} values.";
                 vector<double> returnerr = {-1,-1};
                 return returnerr;
             }
@@ -426,7 +421,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             {
                 successes += 1;
                 double fr_i = this->ord_fr(a,b,"choose",from_matrix);
-                std::cout << "fr_i = " << fr_i << std::endl;
+                //std::cout << "fr_i = " << fr_i << std::endl;
                 if (fr_i ==1)
                 {
                     destimates.push_back(1);
@@ -482,7 +477,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 {
                     counter++;
                     double fr_i = this->ord_fr(a,b,"choose",from_matrix);
-                    std::cout << "fr_i =" << fr_i << std::endl; 
+                    //std::cout << "fr_i =" << fr_i << std::endl; 
                     if (fr_i ==1.0)
                     {
                         destimates.push_back(1);

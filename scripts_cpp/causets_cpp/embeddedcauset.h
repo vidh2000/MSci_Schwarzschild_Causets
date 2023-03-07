@@ -145,6 +145,7 @@ class EmbeddedCauset: public Causet
 
         std::map<int,std::vector<int>> get_lambdas(double& t_f, double r_S=2);
         std::map<int,double>         count_lambdas(double& t_f, double r_S=2);
+        std::map<double,double>  count_lambdas_withdr(double& t_f, double r_S=2);
 
 
         std::map<int,std::vector<int>> get_HRVs(double& t_f, double r_S = 2);
@@ -159,15 +160,23 @@ class EmbeddedCauset: public Causet
 
         // Counting Behind the Scenes
 
-        std::map<int,std::vector<int>> get_lambdas_from_futlinks(double& t_f,
-                                                                 double r_S=2);
         std::map<int,std::vector<int>> get_lambdas_from_futs(double& t_f,
                                                             double r_S=2);
         std::map<int,double> get_lambdas_sizes_from_futs(double& t_f, 
                                                         double r_S = 2);
-        std::map<int,double> get_lambdas_sizes(double& t_f, double r_S = 2);
         std::map<int,double> get_lambdas_distr(const std::map<int, double> 
                                                 & lambdas);
+
+        std::map<int,std::pair<double, double>>
+                    get_lambdas_sizes_withdr_from_futs
+                    (double& t_f, double r_S = 2);
+        std::map<double,double> get_lambdas_distr_withdr
+                    (const std::map<int, std::pair<double, double>> & lambdas);
+
+        std::map<int,std::vector<int>> get_lambdas_from_futlinks(double& t_f,
+                                                                 double r_S=2);
+        std::map<int,double> get_lambdas_sizes(double& t_f, double r_S = 2);
+
 
         std::map<int,std::vector<int>> get_HRVs_from_futlinks(double& t_f,
                                                               double r_S=2);
