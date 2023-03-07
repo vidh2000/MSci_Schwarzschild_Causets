@@ -63,7 +63,7 @@ The following is a plot of a 100-events Causet embedded in a cubic region of a 2
 Then, the main results of our work: the distribution of n-lambda molecules across the horizon of a 3+1D Schwarzschild black hole. We studied up to 750k-elements causet and we saw the number of lambdas scales proportional with area, and the distribution of the n-lambdas follows an exponential fall (like thermodynamic molecules).
 ![n-Lambdas scale linearly with hoirzon area](figures/Nlambdas_vs_Area/Rho%20%3D%205000_lambdas.png)
 
-![n-Lambdas distribution is a falling exponential](figures/NLambdas_vs_Area/n_lambda_probability_distribution_expx_logy.png)
+![n-Lambdas distribution is a falling exponential](figures/Nlambdas_vs_Area/n_lambda_probability_distribution_expx_logy.png)
 
 ## Use and License
 
