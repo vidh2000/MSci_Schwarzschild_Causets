@@ -23,7 +23,7 @@ The C++ modules(classes) in scripts_cpp/causets_cpp:
 - embeddedcauset.cpp(EmbeddedCauset): it inherits from Causet to handle a causet embedded in a region of spacetime.
 - sprinkledcauset.cpp(SprinkledCauset): it inherits from EmbeddedCauset to generate via Poisson Sprinkling a causet embedded in a given region of spacetime.
 - shapes.cpp(Shape): it handles the definition of the aforementioned implemented shapes
-- spacetime.cpp(Spacetime): it handles the definition and properties of a certain spacetime metric.
+- spacetime.cpp(Spacetime): it handles the definition and properties of a the spacetime metrics.
 
 The python modules in scripts_py/causets_py:
 
@@ -49,13 +49,15 @@ integrate( System system , State &start_state , Time start_time , Time end_time 
 
 Also, if you lack the mutex C++ module, which is possible on Windows, it is advisable to comment out lines 409-412 in boost/math/special_functions/detail/polygamma.hpp.
 
+Finally, plotting in Python makes use of scipy, numpy and matploltib.pyplot. 
+
 ## Testing
 
 Most of the implemented code has been tested. The test files are in scripts_cpp/tests and scripts_py. Their name contains the string 'test'. It is specified whether functions have been tested.
 
 ## Example Results
 
-The following is a plot of a 150-events Causet embedded in a cubic region of a 2D Schwarzschild spacetime, in EF-t^* coordinates. Light cones on the manifold of three points are also explicitly shown.
+The following is a plot of a 100-events Causet embedded in a cubic region of a 2D Schwarzschild spacetime, in EF-t^* coordinates. Light cones on the manifold of three points are also explicitly shown.
 ![Example plot for a sprinkle in 2D Schwarzschild spacetime](figures/Schwarzschild/N100_2D_r=4.png)
 
 Then, the main results of our work: the distribution of n-lambda molecules across the horizon of a 3+1D Schwarzschild black hole. We studied up to 750k-elements causet and we saw the number of lambdas scales proportional with area, and the distribution of the n-lambdas follows an exponential fall (like thermodynamic molecules).
@@ -66,13 +68,10 @@ Then, the main results of our work: the distribution of n-lambda molecules acros
 ## Use and License
 
 If you wish to contribute to the project, please get in contact via email:
-
 <stefano.veroni19@imperial.ac.uk>
-
 <vid.homsak19@imperial.ac.uk>
 
 If you use the code for your project, please cite:
-
 "Homsak V, Veroni S. Framework for Causet Coding. 2022."
 
 The source code is published under the BSD 3-Clause License, see [license file](LICENSE.md).
