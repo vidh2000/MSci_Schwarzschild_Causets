@@ -2307,6 +2307,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
+        _future_links.resize(0);
         if (_future_links.size() == _size) /*if already defined*/
         {
             return this->get_HRVs_from_futlinks(t_f,r_S);
@@ -2353,12 +2354,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
         throw std::invalid_argument("Wrong spacetime");
     }
 }
-
-
-
-
-
-
 
 
 
@@ -3035,80 +3030,9 @@ std::map<double,double> EmbeddedCauset::get_lambdas_distr_withdr
 
 
 
-/**
- * @brief  IS WRONG!!!!!!!!!!!!!!!!!! Finds HRVs in the causet.
- * Currently works only for spacetime "Schwarzschild" in EForig coords, but
- * could be expanded if needed in the future. 
- * 
- * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
- * @param r_S Schwarzschild radius
-
- * @return map<int, vector<int>> : key is label of minimal element, 
-    value is pair of labels of [a,b].
- */
-std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
-                                                (double& t_f, double r_S)
-{
-    if (!strcmp(_spacetime._name, "BlackHole")==0)
-    {
-        std::cout<<"Please choose 'BlackHole' for spacetime." <<
-        "Other spacetimes might be available in the future" << std::endl;
-        throw std::invalid_argument("Wrong spacetime");
-    }
-
-    // Maps label of maximal element to size of its lambda
-    std::map<int, std::vector<int>> HRVs;
-    
-    // To find point with lowest time component. Hypersurface set at t=tmax btw.
-    std::vector<double> mintime_vec;
-    std::vector<double> innermost_vec;
-    std::vector<double> outermost_vec;
- 
-    for (int p = 1; p<_size; p++)
-    {
-        // if j is maximal and inside the horizon
-        if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
-        {
-            std::vector<int> ab;
-            ab.insert(ab.end(),
-                     _future_links[p].begin(), _future_links[p].end());
-            int a = (ab[0] < ab[1])? ab[0] : ab[1];
-            int b = (ab[0] < ab[1])? ab[1] : ab[0];
-            if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
-            {
-                //the one inside is maximal
-                if (_future_links[b].size()==0) 
-                {
-                    //the one outside is either maximal 
-                    // or maximal but one and only connected to b
-                    if (_future_links[a].size()==0 ||
-                        (_future_links[a].size()==1 && 
-                         _future_links[a].count(a)==1)
-                        ) 
-                    {
-                        HRVs[p] = {a,b};
-                        mintime_vec  .push_back(_coords[p][0]);
-                        innermost_vec.push_back(_coords[b][1]);
-                        outermost_vec.push_back(_coords[p][1]);
-                        outermost_vec.push_back(_coords[a][1]);
-                    }
-                }
-            }
-        }
-    }
-    double mintime   = vecmin(mintime_vec);
-    double innermost = vecmin(innermost_vec);
-    double outermost = vecmax(outermost_vec);
-    std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
-    std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
-    std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
-    return HRVs;
-}
-
-
 
 /**
- * @brief  IS WRONG!!!!!!!!!!!!!!!!!! Finds HRVs in the causet.
+ * @brief  Finds HRVs in the causet, given futures of points.
  * Currently works only for spacetime "Schwarzschild" in EForig coords, but
  * could be expanded if needed in the future. 
  * 
@@ -3128,7 +3052,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futs
         throw std::invalid_argument("Wrong spacetime");
     }
 
-    // Maps label of maximal element to size of its lambda
+    // Maps label of minimal element to top elements
     std::map<int, std::vector<int>> HRVs;
     
     for (int p = 0; p<_size; p++)
@@ -3377,7 +3301,75 @@ std::map<int,double> EmbeddedCauset::get_HRVs_distr_from_futs(double& t_f,
 
 
 
+/**
+ * @brief  IS WRONG!!!!!!!!!!!!!!!!!! Finds HRVs in the causet.
+ * Currently works only for spacetime "Schwarzschild" in EForig coords, but
+ * could be expanded if needed in the future. 
+ * 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius
 
+ * @return map<int, vector<int>> : key is label of minimal element, 
+    value is pair of labels of [a,b].
+ */
+std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futlinks
+                                                (double& t_f, double r_S)
+{
+    if (!strcmp(_spacetime._name, "BlackHole")==0)
+    {
+        std::cout<<"Please choose 'BlackHole' for spacetime." <<
+        "Other spacetimes might be available in the future" << std::endl;
+        throw std::invalid_argument("Wrong spacetime");
+    }
+
+    // Maps label of maximal element to size of its lambda
+    std::map<int, std::vector<int>> HRVs;
+    
+    // To find point with lowest time component. Hypersurface set at t=tmax btw.
+    std::vector<double> mintime_vec;
+    std::vector<double> innermost_vec;
+    std::vector<double> outermost_vec;
+ 
+    for (int p = 1; p<_size; p++)
+    {
+        // if j is maximal and inside the horizon
+        if (_future_links[p].size()==2 && _coords[p][1]>r_S) 
+        {
+            std::vector<int> ab;
+            ab.insert(ab.end(),
+                     _future_links[p].begin(), _future_links[p].end());
+            int a = (ab[0] < ab[1])? ab[0] : ab[1];
+            int b = (ab[0] < ab[1])? ab[1] : ab[0];
+            if (_coords[b][1] < r_S && _coords[a][1] >= r_S)
+            {
+                //the one inside is maximal
+                if (_future_links[b].size()==0) 
+                {
+                    //the one outside is either maximal 
+                    // or maximal but one and only connected to b
+                    if (_future_links[a].size()==0 ||
+                        (_future_links[a].size()==1 && 
+                         _future_links[a].count(a)==1)
+                        ) 
+                    {
+                        HRVs[p] = {a,b};
+                        mintime_vec  .push_back(_coords[p][0]);
+                        innermost_vec.push_back(_coords[b][1]);
+                        outermost_vec.push_back(_coords[p][1]);
+                        outermost_vec.push_back(_coords[a][1]);
+                    }
+                }
+            }
+        }
+    }
+    double mintime   = vecmin(mintime_vec);
+    double innermost = vecmin(innermost_vec);
+    double outermost = vecmax(outermost_vec);
+    std::cout << "t_min for elements in the HRVs = " << mintime << std::endl; 
+    std::cout << "r_min for elements in the HRVs = " << innermost<<std::endl; 
+    std::cout << "r_max for elements in the HRVs = " << outermost<<std::endl; 
+    return HRVs;
+}
 
 
 
