@@ -18,8 +18,10 @@ use_selected_masses = True #gives equal spacing
 
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
-plot_boundaries = 1
-plot_molecules = True
+
+plot_histogram_Nreps = True
+plot_boundaries = False
+plot_molecules = False
 do_also_not_main_plots = False #those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
@@ -75,7 +77,8 @@ selected_masses = np.array([0.53, 0.75, 0.92, 1.06, 1.19,
 # 2. GET INFO FROM FILES
 ##############################################################################
 
-# an entry for each rho
+# an entry for each M
+Nreps = []
 varying_values = []
 outermosts = []
 outermosts_std = []
@@ -124,6 +127,8 @@ for root, dirs, files in os.walk(dataDir):
                                             dtype = str)[:-1].astype(float)
                     everything_i=np.array([everything_i]) #make it 2D for latr
                 Nreps_i = everything_i[:,0]
+                tot_Nreps_i = sum(Nreps_i)
+                Nreps.append(tot_Nreps_i)
                 # 2.2 get mintime, innermost, outermost ####################
                 outermosts_avg_arr_i = everything_i[:,1]
                 outermosts_std_arr_i = everything_i[:,2]
@@ -184,7 +189,7 @@ for l,ls in zip(molecules_distr, molecules_distr_std):
 
 
 ##############################################################################
-# 2. FIT & PLOT
+# 3. FIT & PLOT
 ##############################################################################
 
 # Fitting function == linear through vertex
@@ -222,6 +227,27 @@ r_S_norm = np.sqrt(x / 4 / np.pi)
 
 print(f"Rho = {Rho:.0f}")
 fixed_string = rf"Rho = {Rho:.0f}"
+
+
+
+###########################################################################
+# 3.0 Nreps ##############################################
+if plot_histogram_Nreps:
+    varying_values_copy = np.array(varying_values)
+    combined = list(zip(varying_values_copy, Nreps)) 
+    sorted_combined = sorted(combined, key=lambda x: x[0]) # sort by values
+    vals = [x[0] for x in sorted_combined] 
+    Nreps = [x[1] for x in sorted_combined]
+    print(vals)
+    print(Nreps)
+    plt.figure("Histogram Nreps", (20, 6))
+    plt.plot(vals, Nreps, "x", markersize = 5, ls ="")
+    plt.xticks(vals, fontsize = 5)
+    plt.vlines(vals, 0, 200, alpha = 0.1, ls ="--")
+    plt.ylabel("Nreps")
+    plt.xlabel("M")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
+    plt.show()
 
 
 ###########################################################################
