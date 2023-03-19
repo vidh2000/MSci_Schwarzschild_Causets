@@ -27,7 +27,6 @@ do_also_not_main_plots = False #those NOT for poster
 params = {'text.usetex' : True,
           'font.size' : 20,
           'font.family' : 'lmodern',
-          #'text.latex.unicode': True,
           'axes.labelsize':34,
           'legend.fontsize': 18,
           'xtick.labelsize': 20,
@@ -253,7 +252,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r"$t_{\text{min}}$ $[\ell]$")
+    plt.ylabel(r'$t_{\mathrm{min}} [\ell]$')
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -282,8 +281,10 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"$\Delta r_{\text{max}}$ $[\ell]$")
+    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
     plt.grid(alpha = 0.4) 
+    from matplotlib.ticker import FormatStrFormatter
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.legend()
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Boundaries_to_rs_in_l.png")
@@ -357,7 +358,7 @@ if plot_molecules:
     #        fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend(ncol = 2)
     plt.xlabel(r'Horizon Area $[\ell^2]$')
-    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+    plt.ylabel(r"Number of $\Lambda_n$")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
@@ -612,10 +613,10 @@ if plot_molecules:
     plt.figure("n-lambda exp probability distribution (logscale)")
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
-            label = r"$n\mathbf{-}\Lambda$ distribution")
+            label = r"$\Lambda_n$ distribution")
     xs = np.linspace(1, len(lambd_probs)+0.2,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "darkorange",
-            label = r"$(e^{\chi}-1)$ $e^{-\chi n}$, $\chi$"+ 
+            label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
             f" = {round(chi,chi_ord)}"+
             f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
     plt.xlabel(r"$n$")
