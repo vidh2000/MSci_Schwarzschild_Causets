@@ -7,7 +7,7 @@ from scipy.optimize import curve_fit
 
 
 
-usehome = True
+usehome = False
 #Poiss="False"
 
 # Home Directory

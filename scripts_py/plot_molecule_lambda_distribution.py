@@ -20,9 +20,9 @@ use_selected_masses = True #gives equal spacing
 
 
 plot_histogram_Nreps = True
-plot_boundaries = False
-plot_molecules = False
-do_also_not_main_plots = False #those NOT for poster
+plot_boundaries = True
+plot_molecules = True
+do_also_not_main_plots = True#those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
@@ -247,7 +247,7 @@ if plot_histogram_Nreps:
     plt.ylabel("Nreps")
     plt.xlabel("M")
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
-    plt.show()
+    #plt.show()
 
 
 ###########################################################################
@@ -408,7 +408,7 @@ if plot_molecules:
         plt.tight_layout()
         plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
         plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
-        plt.show()
+        #plt.show()
 
 
         plt.figure(f"Large molecules for {fixed_string}")
@@ -593,7 +593,7 @@ if plot_molecules:
         plt.tight_layout()
         plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
-        plt.show()
+        #plt.show()
 
 
         plt.figure("n-lambda probability distribution (logscale)")
@@ -614,7 +614,7 @@ if plot_molecules:
         plt.grid(alpha=0.2)
         plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.pdf")
-        plt.show()
+        #plt.show()
 
         plt.figure("n-lambda probability distribution (safe)")
         plt.errorbar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
@@ -633,7 +633,7 @@ if plot_molecules:
         plt.tight_layout()
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
-        plt.show()
+        #plt.show()
 
     x = 8
     plt.figure("n-lambda exp probability distribution (logscale)")

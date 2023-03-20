@@ -15,8 +15,8 @@ fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
 plot_histogram_Nreps = True
-plot_boundaries = False
-plot_molecules = False
+plot_boundaries = True
+plot_molecules = True
 
 
 ##############################################################################
@@ -315,7 +315,7 @@ if plot_molecules:
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
-    plt.show()
+    
 
 
     ##########################################################################
@@ -363,4 +363,5 @@ if plot_molecules:
     l_unc = C_hv_unc/np.sqrt(C_hv)
     print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p")
  
- 
+
+plt.show()
