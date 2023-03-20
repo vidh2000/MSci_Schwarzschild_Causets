@@ -68,6 +68,7 @@ class CoordinateShape
         std::vector<double> _center;
         std::map<std::string, double> _params;
         double _volume = 0;
+        double _deltaphi= 0;
         bool isBicone;
 
         //CONSTRUCTOR (& RELATED)
@@ -79,35 +80,25 @@ class CoordinateShape
                         double hollow   = 0,
                         double edge     = 1,
                         std::vector<double> edges = {});//{1}
-                        
         
+
+        void limitphi(double deltaphi);
+                        
+                        
+        //INTERNAL WORKINGS
+
         void param_rangecheck(std::string name, 
-                                double maxValue = std::nan(""),
-                                bool canBeZero = false);
+                              double maxValue = std::nan(""),
+                              bool canBeZero = false);
+
+        
         
         //GETTERS
+
         double Parameter (std::string key);
         std::vector<double> Edges ();
         double Volume();
         std::vector<double> Limits(int dimension);
-
-        // The following functions are only used in plotting, 
-        // (apart for EllipseEdge in DeSitter XY slicing)
-        // As these are not implemeneted, functions are left undefined:
-        // double              MaxEdgeHalf();
-        // std::vector<double> RectangleEdge();
-        // std::vector<std::vector<double>> CircleEdge();
-        // std::vector<std::vector<double>> ElipseEdge();
-        // std::vector<std::vector<double>> BiconeEdge();
-        // std::vector<std::vector<double>> CylinderCutEdge();
-        // std::vector<std::vector<double>> BallSurface();
-        // std::vector<std::vector<double>> CuboidSurface();
-        // std::vector<std::vector<double>> CubeSurface();
-        // std::vector<std::vector<double>> CylinderlSurface();
-        // std::vector<std::vector<double>> OpenConeSurface();
-
-        //~CoordinateShape();
-
 };
 
 #endif /* SHAPES_H */
