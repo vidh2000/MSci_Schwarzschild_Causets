@@ -94,6 +94,9 @@ int main()
         std::stringstream rstream;
         rstream << std::fixed << std::setprecision(2) << R;
         std::string redge_s = rstream.str();
+        std::stringstream phistream;
+        phistream << std::fixed << std::setprecision(2) << deltaphi / (3.1415) * 180;
+        std::string phi_s = phistream.str();
         // std::stringstream hstream;
         // hstream << std::fixed << std::setprecision(2) << h;
         // std::string h_s = hstream.str();
@@ -102,6 +105,7 @@ int main()
                             + std::to_string(dim)
                             + "D_N" + std::to_string(card)
                             + "_redge" + redge_s;
+                            + "_phi" + phi_s;
         filename +=  ".txt";
         const char* path_file = filename.c_str();
         std::cout<<"Ready to save in\n" << path_file << std::endl;

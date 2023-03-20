@@ -167,8 +167,8 @@ def plot_causet(causetfile_ext, savefile_ext = 0,
     
     if dim == 3 and projection:
         coords, fut_links = take_projection(coords, fut_links, phi_limits)
-        ax.set_xlabel("r [a.u]")
-        ax.set_ylabel("t* [a.u.]")
+        ax.set_xlabel(r"$r [M]$")
+        ax.set_ylabel(r"$t* [M]$")
 
         for i in range(len(coords)):
             ti   = coords[i][0]
@@ -182,16 +182,23 @@ def plot_causet(causetfile_ext, savefile_ext = 0,
                     rj = coords[j][1]
                     phij = coords[j][2]
                     if phi_limits[0] < phij and phij < phi_limits[1]:
-                        ax.plot([ri, rj], [ti, tj], 
-                                    marker = "o", markersize = markersize, 
-                                    markeredgecolor = "black", 
-                                    markerfacecolor = std_color,
-                                    ls = "solid", color = std_color, 
-                                    alpha = link_alpha, lw = link_lw,
-                                    zorder = 5)
+                        plt.plot([ri, rj], [ti, tj], 
+                            marker = "o", markersize = markersize, 
+                            markeredgecolor = "black", 
+                            markerfacecolor = std_color,
+                            lw = 0,
+                            zorder = 2)
+                        plt.plot([ri, rj], [ti, tj], 
+                            marker = "o", markersize = markersize, 
+                            markeredgecolor = "black", 
+                            markerfacecolor = std_color,
+                            ls = "solid", color = "C0", 
+                            alpha = link_alpha, lw = link_lw,
+                            zorder = 1)
         #FINALLY MARK THE HORIZON
         ys = ax.set_ylim()
-        ax.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
+        # r_S = 2
+        # ax.vlines(r_S, ys[0], ys[1], ls = "--", color = "red")
         if min(np.array(coords)[:,1]) < 0:
             ax.vlines(-r_S, ys[0], ys[1], ls = "--",color="r")
         ax.set_ylim(ys)

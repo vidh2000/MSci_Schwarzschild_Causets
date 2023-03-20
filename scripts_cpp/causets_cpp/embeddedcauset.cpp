@@ -2417,24 +2417,16 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
  * [6+size] -> "Coordinates"
  * [6+size+1 to 6+2size,:] -> coordinates
  * 
- * [6+2size+1] -> r_S
+ * [6+2size+1] -> "r_S", <r_S>
  * 
  * ==================================== "lambdas" option ========>
- * From [6+2size+2], for sets
- * "NLambdas_Sized_1", number of lambdas with size 1 (single links)
- * "NLambdas_Sized_2", number of lambdas with size 2 (the normal lambda)
- * "NLambdas_Sized_i", number of lambdas with size i (i-lambda)
- * etc for all sizes up to max...
  * 
  * From after that
  * "Lambda0" upvertex, downvertex1, downvertex2, etc... ENDL
  * "Lambda1", upvertex, downvertex2, downvertex2, etc... ENDL
  * etc for all lambdas...
  * 
- *  * ==================================== "HRVs" option ========>
- * From [6+2size+2], for sets
- * "NHRVs_Open", number of open HRVs (a spacelike b)
- * "NHRVs_Close", number of close HRVs (a<b)
+ * ==================================== "HRVs" option ========>
  * 
  * From after that
  * "HRV0" p-vertex, upvertex_a, upvertex_b
@@ -2493,6 +2485,177 @@ void EmbeddedCauset::save_molecules(const char* path_file_ext,
             for (int j = 0; j < hrv_i.second.size(); j++)
             {
                 out<<hrv_i.second[j];
+                if (j != hrv_i.second.size()-1)
+                    out<<",";
+            }
+            if (i != N-1) out<<std::endl;
+            i++;
+        }
+    }
+    out.close();
+}
+
+
+
+
+/**
+ * @brief Save the following information in a file, given molecules
+ * involving a total of N points were found. All indexes are scaled back to 
+ * 0, 1, 2, ...
+ * 
+ * =================================================================================
+ * [0,1] -> Storage Option
+ * [1,1] -> size; 
+ * [2,1] -> spacetime dimension;
+ * [3,1] -> shape name;  
+ * [4,1] -> spacetime name; 
+ * 
+ * [5,0] -> "Coordinates"
+ * [6 to 6+N-1,:] -> coordinates
+ * 
+ * [6+N] -> "r_S", <r_S> 
+ * 
+ * ==================================== "lambdas" option ========>
+ * From after that
+ * "Lambda0" upvertex, downvertex1, downvertex2, etc... ENDL
+ * "Lambda1", upvertex, downvertex2, downvertex2, etc... ENDL
+ * etc for all lambdas...
+ * 
+ *  * ==================================== "HRVs" option ========>
+ * From after that
+ * "HRV0" p-vertex, upvertex_a, upvertex_b
+ * "HRV1", p-vertex, upvertex_b, upvertex_b
+ * etc for all HRVs...
+ * 
+ * 
+ * @param path_file_ext 
+ * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
+ * @param r_S Schwarzschild radius. Default 2.
+ * @param molecule_option const char*. Either "lambdas"(default) or "HRVs".
+ */
+void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
+                                    double t_f, double r_S,
+                                    const char* molecule_option)
+{
+    std::fstream out;
+    out.open(path_file_ext);
+    //if (!out.is_open()) std::cout<<"It is not open"<<std::endl;
+    out<<"Storage option," << "molecules only" << std::endl;
+    out<<"Size,"<<_size<<std::endl;
+    out<<"Dimension,"<<_spacetime._dim<<std::endl;
+    out<<"Shape,"<<_shape._name<<std::endl;
+    out<<"Spacetime,"<<_spacetime._name<<std::endl;
+
+    if (strcmp(molecule_option, "lambdas")==0)
+    {   
+        int i = 0;
+        std::cout<<"Getting the lambdas"<<std::endl;
+        auto lambdas = get_lambdas(t_f, r_S);
+        int N = lambdas.size();
+
+        // Create and sort a vector of all points involved
+        std::vector<int> all_points_involved;
+        for (std::pair<int,std::vector<int>> lambda_i : lambdas)
+        {
+            all_points_involved.push_back(lambda_i.first);
+            for (int j = 0; j < lambda_i.second.size(); j++)
+            {
+                all_points_involved.push_back(lambda_i.second[j]);
+            }
+            if (i != N-1) out<<std::endl;
+            i++;
+        }
+        std::sort(all_points_involved.begin(), all_points_involved.end());
+
+        // Create map from old label to new
+        std::map<int, int> old_to_new_label;
+        for (int i=0; i<all_points_involved.size(); i++){
+            old_to_new_label[all_points_involved[i]] = i;
+        }
+
+        // Print coordinats
+        out<<"Coordinates"<<std::endl;
+        for (int n_label :  all_points_involved)
+        {
+            auto row = _coords[n_label];
+            for (int mu = 0; mu < _spacetime._dim; mu++)
+            {
+                out<<row[mu];
+                if (mu != _spacetime._dim -1)
+                    out<<",";
+            }
+            if (i != _size-1) 
+                out<<std::endl;
+        }
+
+        // Print lambdas in new labels
+        out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
+        for (std::pair<int,std::vector<int>> lambda_i : lambdas)
+        {
+            out<<"Lambda"<<i<<",";
+            out<<old_to_new_label[lambda_i.first]<<",";
+            for (int j = 0; j < lambda_i.second.size(); j++)
+            {
+                out<<old_to_new_label[lambda_i.second[j]];
+                if (j != lambda_i.second.size()-1)
+                    out<<",";
+            }
+            if (i != N-1) out<<std::endl;
+            i++;
+        }
+    }
+
+
+    else if (strcmp(molecule_option, "HRVs")==0)
+    {        
+        int i = 0;
+        auto HRVs = get_HRVs(t_f, r_S);
+        int N = HRVs.size();
+
+        // Create and sort a vector of all points involved
+        std::vector<int> all_points_involved;
+        for (std::pair<int,std::vector<int>> hrv_i : HRVs)
+        {
+            all_points_involved.push_back(hrv_i.first);
+            for (int j = 0; j < hrv_i.second.size(); j++)
+            {
+                all_points_involved.push_back(hrv_i.second[j]);
+            }
+            if (i != N-1) out<<std::endl;
+            i++;
+        }
+        std::sort(all_points_involved.begin(), all_points_involved.end());
+
+        // Create map from old label to new
+        std::map<int, int> old_to_new_label;
+        for (int i=0; i<all_points_involved.size(); i++){
+            old_to_new_label[all_points_involved[i]] = i;
+        }
+
+        // Print coordinats
+        out<<"Coordinates"<<std::endl;
+        for (int n_label :  all_points_involved)
+        {
+            auto row = _coords[n_label];
+            for (int mu = 0; mu < _spacetime._dim; mu++)
+            {
+                out<<row[mu];
+                if (mu != _spacetime._dim -1)
+                    out<<",";
+            }
+            if (i != _size-1) 
+                out<<std::endl;
+        }
+
+        // Print HRVs in new labels
+        out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
+        for (std::pair<int,std::vector<int>> hrv_i : HRVs)
+        {
+            out<<"HRV"<<i<<",";
+            out<<old_to_new_label[hrv_i.first]<<",";
+            for (int j = 0; j < hrv_i.second.size(); j++)
+            {
+                out<<old_to_new_label[hrv_i.second[j]];
                 if (j != hrv_i.second.size()-1)
                     out<<",";
             }
