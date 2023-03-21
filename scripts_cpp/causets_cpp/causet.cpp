@@ -83,14 +83,7 @@ void Causet::make_sets_fromC()
             {
                 // Add i and its past to the past of j
                 _pasts[j].insert(i);
-                //_pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
-                // Insert j into i's future and into
-                // the future of elements in i's past
                 _futures[i].insert(j);
-                // for (int ind_in_ipast : _pasts[i])
-                // {    
-                //     _futures[ind_in_ipast].insert(j);
-                // }
             }
         }
     }
@@ -320,7 +313,7 @@ double Causet::ord_fr(int a, int b,
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Dimension estimator
+// MM DIMENSION ESTIMATOR
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
