@@ -794,6 +794,7 @@ vector<std::pair<vector<double>,double>> EmbeddedCauset::get_Nchains_inInterval(
 }
 
 
+
 //////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 // SAVE 
@@ -930,9 +931,13 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
 // MAKE ATTRIBUTES //=========================================================
 //////////////////////////////////////////////////////////////////////////////
 //============================================================================
+
 /**
  * @brief Creates chosen attribues.Requires _size to have already be defined,
  *  and EVENTS ALREADY SORTED BY NATURAL LABELLING.
+ * 
+ * @note ONLY MAKE CMATRIX (make_matrix = true, everything else = false)
+ *  is fastest. 
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
@@ -1002,28 +1007,23 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
         else if (make_links == true && make_sets == false)
         {
             if (strcmp(sets_type, "past")==0){
-                std::cout<<"commented out\n";}
-                //this->make_cmatrix_and_pastlinks(method, special);}
+                this->make_cmatrix_and_pastlinks(method, special);}
             else if (strcmp(sets_type, "future")==0){
                 this->make_cmatrix_and_futlinks(method, special);}
         }
         else if (make_links == false && make_sets == true)
         {
             if (strcmp(sets_type, "past")==0){
-                std::cout<<"commented out\n";}
-                //this->make_cmatrix_and_pasts(method, special, use_transitivity);}
+                this->make_cmatrix_and_pasts(method, special, use_transitivity);}
             else if (strcmp(sets_type, "future")==0){
-                std::cout<<"commented out\n";}
-                //this->make_cmatrix_and_futs(method, special, use_transitivity);}
+                this->make_cmatrix_and_futs(method, special, use_transitivity);}
         }
         else /*both make_sets and links*/
         {
             if (strcmp(sets_type, "past")==0){
-                std::cout<<"commented out\n";}
-                //this->make_cmatrix_and_allpasts(special);}
+                this->make_cmatrix_and_allpasts(special);}
             else if (strcmp(sets_type, "future")==0){
-                std::cout<<"commented out\n";}
-                //this->make_cmatrix_and_allfuts(special);}
+                this->make_cmatrix_and_allfuts(special);}
         }
     }
 
@@ -1035,8 +1035,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                 std::cout<<"commented out\n";}
                 //this->make_past_links(method);}
             else if (strcmp(sets_type, "future")==0){
-                std::cout<<"commented out\n";}
-                //this->make_fut_links(method);}
+                this->make_fut_links(method);}
         }
         else if (make_links == false && make_sets == true)
         {
@@ -1044,8 +1043,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                 std::cout<<"commented out\n";}
                 //this->make_pasts(method);}
             else if (strcmp(sets_type, "future")==0){
-                std::cout<<"commented out\n";}
-                //this->make_futures(method);}
+                this->make_futures(method);}
         }
         else if (make_links == true && make_sets == true)
         {
@@ -1053,8 +1051,7 @@ void EmbeddedCauset::make_attrs (const char* method,// = "coordinates",
                 std::cout<<"commented out\n";}
                 //this->make_all_pasts(method);}
             else if (strcmp(sets_type, "future")==0){
-                std::cout<<"commented out\n";}
-                //this->make_all_futures(method);}
+                this->make_all_futures(method);}
         }
         else
         {   
@@ -1121,8 +1118,7 @@ void EmbeddedCauset::make_all_but_links()
 void EmbeddedCauset::make_cmatrix(const char* method,
                                     bool special,
                                     bool use_transitivity)
-{
-    
+{ 
     auto xycausality = this->_spacetime.Causality();
     std::vector<double> st_period = _spacetime._period;
     double mass = _spacetime._mass;
@@ -1132,33 +1128,6 @@ void EmbeddedCauset::make_cmatrix(const char* method,
     {
         if (use_transitivity)
         {
-            //std::cout << "Making cmatrix only with transitivity, without parallel inside\n";
-            // std::cout << "j before i\n";
-            // int special_factor = (special)? -1 : 1;
-            // for(int j=1; j<_size; j++) //can skip the very first, i.e 0th
-            // {
-            //     for(int i=j-1; i>-1; i--) //i can only preceed j
-            //     {
-            //         if (_CMatrix[i][j] != 0){
-            //             continue;}
-            //         else
-            //         {
-            //             //if(xycausality(_coords[i],_coords[j],st_period,mass))
-            //             {
-            //                 _CMatrix[i][j] = special_factor;
-            //                 // Obtain transitive relations
-            //                 //#pragma omp parallel for //schedule(dynamic,8)
-            //                 for (int k = i-1; k>-1; k--)
-            //                 {
-            //                     if(_CMatrix[k][i] != 0) //k<i<j -> k<j
-            //                         { _CMatrix[k][j] = 1;}
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-            //std::cout << "i before j\n";
-            //int special_factor = (special)? -1 : 1;
             for(int i=1; i<_size; i++) //can skip the very first, i.e 0th
             {
                 for(int j=i-1; j>-1; j--) //i can only preceed j
@@ -1167,9 +1136,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                         continue;}
                     else
                     {
-                        // note in flatspacetime funct, I set dim=4 hardcoded in spacetimes.cpp
                         if(xycausality(_coords[i],_coords[j],st_period,mass))
-                        //if (areTimelike4D(_coords[i],_coords[j],4))
                         {
                             _CMatrix[i][j] = 1;//special_factor;
                             // Obtain transitive relations
@@ -1186,22 +1153,12 @@ void EmbeddedCauset::make_cmatrix(const char* method,
         }
         else 
         {
-            //std::cout << "Making cmatrix only without transitivity, without parallel\n";
-            //std::cout << "j then i..\n";
-            //#pragma omp parallel for// schedule(dynamic,8)
-            //#pragma omp parallel for collapse(2)
-            
-            //std::cout << "with parallelisation\n";
             #pragma omp parallel for schedule(dynamic)
             for(int i=0; i<_size-1; i++) //can skip the very last, i.e Nth
             {
                 for(int j=i+1; j<_size; j++) //i can only preceed j
                 {
                     if(xycausality(_coords[i],_coords[j],st_period,mass))
-                    //if(_spacetime.BH_causal4D(_coords[i],_coords[j],st_period,mass))
-                    //if(_spacetime.Flat_causal(_coords[i],_coords[j],st_period,mass)[0])
-                    //Returning a vector of boleans vs just boolean gives 33% boost in time
-                    //if (areTimelike4D(_coords[i],_coords[j]))
                     {
                         _CMatrix[i][j] = 1;
                     }    
@@ -1629,8 +1586,9 @@ void EmbeddedCauset::make_sets(const char* method)
  * 
  * @param method: const char*, possible choices are
  * - "coordinates": create from coordinates causality
+ * OTHERS ARE NOT SUPPORTED
  * - "Cmatrix": create from already existing _CMatrix
- * - "pasts": create from already existing futures
+ * - "pasts": create from already existing pasts
  */
 void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
 {
@@ -1666,6 +1624,7 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
         throw std::invalid_argument("wrong method");
     }
 }
+
 
 
 /**
@@ -1714,29 +1673,36 @@ void EmbeddedCauset::make_all_futures(const char* method)// = "coordinates")
  * - "Cmatrix": create from already existing _CMatrix (not yet implemented)
  * - "pasts": create from already existing pasts (not yet implemented)
  */
-// void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
-// {   
-//     _futures.resize(_size);
-//     // Loop through coordinates t_min -> t_max
-//     for (int i =_size-1; i>-1; i--)
-//     {
-//         //std::cout << "Event #"<< i+1 << std::endl;
-//         for(int j=i+1; j<_size; j++)
-//         {
-//             if (set_contains(j, _futures[i]))
-//                 {continue;}
-//             else
-//             {
-//                 if (strcmp(method, "coordinates")==0 &&
-//                     areTimelike(_coords[i], _coords[j]))
-//                 {
-//                     _futures[i].insert(j);
-//                     _futures[i].insert(_futures[j].begin(), _futures[j].end());
-//                 }
-//             }
-//         }
-//     }
-// }
+void EmbeddedCauset::make_futures(const char* method)// = "coordinates")
+{   
+    auto xycausality = this->_spacetime.Causality();
+    std::vector<double> st_period = _spacetime._period;
+    double mass = _spacetime._mass;
+    _futures.resize(_size);
+
+    if (strcmp(method, "coordinates")==0)
+    {
+        #pragma omp parallel
+        for(int i=0; i<_size-1; i++) //can skip the very last, i.e Nth
+        {
+            for(int j=i+1; j<_size; j++) //i can only preceed j
+            {
+                if(xycausality(_coords[i],_coords[j],st_period,mass))
+                {
+                    #pragma omp critical
+                    _futures[i].insert(j);
+                }    
+            }
+        }
+    }
+    else
+    {
+        std::cout<<"Creation of futures failed because currently\
+        only method = 'coordinates' is supported."<<std::endl;
+        throw std::invalid_argument("Only coordinates method currently \
+        supported");
+    }
+}
 
 
 /**
@@ -1794,20 +1760,20 @@ void EmbeddedCauset::make_fut_links(const char* method)// = "coordinates")
     {
         for (int i =_size-1; i>-1; i--) //can skip the very last
         {
-            //std::cout << "Event #"<< i+1 << std::endl;
             for(int j=i+1; j<_size; j++) //j can only follow i
             {
-                if (set_contains(j, _futures[i]))
-                    {continue;}
-                else
-                {
-                    if (xycausality(_coords[i],_coords[j],st_period,mass))
-                        {_future_links[i].insert(j);}
-                }
+                if (xycausality(_coords[i],_coords[j],st_period,mass))
+                    {_future_links[i].insert(j);}
             }
         }
     }
-    //std::cout <<"Finished sprinkling..." << std::endl;
+    else
+    {
+        std::cout<<"Creation of future links failed because currently\
+        only method = 'coordinates' is supported."<<std::endl;
+        throw std::invalid_argument("Only coordinates method currently \
+        supported");
+    }
 }
 
 
@@ -1974,13 +1940,15 @@ int EmbeddedCauset::count_links_BH(double& t_f, double r_S)
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix KIND OF a set of 
- * future_links vectors such that if an element has one or more future links, 
+ * @brief If _futures are defined, then proceed with get_lambdas from futs.  
+ * If _fut_links are defined, then proceed with get_lambdas_from_futlinks. 
+ * If  _CMatrix is defined, creates from causal matrix KIND OF a set of 
+ * futures vectors such that if an element has one or more futures, 
  * then TWO ONLY, THE FIRST TWO, will be added to the vectors 
- * (as that is enough to see if an element is maximal).
- * Then counts lambdas between maximal 
- * elements -below t_f and inside r_S- and maximal_but_one elements outside r_S.
+ * (as that is enough to see if an element is maximal or maximal but 1).
  * 
+ * Then gets lambdas between maximal elements -below t_f and inside r_S
+ * - and maximal_but_one elements outside r_S.
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
@@ -2009,35 +1977,6 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
             throw std::invalid_argument("No CMatrix");}
         else
         {
-            // _future_links.resize(_size);
-        
-            // for (int i=0; i<_size; i++)
-            // {
-            //     int n_links_of_i = 0;
-            //     for (int j=i+1; j<_size; j++)
-            //     {
-            //         if (_CMatrix[i][j] == 0) {
-            //             continue;
-            //         }
-            //         else
-            //         {
-            //             bool has_broken = false;
-            //             for (int k=i+1; k<j;k++)
-            //             {
-            //                 if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-            //                     has_broken = true;
-            //                     break;}
-            //             }
-            //             if (!has_broken)
-            //             {
-            //                 n_links_of_i += 1;
-            //                 _future_links[i].insert(j);
-            //                 if (n_links_of_i - 1 > 0)
-            //                     {break;} /*breaks j loop, hence goes to next i*/
-            //             }
-            //         }
-            //     }
-            // }
             std::cout<<"Starting doing capped futs in count_lambdas"<<std::endl;
             _futures.resize(_size);
         
@@ -2072,12 +2011,15 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_lambdas(double& t_f,
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix a vector of capped
- * futures sets such that if an element has one or more future elements, 
- * then ONE AND ONLY ONE, THE FIRST, will be added to the vectors 
- * (as that is enough to see if an element is maximal).
- * Then counts lambdas between maximal elements -below t_f and inside r_S- 
- * and maximal_but_one elements outside r_S. 
+ * @brief If _futures are defined, then proceed with get_lambdas from futs.  
+ * If _fut_links are defined, then proceed with get_lambdas_from_futlinks. 
+ * If  _CMatrix is defined, creates from causal matrix KIND OF a set of 
+ * futures vectors such that if an element has one or more futures, 
+ * then TWO ONLY, THE FIRST TWO, will be added to the vectors 
+ * (as that is enough to see if an element is maximal or maximal but 1).
+ * 
+ * Then gets lambdas between maximal elements -below t_f and inside r_S
+ * - and maximal_but_one elements outside r_S.
  * 
  * @param t_f Highest boundary for time. CURRENTLY UNUSED AS FIXED TO MAX.
  * @param r_S Schwarzschild radius
@@ -2121,46 +2063,6 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
         
         else
         {
-            // std::cout<<"Starting doing futlinks in count_lambdas"<<std::endl;
-            // _future_links.resize(_size);
-        
-            // #pragma omp parallel for
-            // for (int i=0; i<_size; i++)
-            // {
-            //     int n_links_of_i = 0;
-            //     for (int j=i+1; j<_size; j++)
-            //     {
-            //         if (_CMatrix[i][j] == 0) {
-            //             continue;
-            //         }
-            //         else
-            //         {
-            //             bool has_broken = false;
-            //             for (int k=i+1; k<j;k++)
-            //             {
-            //                 if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-            //                     has_broken = true;
-            //                     break;}
-            //             }
-            //             if (!has_broken)
-            //             {
-            //                 #pragma omp critical
-            //                 {
-            //                     n_links_of_i += 1;
-            //                     _future_links[i].insert(j);
-            //                 }
-            //                 if (n_links_of_i - 1 > 0)
-            //                     {break;} /*breaks j loop, hence goes to next i*/
-            //             }
-            //         }
-            //     }
-            // }
-            // std::cout << "Finished done futlinks" << std::endl;
-            // std::map<int,double> sizes = get_lambdas_sizes(t_f,r_S);
-            // std::cout << "Finished get_lambdas_sizes" << std::endl;
-            // std::map<int,double> distr = get_lambdas_distr(sizes); 
-            // std::cout << "Finished get_lambdas_distr" << std::endl;
-            // return distr;
             std::cout<<"Starting doing capped futs in count_lambdas"<<std::endl;
             _futures.resize(_size);
         
@@ -2205,8 +2107,9 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix KIND OF a set of 
- * future_links vectors such that if an element has 3 or more future links, 
+ * @brief If _futures are defined, then proceed with get_lambdas from futs.  
+ * If  _CMatrix is defined, creates from causal matrix KIND OF a set of 
+ * futures vectors such that if an element has one or more futures, 
  * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
  * (as that is enough to see if an element is maximal but 2).
  * Then get Hawking's radiation molecules apb:
@@ -2228,12 +2131,12 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 {
     if (strcmp(_spacetime._name, "BlackHole")==0)
     {
-        _future_links.resize(0);
-        if (_future_links.size() == _size) /*if already defined*/
-        {
-            return this->get_HRVs_from_futlinks(t_f,r_S);
-        }
-        else if (_futures.size() == _size){
+        //  works wrong, so noooope
+        // if (_future_links.size() == _size) /*if already defined*/
+        // {
+        //     return this->get_HRVs_from_futlinks(t_f,r_S);
+        // }
+        if (_futures.size() == _size){
             return this->get_HRVs_from_futs(t_f,r_S);
         }
         else if (_CMatrix.size()==0)
@@ -2279,8 +2182,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
 
 
 /**
- * @brief First, creates from causal matrix _CMatrix a list of capped kind of  
- * future_links vectors such that if an element has 3 or more future links, 
+ * @brief If _futures are defined, then proceed with get_lambdas from futs.  
+ * If  _CMatrix is defined, creates from causal matrix KIND OF a set of 
+ * futures vectors such that if an element has one or more futures, 
  * then THREE ONLY, THE FIRST THREE, will be added to the vectors 
  * (as that is enough to see if an element is maximal but 2).
  * Then get Hawking's radiation molecules apb:
@@ -2315,47 +2219,6 @@ std::map<int,double> EmbeddedCauset::count_HRVs(double& t_f, double r_S)
             throw std::invalid_argument("No CMatrix");
         }
         else
-        // {
-        //     std::cout<<"Starting now doing futlinks in count_HRVs"<<std::endl;
-        //     _future_links.resize(_size, {});
-        
-        //     //#pragma omp parallel for
-        //     for (int i=0; i<_size-1; i++)
-        //     {
-        //         if (i==_size-2) std::cout<<"-"<<i<<"/"<<_size<<"-";
-        //         int n_links_of_i = 0;
-        //         for (int j=i+1; j<_size; j++)
-        //         {
-        //             //std::cout<<"2269";
-        //             if (_CMatrix[i][j] == 0) {
-        //                 continue;
-        //             }
-        //             else
-        //             {
-        //                 //std::cout<<"2274";
-        //                 bool has_broken = false;
-        //                 for (int k=i+1; k<j;k++)
-        //                 {
-        //                     //std::cout<<"2278";
-        //                     if (_CMatrix[i][k]*_CMatrix[k][j]!=0){
-        //                         has_broken = true;
-        //                         break;}
-        //                 }
-        //                 if (!has_broken)
-        //                 {
-        //                     //#pragma omp critical
-        //                     _future_links[i].insert(j);
-        //                     n_links_of_i += 1;
-                            
-        //                     if (n_links_of_i - 2 > 0) //n links of i == 3
-        //                         {break;} /*breaks j loop, hence goes to next i*/   
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     std::cout<<"2314-";
-        //     return this->get_HRVs_distr_from_futlinks(t_f,r_S);
-        // }
         {
             // instead of futlinks, just do future, capped at 3 elements
             std::cout<<"Starting capped futures in count_HRVs"<<std::endl;
@@ -2767,6 +2630,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes_from_futs(double& t_f,
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
+    #pragma omp parallel for schedule(dynamic)
     for (int j = 1; j<_size; ++j)
     {
         // if j is maximal and inside the horizon
@@ -2775,24 +2639,20 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes_from_futs(double& t_f,
             lambdas[j] = 0;
             for (int i = j-1; i>-1; --i)
             {
-                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                // if i is maximal but one and outside the horizon
+                if (_futures[i].size()==1 && _coords[i][1]>r_S)
                 {
-                    // if i is maximal but one and outside the horizon
-                    if (_futures[i].size()==1 && _coords[i][1]>r_S)
+                    // if i-j is link
+                    if (_futures[i].find(j) != _futures[i].end()) 
                     {
-                        // if i-j is link
-                        if (_futures[i].find(j) != _futures[i].end()) 
+                        #pragma omp critical
                         {
-                            lambdas[j] += 1;
-                            mintime_vec  .push_back(_coords[i][0]);
-                            innermost_vec.push_back(_coords[j][1]);
-                            outermost_vec.push_back(_coords[i][1]);
+                        lambdas[j] += 1;
+                        mintime_vec  .push_back(_coords[i][0]);
+                        innermost_vec.push_back(_coords[j][1]);
+                        outermost_vec.push_back(_coords[i][1]);
                         }
                     }
-                }
-                else /* t_j<t_i */
-                {
-                    std::cout << "ERROR: t_j < t_i\n";
                 }
             }
         }
