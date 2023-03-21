@@ -5,6 +5,20 @@ from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
 
+params = {'text.usetex' : True,
+          'font.size' : 20,
+          'font.family' : 'lmodern',
+          'axes.labelsize':34,
+          'legend.fontsize': 18,
+          'xtick.labelsize': 20,
+          'ytick.labelsize': 20,
+          'figure.figsize': [8.5, 6.5], 
+          'axes.prop_cycle':plt.cycler(color=
+                            plt.rcParams['axes.prop_cycle'].by_key()['color']
+                            +['magenta'])
+          }
+plt.rcParams.update(params)
+
 
 ##############################################################################
 # 0. SET USER VARIABLES
@@ -15,8 +29,8 @@ fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
 plot_histogram_Nreps = True
-plot_boundaries = True
-plot_molecules = True
+plot_boundaries = 1
+plot_molecules = 1
 
 
 ##############################################################################
@@ -196,8 +210,9 @@ if plot_histogram_Nreps:
     plt.vlines(vals, 0, 200, alpha = 0.1, ls ="--")
     plt.ylabel("Nreps")
     plt.xlabel("M")
+    plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
-    plt.show()
+    
 
 
 ###########################################################################
@@ -213,7 +228,7 @@ if plot_boundaries:
     rc = 2; c = 1; r = 2
     figsize = (6 * c, 14 / r)
     plt.figure(f'Boundaries for {fixed_string}',
-                figsize = figsize, tight_layout = True)
+                figsize = (10, 6), tight_layout = True)
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
@@ -238,13 +253,13 @@ if plot_boundaries:
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
-                fmt = '.', capsize = 4, color = "lightblue",
+                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
-                fmt = '.', capsize = 4, color = "lightblue",
+                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
     # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
@@ -262,7 +277,7 @@ if plot_boundaries:
     plt.grid(alpha = 0.4) 
     plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.png")
     plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.pdf")
-    plt.show()
+    
 
 
 
@@ -271,7 +286,8 @@ if plot_boundaries:
 print("")
 if plot_molecules:
 
-    plt.figure(f"Molecules for {fixed_string}")
+    plt.figure(f"Molecules for {fixed_string}", figsize=figsize, 
+            tight_layout = True)
 
     gradients = []
     gradients_unc = []
@@ -336,10 +352,19 @@ if plot_molecules:
         grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
 
         hrv_probs = gradients/sum(gradients)
-        hrv_probs_uncs = [
-            gradients[(i+1)%2]/grad_sum*sum(grad_sum_unc**2)
-            for i in [0,1]
-            ]
+        hrv_probs_uncs = [0,0]
+        hrv_probs_uncs[0] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+
+        hrv_probs_uncs[1] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+        
         
         print(" \n###PROBABILITIES ###")
         print(f"p_op = {round(hrv_probs[0],4)}+-{round(hrv_probs_uncs[0],4)}")
@@ -353,6 +378,7 @@ if plot_molecules:
         C_hv_unc = np.sqrt( sum(gradients_unc**2 * dC_da_i**2)) 
 
     else:
+        print(" AAAAAAAA GRADIENTS[1] == 0!!!!!")
         C_hv = gradients[0] * np.log(2)
         C_hv_unc = gradients_unc[0] * np.log(2)
 

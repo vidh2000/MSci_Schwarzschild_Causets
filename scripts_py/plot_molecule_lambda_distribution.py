@@ -20,9 +20,9 @@ use_selected_masses = True #gives equal spacing
 
 
 plot_histogram_Nreps = True
-plot_boundaries = True
-plot_molecules = True
-do_also_not_main_plots = True#those NOT for poster
+plot_boundaries = 0
+plot_molecules = 0
+do_also_not_main_plots = 0 #those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
@@ -654,7 +654,7 @@ if plot_molecules:
     plt.tight_layout()
     plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
-    plt.show()
+    
 
 
     
@@ -674,4 +674,6 @@ if plot_molecules:
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
     print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p\n")
+
+plt.show()
  
