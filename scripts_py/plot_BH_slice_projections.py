@@ -85,7 +85,7 @@ print("SAVEFILE")
 if want_save_file:
     savefile_ext = "data/BHplotting/"\
                 f"BH_plot_slice{round(phi0,2)}_"
-    savefile_ext += f"{dim}D_N{card}_redge{edge}_nolcones.png"
+    savefile_ext += f"{dim}D_N{card}_redge{edge}_nolcones.pdf"
 else:
     savefile_ext = 0
 if savefile_ext:
