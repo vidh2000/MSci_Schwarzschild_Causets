@@ -212,6 +212,7 @@ if plot_histogram_Nreps:
     plt.xlabel("M")
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.pdf")
     
 
 
