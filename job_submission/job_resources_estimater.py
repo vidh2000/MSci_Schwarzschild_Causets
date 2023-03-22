@@ -4,7 +4,7 @@ import numpy as np
 # Areas in l^2 units
 #areas_ll = 4*np.pi*(2*mass)**2/(scale**2)
 
-areas_ll = np.arange(1500,21501,1000)
+areas_ll = np.arange(1500,31000,500)
 rhos = np.array([5000])
 int8_t = False
 

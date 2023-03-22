@@ -42,7 +42,7 @@ vector<int> dims = {4};
 double t_f = 0;
 double r_S = 2;
 bool do_hollow = 1;
-std::vector<double> rhos = {1000, 1500}; 
+std::vector<double> rhos = {1000, 5000}; 
 
 // Sprinkle Parameters
 bool poisson          = true;
@@ -70,9 +70,9 @@ int main()
         if (dim == 3) rho *= 150;
         double scale = std::pow(rho, -1.0/dim);
         double mass = r_S /2.;
-        double R = r_S+5*scale;
-        double r = r_S-5*scale;
-        double T = 6*scale;
+        double R = r_S+3*scale;
+        double r = r_S-3*scale;
+        double T = 4*scale;
         double h = (do_hollow)? ((r>0)? r/R : 0.) : 0.;
         int card = 0;
         if (dim == 4)

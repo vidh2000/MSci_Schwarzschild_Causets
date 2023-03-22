@@ -10,12 +10,12 @@ runfilename='lambda_saving_hollow_3_or_4D.cpp'
 runfileRelativeDir='scripts_cpp/for_submitting_cpp/'
 
 # Get useful directories
-mainDir='/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/'
+mainDir='/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/'
 
 # Run the python file which will compile the .cpp file you want
 # (the includes,flags... can be adjusted in run_cpp_file.py)
 echo Building the executable...
-python /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/run_cpp_file.py $mainDir$runfileRelativeDir $runfilename
+python /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/run_cpp_file.py $mainDir$runfileRelativeDir $runfilename
 echo Finished building the executable
 
 echo Go into the directory of the executable file:
