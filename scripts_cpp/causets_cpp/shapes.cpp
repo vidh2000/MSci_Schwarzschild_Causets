@@ -117,6 +117,7 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         _params.insert({"hollow", hollow}); 
         this->param_rangecheck("hollow", 1.0, true);
     }
+
     else if (strcmp(name,"cylinder")==0)
     {
         _params.insert({"radius", radius}); 
@@ -128,11 +129,13 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         _params.insert({"duration", duration}); 
         this->param_rangecheck("duration");   
     }
+
     else if (strcmp(name,"cube")==0)
     {
         _params.insert({"edge", edge}); 
         this->param_rangecheck("edge"); 
     }
+
     else if (strcmp(name,"cuboid")==0)
     {
         vector<double> my_edges(_dim, 1.0);
@@ -153,6 +156,26 @@ CoordinateShape::CoordinateShape(int dim, const char* name,
         } 
     }
 }
+
+
+/**
+ * @brief Set a deltaphi interval, modifying _deltaphi attribute of shape.
+ * 
+ * @param deltaphi double. If deltaphi in (0, 2Pi], modify _deltaphi attribute.
+ */
+void CoordinateShape::limitphi(double deltaphi)
+{
+    if (0 < deltaphi && deltaphi <= 2* M_PI)
+    _deltaphi = deltaphi;
+}
+
+
+//========================================================================
+//////////////////////////////////////////////////////////////////////////
+// INTERNAL WORKINGS
+//////////////////////////////////////////////////////////////////////////
+//========================================================================
+
        
         
 void CoordinateShape::param_rangecheck(std::string name, 
@@ -186,6 +209,15 @@ void CoordinateShape::param_rangecheck(std::string name,
 }
 
 
+
+
+//========================================================================
+//////////////////////////////////////////////////////////////////////////
+// GETTERS
+//////////////////////////////////////////////////////////////////////////
+//========================================================================
+
+
 /**
  * @brief Return value of parameter corresponding to "key". 
  *        Note: for cuboid, need to call "edge_i" where i in [0, _dim-1].
@@ -197,14 +229,6 @@ void CoordinateShape::param_rangecheck(std::string name,
 double CoordinateShape::Parameter (std::string key)
 {
     return _params.find(key)->second;
-    // double paramval;
-    // for (auto const& p : _params)
-    // {
-    //     if (strcmp(p.first, key)==0){
-    //         paramval = p.second;}
-    // }
-    // //std::cout << "Parameter::paramval[" << key << "] = " << paramval << std::endl;
-    // return paramval;
 }
 
 
@@ -220,13 +244,6 @@ vector<double> CoordinateShape::Edges()
     {
         std::string key_s = "edge_"+std::to_string(i);
         edges[i] = _params.find(key_s)->second;
-
-        // Vid's method
-        // for (auto const& p : _params)
-        // {
-        //     if (strcmp(p.first, key_i)==0){
-        //         edges[i] = p.second;}
-        // }
     }
     return edges;
 }

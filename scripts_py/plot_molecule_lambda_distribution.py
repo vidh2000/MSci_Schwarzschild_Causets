@@ -18,18 +18,19 @@ use_selected_masses = True #gives equal spacing
 
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
-plot_boundaries = 1
-plot_molecules = True
-do_also_not_main_plots = False #those NOT for poster
+
+plot_histogram_Nreps = True
+plot_boundaries = 0
+plot_molecules = 1
+do_also_not_main_plots = 0 #those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
 params = {'text.usetex' : True,
           'font.size' : 20,
           'font.family' : 'lmodern',
-          #'text.latex.unicode': True,
-          'axes.labelsize':24,
-          'legend.fontsize': 20,
+          'axes.labelsize':34,
+          'legend.fontsize': 18,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
           'figure.figsize': [8.5, 6.5], 
@@ -52,7 +53,7 @@ if not os.path.exists(dataDir):
     path = os.getcwd()
     plotsDir = path + f"/figures/N{molecules}_vs_Area/"
     dataDir = path + f"/data/{molecules}"
-
+print(dataDir)
 # ensure that, if using Mor Rho, it is decimal with exactly 2 dec digits
 
 if fixed_var == "M" or fixed_var == "Rho":
@@ -76,7 +77,8 @@ selected_masses = np.array([0.53, 0.75, 0.92, 1.06, 1.19,
 # 2. GET INFO FROM FILES
 ##############################################################################
 
-# an entry for each rho
+# an entry for each M
+Nreps = []
 varying_values = []
 outermosts = []
 outermosts_std = []
@@ -125,6 +127,8 @@ for root, dirs, files in os.walk(dataDir):
                                             dtype = str)[:-1].astype(float)
                     everything_i=np.array([everything_i]) #make it 2D for latr
                 Nreps_i = everything_i[:,0]
+                tot_Nreps_i = sum(Nreps_i)
+                Nreps.append(tot_Nreps_i)
                 # 2.2 get mintime, innermost, outermost ####################
                 outermosts_avg_arr_i = everything_i[:,1]
                 outermosts_std_arr_i = everything_i[:,2]
@@ -185,7 +189,7 @@ for l,ls in zip(molecules_distr, molecules_distr_std):
 
 
 ##############################################################################
-# 2. FIT & PLOT
+# 3. FIT & PLOT
 ##############################################################################
 
 # Fitting function == linear through vertex
@@ -225,6 +229,27 @@ print(f"Rho = {Rho:.0f}")
 fixed_string = rf"Rho = {Rho:.0f}"
 
 
+
+###########################################################################
+# 3.0 Nreps ##############################################
+if plot_histogram_Nreps:
+    varying_values_copy = np.array(varying_values)
+    combined = list(zip(varying_values_copy, Nreps)) 
+    sorted_combined = sorted(combined, key=lambda x: x[0]) # sort by values
+    vals = [x[0] for x in sorted_combined] 
+    Nreps = [x[1] for x in sorted_combined]
+    print(vals)
+    print(Nreps)
+    plt.figure("Histogram Nreps", (20, 6))
+    plt.plot(vals, Nreps, "x", markersize = 5, ls ="")
+    plt.xticks(vals, fontsize = 5)
+    plt.vlines(vals, 0, 200, alpha = 0.1, ls ="--")
+    plt.ylabel("Nreps")
+    plt.xlabel("M")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
+    #plt.show()
+
+
 ###########################################################################
 ###########################################################################
 ###########################################################################
@@ -253,7 +278,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r"$t_{Min}$ $[\ell]$")
+    plt.ylabel(r'$t_{\mathrm{min}} [\ell]$')
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -282,8 +307,10 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"$\Delta r_{Max}$ $[\ell]$")
+    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
     plt.grid(alpha = 0.4) 
+    from matplotlib.ticker import FormatStrFormatter
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.legend()
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Boundaries_to_rs_in_l.png")
@@ -381,7 +408,7 @@ if plot_molecules:
         plt.tight_layout()
         plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
         plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.pdf") 
-        plt.show()
+        #plt.show()
 
 
         plt.figure(f"Large molecules for {fixed_string}")
@@ -566,7 +593,7 @@ if plot_molecules:
         plt.tight_layout()
         plt.savefig(plotsDir + "n_lambda_probability_distribution.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution.pdf")
-        plt.show()
+        #plt.show()
 
 
         plt.figure("n-lambda probability distribution (logscale)")
@@ -587,7 +614,7 @@ if plot_molecules:
         plt.grid(alpha=0.2)
         plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.pdf")
-        plt.show()
+        #plt.show()
 
         plt.figure("n-lambda probability distribution (safe)")
         plt.errorbar(np.arange(1,len(lambd_probs[:unsafe_start])+1,1), 
@@ -606,20 +633,20 @@ if plot_molecules:
         plt.tight_layout()
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
-        plt.show()
+        #plt.show()
 
-
+    x = 8
     plt.figure("n-lambda exp probability distribution (logscale)")
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
             yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
-            label = r"$n\mathbf{-}\Lambda$ distribution")
+            label = r"$\Lambda_n$ distribution")
     xs = np.linspace(1, len(lambd_probs)+0.2,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "darkorange",
-            label = r"$(e^{\chi}-1)$ $e^{-\chi n}$, $\chi$"+ 
+            label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
             f" = {round(chi,chi_ord)}"+
             f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
-    plt.xlabel(r"$n$", fontsize = 24)
-    plt.ylabel("Probability", fontsize = 24)
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
     plt.yscale("log")
     plt.legend(loc="upper right", fontsize = 24)
     plt.grid(alpha=0.2)
@@ -627,7 +654,7 @@ if plot_molecules:
     plt.tight_layout()
     plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
     plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
-    plt.show()
+    
 
 
     
@@ -647,4 +674,6 @@ if plot_molecules:
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
     print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p\n")
+
+plt.show()
  

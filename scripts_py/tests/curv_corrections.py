@@ -7,6 +7,7 @@ Created on Wed Feb  1 20:26:35 2023
 
 from causets_py import relfunctions as rel
 from sympy import diff, symbols, sin, Matrix, init_printing, sqrt
+import sympy as sp
 import numpy as np
 import pandas as pd
 

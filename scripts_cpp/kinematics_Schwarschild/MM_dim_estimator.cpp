@@ -46,12 +46,12 @@ int main(){
 ///////////////////////////////////////////////////////////////////////////////
                 
 std::vector<int> dims = {4}; 
-std::vector<int> cards = {7000};
-int min_size = 30;  //Minimal size of the interval (min # of elements in it)
+std::vector<int> cards = {50000};
+int min_size = 1000;  //Minimal size of the interval (min # of elements in it)
 int max_size = 0;
 double mass = 0.25;
-int N_reps = 20;
-int N_intervals = 50;
+int N_reps = 50;
+int N_intervals = 20;
 
 
 // Sprinkling Parameters
@@ -67,8 +67,8 @@ const char* name = "cylinder";
 
 // Shape parameters
 double radius = 4*mass;
-double height = 1;
-double hollow = 0.5;
+double height = 8*mass;
+double hollow = 0;
 ///////////////////////////////////////////
 
 // Begin program
@@ -85,8 +85,8 @@ for (auto dim: dims)
     
     for (auto card : cards)
     {
-        double scale = std::pow(Rho, -1.0/4.0);
-        std::cout << "Scale = " << scale << std::endl;
+        //double scale = std::pow(Rho, -1.0/4.0);
+        //std::cout << "Scale = " << scale << std::endl;
 
         // Array for storing dimension estimate values
         std::vector<double> dim_ests = {}; 
@@ -97,11 +97,12 @@ for (auto dim: dims)
             std::cout << "Dim="<< dim <<", "<<(rep+1)<<"/"<<N_reps<<"\n";
             auto repstart = high_resolution_clock::now();
             // Set up shape
-            std::vector<double> center = {0.0,0.0,0.0,0.0};
+            std::vector<double> center = {0,0,0,0};
             CoordinateShape shape(dim,name,center,radius,height,hollow);
             // Set up spacetime
             Spacetime S = Spacetime();
             S.BlackHoleSpacetime(dim,mass);
+            S.FlatSpacetime(dim);
             // Sprinkle the causet
             SprinkledCauset C(card, S, shape, poisson,
                             make_matrix, special, use_transitivity,
@@ -124,6 +125,7 @@ for (auto dim: dims)
 
             for (auto item : nchains_arr) {
                 double d_i = estimate_MMd(item.first);
+                std::cout << "Estimated D="<<d_i << std::endl;
                 dim_ests.push_back(d_i);
             }
             

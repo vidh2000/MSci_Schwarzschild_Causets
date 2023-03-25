@@ -52,21 +52,22 @@ class SprinkledCauset: public EmbeddedCauset
         SprinkledCauset(int card,
                         Spacetime spacetime, 
                         CoordinateShape shape, 
-                        bool poisson = false,
+                        bool poisson = true,
                         bool make_matrix = true,
                         bool special = false,
                         bool use_transitivity = true,
                         bool make_sets = false,
                         bool make_links = true,
                         const char* sets_type = "future",
-                        int seed = 0);
+                        int seed = 0,
+                        int poisson_seed = 0);
 
 
         // METHODS
 
-        static std::vector<std::vector<double>> sprinkle(int count, 
+        static std::vector<std::vector<double>> sprinkle(int card, 
                                                         CoordinateShape shape, 
-                                                        bool poisson = false,
+                                                        bool poisson = true,
                                                         int seed = 0,
                                                         int poisson_seed = 0);
         static std::vector<std::vector<double>> sprinkle_coords(int count,

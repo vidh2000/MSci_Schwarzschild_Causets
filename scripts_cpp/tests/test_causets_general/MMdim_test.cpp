@@ -15,12 +15,17 @@
 #include <unordered_set>
 #include <chrono>
 
-#include "../causets_cpp/sprinkledcauset.h"
-#include "../causets_cpp/shapes.h"
-#include "../causets_cpp/spacetimes.h"
+#include "../../causets_cpp/sprinkledcauset.h"
+#include "../../causets_cpp/shapes.h"
+#include "../../causets_cpp/spacetimes.h"
+#include "../../causets_cpp/sprinkledcauset.h"
+#include "../../causets_cpp/shapes.h"
+#include "../../causets_cpp/spacetimes.h"
 
-#include "../causets_cpp/functions.h"
-#include "../causets_cpp/vecfunctions.h"
+#include "../../causets_cpp/functions.h"
+#include "../../causets_cpp/vecfunctions.h"
+#include "../../causets_cpp/functions.h"
+#include "../../causets_cpp/vecfunctions.h"
 
 using namespace std::chrono;
 using std::cout;
@@ -43,17 +48,18 @@ using std::vector;
 
 
 // Sprinkled causet parameters
-int card = 1000;
+int card = 2000;
 int dim = 4;
 std::vector<double> center (dim, 0.0);
-double radius = 4.0;
+double radius = 200.0;
+double myduration = 5;
 
 
 bool poisson = true;
-bool make_matrix = false;
-bool special = true;
+bool make_matrix = true;
+bool special = false;
 bool use_transitivity = false;
-bool make_sets = true;
+bool make_sets = false;
 bool make_links = false;
 const char* sets_type = "all"; // "both only", "all", "pasts", "futures"
 
@@ -122,21 +128,30 @@ int main(){
     cout<<"\n========================================================\n";
     cout<<"==== SECOND TEST MYRHEIM MEYER DIMENSIONAL ESTIMATOR ====";
     cout<<"\n========================================================\n";
-    CoordinateShape shape(dim,"bicone",center,radius);
     Spacetime S = Spacetime();
     S.BlackHoleSpacetime(dim);
+    CoordinateShape shape(dim,"cylinder",center,radius,myduration);
+    // S.FlatSpacetime();
+    // CoordinateShape shape(dim,"bicone",center,radius);
+
+
+    cout << "\n1. CHECK MMDIM\n";
+    for (int i = 0; i<10; i++){
     SprinkledCauset Cs(card, S, shape, poisson,
                         make_matrix, special, use_transitivity,
                         make_sets, make_links, sets_type);
-
-
-    cout << "\n1. CHECK MATRIX AND SETS REPRESENTATIONS ARE EQUIVALENT\n";
-    vector<double> MMd_result = Cs.MMdim_est("big", 20, card/4, card, true);
-    cout << "MM estimation with CMatrix (mean, std):";
+    vector<double> MMd_result = Cs.MMdim_est("big", 10, card/100, card, true);
+    cout << "\nMM estimation with CMatrix (mean, std):";
     print_vector(MMd_result);
-    MMd_result = Cs.MMdim_est("big", 20, card/4, card, false);
+    MMd_result = Cs.MMdim_est("big", 10, card/100, card, false);
+    cout << "MM estimation with SETS   (mean, std):";
+    MMd_result = Cs.MMdim_est("random", 10, card/100, card, true);
+    cout << "\nMM estimation with CMatrix (mean, std):";
+    print_vector(MMd_result);
+    MMd_result = Cs.MMdim_est("random", 10, card/100, card, false);
     cout << "MM estimation with SETS   (mean, std):";
     print_vector(MMd_result);
+    }
 
 
     auto stop = high_resolution_clock::now();

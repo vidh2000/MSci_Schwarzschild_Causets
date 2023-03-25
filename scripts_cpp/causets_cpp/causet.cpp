@@ -83,14 +83,7 @@ void Causet::make_sets_fromC()
             {
                 // Add i and its past to the past of j
                 _pasts[j].insert(i);
-                //_pasts[j].insert(_pasts[i].begin(),_pasts[i].end());
-                // Insert j into i's future and into
-                // the future of elements in i's past
                 _futures[i].insert(j);
-                // for (int ind_in_ipast : _pasts[i])
-                // {    
-                //     _futures[ind_in_ipast].insert(j);
-                // }
             }
         }
     }
@@ -320,7 +313,7 @@ double Causet::ord_fr(int a, int b,
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Dimension estimator
+// MM DIMENSION ESTIMATOR
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -376,7 +369,6 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
     // Variables to be used
     int* N = &_size;
     vector<double> destimates;
-    
 
     if (strcmp(method,"random")==0)
     {
@@ -384,10 +376,10 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
         int successes = 0;
         while (Nsamples>0)
         {
-            if (fails>= 1000 && successes == 0)
+            if (fails>= 100000 && successes == 0)
             {
-                std::cout << "Found 0/1000 OK Alexandrov intervals. \
-                Causet portion too small. Returning {-1,-1} values.";
+                std::cout << "Found 0/100000 OK Alexandrov intervals. \
+Causet portion too small. Returning {-1,-1} values.";
                 vector<double> returnerr = {-1,-1};
                 return returnerr;
             }

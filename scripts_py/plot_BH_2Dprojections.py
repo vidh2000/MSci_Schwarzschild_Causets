@@ -4,13 +4,13 @@ import numpy as np
 import os 
 
 ps = {#"text.usetex": True,
-      "font.size" : 20,
+      "font.size" : 16,
       "font.family" : "Times New Roman",
-      'axes.labelsize':24,
-        'legend.fontsize': 20,
-        'xtick.labelsize': 20,
-        'ytick.labelsize': 20,
-        'figure.figsize': [8.5, 6.5],
+      "axes.labelsize": 16,
+      "legend.fontsize": 14,
+      "xtick.labelsize": 14,
+      "ytick.labelsize": 14,
+      "figure.figsize": [7.5, 6],
       "mathtext.default": "default"
        }
 plt.rcParams.update(ps)
@@ -24,16 +24,16 @@ del ps
 
 # Load correct file
 dim  = 3
-card = 30000
-edge = 4 #or radius
+card = 101000
+edge = 2.89 #or radius
 h    = 0.00
 
 use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
-use_h                  = 1 #there is the bit _ha.bd before .txt
+use_h                  = 0 #there is the bit _ha.bd before .txt
 centre_cube_in_horizon = 0
 
 want_save_file = 1 #save file? (see line 100 for saving name)
-n_save_file_max = 10
+n_save_file_max = 50
 
 ##############################################################################
 # In the following, plot 2D projections of slice of 3D causet.
@@ -42,7 +42,7 @@ n_save_file_max = 10
 # Therefore, loop over different sizes of slices, set by <Nslices_s>.
 # For each size of slice, do at most <n_save_file_max> slices.
 ##############################################################################
-Nslices_s = [360, 540]
+Nslices_s = [100, 200]
 for Nslices in Nslices_s:
     phi0 = 6.29/Nslices
     which_phi_interval = 0

@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
 import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
@@ -31,8 +33,9 @@ varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
-plot_boundaries = True
-plot_molecules = True
+plot_histogram_Nreps = True
+plot_boundaries = 0
+plot_molecules = 0
 
 
 ##############################################################################
@@ -59,7 +62,8 @@ else:
 # 2. GET INFO FROM FILES
 ##############################################################################
 
-# an entry for each rho
+# an entry for each M
+Nreps = []
 varying_values = []
 outermosts = []
 outermosts_std = []
@@ -104,6 +108,8 @@ for root, dirs, files in os.walk(dataDir):
                                             dtype = str)[:-1].astype(float)
                     everything_i=np.array([everything_i]) #make it 2D for latr
                 Nreps_i = everything_i[:,0]
+                tot_Nreps_i = sum(Nreps_i)
+                Nreps.append(tot_Nreps_i)
                 # 2.2 get mintime, innermost, outermost ####################
                 outermosts_avg_arr_i = everything_i[:,1]
                 outermosts_std_arr_i = everything_i[:,2]
@@ -193,6 +199,34 @@ print(f"Rho = {Rho:.0f}")
 fixed_string = rf"Rho = {Rho:.0f}"
 
 
+###########################################################################
+# 2.0 Nreps ##############################################
+if plot_histogram_Nreps:
+    varying_values_copy = np.array(varying_values)
+    combined = list(zip(varying_values_copy, Nreps)) 
+    sorted_combined = sorted(combined, key=lambda x: x[0]) # sort by values
+    vals = [x[0] for x in sorted_combined] 
+    Nreps = [x[1] for x in sorted_combined]
+    plt.figure("Histogram Nreps", (20, 6))
+    plt.plot(vals, Nreps, "x", markersize = 5, ls ="")
+    plt.xticks(vals, fontsize = 5)
+    plt.vlines(vals, 0, 200, alpha = 0.1, ls ="--")
+    plt.ylabel("Nreps")
+    plt.xlabel("M")
+    plt.tight_layout()
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.pdf")
+
+    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] < 200]
+    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] < 200]
+    repstable = pd.DataFrame(
+                  np.column_stack(
+                    [vals_not_200, reps_not_200, 200-np.array(reps_not_200)]),
+                  columns = ["M Value", "Current Nreps", "Reps to 200"])
+    print(repstable)
+
+    
+
 
 ###########################################################################
 # 2.1 MOLECULES'S BOUNDARIES ##############################################
@@ -207,16 +241,23 @@ if plot_boundaries:
     rc = 2; c = 1; r = 2
     figsize = (6 * c, 14 / r)
     plt.figure(f'Boundaries for {fixed_string}',
-                figsize = figsize, tight_layout = True)
+                figsize = (10, 6), tight_layout = True)
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
     # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
                     # va='bottom', ha = 'left')
+    # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
+                    # va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
+                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
+                fmt = '.', capsize = 4, color = "C0",
+                zorder = 5, label = r"3$\sigma$")
+    ax.set_xticklabels([])
+    plt.ylabel(r"$t_{\mathrm{min}}$ $[\ell]$")
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
@@ -228,16 +269,20 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 2)
     # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
     #                 va='bottom', ha = 'left')
+    # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
+    #                 va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
+                fmt = '.', capsize = 4, color = "C0",
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
+                fmt = '.', capsize = 4, color = "C0",
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
@@ -253,10 +298,14 @@ if plot_boundaries:
     from matplotlib.ticker import FormatStrFormatter
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.legend()
+    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
+    from matplotlib.ticker import FormatStrFormatter
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    plt.legend()
     plt.grid(alpha = 0.4) 
-    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_in_l.png")
-    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_in_l.pdf")
-    plt.show()
+    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.png")
+    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.pdf")
+    
 
 
 
@@ -265,7 +314,8 @@ if plot_boundaries:
 print("")
 if plot_molecules:
 
-    plt.figure(f"Molecules for {fixed_string}")
+    plt.figure(f"Molecules for {fixed_string}", figsize=figsize, 
+            tight_layout = True)
 
     gradients = []
     gradients_unc = []
@@ -306,10 +356,11 @@ if plot_molecules:
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(f"Number of HRVs")
+    plt.ylabel(f"Number of HRVs")
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
-    plt.show()
+    
 
 
     ##########################################################################
@@ -347,6 +398,24 @@ if plot_molecules:
         print(" \n###PROBABILITIES ###")
         print(f"p_op = {round(hrv_probs[0],4)}+-{round(hrv_probs_uncs[0],4)}")
         print(f"p_cl = {round(hrv_probs[1],4)}+-{round(hrv_probs_uncs[1],4)}")
+        hrv_probs = gradients/sum(gradients)
+        hrv_probs_uncs = [0,0]
+        hrv_probs_uncs[0] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+
+        hrv_probs_uncs[1] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+        
+        
+        print(" \n###PROBABILITIES ###")
+        print(f"p_op = {round(hrv_probs[0],4)}+-{round(hrv_probs_uncs[0],4)}")
+        print(f"p_cl = {round(hrv_probs[1],4)}+-{round(hrv_probs_uncs[1],4)}")
 
 
         print(" \n#### FINAL RESULTS ####")
@@ -356,6 +425,7 @@ if plot_molecules:
         C_hv_unc = np.sqrt( sum(gradients_unc**2 * dC_da_i**2)) 
 
     else:
+        print(" AAAAAAAA GRADIENTS[1] == 0!!!!!")
         C_hv = gradients[0] * np.log(2)
         C_hv_unc = gradients_unc[0] * np.log(2)
 
@@ -366,4 +436,5 @@ if plot_molecules:
     l_unc = C_hv_unc/np.sqrt(C_hv)
     print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p")
  
- 
+
+plt.show()

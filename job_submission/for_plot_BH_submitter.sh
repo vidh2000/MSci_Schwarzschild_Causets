@@ -13,9 +13,9 @@ cpp_file_to_run="'lambda_saving_hollow_3_or_4D.cpp'" #or without hollow
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
-ncpus=256
-mem=512
-runtime="8:00:00" #format: "hh:mm:ss"
+ncpus=64
+mem=32
+runtime="01:00:00" #format: "hh:mm:ss"
 
 counter=0
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

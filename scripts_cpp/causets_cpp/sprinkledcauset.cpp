@@ -33,13 +33,11 @@ using std::vector;
 using std::set;
 using std::unordered_set;
 
-// For Vid (can"t locate headers for some reason)
-// Path: D:\Documents\Sola\Imperial College London\Year 4\MSci project
-//            Project\causets_code\causets_cpp\"header".h...
-
 
 /**
- * @brief Construct a new Sprinkled Causet object. 
+ * @brief Construct a new Sprinkled Causet object. Note: if shape has 
+ * _deltaphi in (0,2pi), then it will restrict to that deltaphi region,
+ * where phi is the angle on the xy plane.
  * 
  * @param card: int, number of events to sprinkle
  * @param spacetime: FlatSpacetime.
@@ -55,19 +53,21 @@ using std::unordered_set;
  * @param sets_type: const char* specifying the type of set:
  * - "past": make _past_links
  * - "future": make _future_links
- * @param seed: int, for coordinate generation.
+ * @param seed: int, for coordinate generation. Default 0, i.e. no seed.
+ * @param seed: int, for N generation ffrom Poisson. Default 0, i.e. no seed.
  */
 SprinkledCauset::SprinkledCauset(int card,
                                  Spacetime spacetime, 
                                  CoordinateShape shape, 
-                                 bool poisson,// = false,
+                                 bool poisson,// = true,
                                  bool make_matrix,// = true,
                                  bool special,// = false,
                                  bool use_transitivity,// = true,
                                  bool make_sets,// = false,
                                  bool make_links,// = false,
                                  const char* sets_type,// = "past",
-                                 int seed)
+                                 int seed, //=0
+                                 int poisson_seed) //=0
                                 : EmbeddedCauset()
 {
     _spacetime = spacetime;
@@ -75,7 +75,7 @@ SprinkledCauset::SprinkledCauset(int card,
 
     if (poisson)
         {_intensity = card*1;}
-    _coords = sprinkle(card, shape, poisson, seed);
+    _coords = sprinkle(card, shape, poisson, seed, poisson_seed);
 
     _size = _coords.size();
 
@@ -97,7 +97,7 @@ SprinkledCauset::SprinkledCauset(int card,
  *        set as a constant integer and calls the sprinkle_coords method with
  *        the given parameters.
  * 
- * @param count : number (or average) number of points to sprinkle.
+ * @param card : number (or average) number of points to sprinkle.
  * @param shape : CoordinateShape where to sprinkle
  * @param poisson : bool, if true count is average of Poisson distribution
  * from which get the effective count
@@ -106,13 +106,13 @@ SprinkledCauset::SprinkledCauset(int card,
  * @return vector<vector<double>> coordinates, with ith entry being coordinates
  * of ith point.
  */
-vector<vector<double>> SprinkledCauset::sprinkle( int count, 
+vector<vector<double>> SprinkledCauset::sprinkle( int card, 
                                                     CoordinateShape shape,
-                                                    bool poisson,// = false,
+                                                    bool poisson,// = true,
                                                     int seed, // = 0,
                                                     int poisson_seed)// = 0)
 {
-    if (count<0)
+    if (card<0)
     {   
         std::cout<<"The sprinkle cardinality has to be a\
             non-negative integer."<<std::endl;
@@ -121,18 +121,17 @@ vector<vector<double>> SprinkledCauset::sprinkle( int count,
     }
     if (poisson)
     {
-        if (poisson_seed==0)
-        {
-            poisson_seed = std::chrono::system_clock::now().time_since_epoch().count();
+        if (poisson_seed==0){
+            poisson_seed = std::chrono::system_clock::now()
+                                                    .time_since_epoch().count();
         }
         
-
         std::mt19937 gen(poisson_seed);
-        std::poisson_distribution<int> distribution(count);
-        count = distribution(gen);
+        std::poisson_distribution<int> distribution(card);
+        card = distribution(gen);
     }
     vector<vector<double>> coords = SprinkledCauset::sprinkle_coords
-                                                      (count,shape,seed); 
+                                                      (card,shape,seed); 
     return coords;
 }   
 
@@ -238,6 +237,9 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
 
         else
         {
+            // number of "different" and "radius-like" coordinates:
+            // - 0 for ball
+            // - 1 (time) for others
             double n_different = (strcmp(shape._name, "ball")==0)? 0 : 1;
             double n_rad = d - n_different;
 
@@ -262,7 +264,8 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
             std::uniform_real_distribution<> other_uni(0, 1);
             for (int i = 0; i<count; i++)
             {
-                //1)First generate random numbers on (n_rad-1)-sphere of rad 1
+                //1)
+                //First generate random numbers on (n_rad-1)-sphere of rad 1
                 std::normal_distribution<> gauss(0,1);
                 double r2_gauss = 0;
                 for (int a = n_different; a<d; a++)
@@ -273,7 +276,9 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                 }
                 // 1/r2 brings the points on a sphere of radius 1
                 r_scaling_i = 1/std::sqrt(r2_gauss);
-                // 2)Scale points radially inside n_rad-ball
+                
+                // 2)
+                // Scale points radially inside n_rad-ball
                 r_scaling_i *= R * std::pow(r_uni(gen), 1/n_rad);
                 if (isDiamond)
                 {
@@ -287,6 +292,21 @@ vector<vector<double>> SprinkledCauset::sprinkle_coords(int count,
                 {
                     coords[i][a] *= r_scaling_i;
                     coords[i][a] += shape._center[a];
+                }
+
+                // If deltaphi in (0, 2pi)
+                // place points inside slice of said deltaphi
+                double deltaphi = shape._deltaphi;
+                if (deltaphi > 0 && deltaphi <= 2*3.1415926535)
+                {
+                    double phi0 = std::atan2(coords[i][2],coords[i][1]);
+                    phi0 += (phi0>0)? 0 : 2*3.1415926535; 
+                    double phi = phi0 * deltaphi / (2*3.1415926535);
+
+                    double rho = std::sqrt(coords[i][1]*coords[i][1]
+                                          +coords[i][2]*coords[i][2]);
+                    coords[i][1] = rho * std::cos(phi);
+                    coords[i][2] = rho * std::sin(phi);
                 }
             }
         }
