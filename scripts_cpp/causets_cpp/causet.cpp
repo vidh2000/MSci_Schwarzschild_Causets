@@ -363,10 +363,9 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 double size_max,// = 1e9
                                 bool from_matrix) //true
 {
-    std::cout << "NOTE (not error, chill): MMd works only in " <<
-                             "flat spacetime" << std::endl;
+    // std::cout << "NOTE (not error, chill): MMd works only in " <<
+    //                          "flat spacetime" << std::endl;
 
-    
     // Variables to be used
     int* N = &_size;
     vector<double> destimates;

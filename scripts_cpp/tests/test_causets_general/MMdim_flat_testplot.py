@@ -21,10 +21,10 @@ import matplotlib.pyplot as plt
 # 0. SET SETTINGS
 ####################################################################
 Nreps = 5
-sizes = [64, 128, 256]#, 512, 1024, 2048, 4096]
+sizes = [64, 128, 12288]#, 512, 1024, 2048, 4096]
 
 file_saved_by_cpp =\
-    f"data/test_MMdim_forpy/MMdim_Flat_Nreps{Nreps}_UpTo={max(sizes)}.txt"
+    f"data/test_MMdim_forpy/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.txt"
 
 
 #####################################################################

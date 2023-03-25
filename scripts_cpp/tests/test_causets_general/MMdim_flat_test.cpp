@@ -15,6 +15,10 @@
 #include <vector>
 #include <unordered_set>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 #include "../../causets_cpp/sprinkledcauset.h"
 #include "../../causets_cpp/shapes.h"
 #include "../../causets_cpp/spacetimes.h"
@@ -27,12 +31,14 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+//running parameters
+bool run_on_hpc = true;
 
 // Sprinkled causet parameters
-int myreps = 20;
-std::vector<int> mycards = {128, 256, 512, 768, 1024, 1280, 1536, 1792, 2048};
-double radius = 200.0;
-
+int myreps = 50;
+std::vector<int> mycards = {128, 256, 512, 768, 1024, 1536, 2048,
+                            3072, 4096, 6144, 8192, 12288};
+double radius = 1.0;
 
 bool poisson = true;
 bool make_matrix = true;
@@ -155,7 +161,18 @@ int main(int argc, char** argv) {
                             +  Nreps_str
                             + "_UpTo" + maxsize_str
                             + ".txt";
+    if (run_on_hpc)
+    {
+      const char* homeDir = getenv("HOME");
+      filename = std::string(homeDir) 
+                            + "/MSci_Schwarzschild_Causets/data/test_MMdim_forpy/MMdim_Flat_Nreps"
+                            +  Nreps_str
+                            + "_UpTo" + maxsize_str
+                            + ".txt";
+    }
     std::ofstream out;
+    std::cout<<"Will save in "<<std::endl;
+    std::cout<<filename<<std::endl;
 
     // First row -> sizes
     out.open(filename);
@@ -176,19 +193,20 @@ int main(int argc, char** argv) {
         double nsuccess = 0;
 
         for (int i = 0; i<Nreps; i++){
-        SprinkledCauset Cs(card, S, shape, poisson,
-                            make_matrix, special, use_transitivity,
-                            make_sets, make_links, sets_type);
-        int size_min = (card/4 < 100)? card/4 : 100;
-        vector<double> MMd_result = Cs.MMdim_est("big", 10, size_min, card, true);
-        
+          SprinkledCauset Cs(card, S, shape, poisson,
+                              make_matrix, special, use_transitivity,
+                              make_sets, make_links, sets_type);
+          int size_min = (card/4 < 100)? card/4 : 100;
+          vector<double> MMd_result = Cs.MMdim_est("big", 10, 
+                                                  size_min, card, true);
+          
 
-        if (MMd_result[0]>0)
-        {
-            sum  += MMd_result[0];
-            sum2 += MMd_result[0]*MMd_result[0];
-            nsuccess += 1;
-        }
+          if (MMd_result[0]>0)
+          {
+              sum  += MMd_result[0];
+              sum2 += MMd_result[0]*MMd_result[0];
+              nsuccess += 1;
+          }
         }
 
         double avg = sum/nsuccess;
@@ -206,8 +224,7 @@ int main(int argc, char** argv) {
     cout << "\n=============Time taken: "
             << duration/pow(10,6) << " seconds===============\n" << std::endl;
 
-    std::system("pwd");
-    std::system("python 'MMdim_flat_testplot.py'");
+    std::system("python 'tests/test_causets_general/MMdim_flat_testplot.py'");
 
     return 0;
 };

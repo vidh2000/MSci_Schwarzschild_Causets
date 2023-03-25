@@ -7,12 +7,14 @@ from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
 
-
-params = {'text.usetex' : True,
+#plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
+#Options
+params = {#'text.usetex' : True,
           'font.size' : 20,
           'font.family' : 'lmodern',
-          'axes.labelsize':34,
-          'legend.fontsize': 18,
+          #'text.latex.unicode': True,
+          'axes.labelsize':24,
+          'legend.fontsize': 20,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
           'figure.figsize': [8.5, 6.5], 
@@ -245,10 +247,17 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 1)
     # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
                     # va='bottom', ha = 'left')
+    # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
+                    # va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
+                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
+                fmt = '.', capsize = 4, color = "C0",
+                zorder = 5, label = r"3$\sigma$")
+    ax.set_xticklabels([])
+    plt.ylabel(r"$t_{\mathrm{min}}$ $[\ell]$")
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
@@ -260,16 +269,20 @@ if plot_boundaries:
     ax = plt.subplot(r, c, 2)
     # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
     #                 va='bottom', ha = 'left')
+    # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
+    #                 va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
+                fmt = '.', capsize = 4, color = "C0",
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
+                fmt = '.', capsize = 4, color = "C0",
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
@@ -281,6 +294,10 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
+    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
+    from matplotlib.ticker import FormatStrFormatter
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    plt.legend()
     plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
     from matplotlib.ticker import FormatStrFormatter
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
@@ -339,6 +356,7 @@ if plot_molecules:
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(f"Number of HRVs")
+    plt.ylabel(f"Number of HRVs")
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
@@ -362,6 +380,24 @@ if plot_molecules:
         grad_sum = sum(gradients)
         grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
 
+        hrv_probs = gradients/sum(gradients)
+        hrv_probs_uncs = [0,0]
+        hrv_probs_uncs[0] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+
+        hrv_probs_uncs[1] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+        
+        
+        print(" \n###PROBABILITIES ###")
+        print(f"p_op = {round(hrv_probs[0],4)}+-{round(hrv_probs_uncs[0],4)}")
+        print(f"p_cl = {round(hrv_probs[1],4)}+-{round(hrv_probs_uncs[1],4)}")
         hrv_probs = gradients/sum(gradients)
         hrv_probs_uncs = [0,0]
         hrv_probs_uncs[0] = 1/grad_sum**2 \
