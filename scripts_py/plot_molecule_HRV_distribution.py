@@ -5,6 +5,23 @@ from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
 
+#plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
+#Options
+params = {#'text.usetex' : True,
+          'font.size' : 20,
+          'font.family' : 'lmodern',
+          #'text.latex.unicode': True,
+          'axes.labelsize':24,
+          'legend.fontsize': 20,
+          'xtick.labelsize': 20,
+          'ytick.labelsize': 20,
+          'figure.figsize': [8.5, 6.5], 
+          'axes.prop_cycle':plt.cycler(color=
+                            plt.rcParams['axes.prop_cycle'].by_key()['color']
+                            +['magenta'])
+          }
+plt.rcParams.update(params)
+
 
 ##############################################################################
 # 0. SET USER VARIABLES
@@ -14,7 +31,7 @@ varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
-plot_boundaries = False
+plot_boundaries = True
 plot_molecules = True
 
 
@@ -194,37 +211,34 @@ if plot_boundaries:
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
-    plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
+    # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
+                    # va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
-                zorder = 10, label = r"$t_{min}$ (1$\sigma$)")
+                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
-                fmt = '.', capsize = 4, color = "lightblue",
-                zorder = 5, label = r"$t_{min}$ (3$\sigma$)")
-    if varying_var == "M":
-        plt.xlabel(r'Horizon Area $[\ell]$')
-    else:
-        plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"Molecules' $t_{min}$ $[\ell]$")
+                fmt = '.', capsize = 4, color = "C0",
+                zorder = 5, label = r"3$\sigma$")
+    ax.set_xticklabels([])
+    plt.ylabel(r"$t_{\mathrm{min}}$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
 
     # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
-    plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
+    # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
+    #                 va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
-                fmt = '.', capsize = 4, color = "lightblue",
+                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
-                fmt = '.', capsize = 4, color = "blue",
+                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
     # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
@@ -235,12 +249,13 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"r-Distance from Horizon $[\ell]$")
-    plt.grid(alpha = 0.4) 
+    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
+    from matplotlib.ticker import FormatStrFormatter
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.legend()
-
-    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.png")
-    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.pdf")
+    plt.grid(alpha = 0.4) 
+    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_in_l.png")
+    plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_in_l.pdf")
     plt.show()
 
 
@@ -290,7 +305,7 @@ if plot_molecules:
         gradients_unc.append(unc[0])
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(f"Number of {label}")
+    plt.ylabel(f"Number of HRVs")
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
@@ -314,9 +329,24 @@ if plot_molecules:
         grad_sum = sum(gradients)
         grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
 
-        lambd_probs = gradients/sum(gradients)
-        lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
-                                gradients**2*grad_sum_unc**2/grad_sum**4)
+        hrv_probs = gradients/sum(gradients)
+        hrv_probs_uncs = [0,0]
+        hrv_probs_uncs[0] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+
+        hrv_probs_uncs[1] = 1/grad_sum**2 \
+                            * np.sqrt(
+                                (gradients[0]*gradients_unc[1])**2\
+                               +(gradients[1]*gradients_unc[0])**2
+                            )
+        
+        
+        print(" \n###PROBABILITIES ###")
+        print(f"p_op = {round(hrv_probs[0],4)}+-{round(hrv_probs_uncs[0],4)}")
+        print(f"p_cl = {round(hrv_probs[1],4)}+-{round(hrv_probs_uncs[1],4)}")
 
 
         print(" \n#### FINAL RESULTS ####")
@@ -335,4 +365,5 @@ if plot_molecules:
     l = 2*np.sqrt(C_hv)
     l_unc = C_hv_unc/np.sqrt(C_hv)
     print(f"Discreteness scale      = {round(l,5)} +- {round(l_unc,5)} l_p")
+ 
  

@@ -187,7 +187,15 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
                                     countend - countstart).count();
             std::cout << "Time taken in count_lambdas for N = "
             << C._size << ": " << durationlinks/pow(10,6) << " seconds"
-            << std::endl;     
+            << std::endl;  
+
+            // std::cout<< "OVERALL MEMORY CONSUMPTION\n";
+            // std::cout<< (sizeof(C) + sizeof(lambdas_distr) 
+            //           + sizeof(S) + sizeof(shape)
+            //           + sizeof(all_iter_lambda_results)
+            //           + sizeof(iter_pastkeys))*8
+            //           <<" bits"
+            //           <<std::endl;   
     }
 
     std::vector<std::map<int, double>> iter_results = avg_distr(

@@ -357,7 +357,7 @@ if plot_molecules:
     #        fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend(ncol = 2)
     plt.xlabel(r'Horizon Area $[\ell^2]$')
-    plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+    plt.ylabel(r"Number of $\Lambda_{n}$")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 

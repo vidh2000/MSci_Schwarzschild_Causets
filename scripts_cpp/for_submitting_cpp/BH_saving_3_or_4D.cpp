@@ -41,7 +41,7 @@ using namespace std::chrono;
 vector<int> dims = {3};
 double t_f = 0;
 double r_S = 2;
-std::vector<int> cards = {50000}; 
+std::vector<int> cards = {72000, 144000}; 
 
 // Sprinkle Parameters
 bool poisson          = true;
@@ -98,7 +98,7 @@ int main()
         std::string h_s = hstream.str();
 
         std::string filename = std::string(homeDir) 
-                            + "/MSci_Schwarzschild_Causets/data/data_for_plotting/blackhole_and_lambdas"
+                            + "/MSci_Schwarzschild_Causets/data/data_for_plotting/blackhole"
                             + std::to_string(dim)
                             + "D_N" + std::to_string(card)
                             + "_redge" + redge_s
@@ -106,7 +106,7 @@ int main()
         filename +=  ".txt";
         const char* path_file = filename.c_str();
         std::cout<<"Ready to save in\n" << path_file << std::endl;
-        C.save_molecules(path_file, "sets", t_f, r_S, "lambdas");
+        C.save_causet(path_file, "sets");
     }
     }
 

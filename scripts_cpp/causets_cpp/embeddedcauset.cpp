@@ -2164,21 +2164,22 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
             std::cout<<"Starting doing capped futs in count_lambdas"<<std::endl;
             _futures.resize(_size);
         
-            #pragma omp parallel for
+            #pragma omp parallel for// schedule(dynamic)
             for (int i=0; i<_size; i++)
             {
                 int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
+                    if (n_futs_of_i - 1 > 0){
+                        break; /*continue j loop, go to next i,
+                                     cannot break inside parallel*/
+                    }
+
                     #pragma omp critical
                     if (_CMatrix[i][j] == 1) {
                         _futures[i].insert(j);
                         n_futs_of_i += 1;
-                    }
-
-                    if (n_futs_of_i - 1 > 0){
-                        break; /*break j loop, go to next i*/
-                    }
+                    } 
                 }
             }
             std::cout << "Finished done futs" << std::endl;
@@ -2195,6 +2196,8 @@ std::map<int,double> EmbeddedCauset::count_lambdas(double& t_f, double r_S)
         "Other spacetimes might be available in the future."
         << std::endl;
         throw std::invalid_argument("Wrong spacetime");
+        std::map<int, double> lambdas_distr;
+        return lambdas_distr;
     }
 }
 
@@ -2661,6 +2664,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes(double& t_f, double r_S)
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
+    
     for (int j = 1; j<_size; ++j)
     {
         // if j is maximal and inside the horizon
@@ -2735,6 +2739,7 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes_from_futs(double& t_f,
     std::vector<double> innermost_vec;
     std::vector<double> outermost_vec;
  
+    #pragma omp parallel for schedule(dynamic)
     for (int j = 1; j<_size; ++j)
     {
         // if j is maximal and inside the horizon
@@ -2743,24 +2748,20 @@ std::map<int,double> EmbeddedCauset::get_lambdas_sizes_from_futs(double& t_f,
             lambdas[j] = 0;
             for (int i = j-1; i>-1; --i)
             {
-                if (_coords[j][0]>_coords[i][0]) //t_j>t_i SHOULD ALWAYS GO HERE
+                // if i is maximal but one and outside the horizon
+                if (_futures[i].size()==1 && _coords[i][1]>r_S)
                 {
-                    // if i is maximal but one and outside the horizon
-                    if (_futures[i].size()==1 && _coords[i][1]>r_S)
+                    // if i-j is link
+                    if (_futures[i].find(j) != _futures[i].end()) 
                     {
-                        // if i-j is link
-                        if (_futures[i].find(j) != _futures[i].end()) 
+                        #pragma omp critical
                         {
-                            lambdas[j] += 1;
-                            mintime_vec  .push_back(_coords[i][0]);
-                            innermost_vec.push_back(_coords[j][1]);
-                            outermost_vec.push_back(_coords[i][1]);
+                        lambdas[j] += 1;
+                        mintime_vec  .push_back(_coords[i][0]);
+                        innermost_vec.push_back(_coords[j][1]);
+                        outermost_vec.push_back(_coords[i][1]);
                         }
                     }
-                }
-                else /* t_j<t_i */
-                {
-                    std::cout << "ERROR: t_j < t_i\n";
                 }
             }
         }

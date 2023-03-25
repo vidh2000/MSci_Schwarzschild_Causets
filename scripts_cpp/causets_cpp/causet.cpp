@@ -347,10 +347,6 @@ double Causet::MM_drelation(double d)
             - 'random': randomly sample.
             - 'big': take all events with no past, all with no future
                      and apply estimator ro their combinations.
- *  
- * @param d0: float 
-            Initial guess for dimension.
-            Default is 2.
  * 
  * @param Nsamples: int 
             Times to iterate procedure to then average on if method "random".
@@ -374,10 +370,9 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                                 double size_max,// = 1e9
                                 bool from_matrix) //true
 {
-    std::cout << "NOTE (not error, chill): MMd works only in " <<
-                             "flat spacetime" << std::endl;
+    // std::cout << "NOTE (not error, chill): MMd works only in " <<
+    //                          "flat spacetime" << std::endl;
 
-    
     // Variables to be used
     int* N = &_size;
     vector<double> destimates;
@@ -426,7 +421,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
             {
                 successes += 1;
                 double fr_i = this->ord_fr(a,b,"choose",from_matrix);
-                std::cout << "fr_i = " << fr_i << std::endl;
+                //std::cout << "fr_i = " << fr_i << std::endl;
                 if (fr_i ==1)
                 {
                     destimates.push_back(1);
@@ -482,7 +477,7 @@ vector<double> Causet::MMdim_est(const char* method,// = "random",
                 {
                     counter++;
                     double fr_i = this->ord_fr(a,b,"choose",from_matrix);
-                    std::cout << "fr_i =" << fr_i << std::endl; 
+                    //std::cout << "fr_i =" << fr_i << std::endl; 
                     if (fr_i ==1.0)
                     {
                         destimates.push_back(1);
