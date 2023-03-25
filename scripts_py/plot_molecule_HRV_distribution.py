@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
 import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
+
 
 params = {'text.usetex' : True,
           'font.size' : 20,
@@ -29,8 +32,8 @@ fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
 plot_histogram_Nreps = True
-plot_boundaries = 1
-plot_molecules = 1
+plot_boundaries = 0
+plot_molecules = 0
 
 
 ##############################################################################
@@ -202,8 +205,6 @@ if plot_histogram_Nreps:
     sorted_combined = sorted(combined, key=lambda x: x[0]) # sort by values
     vals = [x[0] for x in sorted_combined] 
     Nreps = [x[1] for x in sorted_combined]
-    print(vals)
-    print(Nreps)
     plt.figure("Histogram Nreps", (20, 6))
     plt.plot(vals, Nreps, "x", markersize = 5, ls ="")
     plt.xticks(vals, fontsize = 5)
@@ -212,6 +213,15 @@ if plot_histogram_Nreps:
     plt.xlabel("M")
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
+
+    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] < 200]
+    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] < 200]
+    repstable = pd.DataFrame(
+                  np.column_stack(
+                    [vals_not_200, reps_not_200, 200-np.array(reps_not_200)]),
+                  columns = ["M Value", "Current Nreps", "Reps to 200"])
+    print(repstable)
+
     
 
 
