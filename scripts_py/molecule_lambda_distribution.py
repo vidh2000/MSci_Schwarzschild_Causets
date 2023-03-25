@@ -52,7 +52,7 @@ dataDir = f"{home}/MSci_Schwarzschild_Causets/data/{molecules}/"
 if not os.path.exists(dataDir):
     path = os.getcwd()
     plotsDir = path + f"/figures/N{molecules}_vs_Area/"
-    dataDir = path + f"/data/{molecules}"
+    dataDir = path + f"/data/{molecules}/"
 print(dataDir)
 # ensure that, if using Mor Rho, it is decimal with exactly 2 dec digits
 
