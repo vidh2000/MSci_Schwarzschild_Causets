@@ -9,9 +9,9 @@ import os
 #############################################################################
 # Load file
 dim  = 4
-card = 101000
-edge = 2.89 #or radius
-h    = 0.38
+card = 86000
+edge = 2.36 #or radius
+h    = 0.70
 want_save_file = 1 #see line 31 for saving name
 
 use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
@@ -36,7 +36,7 @@ if want_save_file:
                  f"BH_{molecule}_plot{plot_choice_string[plot_choice]}_"
     if plot_choice == 0 and projection:
         savefile_ext += f"proj{round(phi0,2)}_"
-    savefile_ext += f"{dim}D_N{card}_redge{edge}_h{h}.png"
+    savefile_ext += f"{dim}D_N{card}_redge{edge}_h{h}.pdf"
 else:
     savefile_ext = 0
 

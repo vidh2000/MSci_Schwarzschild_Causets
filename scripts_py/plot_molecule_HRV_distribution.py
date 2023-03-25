@@ -213,6 +213,7 @@ if plot_histogram_Nreps:
     plt.xlabel("M")
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
+    plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.pdf")
 
     vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] < 200]
     reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] < 200]
