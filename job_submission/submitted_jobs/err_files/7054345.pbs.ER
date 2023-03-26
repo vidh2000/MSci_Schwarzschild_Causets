@@ -1,3 +1,0 @@
-terminate called after throwing an instance of 'std::bad_alloc'
-  what():  std::bad_alloc
-/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_2.43_N_multiplier__N_reps_30.sh: line 31: 1863266 Aborted                 "./executables/HRVs_M${mass}_Rho${Rho}_reps${N_reps}.exe" $mass $Rho $N_reps

@@ -217,12 +217,13 @@ if plot_histogram_Nreps:
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.pdf")
 
-    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] < 200]
-    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] < 200]
+    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] != 200]
+    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] != 200]
     repstable = pd.DataFrame(
                   np.column_stack(
                     [vals_not_200, reps_not_200, 200-np.array(reps_not_200)]),
                   columns = ["M Value", "Current Nreps", "Reps to 200"])
+    print("Current HRVs that are not 200")
     print(repstable)
 
     
