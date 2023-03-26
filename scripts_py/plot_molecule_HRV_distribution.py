@@ -252,12 +252,7 @@ if plot_boundaries:
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
-                zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, mintimes, 3*np.array(mintimes_std), 
-                fmt = '.', capsize = 4, color = "C0",
-                zorder = 5, label = r"3$\sigma$")
-    ax.set_xticklabels([])
-    plt.ylabel(r"$t_{\mathrm{min}}$ $[\ell]$")
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
@@ -276,13 +271,11 @@ if plot_boundaries:
                 zorder = 10, label = r"1$\sigma$")
     plt.errorbar(x, innermosts-r_S_norm, 3*innermosts_std, 
                 fmt = '.', capsize = 4, color = "C0",
-                fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     plt.errorbar(x, outermosts-r_S_norm, outermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10)#, label = r"Outermost (with 1$\sigma$)")
     plt.errorbar(x, outermosts-r_S_norm, 5*np.array(outermosts_std), 
-                fmt = '.', capsize = 4, color = "C0",
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
@@ -294,13 +287,9 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
     from matplotlib.ticker import FormatStrFormatter
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.legend()
     plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
-    from matplotlib.ticker import FormatStrFormatter
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.legend()
     plt.grid(alpha = 0.4) 
     plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.png")

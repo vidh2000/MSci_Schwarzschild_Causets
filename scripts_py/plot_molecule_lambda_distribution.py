@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
 import os
 from os.path import expanduser
 from causets_py import causet_helpers as ch
@@ -21,14 +23,14 @@ use_selected_masses = True #gives equal spacing
 
 plot_histogram_Nreps = True
 plot_boundaries = 0
-plot_molecules = 1
+plot_molecules = 0
 do_also_not_main_plots = 0 #those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
-params = {'text.usetex' : True,
+params = {#'text.usetex' : True,
           'font.size' : 20,
-          'font.family' : 'lmodern',
+          #'font.family' : 'lmodern',
           'axes.labelsize':34,
           'legend.fontsize': 18,
           'xtick.labelsize': 20,
@@ -249,12 +251,20 @@ if plot_histogram_Nreps:
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
     #plt.show()
 
+    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] < 200]
+    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] < 200]
+    repstable = pd.DataFrame(
+                  np.column_stack(
+                    [vals_not_200, reps_not_200, 200-np.array(reps_not_200)]),
+                  columns = ["M Value", "Current Nreps", "Reps to 200"])
+    print(repstable)
+
 
 ###########################################################################
 ###########################################################################
 ###########################################################################
 ###########################################################################
-# 2.1 MOLECULES'S BOUNDARIES ##############################################
+# 3.1 MOLECULES'S BOUNDARIES ##############################################
 if plot_boundaries:
     mintimes       = np.array(mintimes)      * Rho**(1/4)
     mintimes_std   = np.array(mintimes_std)  * Rho**(1/4)
