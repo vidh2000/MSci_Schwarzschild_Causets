@@ -1,0 +1,30 @@
+Using 256 cores
+Using 128GB of RAM
+Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_for_plot_BH_lambdas.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/lambda_saving_hollow_3_or_4D.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/lambda_saving_hollow_3_or_4D.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/vh119/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+
+Dim = 4
+Rho  = 1000
+Scal = 0.177828
+Card = 39000
+Ready to save in
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/data_for_plotting/blackhole_and_lambdas4D_N39000_redge2.53_h0.58.txt
+Getting the lambdas
+
+Dim = 4
+Rho  = 5000
+Scal = 0.118921
+Card = 86000
+Ready to save in
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/data_for_plotting/blackhole_and_lambdas4D_N86000_redge2.36_h0.70.txt
+Getting the lambdas
+
+Program took in total: 3099.94 seconds
+

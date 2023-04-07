@@ -251,8 +251,8 @@ if plot_histogram_Nreps:
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
     #plt.show()
 
-    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] < 200]
-    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] < 200]
+    vals_not_200 = [vals [i] for i in range(len(vals)) if Nreps[i] != 200]
+    reps_not_200 = [Nreps[i] for i in range(len(vals)) if Nreps[i] != 200]
     repstable = pd.DataFrame(
                   np.column_stack(
                     [vals_not_200, reps_not_200, 200-np.array(reps_not_200)]),

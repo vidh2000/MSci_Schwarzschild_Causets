@@ -1,0 +1,390 @@
+Using 256 cores
+Using 512GB of RAM
+Running /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_HRVcounting_mass_1.35_N_multiplier__N_reps_50.sh
+Building the executable...
+
+C++ files to compile, flags used, executable produced:
+g++ -g '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/get_HRVs.cpp' '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/causet.cpp' '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/embeddedcauset.cpp' '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/sprinkledcauset.cpp' '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/shapes.cpp' '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/causets_cpp/spacetimes.cpp'  -o '/rds/general/user/sv519/home/MSci_Schwarzschild_Causets/scripts_cpp/for_submitting_cpp/get_HRVs.exe'  -std=c++17 -Ofast -fopenmp  -I /rds/general/user/sv519/home/boost/boost_1_80_0
+.............................Compiled............................!
+
+Finished building the executable
+Go into the directory of the executable file:
+PARAMETERS used in the causet generation:
+mass=1.35, Rho=5000, N_reps=50
+
+Scale = 0.118921
+R done
+r done
+T done
+h done
+N done
+r pushed back
+h pushed back
+T pushed back
+N pushed back
+N_reps pushed back
+
+
+============ Sprinkling into cylinder ===================
+Doing CMatrix and inferring future links from it
+ 
+======================================================
+Main interation count: 1/1
+N = 156365. r_S = 2.7. Radius = 3.05676. Hollow = 0.766575. Dimension = 4. Height = 0.475683. Centered at t = -0.237841.
+M=1.35, 1/50
+Time taken generating for N = 156678: 33.7492 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156676/156678-Time taken in count_HRVs for N = 156678: 8.66155 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 2/50
+Time taken generating for N = 156074: 27.9805 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156072/156074-Time taken in count_HRVs for N = 156074: 23.7769 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 3/50
+Time taken generating for N = 156860: 24.9616 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156858/156860-Time taken in count_HRVs for N = 156860: 18.749 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 4/50
+Time taken generating for N = 156161: 25.3873 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156159/156161-Time taken in count_HRVs for N = 156161: 15.9477 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 5/50
+Time taken generating for N = 156857: 25.4165 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156855/156857-Time taken in count_HRVs for N = 156857: 18.9183 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 6/50
+Time taken generating for N = 156228: 26.1474 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156226/156228-Time taken in count_HRVs for N = 156228: 8.15438 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 7/50
+Time taken generating for N = 157011: 22.7901 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-157009/157011-Time taken in count_HRVs for N = 157011: 20.5615 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 8/50
+Time taken generating for N = 156380: 22.1975 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156378/156380-Time taken in count_HRVs for N = 156380: 19.8587 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 9/50
+Time taken generating for N = 156094: 22.3607 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156092/156094-Time taken in count_HRVs for N = 156094: 20.7505 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 10/50
+Time taken generating for N = 156913: 21.8732 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156911/156913-Time taken in count_HRVs for N = 156913: 22.0312 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 11/50
+Time taken generating for N = 156516: 21.7422 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156514/156516-Time taken in count_HRVs for N = 156516: 8.41739 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 12/50
+Time taken generating for N = 156331: 21.7008 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156329/156331-Time taken in count_HRVs for N = 156331: 16.4739 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 13/50
+Time taken generating for N = 156078: 22.0384 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156076/156078-Time taken in count_HRVs for N = 156078: 21.3996 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 14/50
+Time taken generating for N = 155397: 22.0062 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155395/155397-Time taken in count_HRVs for N = 155397: 7.65911 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 15/50
+Time taken generating for N = 156166: 27.3195 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156164/156166-Time taken in count_HRVs for N = 156166: 11.4938 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 16/50
+Time taken generating for N = 156992: 22.1596 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156990/156992-Time taken in count_HRVs for N = 156992: 17.4919 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 17/50
+Time taken generating for N = 156564: 22.1768 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156562/156564-Time taken in count_HRVs for N = 156564: 20.5182 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 18/50
+Time taken generating for N = 156778: 22.0466 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156776/156778-Time taken in count_HRVs for N = 156778: 8.45366 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 19/50
+Time taken generating for N = 156635: 21.9451 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156633/156635-Time taken in count_HRVs for N = 156635: 21.7924 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 20/50
+Time taken generating for N = 155606: 27.0486 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155604/155606-Time taken in count_HRVs for N = 155606: 21.2472 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 21/50
+Time taken generating for N = 156873: 22.0175 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156871/156873-Time taken in count_HRVs for N = 156873: 18.898 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 22/50
+Time taken generating for N = 156431: 21.9508 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156429/156431-Time taken in count_HRVs for N = 156431: 10.2414 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 23/50
+Time taken generating for N = 156122: 21.658 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156120/156122-Time taken in count_HRVs for N = 156122: 17.1095 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 24/50
+Time taken generating for N = 156415: 21.767 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156413/156415-Time taken in count_HRVs for N = 156415: 21.9428 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 25/50
+Time taken generating for N = 156269: 26.4997 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156267/156269-Time taken in count_HRVs for N = 156269: 14.7233 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 26/50
+Time taken generating for N = 157080: 21.9331 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-157078/157080-Time taken in count_HRVs for N = 157080: 17.3242 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 27/50
+Time taken generating for N = 156023: 21.6022 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156021/156023-Time taken in count_HRVs for N = 156023: 11.9156 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 28/50
+Time taken generating for N = 157340: 22.1726 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-157338/157340-Time taken in count_HRVs for N = 157340: 21.42 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 29/50
+Time taken generating for N = 157105: 22.2073 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-157103/157105-Time taken in count_HRVs for N = 157105: 8.0873 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 30/50
+Time taken generating for N = 156793: 21.5227 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156791/156793-Time taken in count_HRVs for N = 156793: 19.3624 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 31/50
+Time taken generating for N = 157175: 22.149 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-157173/157175-Time taken in count_HRVs for N = 157175: 18.7768 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 32/50
+Time taken generating for N = 156959: 21.9969 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156957/156959-Time taken in count_HRVs for N = 156959: 8.3293 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 33/50
+Time taken generating for N = 156226: 21.612 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156224/156226-Time taken in count_HRVs for N = 156226: 21.8882 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 34/50
+Time taken generating for N = 156877: 21.8621 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156875/156877-Time taken in count_HRVs for N = 156877: 13.2907 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 35/50
+Time taken generating for N = 156093: 21.783 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156091/156093-Time taken in count_HRVs for N = 156093: 14.6373 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 36/50
+Time taken generating for N = 155624: 21.9944 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155622/155624-Time taken in count_HRVs for N = 155624: 7.65243 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 37/50
+Time taken generating for N = 156132: 22.108 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156130/156132-Time taken in count_HRVs for N = 156132: 13.5885 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 38/50
+Time taken generating for N = 156039: 21.8448 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156037/156039-Time taken in count_HRVs for N = 156039: 19.5959 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 39/50
+Time taken generating for N = 155855: 22.1895 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155853/155855-Time taken in count_HRVs for N = 155855: 8.01938 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 40/50
+Time taken generating for N = 156618: 22.2308 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156616/156618-Time taken in count_HRVs for N = 156618: 16.8174 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 41/50
+Time taken generating for N = 156117: 21.979 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156115/156117-Time taken in count_HRVs for N = 156117: 16.4577 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 42/50
+Time taken generating for N = 156041: 21.8187 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156039/156041-Time taken in count_HRVs for N = 156041: 11.0923 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 43/50
+Time taken generating for N = 156492: 21.9163 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156490/156492-Time taken in count_HRVs for N = 156492: 11.4111 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 44/50
+Time taken generating for N = 155543: 21.7913 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155541/155543-Time taken in count_HRVs for N = 155543: 15.6886 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 45/50
+Time taken generating for N = 155888: 21.8996 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155886/155888-Time taken in count_HRVs for N = 155888: 9.66318 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 46/50
+Time taken generating for N = 156662: 21.911 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156660/156662-Time taken in count_HRVs for N = 156662: 22.1389 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 47/50
+Time taken generating for N = 156254: 21.9513 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156252/156254-Time taken in count_HRVs for N = 156254: 14.9662 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 48/50
+Time taken generating for N = 156932: 22.2501 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156930/156932-Time taken in count_HRVs for N = 156932: 12.7378 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 49/50
+Time taken generating for N = 155989: 22.1859 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-155987/155989-Time taken in count_HRVs for N = 155989: 20.4872 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+M=1.35, 50/50
+Time taken generating for N = 156475: 22.3879 seconds
+Is open? in save_molecules_only0
+Doing HRVs in save_molecules_only
+Starting capped futures in count_HRVs
+-156473/156475-Time taken in count_HRVs for N = 156475: 12.7502 seconds
+Saving Iteration 1to the file: /rds/general/user/sv519/home/MSci_Schwarzschild_Causets/data/HRVs_connectivity/M=1.35_Rho=5000.00_Card=156365_r=3.06_hollow=0.77_dur=0.480.txt
+
+=============================================================
+===============================================================
+
+Program took in total: 1941.97 seconds
+
+Parameters used:

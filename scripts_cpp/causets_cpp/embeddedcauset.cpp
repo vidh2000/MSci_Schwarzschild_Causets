@@ -2402,6 +2402,7 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
 {
     std::fstream out;
     out.open(path_file_ext);
+    std::cout<<"Is open? in save_molecules_only"<<out.is_open()<<std::endl;
     //if (!out.is_open()) std::cout<<"It is not open"<<std::endl;
     out<<"Storage option," << "molecules only" << std::endl;
     out<<"Size,"<<_size<<std::endl;
@@ -2471,6 +2472,7 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
 
     else if (strcmp(molecule_option, "HRVs")==0)
     {        
+        std::cout<<"Doing HRVs in save_molecules_only"<<std::endl;
         int i = 0;
         auto HRVs = get_HRVs(t_f, r_S);
         int N = HRVs.size();
