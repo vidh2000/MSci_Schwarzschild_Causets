@@ -17,7 +17,7 @@
 
 #include <unistd.h>
 #include <sys/types.h>
-#include <pwd.h>
+//#include <pwd.h>
 
 #include "../../causets_cpp/sprinkledcauset.h"
 #include "../../causets_cpp/shapes.h"
@@ -32,12 +32,11 @@ using std::endl;
 using std::vector;
 
 //running parameters
-bool run_on_hpc = true;
+bool run_on_hpc = false;
 
 // Sprinkled causet parameters
-int myreps = 50;
-std::vector<int> mycards = {128, 256, 512, 768, 1024, 1536, 2048,
-                            3072, 4096, 6144, 8192, 12288};
+int myreps = 20;
+std::vector<int> mycards = {128, 256, 512, 1024, 2048, 4096, 8192};
 double radius = 1.0;
 
 bool poisson = true;
@@ -161,8 +160,10 @@ int main(int argc, char** argv) {
                             +  Nreps_str
                             + "_UpTo" + maxsize_str
                             + ".txt";
+
     if (run_on_hpc)
     {
+      std::cout<<"Run on HPC : true\n";
       const char* homeDir = getenv("HOME");
       filename = std::string(homeDir) 
                             + "/MSci_Schwarzschild_Causets/data/test_MMdim_forpy/MMdim_Flat_Nreps"
@@ -181,7 +182,7 @@ int main(int argc, char** argv) {
     }
 
     // Results
-    for (int dim : {1,2,3,4}){
+    for (int dim : {2,3,4}){
       std::vector<double> center (dim, 0.0);
       CoordinateShape shape(dim,"bicone",center,radius);
       
