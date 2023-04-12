@@ -45,7 +45,7 @@ bool special = false;
 bool use_transitivity = false;
 bool make_sets = false;
 bool make_links = false;
-const char* sets_type = "futures"; // "both only", "all", "pasts", "futures"
+const char* sets_type = "all"; // "both only", "all", "pasts", "futures"
 
 int main(int argc, char** argv) {
 
@@ -189,18 +189,18 @@ int main(int argc, char** argv) {
       
       out<<std::endl;
       for (int card : cards){
-        std::cout<<dim<<"D, N = "<<card<<std::endl;
+        //std::cout<<dim<<"D, N = "<<card<<std::endl;
         double sum = 0;
         double sum2 = 0;
         double nsuccess = 0;
 
         for (int i = 0; i<Nreps; i++){
-          std::cout << dim <<"D, N="<<card<< (i+1) <<"/"<<Nreps<< std::endl;
+          std::cout << dim <<"D, N="<<card<< ", "<<(i+1) <<"/"<<Nreps<< std::endl;
           SprinkledCauset Cs(card, S, shape, poisson,
                               make_matrix, special, use_transitivity,
                               make_sets, make_links, sets_type);
           int size_min = (card/4 < 100)? card/4 : 100;
-          vector<double> MMd_result = Cs.MMdim_est("random", 10, 
+          vector<double> MMd_result = Cs.MMdim_est("big", 10, 
                                                   size_min, card, true);
           
 
