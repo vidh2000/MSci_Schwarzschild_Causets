@@ -182,7 +182,8 @@ int main(int argc, char** argv) {
     }
 
     // Results
-    for (int dim : {2,3,4}){
+    for (int dim : {2,3,4})
+    {
       std::vector<double> center (dim, 0.0);
       CoordinateShape shape(dim,"bicone",center,radius);
       
@@ -194,6 +195,7 @@ int main(int argc, char** argv) {
         double nsuccess = 0;
 
         for (int i = 0; i<Nreps; i++){
+          std::cout << dim <<"D, "<< (i+1) <<"/"<<Nreps<< std::endl;
           SprinkledCauset Cs(card, S, shape, poisson,
                               make_matrix, special, use_transitivity,
                               make_sets, make_links, sets_type);

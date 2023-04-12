@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 ####################################################################
 # 0. SET SETTINGS
 ####################################################################
-Nreps = 5
-sizes = [64, 128, 12288]#, 512, 1024, 2048, 4096]
+Nreps = 20
+sizes = [64, 128, 8192]#, 512, 1024, 2048, 4096]
 
 file_saved_by_cpp =\
     f"data/test_MMdim_forpy/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.txt"
@@ -30,20 +30,20 @@ file_saved_by_cpp =\
 #####################################################################
 ## 1. COMPILE C++ FILE RUNNING MMDIM
 #####################################################################
-cwd = os.getcwd()
-
-# Path to MSci_Schwarzschild_Causets
-file_dir = os.path.dirname(os.path.realpath(__file__))
-main_dir = os.path.dirname(file_dir)
-print(main_dir)
+# cwd = os.getcwd()
+#
+# # Path to MSci_Schwarzschild_Causets
+# file_dir = os.path.dirname(os.path.realpath(__file__))
+# main_dir = os.path.dirname(file_dir)
+# print(main_dir)
 #remove scripts_py
-main_dir = main_dir[:-17]
-print(main_dir)
+# main_dir = main_dir[:-17]
+# print(main_dir)
 
-# Specify which file you want to run: 
-runfileDir = f"{main_dir}scripts_cpp/tests/test_causets_general/"
-runfilename = "MMdim_test_forpy.cpp"
-
+# # Specify which file you want to run: 
+# runfileDir = f"{main_dir}scripts_cpp/tests/test_causets_general/"
+# runfilename = "MMdim_test_forpy.cpp"
+ 
 # # Directory path of causets_cpp
 # causets_cpp = main_dir + "scripts_cpp/causets_cpp/"
 
