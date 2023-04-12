@@ -13,7 +13,7 @@ params = {#'text.usetex' : True,
           'font.size' : 20,
           'font.family' : 'lmodern',
           #'text.latex.unicode': True,
-          'axes.labelsize':24,
+          'axes.labelsize':34,
           'legend.fontsize': 20,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
@@ -34,8 +34,8 @@ fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
 plot_histogram_Nreps = True
-plot_boundaries = 0
-plot_molecules = 0
+plot_boundaries = 1
+plot_molecules = 1
 
 
 ##############################################################################
