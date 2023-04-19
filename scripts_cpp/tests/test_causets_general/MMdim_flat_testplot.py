@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 # 0. SET SETTINGS
 ####################################################################
 Nreps = 20
-sizes = [64, 128, 8192]#, 512, 1024, 2048, 4096]
+sizes = [32,64,128,256,512,1024,2048,4096, 8192]#, 512, 1024, 2048, 4096]
 
 file_saved_by_cpp =\
     f"data/test_MMdim_forpy/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.txt"
@@ -30,11 +30,11 @@ file_saved_by_cpp =\
 #####################################################################
 ## 1. COMPILE C++ FILE RUNNING MMDIM
 #####################################################################
-# cwd = os.getcwd()
-#
+main_dir = os.getcwd()
+main_dir = main_dir+"/"
 # # Path to MSci_Schwarzschild_Causets
-# file_dir = os.path.dirname(os.path.realpath(__file__))
-# main_dir = os.path.dirname(file_dir)
+file_dir = os.path.dirname(os.path.realpath(__file__))
+#main_dir = os.path.dirname(file_dir)
 # print(main_dir)
 #remove scripts_py
 # main_dir = main_dir[:-17]
@@ -106,22 +106,42 @@ file_saved_by_cpp =\
 #####################################################################
 ## 3. LOAD SAVE FILE AND PLOT
 #####################################################################
-info = np.loadtxt(f"{main_dir}{file_saved_by_cpp}", skiprows = 1)
+params = {'text.usetex' : True,
+          'font.size' : 20,
+          #'font.family' : 'lmodern',
+          'axes.labelsize':30,
+          'legend.fontsize': 18,
+          'xtick.labelsize': 20,
+          'ytick.labelsize': 20,
+          'figure.figsize': [8.5, 6.5], 
+          #'axes.prop_cycle':plt.cycler(color=
+          #                  plt.rcParams['axes.prop_cycle'].by_key()['color']
+          #                  +['magenta'])
+          }
+plt.rcParams.update(params)
 
-plt.figure((7,7))
+
+info = np.loadtxt(f"{main_dir}{file_saved_by_cpp}", skiprows = 1,
+                  delimiter=",")
+
+print(info)
+
+plt.figure()
 for (d,line) in enumerate(info):
     ests = []
     stds = []
-    for i in range(len(line)/2):
+    for i in range(int(len(line)/2)):
         ests.append(line[2*i])
         stds.append(line[2*i+1])
     
-    plt.errorbar(sizes, ests, stds,
+    plt.errorbar(sizes, ests, yerr=stds,
                  fmt = '.', capsize = 2, label = f"{d+1}D")
     plt.grid(alpha = 0.3)
 
 plt.xlabel("Cardinality")
 plt.ylabel("MM Dimension")
+plt.xscale("log")
+plt.ylim((1.5,4.1))
 plt.savefig(f"{main_dir}figures/MMd/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.png")
 plt.savefig(f"{main_dir}figures/MMd/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.pdf")
 plt.show()

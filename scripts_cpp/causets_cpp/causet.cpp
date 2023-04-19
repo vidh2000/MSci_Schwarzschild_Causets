@@ -454,8 +454,36 @@ Causet portion too small. Returning {-1,-1} values.";
             }
             else if (_futures[e].size() == 0){
                 Bs.push_back(e);
+        }
+        for (int e = 0; e<*N; e++)
+        {
+            // Find if e is maximal element
+            bool edge_element = true;
+            for (int j=e; j<*N; j++)
+            {
+                if (_CMatrix[e][j]!=0){
+                    edge_element = false;
+                    break;}
+            }
+            if (edge_element) {
+                 Bs.push_back(e);
+            }
+            else {
+
+                // Find if e is minimal element
+                edge_element = true;
+                for (int i=0; i<e; i++){
+                    if (_CMatrix[i][e]!=0){
+                        edge_element = false;
+                        break;
+                        }
+                    }
+                if (edge_element) {
+                    As.push_back(e);
+                }
             }
         }
+
         int counter = 0;
         for (int i=0; i<As.size(); i++)
         {
