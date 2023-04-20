@@ -254,16 +254,20 @@ double Causet::ord_fr(int a, int b,
                                     'choose' or 'n2'");
     }
     
-    if (a>b)
-    {
+    if (a>b){
         return ord_fr(b, a, denominator, from_matrix);
     }
 
     double nrelations = 0;
     double N;
     bool have_sets = _pasts.size() && _futures.size();
+
     if (_CMatrix.size() && (from_matrix || !have_sets))
     {
+        if (_CMatrix[a][b] == 0){
+            return 0.;
+        }
+
         // Get all elements in the Alexander interval [A,B]
         std::vector<int> A = {a};
 
@@ -286,8 +290,13 @@ double Causet::ord_fr(int a, int b,
             }
         }
     }      
+
     else if (have_sets)
     {
+        if (_futures[a].find(b)!=_futures[a].end()){
+        return 0;
+        }
+
         std::cout << "In pasts and futures ord_fr\n";
         std::unordered_set<int> A = set_intersection(_futures[a],_pasts[b]);
         A.insert(a);
@@ -333,7 +342,8 @@ double Causet::MM_drelation(double d)
  * @brief Use Myrheim-Meyers dimensional estimator to compute the 
           fractal dimension (not necesseraly int).
           Only intended to work with a Causet with
-          _pasts, and _futures vector<set<int>> objects existing.
+          _pasts and _futures vector<set<int>> objects existing. Could also
+          work with CMatrix. Doesn't work for spacetime of dimnsion >=10.
         
  * 
  * @param method: str 
@@ -342,7 +352,8 @@ double Causet::MM_drelation(double d)
                      and apply estimator ro their combinations.
  * 
  * @param Nsamples: int 
-            Times to iterate procedure to then average on if method "random".
+            Times to iterate procedure to then average on if method "random"
+            or, also, if it is big.
             Default is 20.
  * 
  * @param size_min: int\n
@@ -351,7 +362,7 @@ double Causet::MM_drelation(double d)
  * 
  * @param size_max: int\n
             Maximum size of Alexandrov Sets on which you apply estimators.
-            Default and highly recommended is np.Inf.
+            Default and highly recommended is 1e9.
  * 
  * @return
         - dimension estimate: float
@@ -443,6 +454,7 @@ Causet portion too small. Returning {-1,-1} values.";
             }
         }
     }
+
     else if (strcmp(method, "big")==0)
     {
         vector<int> As = {};
@@ -459,10 +471,12 @@ Causet portion too small. Returning {-1,-1} values.";
         int counter = 0;
         for (int i=0; i<As.size(); i++)
         {
-            for (int j=0; j<Bs.size(); j++)
+            if (counter > Nsamples) break;
+            for (int j=Bs.size()-1; j>-1; j--)
             {   
                 int a = As[i];
                 int b = Bs[j];
+                if (a == b) continue;
                 double n = (double)IntervalCard(a, b)*1.0;
                 //std::cout << "n = " << n << std::endl;
                 if (n >= size_min && n<= size_max) 
@@ -470,38 +484,38 @@ Causet portion too small. Returning {-1,-1} values.";
                     counter++;
                     double fr_i = this->ord_fr(a,b,"choose",from_matrix);
                     //std::cout << "fr_i =" << fr_i << std::endl; 
-                    if (fr_i ==1.0)
-                    {
+                    if (fr_i ==1.0){
                         destimates.push_back(1);
                     }
                     else
                     {
                         //Order fraction correction for MMestimator
-                        //std::cout << "n after = " << (n-1.0)/n << std::endl;
-                        fr_i *= (n-1.0)/n;
-                        //std::cout << "fr_i after = " << fr_i << std::endl; 
+                        fr_i *= ((double)n-1.0)/(double)n;
 
                         // Define function whose root needs to be found
                         auto MM_to_solve = [fr_i](double d){
                             return Causet::MM_drelation(d) - fr_i/2;};
 
-                        double dmin = 0.1;
+                        double dmin = 0.9;
                         double dmax = 10;
                         // Estimate dimension of Causet
                         double d_i = bisection(MM_to_solve,dmin,dmax);
                         //std::cout << "dim est = " << d_i << std::endl;
+                        if (d_i != dmin && d_i != dmax)
                         destimates.push_back(d_i);
                     }
                 }
             }
         }
     }
+
     else
     {
         const char* errormsg = "'method' parameter must be 'random' or 'big'";
         std::cout<<errormsg<<std::endl;
         throw std::invalid_argument(errormsg);
     }
+
     // Return mean and std of dimension estimate result
     double sum = std::accumulate(std::begin(destimates),
                                  std::end(destimates), 0.0);
@@ -515,7 +529,7 @@ Causet portion too small. Returning {-1,-1} values.";
                     });
 
     double stdev = sqrt(accum / (destimates.size()));
-    vector<double> result = {mean,stdev};
+    vector<double> result = {mean, stdev};
     return result;
     
 }   
@@ -613,7 +627,7 @@ void Causet::saveC(const char* path_file_ext)
  * @param a int : label of event a.
  * @param b int : label of event b
  * @param includeBoundary bool : innclude a and b in count?
- * @return int : Cardinality of Interval
+ * @return int : Cardinality of Interval. 0 if they are not related.
  */
 int Causet::IntervalCard(int a, int b, bool includeBoundary)
 {
@@ -622,6 +636,10 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
     // IF DEFINED USE CMATRIX
     if (_CMatrix.size())
     {
+        if ((a<b && _CMatrix[a][b] == 0) || (b<a && _CMatrix[b][a] == 0)){
+            return 0;
+        }
+
         int Nintersections = 2 * includeBoundary;
         if (a<b)
         {
@@ -638,8 +656,12 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
     // ELSE USE SETS
     else //if ( _pasts.size() && _futures.size()) and no cmatrix exists
     {
+
         if (a<b)
         {
+            if (_futures[a].find(b)!=_futures[a].end()){
+                return 0;
+            }
             int Nintersections = 2 * includeBoundary;
             if (_futures[a].size()<_pasts[b].size()) //loop over shortest
             {
@@ -653,8 +675,12 @@ int Causet::IntervalCard(int a, int b, bool includeBoundary)
             }
             return Nintersections;
         }
+
         else /*b<a*/
         {
+            if ( _futures[b].find(a)!=_futures[b].end()){
+                return 0;
+            }
             int Nintersections = 2 * includeBoundary;
             if (_pasts[a].size()<_futures[b].size()) //loop over shortest
             {

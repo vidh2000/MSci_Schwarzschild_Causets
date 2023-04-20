@@ -21,12 +21,12 @@ use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
 
 
 ps = {"text.usetex": True,
-      "font.size" : 16,
+      "font.size" : 20,
       "font.family" : "lmodern",
       "axes.labelsize": 24,
-      "legend.fontsize": 21,
-      "xtick.labelsize": 16,
-      "ytick.labelsize": 16,
+      "legend.fontsize": 20,
+      "xtick.labelsize": 18,
+      "ytick.labelsize": 18,
       "figure.figsize": [6, 12],
       "mathtext.default": "default"
        }
@@ -63,8 +63,8 @@ print(file_name)
 ###################################################################
 #%%### PLOT
 ###################################################################
-ax = cplt.plot_causet(file_name, savefile_ext=savefile_ext+".pdf",
-                      link_alpha = 0.25,
+ax = cplt.plot_causet(file_name,# savefile_ext=savefile_ext+".pdf",
+                      link_alpha = 0.5,
                         figsize = (7,7))
 
 

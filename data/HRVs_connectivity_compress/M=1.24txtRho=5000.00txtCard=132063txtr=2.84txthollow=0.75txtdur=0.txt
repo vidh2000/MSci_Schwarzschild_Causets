@@ -1,0 +1,2 @@
+Nreps,3avg,3std,4avg,4std,5avg,5std,6avg,6std,7avg,7std,8avg,8std,9avg,9std,10avg,10std
+2,299.5,6.5,21.0,4.0,28.5,0.5,5.0,1.0,5.0,2.0,0.5,0.5,0.5,0.5,0.5,0.5

@@ -75,8 +75,8 @@ int main()
                 for (int card : cards)
                 {
                     std::cout<<"\nCARD "<<card<<" \n";
-                    CoordinateShape shape (dim,name,center,radius,myduration,
-                                        edge,edges,0.0);
+                    CoordinateShape shape (dim,name,center,0.0,radius,myduration,
+                                        edge,edges);
                     Spacetime S;
                     S.BlackHoleSpacetime(dim, mass, metric);
                     SprinkledCauset C(card, S, shape, poisson,

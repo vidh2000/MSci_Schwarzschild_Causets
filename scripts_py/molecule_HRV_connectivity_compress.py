@@ -19,8 +19,12 @@ from scipy.sparse.csgraph import connected_components
 # HRV_connectivity_compress/M=<>_Rho=<>_Card=<>_r=<>_hollow=<>_dur=<>.txt
 ###############################################################################
 
+a = [1,1,1,2]
+print(np.bincount(a))
+print(np.bincount(a)[1:])
 
-def get_info_of_HRVs(file_ext):
+
+def get_info_of_HRVs_for_connectivity(file_ext):
     """
 
     Parameters
@@ -30,36 +34,13 @@ def get_info_of_HRVs(file_ext):
 
     Returns
     -------
-    - size : int (#0)
-
-    - dim : int (#1)
-
-    - shapename : str (#2)
-
-    - spacetimename : str (#3)
-
-    - coords : list<list<float>> (#4)
-
-    - r_S : float (#5)
-    
-    - molecules : list<list<int>> (#6) /not all files have that,
-    so might return empty list if molecules are not saved.
-
     - Adj_matrix : np.ndarray(int, int)
         Adj_ij = 1 if i < j or j < i
         Irreflexive, i.e 0 diagonal.
     """
     with open(file_ext, 'r') as fl: 
             f = fl.readlines() 
-
-            size           = int(f[1].split(",")[1])
-            dim            = int(f[2].split(",")[1])
-            shapename      = str(f[3].split(",")[1])
-            spacetimename  = str(f[4].split(",")[1])
-
             mols = []
-            coords = []
-            r_S = 0
 
             #start reading file from last line
             go = -1
@@ -75,20 +56,16 @@ def get_info_of_HRVs(file_ext):
                     for label in row[1:]:
                         if label != "" and label != "\n":
                             mols[-1].append(int(label))
-                    go =- 1
+                    go -= 1
 
                 elif "r_S" in key:
                     r_S = float(row[1])
-                    go -= 1
-
+                    break
                 elif "Coordinates" in key:
                     break
                 else: #the coordinates#
-                    coords.insert(0, [])
-                    for i in range(dim):
-                        coords[0].append(float(row[i]))
-                    go -= 1
-            # finished reading file from last line
+                    break
+            # finished reading file
 
             # make adjacency matrix of connections
             N = np.amax(mols) +1
@@ -99,16 +76,7 @@ def get_info_of_HRVs(file_ext):
                 Adj_matrix[mol[0], mol[2]] = 1
                 Adj_matrix[mol[2], mol[0]] = 1
 
-    return [size,           #0
-            dim,            #1
-            shapename,      #2
-            spacetimename,  #3
-
-            coords,         #4
-            r_S,            #5
-
-            mols,           #6
-            Adj_matrix]     #7
+    return Adj_matrix
     
 
 ##############################################################################
@@ -119,22 +87,6 @@ varying_var = "M"     #variable varying: can be M, Rho, Nmult (M best)
 fixed_var = "Rho"     #variable fixed:   can be, M, Rho, Nmult (Rho best)
 fixed_val = 5000     #value of fixed_var 
 use_selected_masses = True #gives equal spacing
-
-#plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
-#Options
-params = {'text.usetex' : True,
-          'font.size' : 20,
-          'font.family' : 'lmodern',
-          'axes.labelsize':34,
-          'legend.fontsize': 18,
-          'xtick.labelsize': 20,
-          'ytick.labelsize': 20,
-          'figure.figsize': [8.5, 6.5], 
-          'axes.prop_cycle':plt.cycler(color=
-                            plt.rcParams['axes.prop_cycle'].by_key()['color']
-                            +['magenta'])
-          }
-plt.rcParams.update(params)
 
 
 ##############################################################################
@@ -148,6 +100,7 @@ if not os.path.exists(dataDir):
     path = os.getcwd()
     plotsDir = path + f"/figures/N{molecules}_vs_Area/"
     dataDir = path + f"/data/{molecules}_connectivity/"
+newDataDir = dataDir + "_compress"
 print(dataDir)
 # ensure that, if using Mor Rho, it is decimal with exactly 2 dec digits
 
@@ -157,15 +110,15 @@ else:
     fixed_string = f"{fixed_var}={fixed_val}"
 
 
-selected_masses = np.array([0.53, 0.75, 0.92, 1.06, 1.19, 
-                            1.30, 1.40, 1.50, 
-                            1.59, 1.68, 1.76, 1.84, 1.91, 1.98, 
-                            2.05, 2.12, 2.19, 2.25, 2.31, 2.37, 2.43,
-                            0.65, 0.84, 0.99, 1.13, 1.24, 1.35, 1.45,
-                            1.55, 1.63, 1.72, 1.88, 1.95,
-                            1.8,
-                            2.02, 2.09, 2.15, 2.22, 2.28, 2.34, 
-                            2.4, 2.46 ])
+selected_masses = np.array([
+                            0.53, 0.65, 0.75, 0.92, 0.99, 1.06, 1.13, 
+                            #1.19, 1.24, 1.30, 1.35, 1.40, 1.45, 1.50, 
+                            # 1.55, 1.63, 1.72, 1.80, 1.88, 1.95,
+                            # 1.59, 1.68, 1.76, 1.84, 1.91, 1.98, 
+                            # 2.02, 2.09, 2.15, 2.22, 2.28, 2.34, 
+                            # 2.05, 2.12, 2.19, 2.25, 2.31, 2.37, 2.43,
+                            # 2.4, 2.46
+                            ])
 
 
 
@@ -174,9 +127,12 @@ selected_masses = np.array([0.53, 0.75, 0.92, 1.06, 1.19,
 ##############################################################################
 
 # an entry for each M
+file_names = [] #store name of files (one per value of varying_value)
 Nreps = []
 varying_values = []
-connectivities = []
+sizes_i_n = [] # the ith array corresponds to  a certain varying_value and is
+               # and is an Nreps[i]-long array of arrays of sizes of the HRVs
+               # clusters in the nth repetition
 
 
 for root, dirs, files in os.walk(dataDir):
@@ -188,7 +144,7 @@ for root, dirs, files in os.walk(dataDir):
                 go_on = True
                 file_i_path = os.path.join(root, file_i)
                 file_i_pieces = file_i.split("_")
-                # get the value of the varying variable of file_i
+                # get the value of the varying variable (M) of file_i
                 for piece_j in file_i_pieces:
                     if varying_var+"=" in piece_j:
                         varying_var_i = float(piece_j.split("=")[1])
@@ -197,29 +153,31 @@ for root, dirs, files in os.walk(dataDir):
                             go_on = False
                             break #j loop
                         if varying_var_i not in varying_values:
-                            print(varying_var+"=", varying_var_i)
+                            print(varying_var+" =", varying_var_i)
                             varying_values.append(varying_var_i)
-                            Nreps.append([])
-                            connectivities.append([])
+                            Nreps.append(0)
+                            sizes_i_n.append([])
+                            file_names.append(file_i)
                         break
             # if the file is correct
             if go_on: 
                 # 2.1 get # of components and info on dstribution of sizes of
                 # components
-                results = get_info_of_HRVs(file_i_path)
-                Aij = results[-1]
+                Aij = get_info_of_HRVs_for_connectivity(file_i_path)
+                #1. Get the number of clusters and label elements by custer
                 n_components, labels = connected_components(Aij)
-                sizes = np.bincount(labels)
-                mean = np.mean(sizes)
-                std  = np.std(sizes)
-                sk   = skew(sizes)
-                kur  = kurtosis(sizes)
+                #2. Bin the labels to get the size of each ith cluster 
+                #Each entry of size_clusters is the size of the ith cluster
+                size_clusters = np.bincount(labels)
+                #3. Bin again to get the number of clusters of a certain size
+                # excluding size 0
+                number_per_size = np.bincount(size_clusters)[1:]
 
                 # update
                 index = varying_values.index(varying_var_i)
                 Nreps[index] += 1
-                connectivities[index].append(
-                    n_components, mean, std, sk, kur)
+                sizes_i_n[index].append(number_per_size)
+
 
 #############################################################
 # INFO ON NREPS
@@ -230,90 +188,65 @@ vals = [x[0] for x in sorted_combined]
 Nreps = [x[1] for x in sorted_combined]
 maxrep = max(Nreps)
 
-vals_not_max = [vals [i] for i in range(len(vals)) if Nreps[i] < maxrep]
-reps_not_max = [Nreps[i] for i in range(len(vals)) if Nreps[i] < maxrep]
+vals_not_max = [vals [i] for i in range(len(vals)) if Nreps[i] != maxrep]
+reps_not_max = [Nreps[i] for i in range(len(vals)) if Nreps[i] != maxrep]
 repstable = pd.DataFrame(
                 np.column_stack(
                 [vals_not_max, reps_not_max, maxrep-np.array(reps_not_max)]),
-                columns = ["M Value", "Current Nreps", "Reps to Max"])
+                columns = ["M Value", "Current Nreps", "Reps to Aim"])
 print(f"Maximum number of Nreps is {maxrep}")
-print("For the following, the maximum number of rep was not reached")
+print("The following values have a number of Nreps different than the desired")
 print(repstable)
 
 
 #############################################################
-# INFO ON CONNECTIVITIES
-con_means = [] # array of means of n_components, mean, std, sk, kur per Mass
-con_stds  = [] # array of stds of  n_components, mean, std, sk, kur per Mass
+# SAVE INFO ON SIZES OF CLUSTERS OF HRVS 
+print("\nStarting the saving file procedure")
 for i in range(len(varying_values)):
-    con_means.append(np.mean(connectivities[i], axis = 0))
-    con_stds .append(np.std(connectivities[i], axis = 0, ddof = 1))
-
-
-
-############################################################
-# PLOTS OF RESULTS
-
-# Set the right x for the varying-fixed values -> x  is Area in l^2 units
-x = np.array(varying_values)
-if varying_var=="M":
-    x = 4*np.pi*(2*x)**2 #==Area
-    if fixed_var == "Nmult":    
-        Rho = fixed_val/(4/3*np.pi*26)
-        print(f"You're doing Nmult {fixed_val} fixed!") 
-    elif fixed_var == "Rho":
-        Rho = fixed_val
-    x /= Rho**(-1/2)
-r_S_norm = np.sqrt(x / 4 / np.pi)   
-print(f"Rho = {Rho:.0f}")
-fixed_string = rf"Rho = {Rho:.0f}"
-
-
-plt.figure("n_components per Mass", tight_layout = True)
-plt.errorbar(x, con_means[:,0], con_stds[:,0], 
-             fmt = '.', capsize = 2, color = "black",
-            zorder = 10)
-plt.ylabel("Number of Components")
-plt.xlabel(r"Horizon Area $[\ell^2]$")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_number.png")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_number.pdf")
-
-
-plt.figure("components' mean size per Mass", tight_layout = True)
-plt.errorbar(x, con_means[:,1], con_stds[:,1], 
-             fmt = '.', capsize = 2, color = "black",
-            zorder = 10)
-plt.ylabel("Mean of Components' Size")
-plt.xlabel(r"Horizon Area $[\ell^2]$")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_mean.png")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_mean.pdf")
-
-
-plt.figure("components' sdev on size per Mass", tight_layout = True)
-plt.errorbar(x, con_means[:,2], con_stds[:,2], 
-             fmt = '.', capsize = 2, color = "black",
-            zorder = 10)
-plt.ylabel("Std of Components' Size")
-plt.xlabel(r"Horizon Area $[\ell^2]$")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_sdev.png")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_sdev.pdf")
-
-
-plt.figure("components' skew on size per Mass", tight_layout = True)
-plt.errorbar(x, con_means[:,3], con_stds[:,3], 
-             fmt = '.', capsize = 2, color = "black",
-            zorder = 10)
-plt.ylabel("Skew of Components' Size")
-plt.xlabel(r"Horizon Area $[\ell^2]$")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_skew.png")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_skew.pdf")
-
-
-plt.figure("components' kurtosis on size per Mass", tight_layout = True)
-plt.errorbar(x, con_means[:,4], con_stds[:,4], 
-             fmt = '.', capsize = 2, color = "black",
-            zorder = 10)
-plt.ylabel("Skew of Components' Size")
-plt.xlabel(r"Horizon Area $[\ell^2]$")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_thekurtosis.png")
-plt.savefig(plotsDir + f"{fixed_string}_HRV_components_size_thekurtosis.pdf")
+    # sizes_sum is an array, whose ith element is the sum of the # of 
+    # HRV clusters of size i among all repetitions. Dividing by Nreps[i] gives
+    # avg number of said cluster per repetitions.
+    # sizes2_sum is the sum of the squares.
+    L = len(sizes_i_n[i][0])
+    sizes_sum = sizes_i_n[i][0]*1.
+    sizes2_sum= sizes_i_n[i][0]*sizes_i_n[i][0]
+    for n in range(1,Nreps[i]):
+        try:
+            sizes_in = sizes_i_n[i][n]
+        except IndexError:
+            print(f"We are at rep {n}, within varying value {i}")
+            print(f"Nreps[i] is {Nreps[i]}")
+            print(f"Length size_i_n[i] is {len(sizes_i_n[i])}")
+            sizes_in = sizes_i_n[i][n]
+        len_diff = len(sizes_in) - L
+        if len_diff > 0:
+            temp_list = sizes_sum.tolist()
+            temp_list2 = sizes2_sum.tolist()
+            for ld in range(len_diff):
+                temp_list.append(0)              
+                temp_list2.append(0)
+                L += 1
+            sizes_sum = np.array(temp_list)
+            sizes2_sum = np.array(temp_list)
+        elif len_diff < 0:
+            temp_list = sizes_in.tolist()
+            for ld in range(abs(len_diff)):
+                temp_list.append(0)
+            sizes_in = np.array(temp_list)
+        sizes_sum += sizes_in
+        sizes2_sum+= sizes_in*sizes_in
+    mean_number_per_size = sizes_sum/Nreps[i]
+    std_number_per_size = np.sqrt(sizes2_sum/Nreps[i]
+                                  - mean_number_per_size)
+    columns = ["Nreps"]
+    data = [Nreps[i]]
+    for s in range(len(sizes_sum)):
+        columns.append(f"{s+1}avg")
+        columns.append(f"{s+1}std")
+        data.append(mean_number_per_size[s])
+        data.append(std_number_per_size[s])
+    ith_file = file_names[i][:-6] + ".txt"
+    ith_table = pd.DataFrame(data, columns = columns)
+    ith_table.to_csv(newDataDir+ith_file, sep = ",", 
+                     header = True, index = False)
+    print(f"Saved {newDataDir+ith_file}")

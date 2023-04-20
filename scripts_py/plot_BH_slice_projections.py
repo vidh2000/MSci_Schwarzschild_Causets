@@ -99,7 +99,7 @@ else:
 ###################################################################
 ax = cplt.plot_causet(file_name, savefile_ext = savefile_ext,
                     projection=1,
-                    link_alpha = 0.25,
+                    link_alpha = 0.42,
                     figsize = (7,7))
 
 

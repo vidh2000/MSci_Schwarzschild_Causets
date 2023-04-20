@@ -26,14 +26,17 @@ using namespace std::chrono;//can't use duration
 
 
 // Sprinkled causet parameters
-int card = 20;
+int card = 200;
 int dim = 3;
 std::vector<double> center (dim, 0.0);
-double radius = 4.0;
-double myduration = 10;
-double hollow = 0;
+double radius = 1.5;
+double myduration = 5;
+double hollow = 0.7;
 double edge = 1.5;
 std::vector<double> edges = {1,2,3,4};
+
+// For BH
+double mass = 0.5;
 
 
 // Sprinkling Parameters
@@ -69,6 +72,7 @@ int main(){
         
 
         Spacetime S = Spacetime();
+        //S.FlatSpacetime(dim);
         S.FlatSpacetime(dim);
         SprinkledCauset C(card, S, shape, poisson,
                           make_matrix, special, use_transitivity,

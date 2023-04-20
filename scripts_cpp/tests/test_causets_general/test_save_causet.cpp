@@ -28,6 +28,7 @@ int card = 20;
 int dim = 2;
 double radius = 3.0;
 double myduration = 3;
+double hollow = 0;
 double edge = 4;
 std::vector<double> center (dim, edge/2);
 std::vector<double> edges = {1,2,3,4};
@@ -54,7 +55,7 @@ for (const char* name : names)
 {
     std::cout<<"\n\n============= USING "<<name<<" ====================\n";
 
-    CoordinateShape shape(dim,name,center,radius,myduration,edge,edges,0.0);
+    CoordinateShape shape(dim,name,center,radius,myduration,hollow,edge,edges);
     Spacetime S = Spacetime();
     //S.FlatSpacetime(dim);
     S.BlackHoleSpacetime(dim);
@@ -62,7 +63,7 @@ for (const char* name : names)
                         make_matrix, special, use_transitivity,
                         make_sets, make_links,sets_type);
     std::cout << "Generate the causet... Saving ->" << std::endl;
-    std::string path_file_str = "../data/blackhole"+std::to_string(dim)
+    std::string path_file_str = "../../../data/blackhole"+std::to_string(dim)
                                +"D_N"+std::to_string(card)+".txt";
     const char* path_file = path_file_str.c_str();
     C.save_causet(path_file);
