@@ -15,12 +15,12 @@
 #include <unordered_set>
 #include <chrono>
 
-#include "../causets_cpp/sprinkledcauset.h"
-#include "../causets_cpp/shapes.h"
-#include "../causets_cpp/spacetimes.h"
+#include "../../causets_cpp/sprinkledcauset.h"
+#include "../../causets_cpp/shapes.h"
+#include "../../causets_cpp/spacetimes.h"
 
-#include "../causets_cpp/functions.h"
-#include "../causets_cpp/vecfunctions.h"
+#include "../../causets_cpp/functions.h"
+#include "../../causets_cpp/vecfunctions.h"
 
 using namespace std::chrono;
 using std::cout;
