@@ -71,8 +71,9 @@ int main(int argc, char* argv[]){
 
 //double mass = 0.25;
 std::vector<double> masses = {0.25};
-double Rho = 1000; //1000;
-int N_reps = 2;          
+double Rho = 5000; //1000;
+double scale = std::pow(Rho, -1.0/4.0);
+int N_reps = 30;          
 int dim = 3; //want it to be "hard coded = 4"
 
 std::vector<int> cards = {};
@@ -85,9 +86,9 @@ for (double mass : masses){
 
 
     // Shape parameters
-    double R = 4*mass;
-    double r = 4/5*mass;
-    double T = 0.625;
+    double R = 2*mass+3*scale;
+    double r = 2*mass-3*scale;
+    double T = 4*scale;
     double h = r/R;
     int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T; 
     radii.push_back(R);
@@ -111,9 +112,9 @@ const char* name = "cylinder";
 auto beginning = high_resolution_clock::now();
 
 std::cout<<"\n\n============ Sprinkling into "<<name<<" ===================\n";
-std::cout << "Doing CMatrix and inferring future links from it\n \n";
-std::cout << "Rho = " << Rho << "\n \n";
-
+std::cout << "Doing CMatrix and inferring future links from it\n";
+std::cout << "Rho = " << Rho << std::endl;
+std::cout << "Scale = " << scale << "\n \n";
 // Variables for storage of information from each iteration
 std::map<int, std::vector<double>> all_lambda_results;
 
@@ -149,7 +150,7 @@ for (auto && tup : boost::combine(cards, radii, hollow_vals,
     {
             auto repstart = high_resolution_clock::now();
             // Set up shape
-            std::vector<double> center = {-myduration/2,0.0,0.0,0.0};
+            std::vector<double> center = {-myduration/2,0.0,0.0};
             CoordinateShape shape(dim,name,center,radius,myduration,hollow);
             // Set up spacetime
             Spacetime S = Spacetime();
