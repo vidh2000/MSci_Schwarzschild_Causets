@@ -21,7 +21,7 @@ use_selected_masses = True #gives equal spacing
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
 
-plot_histogram_Nreps = True
+plot_histogram_Nreps = 0
 plot_boundaries = 0
 plot_molecules = 1
 do_also_not_main_plots = 0 #those NOT for poster
@@ -91,8 +91,9 @@ mintimes_std = []
 # matrix: a row for each type of molecule 
 #           -> molecules_distr[i] = array of occurrences of ith mol for each rho
 #         a column for each rho
-molecules_distr = []     #each entry is a row of entries
-molecules_distr_std = []
+molecules_distr = []    # each ith entry is an array whose jth entry is
+                        # the # of times the ith lambdas found for mass j
+molecules_distr_std = [] #same, but std
 
 
 for root, dirs, files in os.walk(dataDir):
@@ -509,14 +510,33 @@ if plot_molecules:
     ##########################################################################
     ### Find Probability Distribution of Lambda
     ##########################################################################
+    # Get Probs from Gradient
     grad_sum = sum(gradients)
     grad_sum_unc = np.sqrt(sum([g**2 for g in gradients_unc]))
-    
-    lambd_occurs = [sum(molecules_distr[n]) 
-                        for n in range(len(molecules_distr))]
     lambd_probs = gradients/sum(gradients)
     lambd_probs_uncs = np.sqrt(gradients_unc**2/grad_sum**2 +
                                gradients**2*grad_sum_unc**2/grad_sum**4)
+    print("p_n list and sigma_p_n obtained with gradients")
+    print([round(pn,5) for pn in lambd_probs])
+    print([round(spn,5) for spn in lambd_probs_uncs])
+    
+    # Get Probs from Counts directly - more weight on larger M
+    # lambd_occurs[n] is the number of mols found in total of size n
+    lambd_occurs = np.array([sum(molecules_distr[n]) 
+                        for n in range(len(molecules_distr))])
+    lambd_occurs_stds = np.sqrt([sum(np.array(molecules_distr_std[n])**2)
+                                for n in range(len(molecules_distr))])
+    S = sum(lambd_occurs)*1.
+    lambd_probs = lambd_occurs/S
+    lambd_probs_uncs = np.sqrt(((S - lambd_occurs)/S**2)**2 * lambd_occurs_stds**2 \
+                            +\
+                            lambd_occurs**2/S**4 * sum(lambd_occurs_stds**2))
+    print("p_n list and sigma_p_n obtained with overall occurrences")
+    print([round(pn,5) for pn in lambd_probs])
+    print([round(spn,5) for spn in lambd_probs_uncs])
+    print("Just noting that lamb_occurs was used, rather than grad_sum for\
+          \nthe probabilities p_n")
+    
 
     ###################################################################
     # Fit to exponential (1-I) * I**n

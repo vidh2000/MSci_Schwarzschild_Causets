@@ -35,8 +35,9 @@ using std::vector;
 bool run_on_hpc = false;
 
 // Sprinkled causet parameters
-int myreps = 10;
-std::vector<int> mycards = {128, 256, 512, 1024, 2048, 4096, 8193};
+int myreps = 20;
+std::vector<int> dims = {2,3,4};
+std::vector<int> mycards = {128, 256, 512, 1024, 2048, 4096, 8192, 16384};
 double radius = 1.0;
 
 bool poisson = true;
@@ -182,21 +183,21 @@ int main(int argc, char** argv) {
     }
 
     // Results
-    for (int dim : {4})
+    for (int dim : dims)
     {
       std::vector<double> center (dim, 0.0);
       CoordinateShape shape(dim,"bicone",center,radius);
       
       out<<std::endl;
       for (int card : cards){
-        std::cout<<dim<<"D, N = "<<card<<std::endl;
+        std::cout<<std::endl;
+        std::cout<<dim<<"D, N = "<<card<<": ";
         double sum = 0;
         double sum2 = 0;
         double nsuccess = 0;
 
         for (int i = 0; i<Nreps; i++){
-          std::cout << dim <<"D, N="<<card<<", "<<
-                    (i+1) <<"/"<<Nreps<< std::endl;
+          std::cout << i << ", ";
           SprinkledCauset Cs(card, S, shape, poisson,
                               make_matrix, special, use_transitivity,
                               make_sets, make_links, sets_type);
@@ -204,7 +205,7 @@ int main(int argc, char** argv) {
           vector<double> MMd_result = Cs.MMdim_est("big", 10, 
                                                   size_min, card, true);
           
-          print(MMd_result);
+          //print(MMd_result);
           if (MMd_result[0]>0)
           {
               sum  += MMd_result[0];
@@ -215,7 +216,7 @@ int main(int argc, char** argv) {
 
         double avg = sum/nsuccess;
         double std = std::sqrt(sum2/nsuccess - avg*avg);
-        std::cout << "Dim estimated=" <<avg <<"+-"<<std<<std::endl;
+        //std::cout << "Dim estimated=" <<avg <<"+-"<<std<<std::endl;
         out << avg << ", " << std;
         if (card!=cards[cards.size()-1])
         out<<",";

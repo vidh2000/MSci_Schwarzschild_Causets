@@ -471,7 +471,7 @@ Causet portion too small. Returning {-1,-1} values.";
         {
             // Find if e is maximal element
             bool edge_element = true;
-            for (int j=e; j<*N; j++)
+            for (int j=e+1; j<*N; j++)
             {
                 if (_CMatrix[e][j]!=0){
                     edge_element = false;
