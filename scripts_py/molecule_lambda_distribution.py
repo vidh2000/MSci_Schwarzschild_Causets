@@ -28,10 +28,10 @@ do_also_not_main_plots = 0 #those NOT for poster
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
-params = {#'text.usetex' : True,
+params = {'text.usetex' : True,
           'font.size' : 20,
-          #'font.family' : 'lmodern',
-          'axes.labelsize':34,
+          'font.family' : 'Times New Roman',
+          'axes.labelsize':30,
           'legend.fontsize': 18,
           'xtick.labelsize': 20,
           'ytick.labelsize': 20,
@@ -349,7 +349,7 @@ if plot_molecules:
         y    = molecules_distr[n]
         yerr = molecules_distr_std[n]
         label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs"\
-                else str(n+1) + r"$\mathbf{-}\Lambda$"
+                else r"$\Lambda_{" + str(n+1) + r"}$"
         plt.errorbar(x, y, yerr, 
                     fmt = '.', capsize = 4, 
                     label = label)
@@ -408,13 +408,13 @@ if plot_molecules:
             y    = molecules_distr[n]
             yerr = molecules_distr_std[n]
             label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                    else str(n+1) + r"$\mathbf{-}\Lambda$"
+                    else r"$\Lambda_{" + str(n+1) + r"}$"
             plt.errorbar(x, y, yerr, 
                         fmt = '.', capsize = 4, 
                         label = label)
         plt.legend()
         plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-        plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+        plt.ylabel(r"Number of $\Lambda_{n}$")
         plt.grid(alpha = 0.2)
         plt.tight_layout()
         plt.savefig(plotsDir + f"{fixed_string}_large_{molecules}.png")
@@ -427,13 +427,13 @@ if plot_molecules:
             y    = molecules_distr[n]
             yerr = molecules_distr_std[n]
             label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                    else str(n+1) + r"$\mathbf{-}\Lambda$"
+                    else r"$\Lambda_{" + str(n+1) + r"}$"
             plt.errorbar(x, y, yerr, 
                         fmt = '.', capsize = 4, 
                         label = label)
         plt.legend()
         plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-        plt.ylabel(r"Number of $n\mathbf{-}\Lambda$")
+        plt.ylabel(r"Number of $\Lambda_{n}$")
         plt.grid(alpha = 0.2)
         plt.tight_layout()
         plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.png")
@@ -442,22 +442,59 @@ if plot_molecules:
 
 
 
-        plt.figure(f"Small molecules uncertainty for {fixed_string}")
-        for n in range(0, 4):
-            yerr = molecules_distr_std[n]
-            label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                    else str(n+1) + r"$\mathbf{-}\Lambda$"
-            plt.errorbar(x, yerr, 
-                        fmt = '.', capsize = 4, 
-                        label = label)
-        plt.legend()
-        plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-        plt.ylabel(r"Uncertainty of $n\mathbf{-}\Lambda$")
-        plt.grid(alpha = 0.2)
-        plt.tight_layout()
-        plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.png")
-        plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
-        #plt.show()
+    plt.figure(f"Small molecules uncertainty for {fixed_string}")
+    for n in range(0, 4):
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else r"$\Lambda_{" + str(n+1) + r"}$"
+        plt.errorbar(x, yerr, 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+    plt.legend()
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
+    plt.grid(alpha = 0.2)
+    plt.tight_layout()
+    plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.png")
+    plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
+
+
+    plt.figure(f"Small molecules normalised uncertainty for {fixed_string}")
+    for n in range(0, 4):
+        y = molecules_distr[n]
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else r"$\Lambda_{" + str(n+1) + r"}$"
+        plt.errorbar(x, np.array(yerr)/np.array(y), 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+    plt.legend()
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
+    plt.grid(alpha = 0.2)
+    plt.tight_layout()
+    plt.savefig(plotsDir+f"{fixed_string}_normed_uncertainty_small_{molecules}.png")
+    plt.savefig(plotsDir+f"{fixed_string}_normed_uncertainty_small_{molecules}.pdf") 
+
+
+    plt.figure(f"Small molecules loglog normalised uncertainty for {fixed_string}")
+    for n in range(0, 4):
+        y = molecules_distr[n]
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+                else r"$\Lambda_{" + str(n+1) + r"}$"
+        plt.errorbar(x, np.array(yerr)/np.array(y), 
+                    fmt = '.', capsize = 4, 
+                    label = label)
+    plt.legend()
+    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
+    plt.yscale("log")
+    plt.xscale("log")
+    plt.grid(alpha = 0.2)
+    plt.tight_layout()
+    plt.savefig(plotsDir+f"{fixed_string}_normedlog_uncertainty_small_{molecules}.png")
+    plt.savefig(plotsDir+f"{fixed_string}_normedlog_uncertainty_small_{molecules}.pdf") 
 
 
     ##########################################################################
@@ -611,7 +648,7 @@ if plot_molecules:
         plt.figure("n-lambda probability distribution")
         plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
                 yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
-                label = r"$n\mathbf{-}\Lambda$ probability distribution")
+                label = r"$\Lambda_{n}$ probability distribution")
         xs = np.linspace(1, len(lambd_probs)+1,100)
         plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "green",
                 label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
@@ -629,7 +666,7 @@ if plot_molecules:
         plt.figure("n-lambda probability distribution (logscale)")
         plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
                 yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
-                label = r"$n\mathbf{-}\Lambda$ distribution")
+                label = r"$\Lambda_{n}$ distribution")
         xs = np.linspace(1, len(lambd_probs)+1,100)
         plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "gold",
                 label = r"$(1-\mathcal{I})$ $\mathcal{I}^{(n-1)}$"+ 
