@@ -4,9 +4,6 @@ import pandas as pd
 
 import os
 from os.path import expanduser
-from causets_py import causet_helpers as ch
-from scipy.optimize import curve_fit
-from scipy.stats import chisquare, pearsonr, skew, kurtosis
 from scipy.sparse.csgraph import connected_components
 
 ###############################################################################
@@ -14,7 +11,7 @@ from scipy.sparse.csgraph import connected_components
 # each containing the HRVs molecules from the nth run of a causet with 
 # specified parameters.
 #
-# Then save a file with columns being # clusters of HRVs with certain size
+# Then save a file with columns being # clusters of HRVs with certain # of points
 # and associated standard deviation (like with lambdas), of title
 # HRV_connectivity_compress/M=<>_Rho=<>_Card=<>_r=<>_hollow=<>_dur=<>.txt
 ###############################################################################
@@ -100,7 +97,7 @@ if not os.path.exists(dataDir):
     path = os.getcwd()
     plotsDir = path + f"/figures/N{molecules}_vs_Area/"
     dataDir = path + f"/data/{molecules}_connectivity/"
-newDataDir = dataDir + "_compress"
+newDataDir = dataDir[:-1] + "_compress/"
 print(dataDir)
 # ensure that, if using Mor Rho, it is decimal with exactly 2 dec digits
 
@@ -111,13 +108,13 @@ else:
 
 
 selected_masses = np.array([
-                            0.53, 0.65, 0.75, 0.92, 0.99, 1.06, 1.13, 
-                            #1.19, 1.24, 1.30, 1.35, 1.40, 1.45, 1.50, 
-                            # 1.55, 1.63, 1.72, 1.80, 1.88, 1.95,
-                            # 1.59, 1.68, 1.76, 1.84, 1.91, 1.98, 
-                            # 2.02, 2.09, 2.15, 2.22, 2.28, 2.34, 
-                            # 2.05, 2.12, 2.19, 2.25, 2.31, 2.37, 2.43,
-                            # 2.4, 2.46
+                            0.53 ,0.65, 0.75, 0.84, 0.92, 0.99, 1.06, 
+                            1.13, 1.19, 1.24, 1.30, 1.35, 1.40, 1.45, 
+                            1.50, 1.55, 1.59, 1.63, 1.68, 1.72, 1.76, 
+                            1.80, 1.84, 1.88, 1.91, 1.95, 1.98, 2.02, 
+                            2.05, 2.09, 2.12, 2.15, 2.19, 2.22, 2.25, 
+                            2.28, 2.31, 2.34, 2.37, 2.40, 
+                            2.43, 2.46, 2.49,
                             ])
 
 
@@ -157,21 +154,29 @@ for root, dirs, files in os.walk(dataDir):
                             varying_values.append(varying_var_i)
                             Nreps.append(0)
                             sizes_i_n.append([])
-                            file_names.append(file_i)
-                        break
+                            # Set name of file in which saving compress info
+                            # of HRVs of certain mass
+                            filename_to_use = ""
+                            for piece_i in file_i_pieces[:-1]:
+                                filename_to_use += piece_i + "_"
+                            filename_to_use = filename_to_use[:-1]+"txt"
+                            file_names.append(filename_to_use)
+                        break #piece_j loop 20ish lines above
+
             # if the file is correct
             if go_on: 
                 # 2.1 get # of components and info on dstribution of sizes of
                 # components
                 Aij = get_info_of_HRVs_for_connectivity(file_i_path)
                 #1. Get the number of clusters and label elements by custer
-                n_components, labels = connected_components(Aij)
+                n_components, labels = connected_components(Aij, directed = False)
                 #2. Bin the labels to get the size of each ith cluster 
                 #Each entry of size_clusters is the size of the ith cluster
                 size_clusters = np.bincount(labels)
                 #3. Bin again to get the number of clusters of a certain size
-                # excluding size 0
-                number_per_size = np.bincount(size_clusters)[1:]
+                # excluding size 0, 1 and 2 (which are not possible as size of
+                # HRV is 3).
+                number_per_size = np.bincount(size_clusters)[3:]
 
                 # update
                 index = varying_values.index(varying_var_i)
@@ -237,16 +242,13 @@ for i in range(len(varying_values)):
         sizes2_sum+= sizes_in*sizes_in
     mean_number_per_size = sizes_sum/Nreps[i]
     std_number_per_size = np.sqrt(sizes2_sum/Nreps[i]
-                                  - mean_number_per_size)
-    columns = ["Nreps"]
-    data = [Nreps[i]]
+                                  - mean_number_per_size*mean_number_per_size)
+    table_dict = {"Nreps" : Nreps[i]}
     for s in range(len(sizes_sum)):
-        columns.append(f"{s+1}avg")
-        columns.append(f"{s+1}std")
-        data.append(mean_number_per_size[s])
-        data.append(std_number_per_size[s])
+        table_dict[f"{s+3}avg"] = round(mean_number_per_size[s],3)
+        table_dict[f"{s+3}std"] = round(std_number_per_size[s],3)
     ith_file = file_names[i][:-6] + ".txt"
-    ith_table = pd.DataFrame(data, columns = columns)
+    ith_table = pd.DataFrame(table_dict, index = [0])
     ith_table.to_csv(newDataDir+ith_file, sep = ",", 
                      header = True, index = False)
     print(f"Saved {newDataDir+ith_file}")

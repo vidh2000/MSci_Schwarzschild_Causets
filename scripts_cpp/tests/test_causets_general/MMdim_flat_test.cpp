@@ -201,7 +201,7 @@ int main(int argc, char** argv) {
           SprinkledCauset Cs(card, S, shape, poisson,
                               make_matrix, special, use_transitivity,
                               make_sets, make_links, sets_type);
-          int size_min = (card/5 < 100)? card/5 : 100;
+          int size_min = (card/4 < 50)? card/4 : 50;
           vector<double> MMd_result = Cs.MMdim_est("big", 10, 
                                                   size_min, card, true);
           

@@ -1,1 +1,0 @@
-128avg, 128std, 256avg, 256std, 512avg, 512std, 1024avg, 1024std, 2048avg, 2048std, 
