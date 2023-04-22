@@ -33,7 +33,7 @@ params = {'text.usetex' : True,
           'font.size' : 25,
           'font.family' : 'Times New Roman',
           'axes.labelsize': 28,
-          'legend.fontsize': 23,
+          'legend.fontsize': 20,
           'xtick.labelsize': 22,
           'ytick.labelsize': 22,
           'figure.figsize': [8.5, 6.5], 
@@ -396,7 +396,7 @@ if plot_molecules:
     #        fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend(ncol = 2)
     plt.xlabel(r'Horizon Area $[\ell^2]$')
-    plt.ylabel(r"$ \langle \N_{\Lambda_{n}} \rangle$")
+    plt.ylabel(r"$ \langle N_{\Lambda_n} \rangle $")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
@@ -434,7 +434,7 @@ if plot_molecules:
                         label = label)
         plt.legend()
         plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-        plt.ylabel(r"$ \langle \N_{\Lambda_{n}} \rangle$")
+        plt.ylabel(r"$ \langle N_{\Lambda_n} \rangle $")
         plt.grid(alpha = 0.2)
         plt.tight_layout()
         plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.png")
@@ -471,7 +471,7 @@ if plot_molecules:
                     label = label)
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') 
-    plt.ylabel(r"$ \sigma_{\Lambda_{n}} / \langle \N_{\Lambda_{n}} \rangle$")
+    plt.ylabel(r"$ \sigma_{\Lambda_n} / \langle N_{\Lambda_n} \rangle $")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
     plt.savefig(plotsDir+f"{fixed_string}_normed_uncertainty_small_{molecules}.png")
@@ -591,7 +591,7 @@ if plot_molecules:
     #          schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
     #          ls = "--", color = "dodgerblue",
     #          label = r"$a^{(0)}_{L} A_{\ell} \left[ 1 + \frac{1.901}{\sqrt{A_{\ell}}} \right]$")
-    # ax.set_ylabel(r"$\langle N_L \rangle$")
+    # ax.set_ylabel(r"$\langle N_L \rangle $")
     # p = axtwin.plot(x, links_std/links, "x",ls="", color = "maroon")
     # axtwin.set_ylabel( r"$ \sigma_{L}/\langle N_{L} \rangle $" )
     # axtwin.spines['right'].set_color(p[-1].get_color()) #color yaxis
