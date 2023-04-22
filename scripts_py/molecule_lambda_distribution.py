@@ -26,15 +26,16 @@ plot_boundaries = 0
 plot_molecules = 1
 do_also_not_main_plots = 0 #those NOT for poster
 
+
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
 params = {'text.usetex' : True,
-          'font.size' : 20,
+          'font.size' : 25,
           'font.family' : 'Times New Roman',
-          'axes.labelsize':30,
-          'legend.fontsize': 18,
-          'xtick.labelsize': 20,
-          'ytick.labelsize': 20,
+          'axes.labelsize': 28,
+          'legend.fontsize': 23,
+          'xtick.labelsize': 22,
+          'ytick.labelsize': 22,
           'figure.figsize': [8.5, 6.5], 
           'axes.prop_cycle':plt.cycler(color=
                             plt.rcParams['axes.prop_cycle'].by_key()['color']
@@ -71,7 +72,7 @@ selected_masses = np.array([
                             1.80, 1.84, 1.88, 1.91, 1.95, 1.98, 2.02, 
                             2.05, 2.09, 2.12, 2.15, 2.19, 2.22, 2.25, 
                             2.28, 2.31, 2.34, 2.37, 2.40, 
-                            2.43, 2.46, 2.49,
+                            #2.43, 2.46, 2.49, 2.52, 2.54, 2.57, 2.60, 2.63
                             ])
 
 
@@ -275,13 +276,13 @@ if plot_boundaries:
     outermosts_std = np.array(outermosts_std)* Rho**(1/4)
 
     rc = 2; c = 1; r = 2
-    plt.figure(f'Boundaries for {fixed_string}',
+    plt.figure(f'Boundaries for {fixed_string}', figsize = (10,10),
                 tight_layout = True)
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
-    #plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
-    #                va='bottom', ha = 'left')
+    plt.annotate ("a)", (-0.2, 1.05), xycoords = "axes fraction", 
+                   va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -289,14 +290,14 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r'$t_{\mathrm{min}} [\ell]$')
+    plt.ylabel(r'$\Delta t_{\mathrm{max}} [\ell]$')
     plt.legend()
     plt.grid(alpha = 0.4) 
 
     # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
-    #plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
-    #                va='bottom', ha = 'left')
+    plt.annotate ("b)", (-0.2, 1.05), xycoords = "axes fraction", 
+                   va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -395,7 +396,7 @@ if plot_molecules:
     #        fontsize=12, va='center', ha = 'right', bbox=props)
     plt.legend(ncol = 2)
     plt.xlabel(r'Horizon Area $[\ell^2]$')
-    plt.ylabel(r"Number of $\Lambda_{n}$")
+    plt.ylabel(r"$ \langle \N_{\Lambda_{n}} \rangle$")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
@@ -433,7 +434,7 @@ if plot_molecules:
                         label = label)
         plt.legend()
         plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-        plt.ylabel(r"Number of $\Lambda_{n}$")
+        plt.ylabel(r"$ \langle \N_{\Lambda_{n}} \rangle$")
         plt.grid(alpha = 0.2)
         plt.tight_layout()
         plt.savefig(plotsDir + f"{fixed_string}_XXL_{molecules}.png")
@@ -442,21 +443,21 @@ if plot_molecules:
 
 
 
-    plt.figure(f"Small molecules uncertainty for {fixed_string}")
-    for n in range(0, 4):
-        yerr = molecules_distr_std[n]
-        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                else r"$\Lambda_{" + str(n+1) + r"}$"
-        plt.errorbar(x, yerr, 
-                    fmt = '.', capsize = 4, 
-                    label = label)
-    plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
-    plt.grid(alpha = 0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.png")
-    plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
+    # plt.figure(f"Small molecules uncertainty for {fixed_string}")
+    # for n in range(0, 4):
+    #     yerr = molecules_distr_std[n]
+    #     label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+    #             else r"$\Lambda_{" + str(n+1) + r"}$"
+    #     plt.errorbar(x, yerr, 
+    #                 fmt = '.', capsize = 4, 
+    #                 label = label)
+    # plt.legend()
+    # plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
+    # plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
+    # plt.grid(alpha = 0.2)
+    # plt.tight_layout()
+    # plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.png")
+    # plt.savefig(plotsDir+f"{fixed_string}_uncertainty_small_{molecules}.pdf") 
 
 
     plt.figure(f"Small molecules normalised uncertainty for {fixed_string}")
@@ -469,32 +470,32 @@ if plot_molecules:
                     fmt = '.', capsize = 4, 
                     label = label)
     plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
+    plt.xlabel(r'Horizon Area $[\ell^2]$') 
+    plt.ylabel(r"$ \sigma_{\Lambda_{n}} / \langle \N_{\Lambda_{n}} \rangle$")
     plt.grid(alpha = 0.2)
     plt.tight_layout()
     plt.savefig(plotsDir+f"{fixed_string}_normed_uncertainty_small_{molecules}.png")
     plt.savefig(plotsDir+f"{fixed_string}_normed_uncertainty_small_{molecules}.pdf") 
 
 
-    plt.figure(f"Small molecules loglog normalised uncertainty for {fixed_string}")
-    for n in range(0, 4):
-        y = molecules_distr[n]
-        yerr = molecules_distr_std[n]
-        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
-                else r"$\Lambda_{" + str(n+1) + r"}$"
-        plt.errorbar(x, np.array(yerr)/np.array(y), 
-                    fmt = '.', capsize = 4, 
-                    label = label)
-    plt.legend()
-    plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
-    plt.yscale("log")
-    plt.xscale("log")
-    plt.grid(alpha = 0.2)
-    plt.tight_layout()
-    plt.savefig(plotsDir+f"{fixed_string}_normedlog_uncertainty_small_{molecules}.png")
-    plt.savefig(plotsDir+f"{fixed_string}_normedlog_uncertainty_small_{molecules}.pdf") 
+    # plt.figure(f"Small molecules loglog normalised uncertainty for {fixed_string}")
+    # for n in range(0, 4):
+    #     y = molecules_distr[n]
+    #     yerr = molecules_distr_std[n]
+    #     label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs" \
+    #             else r"$\Lambda_{" + str(n+1) + r"}$"
+    #     plt.errorbar(x, np.array(yerr)/np.array(y), 
+    #                 fmt = '.', capsize = 4, 
+    #                 label = label)
+    # plt.legend()
+    # plt.xlabel(r'Horizon Area $[\ell^2]$') 
+    # plt.ylabel(r"Uncertainty of $\Lambda_{n}$")
+    # plt.yscale("log")
+    # plt.xscale("log")
+    # plt.grid(alpha = 0.2)
+    # plt.tight_layout()
+    # plt.savefig(plotsDir+f"{fixed_string}_normedlog_uncertainty_small_{molecules}.png")
+    # plt.savefig(plotsDir+f"{fixed_string}_normedlog_uncertainty_small_{molecules}.pdf") 
 
 
     ##########################################################################
@@ -543,6 +544,90 @@ if plot_molecules:
     print(f"Linearity links: Pearson r = {round(r,3)}, p-val = {round(1-pvalue,3)}")
 
 
+    #####################################################################à
+    # Do plot for links
+    plt.figure("Links")
+    plt.errorbar(x, links, yerr=links_std,
+                 capsize=4,fmt=".",ls="")
+    plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             np.linspace(x[0], x[-1]*1.05, 100)*np.sqrt(3)/10, 
+             ls = "--", color = "green",
+             label = r"$a^{(0)}_{L} \; A_{\ell}$")
+    plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
+             ls = "--", color = "darkorange",
+             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 + 1.901/\sqrt{A_{\ell}} \right]$")
+    plt.xlabel(r'Horizon Area $[\ell^2]$') 
+    plt.ylabel(r"$\langle N_L \rangle $")
+    plt.legend(loc="upper left")
+    plt.grid(alpha=0.2)
+    plt.tight_layout()
+    plt.savefig(plotsDir + "Links_vs_Area.png")
+    plt.savefig(plotsDir + "Links_vs_Area.pdf")
+
+    # Do plot for links uncertainty
+    plt.figure("Links Unc")
+    plt.plot(x, links_std/links, ".", ls="")
+    plt.xlabel(r'Horizon Area $[\ell^2]$') 
+    plt.ylabel(r"$ \sigma_L / \langle N_L \rangle $")
+    #plt.legend(loc="upper left")
+    plt.grid(alpha=0.2)
+    plt.tight_layout()
+    plt.savefig(plotsDir + "Links_NormUnc_vs_Area.png")
+    plt.savefig(plotsDir + "Links_NormUncs_vs_Area.pdf")
+
+
+    # fig = plt.figure("Links with uncs/numb")
+    # ax = plt.axes()
+    # axtwin = ax.twinx() #twin axeis sharing x-axis
+    # ax.set_xlabel(r'Horizon Area $[\ell^2]$') 
+    # ax.errorbar(x, links, yerr=links_std,
+    #              capsize=4,fmt=".",ls="", color = "black")
+    # ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+    #          np.linspace(x[0], x[-1]*1.05, 100)*np.sqrt(3)/10, 
+    #          ls = "--", color = "green",
+    #          label = r"$a^{(0)}_{L} A_{\ell}$")
+    # ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+    #          schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
+    #          ls = "--", color = "dodgerblue",
+    #          label = r"$a^{(0)}_{L} A_{\ell} \left[ 1 + \frac{1.901}{\sqrt{A_{\ell}}} \right]$")
+    # ax.set_ylabel(r"$\langle N_L \rangle$")
+    # p = axtwin.plot(x, links_std/links, "x",ls="", color = "maroon")
+    # axtwin.set_ylabel( r"$ \sigma_{L}/\langle N_{L} \rangle $" )
+    # axtwin.spines['right'].set_color(p[-1].get_color()) #color yaxis
+    # axtwin.yaxis.label.set_color(p[-1].get_color())    #color yaxis label
+    # axtwin.tick_params(axis='y', colors=p[-1].get_color()) #color yaxis tciks
+    # ax.legend(ncol = 2, loc = "upper center", fontsize = 16)
+    # fig.tight_layout()
+    # fig.savefig(plotsDir + "Links_and_NormUncs_vs_Area.png")
+    # fig.savefig(plotsDir + "Links_and_NormUncs_vs_Area.pdf")
+
+
+    # fig = plt.figure("Links with uncs")
+    # ax = plt.axes()
+    # axtwin = ax.twinx() #twin axeis sharing x-axis
+    # ax.set_xlabel(r'Horizon Area $[\ell^2]$') 
+    # ax.errorbar(x, links, yerr=links_std,
+    #              capsize=4,fmt=".",ls="")
+    # ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+    #          np.linspace(x[0], x[-1]*1.05, 100)*np.sqrt(3)/10, 
+    #          ls = "--", color = "green",
+    #          label = r"$a^{(0)}_{L} \; A_{\ell}$")
+    # ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+    #          schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
+    #          ls = "--", color = "darkorange",
+    #          label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 + 1.901/\sqrt{A_{\ell}} \right]$")
+    # ax.set_ylabel(r"Number of Links")
+    # p = axtwin.plot(x, links_std, "x",ls="")
+    # axtwin.set_ylabel( "Standard Deviation" )
+    # axtwin.spines['right'].set_color(p[-1].get_color()) #color yaxis
+    # axtwin.yaxis.label.set_color(p[-1].get_color())    #color yaxis label
+    # axtwin.tick_params(axis='y', colors=p[-1].get_color()) #color yaxis tciks
+    # fig.tight_layout()
+    # fig.savefig(plotsDir + "Links_and_Uncs_vs_Area.png")
+    # fig.savefig(plotsDir + "Links_and_Uncs_vs_Area.pdf")
+
+
     
     ##########################################################################
     ### Find Probability Distribution of Lambda
@@ -575,8 +660,10 @@ if plot_molecules:
           \nthe probabilities p_n")
     
 
+    
+
     ###################################################################
-    # Fit to exponential (1-I) * I**n
+    # Fit Probability to exponential (1-I) * I**n
 
     unsafe_start = len(noninf_indices[0]) #gets rid of data with bad statistics
     ns = np.arange(1, unsafe_start+1)
@@ -705,7 +792,7 @@ if plot_molecules:
     x = 8
     plt.figure("n-lambda exp probability distribution (logscale)")
     plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt="",ls="",ecolor="red",
+            yerr=lambd_probs_uncs,capsize=7,fmt=".",ls="",color="red",
             label = r"$\Lambda_n$ distribution")
     xs = np.linspace(1, len(lambd_probs)+0.2,100)
     plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "darkorange",
@@ -715,7 +802,7 @@ if plot_molecules:
     plt.xlabel(r"$n$")
     plt.ylabel("Probability")
     plt.yscale("log")
-    plt.legend(loc="upper right", fontsize = 24)
+    plt.legend(loc="upper right")
     plt.grid(alpha=0.2)
     plt.xticks(np.arange(1,len(lambd_probs)+1,1))
     plt.tight_layout()

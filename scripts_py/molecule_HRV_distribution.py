@@ -7,16 +7,16 @@ from os.path import expanduser
 from causets_py import causet_helpers as ch
 from scipy.optimize import curve_fit
 
+
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
 #Options
-params = {#'text.usetex' : True,
-          'font.size' : 20,
-          'font.family' : 'lmodern',
-          #'text.latex.unicode': True,
-          'axes.labelsize':34,
-          'legend.fontsize': 20,
-          'xtick.labelsize': 20,
-          'ytick.labelsize': 20,
+params = {'text.usetex' : True,
+          'font.size' : 25,
+          'font.family' : 'Times New Roman',
+          'axes.labelsize': 28,
+          'legend.fontsize': 25,
+          'xtick.labelsize': 22,
+          'ytick.labelsize': 22,
           'figure.figsize': [8.5, 6.5], 
           'axes.prop_cycle':plt.cycler(color=
                             plt.rcParams['axes.prop_cycle'].by_key()['color']
@@ -33,8 +33,9 @@ varying_var = "M"     #variable varying: can be M, Rho, Nmult
 fixed_var = "Rho"   #variable fixed: can be, M, Rho, Nmult
 fixed_val = 5000     #value of fixed_var
 
-plot_histogram_Nreps = True
-plot_boundaries = 1
+use_selected_masses = True
+plot_histogram_Nreps = False
+plot_boundaries = 0
 plot_molecules = 1
 
 
@@ -56,6 +57,17 @@ if fixed_var == "M" or fixed_var == "Rho":
     fixed_string = f"{fixed_var}=" + format(fixed_val,".2f")
 else:
     fixed_string = f"{fixed_var}={fixed_val}"
+
+
+selected_masses = np.array([
+                            0.53 ,0.65, 0.75, 0.84, 0.92, 0.99, 1.06, 
+                            1.13, 1.19, 1.24, 1.30, 1.35, 1.40, 1.45, 
+                            1.50, 1.55, 1.59, 1.63, 1.68, 1.72, 1.76, 
+                            1.80, 1.84, 1.88, 1.91, 1.95, 1.98, 2.02, 
+                            2.05, 2.09, 2.12, 2.15, 2.19, 2.22, 2.25, 
+                            2.28, 2.31, 2.34, 2.37, 2.40, 
+                            #2.43, 2.46, 2.49, 2.52, 2.54, 2.57, 2.60, 2.63
+                            ])
 
 
 ##############################################################################
@@ -91,6 +103,10 @@ for root, dirs, files in os.walk(dataDir):
                 for piece_j in file_i_pieces:
                     if varying_var+"=" in piece_j:
                         varying_var_i = float(piece_j.split("=")[1])
+                        if use_selected_masses \
+                            and varying_var_i not in selected_masses:
+                            go_on = False
+                            break #j loop
                         if varying_var_i not in varying_values:
                             print(varying_var+"=", varying_var_i)
                             varying_values.append(varying_var_i)
@@ -240,16 +256,13 @@ if plot_boundaries:
     outermosts_std = np.array(outermosts_std)* Rho**(1/4)
 
     rc = 2; c = 1; r = 2
-    figsize = (6 * c, 14 / r)
-    plt.figure(f'Boundaries for {fixed_string}',
-                figsize = (10, 6), tight_layout = True)
+    plt.figure(f'Boundaries for {fixed_string}', tight_layout = True,
+               figsize = (10, 10))
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
-    # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    # va='bottom', ha = 'left')
-    # plt.annotate ("a)", (-0.05, 1.05), xycoords = "axes fraction", 
-                    # va='bottom', ha = 'left')
+    plt.annotate ("(a)", (-0.2, 1.05), xycoords = "axes fraction", 
+                  va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -257,16 +270,14 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r"$t_{\mathrm{min}}$ $[\ell]$")
+    plt.ylabel(r"$\Delta t_{\mathrm{max}}$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
 
     # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
-    # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
-    #                 va='bottom', ha = 'left')
-    # plt.annotate ("b)", (-0.05, 1.05), xycoords = "axes fraction", 
-    #                 va='bottom', ha = 'left')
+    plt.annotate ("(b)", (-0.2, 1.05), xycoords = "axes fraction", 
+                    va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -280,10 +291,6 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5)#, label = r"Outermost (with 5$\sigma$)")
 
-    # props = dict(boxstyle='round', facecolor='wheat', edgecolor = 'grey', 
-    #             ls = '', alpha=0.2)
-    # ax.text(0.95, 0.05, rf"$\rho \: = \: {Rho:.0f}$", transform=ax.transAxes, 
-    # fontsize=10, va='bottom', ha = 'right', bbox=props)
     if varying_var == "M":
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
@@ -304,8 +311,7 @@ if plot_boundaries:
 print("")
 if plot_molecules:
 
-    plt.figure(f"Molecules for {fixed_string}", figsize=figsize, 
-            tight_layout = True)
+    plt.figure(f"Molecules for {fixed_string}", tight_layout = True)
 
     gradients = []
     gradients_unc = []
@@ -345,11 +351,52 @@ if plot_molecules:
         gradients_unc.append(unc[0])
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
-    plt.ylabel(f"Number of HRVs")
-    plt.ylabel(f"Number of HRVs")
+    plt.ylabel(r"$\langle N_{HRV} \rangle $")
     plt.grid(alpha = 0.2)
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
+
+
+    plt.figure(f"HRVs Norm Uncs", tight_layout = True)
+    ax = plt.axes()
+    ax.set_xlabel(r'Horizon Area $[\ell^2]$')
+    for n in range(len(molecules_distr)):
+        y    = molecules_distr[n]
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs"\
+                else str(n+1) + r"$\mathbf{-}\Lambda$"
+        ax.plot(x, np.array(yerr)/np.array(y), 'x', label = label)       
+    ax.set_ylabel(r"$\sigma_{HRV} / \langle N_{HRV} \rangle$")
+    ax.legend()
+    plt.grid(alpha = 0.2)
+    plt.savefig(plotsDir + f"HRVs_NormUnc_vs_Area.png") 
+    plt.savefig(plotsDir + f"HRVs_NormUnc_vs_Area.pdf") 
+
+
+    plt.figure(f"HRVs with Norm Uncs", tight_layout = True)
+    ax = plt.axes()
+    axtwin = ax.twinx()
+    ax.set_xlabel(r'Horizon Area $[\ell^2]$')
+    for n in range(len(molecules_distr)):
+        y    = molecules_distr[n]
+        yerr = molecules_distr_std[n]
+        label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs"\
+                else str(n+1) + r"$\mathbf{-}\Lambda$"
+        p = axtwin.plot(x, np.array(yerr)/np.array(y), 'x', mec = "maroon", mew = 1)
+        c = p[-1].get_color()
+        ax.errorbar(x, y, yerr, 
+                    fmt = '.', capsize = 4, 
+                    label = label,
+                    color = c)
+        
+    ax.set_ylabel(r"$\langle N_{HRV} \rangle$")
+    axtwin.set_ylabel( r"$ \sigma_{HRV}/\langle N_{HRV} \rangle $" )
+    axtwin.spines['right'].set_color("maroon") #color yaxis
+    axtwin.yaxis.label.set_color("maroon")    #color yaxis label
+    axtwin.tick_params(axis='y', colors="maroon") #color yaxis tciks
+    ax.legend()
+    plt.savefig(plotsDir + f"HRVs_and_NormUnc_vs_Area.png") 
+    plt.savefig(plotsDir + f"HRVs_and_NormUnc_vs_Area.pdf") 
     
 
 
