@@ -22,7 +22,7 @@ use_selected_masses = True #gives equal spacing
 
 
 plot_histogram_Nreps = 0
-plot_boundaries = 0
+plot_boundaries = 1
 plot_molecules = 1
 do_also_not_main_plots = 0 #those NOT for poster
 
