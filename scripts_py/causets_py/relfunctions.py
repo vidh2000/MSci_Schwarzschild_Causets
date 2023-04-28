@@ -8,7 +8,7 @@ Created on 16 Feb 2022
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from sympy import diff, symbols, sin, Matrix, init_printing, sqrt
+from sympy import diff, symbols, sin, Matrix, init_printing, sqrt, simplify
 from . import causet_helpers as ch
 
 
@@ -57,3 +57,16 @@ def printChris(g_ij, indexes = symbols('t r o p')):
                     print(f"G^{mus[i]}_{mus[j]}{mus[k]} = ",
                            Gamma[i][j][k].simplify())
     return Gamma
+
+def covDerivative_covector(cov, g_ij, indexes = symbols('t r o p')):
+    n_ab = Matrix([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+    for a in range(4):
+        for b in range(4):
+            n_ab[a,b] += diff(cov[a], indexes[b])
+            #print(simplify(diff(cov[a], indexes[b])))
+            Chris_mu_a_b_Times_cov_mu = 0
+            for mu in range(4):
+                Chris_mu_a_b = Christoffel_ijk(g_ij, mu, b, a, indexes)
+                Chris_mu_a_b_Times_cov_mu += Chris_mu_a_b * cov[mu]
+            n_ab[a,b] -= Chris_mu_a_b_Times_cov_mu
+    return n_ab
