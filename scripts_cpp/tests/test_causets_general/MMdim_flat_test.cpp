@@ -37,8 +37,11 @@ bool run_on_hpc = false;
 // Sprinkled causet parameters
 int myreps = 20;
 std::vector<int> dims = {2,3,4};
-std::vector<int> mycards = {128, 256, 512, 1024, 2048, 4096, 8192, 16384};
+std::vector<int> mycards = {128, 256, 512, 1024, 2048};
 double radius = 1.0;
+
+//MMdim par
+int nsamples = 30;
 
 bool poisson = true;
 bool make_matrix = true;
@@ -201,8 +204,8 @@ int main(int argc, char** argv) {
           SprinkledCauset Cs(card, S, shape, poisson,
                               make_matrix, special, use_transitivity,
                               make_sets, make_links, sets_type);
-          int size_min = (card/4 < 50)? card/4 : 50;
-          vector<double> MMd_result = Cs.MMdim_est("big", 10, 
+          int size_min = (card/6 < 50)? card/6 : 50;
+          vector<double> MMd_result = Cs.MMdim_est("big", nsamples, 
                                                   size_min, card, true);
           
           //print(MMd_result);

@@ -349,6 +349,7 @@ if plot_molecules:
         #plt.plot(xfit, lin_func(xfit,*popt), '--', color="red")
         gradients.append(popt[0])
         gradients_unc.append(unc[0])
+    print(f"Gradient factor Overall = {round(sum(gradients),5)} +- {round(np.sqrt(sum(np.array(gradients_unc)**2)),5)}")
     plt.legend()
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(r"$\langle N_{HRV} \rangle $")

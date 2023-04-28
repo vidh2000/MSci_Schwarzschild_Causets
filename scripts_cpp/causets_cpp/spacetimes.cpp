@@ -251,7 +251,7 @@ bool Spacetime::Flat_causal(const vector<double>& xvec, const vector<double>& yv
     for(int i=1; i<xvec.size(); i++){
        dspace2 += (xvec[i]-yvec[i])*(xvec[i]-yvec[i]);
     }
-    if ((dt*dt)-(dspace2)>0){
+    if ((dt*dt) - (dspace2)  >0){
         return true;}
     else{
         return false;}
@@ -286,7 +286,7 @@ bool Spacetime::Flat_causal_periodic(const vector<double>& xvec,
                         space_delta_i*space_delta_i :
                         wrapped_space_delta_i*wrapped_space_delta_i;
     }
-    return t_delta2 >= space_delta2;
+    return t_delta2 >= space_delta2 ;
 }
 
 
