@@ -35,9 +35,13 @@ using std::vector;
 bool run_on_hpc = false;
 
 // Sprinkled causet parameters
-int myreps = 20;
+int myreps = 60;
 std::vector<int> dims = {2,3,4};
+<<<<<<< HEAD
 std::vector<int> mycards = {128, 256, 512, 1024, 2048};
+=======
+std::vector<int> mycards = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768};
+>>>>>>> e20ba53ed25fce62b8fd3d436ad3082041d4a187
 double radius = 1.0;
 
 //MMdim par

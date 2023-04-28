@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 ####################################################################
 # 0. SET SETTINGS
 ####################################################################
-Nreps = 20
-sizes = [32,64,128,256,512,1024,2048,4096, 8192]#, 512, 1024, 2048, 4096]
+Nreps = 60
+sizes = [128,256,512,1024,2048,4096, 8192,16384,32768]#, 512, 1024, 2048, 4096]
 
 file_saved_by_cpp =\
     f"data/test_MMdim_forpy/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.txt"
@@ -107,16 +107,16 @@ file_dir = os.path.dirname(os.path.realpath(__file__))
 ## 3. LOAD SAVE FILE AND PLOT
 #####################################################################
 params = {'text.usetex' : True,
-          'font.size' : 20,
-          #'font.family' : 'lmodern',
-          'axes.labelsize':30,
-          'legend.fontsize': 18,
-          'xtick.labelsize': 20,
-          'ytick.labelsize': 20,
+          'font.size' : 25,
+          'font.family' : 'Times New Roman',
+          'axes.labelsize': 28,
+          'legend.fontsize': 20,
+          'xtick.labelsize': 22,
+          'ytick.labelsize': 22,
           'figure.figsize': [8.5, 6.5], 
-          #'axes.prop_cycle':plt.cycler(color=
-          #                  plt.rcParams['axes.prop_cycle'].by_key()['color']
-          #                  +['magenta'])
+          'axes.prop_cycle':plt.cycler(color=
+                            plt.rcParams['axes.prop_cycle'].by_key()['color']
+                            +['magenta'])
           }
 plt.rcParams.update(params)
 
@@ -135,13 +135,16 @@ for (d,line) in enumerate(info):
         stds.append(line[2*i+1])
     
     plt.errorbar(sizes, ests, yerr=stds,
-                 fmt = '.', capsize = 2, label = f"{d+1}D")
-    plt.grid(alpha = 0.3)
+                 fmt = '.', capsize = 4, label = f"D={d+2}")
+    plt.hlines(d+2,128,32800,linestyles="dashed", color="red")
+    #plt.grid(alpha = 0.3)
 
-plt.xlabel("Cardinality")
-plt.ylabel("MM Dimension")
+plt.xlabel(r"Cardinality")
+plt.ylabel(r"MM Dimension")
+plt.legend(loc="lower right")
 plt.xscale("log")
-plt.ylim((1.5,4.1))
+plt.ylim((1,4.1))
+plt.tight_layout()
 plt.savefig(f"{main_dir}figures/MMd/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.png")
 plt.savefig(f"{main_dir}figures/MMd/MMdim_Flat_Nreps{Nreps}_UpTo{max(sizes)}.pdf")
 plt.show()
