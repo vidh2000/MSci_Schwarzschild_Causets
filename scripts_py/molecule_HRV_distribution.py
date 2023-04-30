@@ -261,8 +261,8 @@ if plot_boundaries:
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
-    plt.annotate ("(a)", (-0.2, 1.05), xycoords = "axes fraction", 
-                  va='bottom', ha = 'left')
+    #plt.annotate ("(a)", (-0.2, 1.05), xycoords = "axes fraction", 
+    #              va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -276,8 +276,8 @@ if plot_boundaries:
 
     # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
-    plt.annotate ("(b)", (-0.2, 1.05), xycoords = "axes fraction", 
-                    va='bottom', ha = 'left')
+    #plt.annotate ("(b)", (-0.2, 1.05), xycoords = "axes fraction", 
+    #                va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -300,6 +300,7 @@ if plot_boundaries:
     plt.ylabel(r"$\langle \Delta r_{\mathrm{max}} \rangle$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
+    plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.png")
     plt.savefig(plotsDir + f"{fixed_string}__{molecules}Boundaries_to_rs_in_l.pdf")
     
@@ -354,6 +355,7 @@ if plot_molecules:
     plt.xlabel(r'Horizon Area $[\ell^2]$') #not yet in terms of l^2
     plt.ylabel(r"$\langle N_{HRV} \rangle $")
     plt.grid(alpha = 0.2)
+    plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.png") 
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}.pdf") 
 
@@ -366,10 +368,11 @@ if plot_molecules:
         yerr = molecules_distr_std[n]
         label = ("Open HRV" if n==0 else "Closed HRV ") if molecules == "HRVs"\
                 else str(n+1) + r"$\mathbf{-}\Lambda$"
-        ax.plot(x, np.array(yerr)/np.array(y), 'x', label = label)       
+        ax.plot(x, np.array(yerr)/np.array(y), 'o', label = label)       
     ax.set_ylabel(r"$\sigma_{HRV} / \langle N_{HRV} \rangle$")
     ax.legend()
     plt.grid(alpha = 0.2)
+    plt.tight_layout()
     plt.savefig(plotsDir + f"HRVs_NormUnc_vs_Area.png") 
     plt.savefig(plotsDir + f"HRVs_NormUnc_vs_Area.pdf") 
 
@@ -396,6 +399,7 @@ if plot_molecules:
     axtwin.yaxis.label.set_color("maroon")    #color yaxis label
     axtwin.tick_params(axis='y', colors="maroon") #color yaxis tciks
     ax.legend()
+    plt.tight_layout()
     plt.savefig(plotsDir + f"HRVs_and_NormUnc_vs_Area.png") 
     plt.savefig(plotsDir + f"HRVs_and_NormUnc_vs_Area.pdf") 
     

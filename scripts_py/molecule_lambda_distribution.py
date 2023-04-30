@@ -254,6 +254,7 @@ if plot_histogram_Nreps:
     plt.vlines(vals, 0, 200, alpha = 0.1, ls ="--")
     plt.ylabel("Nreps")
     plt.xlabel("M")
+    plt.tight_layout()
     plt.savefig(plotsDir + f"{fixed_string}_{molecules}Nreps.png")
     #plt.show()
 
@@ -285,8 +286,8 @@ if plot_boundaries:
 
     # MINTIME #######################################################
     ax = plt.subplot(r, c, 1)
-    plt.annotate ("a)", (-0.2, 1.05), xycoords = "axes fraction", 
-                   va='bottom', ha = 'left')
+    #plt.annotate ("a)", (-0.2, 1.05), xycoords = "axes fraction", 
+    #               va='bottom', ha = 'left')
     plt.errorbar(x, mintimes, mintimes_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -300,8 +301,8 @@ if plot_boundaries:
 
     # INNERMOST & OUTMOST ####################################################
     ax = plt.subplot(r, c, 2)
-    plt.annotate ("b)", (-0.2, 1.05), xycoords = "axes fraction", 
-                   va='bottom', ha = 'left')
+    #plt.annotate ("b)", (-0.2, 1.05), xycoords = "axes fraction", 
+    #               va='bottom', ha = 'left')
     plt.errorbar(x, innermosts-r_S_norm, innermosts_std, 
                 fmt = '.', capsize = 2, color = "black",
                 zorder = 10, label = r"1$\sigma$")
@@ -693,7 +694,7 @@ if plot_molecules:
                             p0 = 1-lambd_probs[0],
                             sigma=lambd_probs_uncs[:unsafe_start],
                             absolute_sigma=True)
-    unc = np.sqrt(np.diag(pcov))
+    unc = np.sqrt(np.diag(pcov)) 
     #expected = i_exp(ns, *popt)
     #Chi2, pvalue = chisquare(lambd_occurs[:unsafe_start], expected, len(popt))
     print(" \n#### N-LAMBDAS DISTRIBUTION ####")
@@ -836,6 +837,7 @@ if plot_molecules:
         plt.yscale("log")
         plt.legend(loc="upper right")
         plt.grid(alpha=0.2)
+        plt.tight_layout()
         plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution_I_logy.pdf")
         #plt.show()
