@@ -76,7 +76,8 @@ selected_masses = np.array([
                             # 1.72, 1.76, 
                             # 1.80, 1.84, 1.88, 1.91, 1.95, 1.98, 2.02, 
                             # 2.05, 2.09, 2.12, 2.15, 2.19, 2.22, 2.25, 
-                            # 2.28, 2.31, 2.34, 2.37, 2.40, 
+                            # 2.28, 2.31, 2.34, 2.37, 
+                            2.40, 
                             # 2.43, 2.46, 2.49,
                             ])
 
@@ -168,7 +169,9 @@ print(f"Maximum number of Nreps is {maxrep}")
 print("For the following, the maximum number of rep was not reached")
 print(repstable, "\n")
 
-print(n_clusts_per_mass_per_size)
+for nlist in n_clusts_per_mass_per_size:
+    print(nlist)
+    print([round((nlist_i)/sum(nlist)*100, 3) for nlist_i in nlist])
 
 
 
@@ -193,8 +196,8 @@ fixed_string = rf"Rho = {Rho:.0f}"
 
 ##############################################################################
 #Clusters' Distribution
-
-plt.figure("Clusters")
+x = [1000, 10000, 20500]
+#plt.figure("Clusters")
 plt.figure("Clusters Log")
 for m in range(len(varying_values)):
     n_clusts_per_size_of_m = np.array(n_clusts_per_mass_per_size[m])
@@ -212,26 +215,27 @@ for m in range(len(varying_values)):
                                                 *std_clusts_per_size_of_m[i]**2
     p_std_clusts_per_size_of_m = np.sqrt(p_std_clusts_per_size_of_m)     
 
-    plt.figure("Clusters")
-    plt.errorbar(np.arange(3, len(p_clusts_per_size_of_m)+3),
-                  p_clusts_per_size_of_m, 
-                  p_std_clusts_per_size_of_m,
-                  fmt = ".", capsize = 4, 
-                  label = f"A = {int(x[m])}" + r"$\ell^2$")
+    # plt.figure("Clusters")
+    # plt.errorbar(np.arange(3, len(p_clusts_per_size_of_m)+3),
+    #               p_clusts_per_size_of_m, 
+    #               p_std_clusts_per_size_of_m,
+    #               fmt = ".", capsize = 4, 
+    #               label = f"A = {int(x[m])}" + r"$\ell^2$")
 
     plt.figure("Clusters Log")
     plt.errorbar(np.arange(3, len(p_clusts_per_size_of_m)+3),
                   p_clusts_per_size_of_m, 
                   p_std_clusts_per_size_of_m,
-                  fmt = ".", capsize = 4, 
+                  fmt = "o", 
+                  capsize = 4, 
                   label = f"A = {int(x[m])}" + r"$\ell^2$")
     
-plt.figure("Clusters")
-plt.xlabel('Cluster Size')
-plt.ylabel("Probability")
-plt.grid(alpha = 0.2)
-plt.legend()
-plt.tight_layout()
+# plt.figure("Clusters")
+# plt.xlabel('Cluster Size')
+# plt.ylabel("Probability")
+# plt.grid(alpha = 0.2)
+# plt.legend()
+# plt.tight_layout()
 
 plt.figure("Clusters Log")
 plt.xlabel('Cluster Size')
@@ -239,6 +243,7 @@ plt.ylabel("Probability")
 plt.yscale("log")
 plt.grid(alpha = 0.2)
 plt.legend()
+#plt.savefig("../figures/HRV_connectivity/ClustersDistributionLog.pdf")
 plt.tight_layout()
 
 plt.show()
