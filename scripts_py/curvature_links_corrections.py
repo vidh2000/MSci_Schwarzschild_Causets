@@ -102,23 +102,23 @@ sp.pprint(mn)
 
 
 # Define ell^mu
-ell0, ell1, ell2, ell3 = sp.symbols('ell^0 ell^1 ell^2 ell^3', real = True)
-ell_vec = sp.Matrix([ell0, ell1, 0, 0])
-ell_vec = ell_vec.subs(ell1, - 1)
-ell_cov = g_ij*ell_vec
-ellell_J = ell_vec.dot(ell_cov).subs(Jreplace)
-eql = sp.Eq(ellell_J, 0)
-ell_vec0 = sp.solve(eql, ell0)[0]
-ell_cov = ell_cov.subs(ell0, ell_vec0)
-ell_vec = ell_vec.subs(ell0, ell_vec0)
-# Print ell^mu and ell_mu in general
-print("\nell^mu is null on H, and k^mu l_mu = -1")
-ell_cov.simplify()
-ell_vec.simplify()
-print("Vector ell^mu =")
-sp.pprint(ell_vec)
-print("Covector ell_mu =")
-sp.pprint(ell_cov)
+# ell0, ell1, ell2, ell3 = sp.symbols('ell^0 ell^1 ell^2 ell^3', real = True)
+# ell_vec = sp.Matrix([ell0, ell1, 0, 0])
+# ell_vec = ell_vec.subs(ell1, - 1)
+# ell_cov = g_ij*ell_vec
+# ellell_J = ell_vec.dot(ell_cov).subs(Jreplace)
+# eql = sp.Eq(ellell_J, 0)
+# ell_vec0 = sp.solve(eql, ell0)[0]
+# ell_cov = ell_cov.subs(ell0, ell_vec0)
+# ell_vec = ell_vec.subs(ell0, ell_vec0)
+# # Print ell^mu and ell_mu in general
+# print("\nell^mu is null on H, and k^mu l_mu = -1")
+# ell_cov.simplify()
+# ell_vec.simplify()
+# print("Vector ell^mu =")
+# sp.pprint(ell_vec)
+# print("Covector ell_mu =")
+# sp.pprint(ell_cov)
 
 # Evaluate the vectors and covectors at J = H = 0 and Sigma = 0
 n_cov_J = n_cov.subs(Jreplace)
@@ -127,8 +127,8 @@ k_cov_J = k_cov.subs(Jreplace)
 k_vec_J = k_vec.subs(Jreplace)
 m_vec_J = m_vec.subs(Jreplace)
 m_cov_J = m_cov.subs(Jreplace)
-ell_vec_J = ell_vec.subs(Jreplace)
-ell_cov_J = ell_cov.subs(Jreplace)
+# ell_vec_J = ell_vec.subs(Jreplace)
+# ell_cov_J = ell_cov.subs(Jreplace)
 
 # Print n_cov, n_vec, k_cov, k_vec evaluated at H = 0 and Sigma = 0
 print("\nCovector n_mu at H = 0, Sigma = 0:")
@@ -145,16 +145,93 @@ sp.pprint(m_vec_J)
 print("\nCovector m_mu at H=0 and Sigma=0:")
 sp.pprint(m_cov_J)
 # Print ell^mu and ell_mu at H=0 and Sigma=0
-print("\nVector ell^mu at H=0 and Sigma=0:")
-sp.pprint(ell_vec_J)
-print("\nCovector ell_mu at H=0 and Sigma=0:")
-sp.pprint(ell_cov_J)
+# print("\nVector ell^mu at H=0 and Sigma=0:")
+# sp.pprint(ell_vec_J)
+# print("\nCovector ell_mu at H=0 and Sigma=0:")
+# sp.pprint(ell_cov_J)
 
 
 
 print("\n STEP 3: THE PROJECTORS  ################\n")
+h_ab = sp.Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+h_up = g_ij.inv().subs(Jreplace)
+for a in range(4):
+    for b in range(4):
+        h_ab[a,b] += n_vec[a]*n_cov[b]
+        h_up[a,b] += n_vec[a]*n_vec[b]
+
+sigma_ab_J = h_ab.subs(Jreplace)
+for a in range(4):
+    for b in range(4):
+        sigma_ab_J[a,b] -= m_vec_J[a] * m_cov_J[b]
+
+h_ab_J = h_ab.subs(Jreplace)
+
+print("\nProjector h^a_b")
+rel.print4D(h_ab)
+print("\nProjector h^a_b at J")
+rel.print4D(h_ab.subs(Jreplace))
+print("\nProjector h^{ab} at J")
+rel.print4D(h_up.subs(Jreplace))
+print("\nProjector sigma^a_b at J")
+rel.print4D(sigma_ab_J)
 
 
+
+
+
+print("\n STEP 4: THE COVARIANT DERIVATIVES  ################\n")
+n_cd = rel.covDerivative_covector(n_cov, g_ij, cs)
+k_ab_J = rel.covDerivative_covector(k_cov, g_ij, cs).subs(Jreplace)
+n_cd_J = n_cd.subs(Jreplace)
+
+print("\nnabla_d n_c")
+rel.print4D(n_cd)
+print("\nnabla_d n_c at J")
+rel.print4D(n_cd_J)
+print("\nnabla_b k_a at J")
+rel.print4D(k_ab_J)
+
+
+
+print("\n STEP 5: THE GEOMETRIC INVARIANTS  ################\n")
+Kcurvature_ab_J = sp.Matrix([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+for mu in range(4):
+    for nu in range(4):
+        for c in range(4):
+            for d in range(4):
+                Kcurvature_ab_J[mu, nu]\
+                    += n_cd_J[c, d] * h_ab_J[c, mu] * h_ab_J[d, nu]
+
+Theta_J = 0
+for mu in range(4):
+    for nu in range(4):
+        Theta_J += k_ab_J[mu,nu] * sigma_ab_J[mu,nu]
+
+Ktrace_J = rel.trace(g_ij.subs(Jreplace), Kcurvature_ab_J).subs(Jreplace)
+# Ktrace_J = 0
+# for i in range(4):
+#     for j in range(4):
+#         Ktrace_J += h_up[i,j]*Kcurvature_ab_J[i,j]
+
+Km_J = 0
+for mu in range(4):
+    for nu in range(4):
+        Km_J += Kcurvature_ab_J[mu, nu]*m_vec_J[mu]*m_vec_J[nu]
+
+
+print("\nK curvature tensor at J")
+rel.print4D(Kcurvature_ab_J)
+print("\nTrace of curvature K at J")
+print(Ktrace_J.subs(Jreplace))
+print("\nComponent of K along m")
+print(Km_J)
+print("\n Null Expansion Theta")
+print(Theta_J)
+
+
+print("\n STEP 5: THE CORRECTION a^{(1)}_L  ################\n")
+print(-1.*(0.0355127*Ktrace_J.subs(Jreplace) + 0.0887817*Km_J + 0.209*Theta_J))
 
 
 

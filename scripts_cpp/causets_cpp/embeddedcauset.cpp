@@ -1151,7 +1151,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                 }
             }
         }
-        else 
+        else /*no transitivity*/
         {
             #pragma omp parallel for schedule(dynamic)
             for(int i=0; i<_size-1; i++) //can skip the very last, i.e Nth

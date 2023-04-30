@@ -22,7 +22,7 @@ use_selected_masses = True #gives equal spacing
 
 
 plot_histogram_Nreps = 0
-plot_boundaries = 1
+plot_boundaries = 0
 plot_molecules = 1
 do_also_not_main_plots = 0 #those NOT for poster
 
@@ -202,7 +202,7 @@ def lin_func(x,a):
     return a*x
 
 # Fitting function2 == corrected-linear through vertex
-def corrected_lin_func(x,a, coeff = - 0.0464):
+def corrected_lin_func(x,a, coeff = - 0.00554885*np.sqrt(2)):
     " x is A in l units"
     M = np.sqrt(np.array(x)/(16*np.pi))
     return (a + coeff/M)*x
@@ -210,6 +210,10 @@ def corrected_lin_func(x,a, coeff = - 0.0464):
 def i_exp(n, I):
     """ (1-I) * I^(n-1) """
     return (1. - I) * I**(n-1)
+
+def chi_exp(n, chi):
+    """ I = e^{-chi} -> (1-I) * I^(n-1) """
+    return (1. - np.exp(-chi)) * np.exp(-chi)**(n-1)
 
 def i_exp_on_n(n, I):
     """ - [ I / ln(1-I) ] * I^(n-1) """
@@ -533,9 +537,10 @@ if plot_molecules:
     unc = np.sqrt(np.diag(pcov))
     print(f"Gradient of Links      = {round(popt[0],4)} +- {round(unc[0],4)}")
 
+
     # Fit to corrected linear fit
     def schwarz_lin_func(x, a):
-        return corrected_lin_func(x, a, coeff = +0.0464)
+        return corrected_lin_func(x, a, coeff = - 0.00554885*np.sqrt(2))
     popt, pcov = curve_fit(schwarz_lin_func, x, links, sigma=links_std,
                             absolute_sigma=True)
     unc = np.sqrt(np.diag(pcov))
@@ -543,7 +548,18 @@ if plot_molecules:
 
     r, pvalue = pearsonr(x, links)
     print(f"Linearity links: Pearson r = {round(r,3)}, p-val = {round(1-pvalue,3)}")
+    a_1_L = - 0.00554885*np.sqrt(2) * 10 / np.sqrt(3) * 4 * np.sqrt(np.pi)
+    plus_or_minus = " + " if popt[0]>0 else " "
 
+    # Fit correction with fixed flat coeff linear fit
+    def schwarz_lin_func2(x, a):
+        return corrected_lin_func(x, np.sqrt(3)/10, a)
+    popt, pcov = curve_fit(schwarz_lin_func2, x, links, sigma=links_std,
+                            absolute_sigma=True)
+    unc = np.sqrt(np.diag(pcov))
+    print(f"Ideal correction to go over M for a^(0)_L=sqrt(3)/10 = {round(popt[0],4)} +- {round(unc[0],4)}")
+    print("\n")
+    ideal_corr = round(popt[0]*10/np.sqrt(3)*4*np.sqrt(np.pi),3)
 
     #####################################################################à
     # Do plot for links
@@ -557,14 +573,19 @@ if plot_molecules:
     plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
              schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
              ls = "--", color = "darkorange",
-             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 + 1.901/\sqrt{A_{\ell}} \right]$")
+             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 - 0.322/\sqrt{A_{\ell}} \right]$")
+    plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             schwarz_lin_func2(np.linspace(x[0], x[-1]*1.05, 100), popt[0]), 
+             ls = "--", color = "red",
+             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1"
+             + f"{plus_or_minus}{ideal_corr}"+r"/\sqrt{A_{\ell}} \right]$")
     plt.xlabel(r'Horizon Area $[\ell^2]$') 
     plt.ylabel(r"$\langle N_L \rangle $")
     plt.legend(loc="upper left")
     plt.grid(alpha=0.2)
     plt.tight_layout()
-    plt.savefig(plotsDir + "Links_vs_Area.png")
-    plt.savefig(plotsDir + "Links_vs_Area.pdf")
+    plt.savefig(plotsDir + "Links_vs_Area_withFits.png")
+    plt.savefig(plotsDir + "Links_vs_Area_withFits.pdf")
 
     # Do plot for links uncertainty
     plt.figure("Links Unc")
@@ -653,7 +674,8 @@ if plot_molecules:
     lambd_probs = lambd_occurs/S
     lambd_probs_uncs = np.sqrt(((S - lambd_occurs)/S**2)**2 * lambd_occurs_stds**2 \
                             +\
-                            lambd_occurs**2/S**4 * sum(lambd_occurs_stds**2))
+                            lambd_occurs**2/S**4 * sum(lambd_occurs_stds**2)\
+                            - lambd_occurs**2/S**4 * lambd_occurs_stds**2)
     print("p_n list and sigma_p_n obtained with overall occurrences")
     print([round(pn,5) for pn in lambd_probs])
     print([round(spn,5) for spn in lambd_probs_uncs])
@@ -684,16 +706,16 @@ if plot_molecules:
     print("Ratio of n_to_n+1-lambdas:\n",
             [round(lambd_probs[n]/lambd_probs[n+1],5) 
             for n in range(len(lambd_probs)-1)])
-    print("\nFIT RESULTS")
+    print("\nI - FIT RESULTS")
     print("Exponential fit (1-I) I^(n-1) has:")
     print(f" - I = {round(popt[0],4)} +- {round(unc[0],4)}")
     print(f"With e^-x rather than I, it has:")
     print(f" - x = {-round(np.log(popt[0]),4)} +- {round(unc[0]/popt[0],4)}")
     #print(f"The associated Chi2 = {Chi2} and p-value = {pvalue}")
 
+
     ###################################################################
     # Do numerical calculation rather than fit for exponential 
-
     r1 = grad_sum/coefsum
     r1unc = grad_sum_unc/coefsum
     I = 1 - r1
@@ -715,7 +737,6 @@ if plot_molecules:
 
     ###################################################################
     # Do numerical calculation rather than fit for exponential - linear fall
-
     r0 = gradients[0]/coefsum
     r0unc = gradients_unc[0]/coefsum
     I2 = 1 - r0
@@ -732,6 +753,55 @@ if plot_molecules:
 
     #################################################################
     # PLot Distribution (all, all in logscale, small in logscale)
+    x = 8
+    plt.figure("n-lambda exp probability distribution (logscale)")
+    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+            yerr=lambd_probs_uncs,capsize=7,fmt=".",ls="",color="red",
+            label = r"$\Lambda_n$ distribution")
+    xs = np.linspace(1, len(lambd_probs)+0.2,100)
+    plt.plot(xs, chi_exp(xs, chi), ls = "--", color = "darkorange",
+            label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
+            f" = {round(chi,chi_ord)}"+
+            f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
+    plt.yscale("log")
+    plt.legend(loc="upper right")
+    plt.grid(alpha=0.2)
+    plt.xticks(np.arange(1,len(lambd_probs)+1,1))
+    plt.tight_layout()
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
+    plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
+
+
+    x = min(11, len(lambd_probs))
+    plt.figure("n-lambda exp probability distribution (logscale) with unc")
+    plt.errorbar(np.arange(1,x+1,1), lambd_probs[:x],
+            yerr=lambd_probs_uncs[:x],
+            capsize=7,fmt=".",ls="",color="red",
+            label = r"$\Lambda_n$ distribution"
+            )
+    xs = np.linspace(1, x+0.2,100)
+    plt.fill_between(xs, chi_exp(xs, 1.49), chi_exp(xs, 1.55), 
+                     color = "darkorange", alpha = 0.2
+                    )
+    plt.plot(xs, chi_exp(xs, 1.52), ls = "--", color = "darkorange",
+            label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
+            f" = {round(chi,chi_ord)}"+
+            f"({int(round(0.03,chi_ord)*10**chi_ord)})"
+            #f"({int(round(chiunc,chi_ord)*10**chi_ord)})"
+            )
+    plt.xlabel(r"$n$")
+    plt.ylabel("Probability")
+    plt.yscale("log")
+    plt.legend(loc="upper right")
+    plt.grid(alpha=0.2)
+    plt.xticks(np.arange(1,x+1,1))
+    plt.tight_layout()
+    plt.savefig(plotsDir + "n_lambda_prob_distribution_expx_logy_withcloud.png")
+    plt.savefig(plotsDir + "n_lambda_prob_distribution_expx_logy_withcloud.pdf")
+    plt.show()
+
     if do_also_not_main_plots:
         plt.figure("n-lambda probability distribution")
         plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
@@ -790,26 +860,6 @@ if plot_molecules:
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.png")
         plt.savefig(plotsDir + "n_lambda_probability_distribution_small.pdf")
         #plt.show()
-
-    x = 8
-    plt.figure("n-lambda exp probability distribution (logscale)")
-    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt=".",ls="",color="red",
-            label = r"$\Lambda_n$ distribution")
-    xs = np.linspace(1, len(lambd_probs)+0.2,100)
-    plt.plot(xs, i_exp(xs, *popt), ls = "--", color = "darkorange",
-            label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
-            f" = {round(chi,chi_ord)}"+
-            f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
-    plt.xlabel(r"$n$")
-    plt.ylabel("Probability")
-    plt.yscale("log")
-    plt.legend(loc="upper right")
-    plt.grid(alpha=0.2)
-    plt.xticks(np.arange(1,len(lambd_probs)+1,1))
-    plt.tight_layout()
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
     
 
 
