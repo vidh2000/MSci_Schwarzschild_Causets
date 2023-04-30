@@ -22,7 +22,7 @@ use_selected_masses = True #gives equal spacing
 
 
 plot_histogram_Nreps = 0
-plot_boundaries = 1
+plot_boundaries = 0
 plot_molecules = 1
 do_also_not_main_plots = 0 #those NOT for poster
 
@@ -536,6 +536,7 @@ if plot_molecules:
     unc = np.sqrt(np.diag(pcov))
     print(f"Gradient of Links      = {round(popt[0],4)} +- {round(unc[0],4)}")
 
+
     # Fit to corrected linear fit
     def schwarz_lin_func(x, a):
         return corrected_lin_func(x, a, coeff = - 0.00554885*np.sqrt(2))
@@ -547,6 +548,17 @@ if plot_molecules:
     r, pvalue = pearsonr(x, links)
     print(f"Linearity links: Pearson r = {round(r,3)}, p-val = {round(1-pvalue,3)}")
     a_1_L = - 0.00554885*np.sqrt(2) * 10 / np.sqrt(3) * 4 * np.sqrt(np.pi)
+    plus_or_minus = " + " if popt[0]>0 else " "
+
+    # Fit correction with fixed flat coeff linear fit
+    def schwarz_lin_func2(x, a):
+        return corrected_lin_func(x, np.sqrt(3)/10, a)
+    popt, pcov = curve_fit(schwarz_lin_func2, x, links, sigma=links_std,
+                            absolute_sigma=True)
+    unc = np.sqrt(np.diag(pcov))
+    print(f"Ideal correction to go over M for a^(0)_L=sqrt(3)/10 = {round(popt[0],4)} +- {round(unc[0],4)}")
+    print("\n")
+    ideal_corr = round(popt[0]*10/np.sqrt(3)*4*np.sqrt(np.pi),3)
 
     #####################################################################à
     # Do plot for links
@@ -561,13 +573,18 @@ if plot_molecules:
              schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
              ls = "--", color = "darkorange",
              label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 - 0.322/\sqrt{A_{\ell}} \right]$")
+    plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             schwarz_lin_func2(np.linspace(x[0], x[-1]*1.05, 100), popt[0]), 
+             ls = "--", color = "red",
+             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1"
+             + f"{plus_or_minus}{ideal_corr}"+r"/\sqrt{A_{\ell}} \right]$")
     plt.xlabel(r'Horizon Area $[\ell^2]$') 
     plt.ylabel(r"$\langle N_L \rangle $")
     plt.legend(loc="upper left")
     plt.grid(alpha=0.2)
     plt.tight_layout()
-    plt.savefig(plotsDir + "Links_vs_Area.png")
-    plt.savefig(plotsDir + "Links_vs_Area.pdf")
+    plt.savefig(plotsDir + "Links_vs_Area_withFits.png")
+    plt.savefig(plotsDir + "Links_vs_Area_withFits.pdf")
 
     # Do plot for links uncertainty
     plt.figure("Links Unc")

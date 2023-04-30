@@ -232,7 +232,6 @@ print(Theta_J)
 
 print("\n STEP 5: THE CORRECTION a^{(1)}_L  ################\n")
 print(-1.*(0.0355127*Ktrace_J.subs(Jreplace) + 0.0887817*Km_J + 0.209*Theta_J))
-print(-1.*(0.0355127*Ktrace_J.subs(Jreplace) + 0.0887817*Km_J + 0.209*Theta_J))
 
 
 

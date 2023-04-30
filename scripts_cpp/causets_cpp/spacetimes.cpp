@@ -582,25 +582,30 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
     }
 
     // Section 2.3: Sufficient Conditions for c. related and unrelated
-    //// 2.3.1 Spacelike Bounds
-    else if (r2_min_r1 <= 0)// xvec[1] >= yvec[1])
+    else if (r2_min_r1 <= 0) //r2 < r1
     {
-        //spacelike
+        //spacelike (1)
         if (t2_min_t1 + r2_min_r1 < 0)
             {return false;}
-        //spacelike
+        //spacelike (8)
         else if (t2_min_t1 - yvec[1]*varphi2 < 0) 
             {return false;}
-        //timelike
-        else if (xvec[1] - 2*mass> 0)
+        //timelike (1)
+        else if (xvec[1] - 2*mass> 0) //r1 > 2M
         {
             //First find r0
             double r0;
-            if (yvec[1] - 3*mass>= 0){r0 = yvec[1];}
-            else if (xvec[1] >= 3*mass && 3*mass > yvec[1]) {r0 = 3*mass;}
-            else {r0 = xvec[1];} //if (3*mass > r1 && r1 > 2*mass) 
-            //then
-            if (t2_min_t1 + r2_min_r1 >= (r0/std::sqrt(1-2*mass/r0))*varphi2)
+            // r1 > r2 and r2 > 3M -> r0 = r2
+            if (yvec[1] - 3*mass>= 0) 
+                {r0 = yvec[1];} 
+            // r1 > r2 and 3M in [r2, r1] -> r0 = 3M
+            else if (xvec[1] >= 3*mass && 3*mass > yvec[1]) 
+                {r0 = 3*mass;}
+            // r1 > r2 and 3M < r1 -> r0 = r1
+            else 
+                {r0 = xvec[1];} 
+            //Then
+            if (t2_min_t1 + r2_min_r1 >= (r0*varphi2 / std::sqrt(1-2*mass/r0)) )
                 {return true;}
             else
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}
@@ -609,19 +614,19 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
-    else if (r2_min_r1>0 && xvec[1] - 2*mass> 0)
+    else if (r2_min_r1>0 && xvec[1] - 2*mass> 0) //r2 > r1 > 2M
     {
-        //spacelike
+        //spacelike (3)
         if (t2_min_t1-r2_min_r1-4*std::log((yvec[1]-2*mass)/(xvec[1]-2*mass)) < 0)
             {return false;}
-        else if (xvec[1] - 3*mass> 0)
+        else if (xvec[1] - 3*mass> 0) //r1 > 3M
         {
-            //spacelike
+            //spacelike (5)
             double r0 = xvec[1];
             if (t2_min_t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return false;}
-            //timelike
-            else if (t2_min_t1>= r2_min_r1 
+            //timelike (2)
+            else if (t2_min_t1 >= r2_min_r1 
                     + 4*mass * std::log((yvec[1]-2*mass)/(xvec[1]-2*mass))
                     + (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return true;}
@@ -629,18 +634,18 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}
 
         }
-        else if(xvec[1] - 3*mass< 0 && 3*mass - yvec[1] < 0)
+        else if(xvec[1] - 3*mass< 0 && 3*mass - yvec[1] < 0) //r1 < 3M < r2
         {
-            //spacelike
+            //spacelike (6)
             double r0 = 3*mass;
             if (t2_min_t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return false;}
             else
                 {return BH_last_resort(transf_xvec, transf_yvec, mass);}
         }
-        else if(yvec[1] - 3*mass<= 0)
+        else if(yvec[1] - 3*mass<= 0) // 3M > r2 > r1
         {
-            //spacelike
+            //spacelike (7)
             double r0 = yvec[1];
             if (t2_min_t1 < (r0/std::sqrt(1-2*mass/r0))*varphi2)
                 {return false;}
@@ -651,7 +656,7 @@ bool Spacetime::BH_causal4D (const vector<double>& xvec,
             {return BH_last_resort(transf_xvec, transf_yvec, mass);}
     }
 
-    else //r2>2*mass>r1
+    else //r2>2*mass>r1 -> spacelike (2)
         {return false;}
 }
 
@@ -1002,7 +1007,8 @@ void Spacetime::CarttoSpherical (std::vector<double>& xvec)
         double theta = std::atan2(rho, xvec[3]);
         double phi = std::atan2(xvec[2],xvec[1]);
         xvec[1] = r;
-        xvec[2] = phi;
+        xvec[2] = theta;
+        xvec[3] = phi;
     }
 }
 
