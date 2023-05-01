@@ -22,8 +22,8 @@ use_selected_masses = True #gives equal spacing
 
 
 plot_histogram_Nreps = 0
-plot_boundaries = 0
-plot_molecules = 1
+plot_boundaries = 1
+plot_molecules = 0
 do_also_not_main_plots = 0 #those NOT for poster
 
 
@@ -295,7 +295,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r'$\Delta t_{\mathrm{max}} [\ell]$')
+    plt.ylabel(r'$\langle \Delta t_{\mathrm{max}} \rangle [\ell]$')
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -324,7 +324,7 @@ if plot_boundaries:
         plt.xlabel(r'Horizon Area $[\ell^2]$')
     else:
         plt.xlabel(f'{varying_var} [a.u.]')
-    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
+    plt.ylabel(r"$\langle \Delta r_{\mathrm{max}} \rangle$ $[\ell]$")
     plt.grid(alpha = 0.4) 
     from matplotlib.ticker import FormatStrFormatter
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))

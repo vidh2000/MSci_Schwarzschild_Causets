@@ -36,7 +36,7 @@ fixed_val = 5000     #value of fixed_var
 use_selected_masses = True
 plot_histogram_Nreps = False
 plot_boundaries = 1
-plot_molecules = 1
+plot_molecules = 0
 
 
 ##############################################################################
@@ -270,7 +270,7 @@ if plot_boundaries:
                 fmt = '.', capsize = 4, color = "C0",
                 zorder = 5, label = r"3$\sigma$")
     ax.set_xticklabels([])
-    plt.ylabel(r"$\Delta t_{\mathrm{max}}$ $[\ell]$")
+    plt.ylabel(r"$\langle \Delta t_{\mathrm{max}} \rangle$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
 
@@ -297,7 +297,7 @@ if plot_boundaries:
         plt.xlabel(f'{varying_var} [a.u.]')
     from matplotlib.ticker import FormatStrFormatter
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.ylabel(r"$\Delta r_{\mathrm{max}}$ $[\ell]$")
+    plt.ylabel(r"$\langle \Delta r_{\mathrm{max}} \rangle$ $[\ell]$")
     plt.legend()
     plt.grid(alpha = 0.4) 
     plt.tight_layout()
