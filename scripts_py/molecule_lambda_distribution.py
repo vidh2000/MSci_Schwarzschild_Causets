@@ -560,7 +560,8 @@ if plot_molecules:
     print(f"Ideal correction to go over M for a^(0)_L=sqrt(3)/10 = {round(popt[0],4)} +- {round(unc[0],4)}")
     print("\n")
     ideal_corr = round(popt[0]*10/np.sqrt(3)*4*np.sqrt(np.pi),3)
-
+    ideal_corr_err = round(unc[0]*10/np.sqrt(3)*4*np.sqrt(np.pi),3)
+    print(f"Ideal correction as a*l/sqrt(A) == {ideal_corr} +- {ideal_corr_err}")
     #####################################################################à
     # Do plot for links
     plt.figure("Links")
@@ -573,12 +574,12 @@ if plot_molecules:
     plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
              schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
              ls = "--", color = "darkorange",
-             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 - 0.322/\sqrt{A_{\ell}} \right]$")
+             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1 - \frac{0.322}{\sqrt{A_{\ell}}} \right]$")
     plt.plot(np.linspace(x[0], x[-1]*1.05, 100), 
              schwarz_lin_func2(np.linspace(x[0], x[-1]*1.05, 100), popt[0]), 
              ls = "--", color = "red",
              label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1"
-             + f"{plus_or_minus}{ideal_corr}"+r"/\sqrt{A_{\ell}} \right]$")
+             + f"{plus_or_minus}"+r"\frac{%.3f}{\sqrt{A_{\ell}}} \right]$" %ideal_corr)
     plt.xlabel(r'Horizon Area $[\ell^2]$') 
     plt.ylabel(r"$\langle N_L \rangle $")
     plt.legend(loc="upper left")
@@ -595,34 +596,51 @@ if plot_molecules:
     #plt.legend(loc="upper left")
     plt.grid(alpha=0.2)
     plt.tight_layout()
-    plt.savefig(plotsDir + "Links_NormUnc_vs_Area.png")
+    plt.savefig(plotsDir + "Links_NormUncs_vs_Area.png")
     plt.savefig(plotsDir + "Links_NormUncs_vs_Area.pdf")
 
 
-    # fig = plt.figure("Links with uncs/numb")
-    # ax = plt.axes()
-    # axtwin = ax.twinx() #twin axeis sharing x-axis
-    # ax.set_xlabel(r'Horizon Area $[\ell^2]$') 
-    # ax.errorbar(x, links, yerr=links_std,
-    #              capsize=4,fmt=".",ls="", color = "black")
-    # ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
-    #          np.linspace(x[0], x[-1]*1.05, 100)*np.sqrt(3)/10, 
-    #          ls = "--", color = "green",
-    #          label = r"$a^{(0)}_{L} A_{\ell}$")
-    # ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
-    #          schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
-    #          ls = "--", color = "dodgerblue",
-    #          label = r"$a^{(0)}_{L} A_{\ell} \left[ 1 + \frac{1.901}{\sqrt{A_{\ell}}} \right]$")
-    # ax.set_ylabel(r"$\langle N_L \rangle $")
-    # p = axtwin.plot(x, links_std/links, "x",ls="", color = "maroon")
-    # axtwin.set_ylabel( r"$ \sigma_{L}/\langle N_{L} \rangle $" )
-    # axtwin.spines['right'].set_color(p[-1].get_color()) #color yaxis
-    # axtwin.yaxis.label.set_color(p[-1].get_color())    #color yaxis label
-    # axtwin.tick_params(axis='y', colors=p[-1].get_color()) #color yaxis tciks
-    # ax.legend(ncol = 2, loc = "upper center", fontsize = 16)
-    # fig.tight_layout()
-    # fig.savefig(plotsDir + "Links_and_NormUncs_vs_Area.png")
-    # fig.savefig(plotsDir + "Links_and_NormUncs_vs_Area.pdf")
+    fig = plt.figure("Links with uncs/numb")
+    ax = plt.axes()
+    axtwin = ax.twinx() #twin axeis sharing x-axis
+    ax.set_xlabel(r'Horizon Area $[\ell^2]$') 
+    ax.errorbar(x, links, yerr=links_std,
+                 capsize=4,fmt=".",ls="", color = "black")
+    #ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+    #         np.linspace(x[0], x[-1]*1.05, 100)*np.sqrt(3)/10, 
+    #         ls = "--", color = "green",
+    #         label = r"$a^{(0)}_{L} A_{\ell}$")
+    #ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+    #         schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
+    #         ls = "--", color = "dodgerblue",
+    #         label = r"$a^{(0)}_{L} A_{\ell} \left[ 1 + \frac{1.901}{\sqrt{A_{\ell}}} \right]$")
+    ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             np.linspace(x[0], x[-1]*1.05, 100)*np.sqrt(3)/10, 
+             ls = "--", color = "forestgreen",
+             label = r"$a^{(0)}_{L} A_{\ell}$")
+    ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             schwarz_lin_func(np.linspace(x[0], x[-1]*1.05, 100), np.sqrt(3)/10), 
+             ls = "--", color = "darkorange",#darkorange
+             label = r"$a^{(0)}_{L} A_{\ell} \left[ 1 - \frac{0.322}{\sqrt{A_{\ell}}} \right]$")
+    ax.plot(np.linspace(x[0], x[-1]*1.05, 100), 
+             schwarz_lin_func2(np.linspace(x[0], x[-1]*1.05, 100), popt[0]), 
+             ls = "--", color = "red",
+             label = r"$a^{(0)}_{L} \; A_{\ell} \left[ 1"
+             + f"{plus_or_minus}"+r"\frac{%.3f}{\sqrt{A_{\ell}}} \right]$" %ideal_corr)
+    print(f"Ideal correction is: {plus_or_minus}{ideal_corr}")
+    ax.set_ylabel(r"$\langle N_L \rangle $")
+    p = axtwin.plot(x, links_std/links, "x",ls="", color = "midnightblue")#maroon
+    axtwin.set_ylabel( r"$ \sigma_{L}/\langle N_{L} \rangle $" )
+    axtwin.spines['right'].set_color(p[-1].get_color()) #color yaxis
+    axtwin.yaxis.label.set_color(p[-1].get_color())    #color yaxis label
+    axtwin.tick_params(axis='y', colors=p[-1].get_color()) #color yaxis tciks
+    #ax.legend(ncol = 2, loc = "upper center", fontsize = 16)
+    ax.legend(bbox_to_anchor=(0.12, 0.99), loc='upper left', borderaxespad=0,fontsize=19)
+    #ax.legend(loc="upper left")
+    #ax.set_zorder(-1)
+    plt.tight_layout()
+    fig.savefig(plotsDir + "Links_and_NormUncs_vs_Area.png")
+    fig.savefig(plotsDir + "Links_and_NormUncs_vs_Area.pdf")
 
 
     # fig = plt.figure("Links with uncs")
