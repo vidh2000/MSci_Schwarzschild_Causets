@@ -29,6 +29,7 @@ The python modules in scripts_py/causets_py:
 
 - causetplotting.py: functions for the plotting of a causet from a file saved in the format determined by the EmbeddedCauset::save_causet() and EmbeddedCauset::save_molecules() functiona. As this coding framework was born for horizon molecules' analysis, it is also possible to plot certain type of horizon molecules. It uses 'matplotlib'.
 - causethelpers.py: some functions in support of the plotting.
+- relfunctions.py: some functions concerning general relativity, using SymPy library for symbolic computations.
 
 The modules (classes and functions) are documented.
 
@@ -49,7 +50,7 @@ integrate( System system , State &start_state , Time start_time , Time end_time 
 
 Also, if you lack the mutex C++ module, which is possible on Windows, it is advisable to comment out lines 409-412 in boost/math/special_functions/detail/polygamma.hpp.
 
-Finally, plotting in Python makes use of scipy, numpy and matploltib.pyplot. 
+Finally, plotting in Python makes use of scipy, numpy and matploltib.pyplot.
 
 ## Testing
 
