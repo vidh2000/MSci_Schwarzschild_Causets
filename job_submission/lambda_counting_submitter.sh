@@ -13,13 +13,13 @@ cpp_file_to_run="'count_lambdas_3D.cpp'"  # need 'filename.cpp' inside the strin
 
 # CPP VARIABLES
 Rho=5000
-N_reps=10
+N_reps=30
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
-ncpus=32
-mem=160
-runtime="02:00:00" #format: "hh:mm:ss"
+ncpus=256
+mem=3000
+runtime="24:00:00" #format: "hh:mm:ss"
 
 
 # SET MASSES YOU WANT TO SIMULATE
@@ -35,12 +35,12 @@ runtime="02:00:00" #format: "hh:mm:ss"
 #  2.02 2.09 2.15 2.22 2.28 2.34 2.4
 #  ]
 # THIRD ROUND MASSES - 500 increments
-# 2.43 2.46 2.49 2.52 2.54 2.57 2.6 2.63 2.65 2.68  (N50, mem1500, 24h)
-# 2.7 2.73 2.76 2.78 2.81 2.83 2.86 2.88 2.91 2.93 2.9533 2.977 3.0005 (N40, mem2000, 24h)
-# 3.0239 3.047 3.07 3.0929 (N30, mem3000, 24h)
+# 2.43 2.46 2.49 2.52 2.54 2.57 2.6 2.63 2.65 2.68  (N50, mem1500, 24h) -- finished 200reps
+# 2.7 2.73 2.76 2.78 2.81 2.83 2.86 2.88 2.91 2.93 2.9533 2.977 3.0005 (N40, mem2000, 24h) -- finished submtting 200reps
+# 3.0239 3.047 3.07 3.0929 (N30, mem3000, 24h) -- 90 reps submitted for 3.0239-3.07, 60reps submitted for 3.0929
 # 3.1155 3.138 3.1604 3.1825 3.2046 3.2264 3.2482 3.2697 3.2912 3.3125 3.3337 3.3547 3.3756 3.3964 3.417 3.4375 (N20, mem4000, 24h)
 counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 2.7 2.73 2.76 2.78 2.81 2.83 2.86 2.88 2.91 2.93 2.9533
+for mass in 3.0239 3.047 3.07 3.0929
 do
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
