@@ -503,3 +503,71 @@ Finished get_lambdas_sizes
 Finished get_lambdas_distr
 Update distr starting to run now..
 Time taken in count_lambdas for N = 660569: 730.752 seconds
+M=2.78, 37/40
+Time taken generating for N = 659661: 528.257 seconds
+Count lambdas starting to run now..
+Starting doing capped futs in count_lambdas
+Finished done futs
+
+t_min for elements in lambdas = -0.308793
+r_min for elements in lambdas = 5.3575
+r_max for elements in lambdas = 5.78504
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 659661: 687.593 seconds
+M=2.78, 38/40
+Time taken generating for N = 660661: 506.62 seconds
+Count lambdas starting to run now..
+Starting doing capped futs in count_lambdas
+Finished done futs
+
+t_min for elements in lambdas = -0.28391
+r_min for elements in lambdas = 5.35694
+r_max for elements in lambdas = 5.74517
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 660661: 698.036 seconds
+M=2.78, 39/40
+Time taken generating for N = 659678: 488.702 seconds
+Count lambdas starting to run now..
+Starting doing capped futs in count_lambdas
+Finished done futs
+
+t_min for elements in lambdas = -0.303572
+r_min for elements in lambdas = 5.32021
+r_max for elements in lambdas = 5.77768
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 659678: 700.359 seconds
+M=2.78, 40/40
+Time taken generating for N = 659212: 519.532 seconds
+Count lambdas starting to run now..
+Starting doing capped futs in count_lambdas
+Finished done futs
+
+t_min for elements in lambdas = -0.318724
+r_min for elements in lambdas = 5.3406
+r_max for elements in lambdas = 5.76048
+Finished get_lambdas_sizes
+Finished get_lambdas_distr
+Update distr starting to run now..
+Time taken in count_lambdas for N = 659212: 726.379 seconds
+Average time taken for generating 40 causets with N = 660143:
+1203.09 seconds
+
+
+==========================================================
+Saving Iteration 1 to the file:
+/rds/general/user/vh119/home/MSci_Schwarzschild_Causets/data/lambdas/M=2.78_Rho=5000.00_Card=660143_r=5.92_hollow=0.88_dur=0.48.txt
+Pastkeys found are{-3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8}
+{0, 0}
+
+=============================================================
+
+Program took in total: 48123.7 seconds
+
+Parameters used:
+Dim = 4, Rho = 5000
