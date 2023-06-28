@@ -9,5 +9,5 @@ export OMP_NUM_THREADS=256
 echo Using 256 cores
 echo Using 3000GB of RAM
 
-echo Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_3.07_Rho5000_N_reps_30_Nth2.sh
-sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_3.07_Rho5000_N_reps_30_Nth2.sh
+echo Running /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_3.07_Rho5000_N_reps_30_Nth8.sh
+sh /rds/general/user/vh119/home/MSci_Schwarzschild_Causets/job_submission/submitted_jobs/runfile_files/run_file_lambdacounting_mass_3.07_Rho5000_N_reps_30_Nth8.sh

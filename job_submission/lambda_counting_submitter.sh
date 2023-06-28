@@ -9,7 +9,7 @@
 homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
-cpp_file_to_run="'count_lambdas_3D.cpp'"  # need 'filename.cpp' inside the string!
+cpp_file_to_run="'count_lambdas_4D.cpp'"  # need 'filename.cpp' inside the string! #count_lambdas_ND...
 
 # CPP VARIABLES
 Rho=5000
@@ -40,7 +40,7 @@ runtime="24:00:00" #format: "hh:mm:ss"
 # 3.0239 3.047 3.07 3.0929 (N30, mem3000, 24h) -- 90 reps submitted for 3.0239-3.07, 60reps submitted for 3.0929
 # 3.1155 3.138 3.1604 3.1825 3.2046 3.2264 3.2482 3.2697 3.2912 3.3125 3.3337 3.3547 3.3756 3.3964 3.417 3.4375 (N20, mem4000, 24h)
 counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 3.0239 3.047 3.07 3.0929
+for mass in 3.047 3.07 3.0929
 do
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
