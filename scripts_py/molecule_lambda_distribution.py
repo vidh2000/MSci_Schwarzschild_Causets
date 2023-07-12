@@ -21,9 +21,9 @@ use_selected_masses = True #gives equal spacing
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
 
-plot_histogram_Nreps = 1
+plot_histogram_Nreps = 0
 plot_boundaries = 0
-plot_molecules = 0
+plot_molecules = 1
 do_also_not_main_plots = 0 #those NOT for poster
 
 
