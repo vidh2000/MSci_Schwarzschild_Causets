@@ -35,8 +35,9 @@ fixed_val = 5000     #value of fixed_var
 
 use_selected_masses = True
 plot_histogram_Nreps = False
-plot_boundaries = 1
-plot_molecules = 0
+plot_boundaries = 0
+plot_molecules = 1
+    
 
 
 ##############################################################################

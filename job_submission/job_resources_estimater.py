@@ -5,7 +5,7 @@ import numpy as np
 #areas_ll = 4*np.pi*(2*mass)**2/(scale**2)
 
 dim=4
-areas_ll = np.arange(1000,30001,500)
+areas_ll = np.arange(1000,45001,500)
 rhos = np.array([5000])
 int8_t = False
 
