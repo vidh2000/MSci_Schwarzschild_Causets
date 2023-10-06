@@ -28,8 +28,8 @@ do_also_not_main_plots = 0 #those NOT for poster
 
 
 #plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
-#Options
-params = {'text.usetex' : False,
+#Optionss
+params = {'text.usetex' : True,
           'font.size' : 25,
           'font.family' : 'Times New Roman',
           'axes.labelsize': 28,
@@ -67,7 +67,7 @@ else:
 
 selected_masses = np.array([
                             0.53 ,0.65, 0.75, 0.84, 0.92, 0.99, 1.06, 
-                            1.13, 1.19, 1.24, 1.30, 1.35, 1.40, 1.45, 
+                            1.13, 1.19, 1.24, 1.30, 1.35, 1.40, 1.45,
                             1.50, 1.55, 1.59, 1.63, 1.68, 1.72, 1.76, 
                             1.80, 1.84, 1.88, 1.91, 1.95, 1.98, 2.02, 
                             2.05, 2.09, 2.12, 2.15, 2.19, 2.22, 2.25, 
@@ -763,41 +763,41 @@ if plot_molecules:
 
     ###################################################################
     # Do numerical calculation rather than fit for exponential - linear fall
-    r0 = gradients[0]/coefsum
-    r0unc = gradients_unc[0]/coefsum
-    I2 = 1 - r0
-    I2unc = r0unc
-    chi2 = - np.log(I2)
-    chi2unc = I2unc/I2
-    print("\nPLAIN NUMERICAL RESULTS")
-    print(f"Exponential-LinearFall model 1/ln[1/(1-I)] I^(n)/n has:")
-    print(f" - I = {round(I2,4)} +- {round(I2unc,4)}")
-    print(f"With e^-x rather than I, it has:")
-    print(f" - x = {round(chi2,4)} +- {round(chi2unc,4)}")
+    # r0 = gradients[0]/coefsum
+    # r0unc = gradients_unc[0]/coefsum
+    # I2 = 1 - r0
+    # I2unc = r0unc
+    # chi2 = - np.log(I2)
+    # chi2unc = I2unc/I2
+    # print("\nPLAIN NUMERICAL RESULTS")
+    # print(f"Exponential-LinearFall model 1/ln[1/(1-I)] I^(n)/n has:")
+    # print(f" - I = {round(I2,4)} +- {round(I2unc,4)}")
+    # print(f"With e^-x rather than I, it has:")
+    # print(f" - x = {round(chi2,4)} +- {round(chi2unc,4)}")
 
     
 
     #################################################################
     # PLot Distribution (all, all in logscale, small in logscale)
-    x = 8
-    plt.figure("n-lambda exp probability distribution (logscale)")
-    plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
-            yerr=lambd_probs_uncs,capsize=7,fmt=".",ls="",color="red",
-            label = r"$\Lambda_n$ distribution")
-    xs = np.linspace(1, len(lambd_probs)+0.2,100)
-    plt.plot(xs, chi_exp(xs, chi), ls = "--", color = "darkorange",
-            label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
-            f" = {round(chi,chi_ord)}"+
-            f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
-    plt.xlabel(r"$n$")
-    plt.ylabel("Probability")
-    plt.yscale("log")
-    plt.legend(loc="upper right")
-    plt.grid(alpha=0.2)
-    plt.xticks(np.arange(1,len(lambd_probs)+1,1))
-    plt.tight_layout()
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
-    plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
+    # x = 8
+    # plt.figure("n-lambda exp probability distribution (logscale)")
+    # plt.errorbar(np.arange(1,len(lambd_probs)+1,1), lambd_probs,
+    #         yerr=lambd_probs_uncs,capsize=7,fmt=".",ls="",color="red",
+    #         label = r"$\Lambda_n$ distribution")
+    # xs = np.linspace(1, len(lambd_probs)+0.2,100)
+    # plt.plot(xs, chi_exp(xs, chi), ls = "--", color = "darkorange",
+    #         label = r"$(e^{\chi}-1)$ $e^{- n \chi}$, $\chi$"+ 
+    #         f" = {round(chi,chi_ord)}"+
+    #         f"({int(round(chiunc,chi_ord)*10**chi_ord)})")
+    # plt.xlabel(r"$n$")
+    # plt.ylabel("Probability")
+    # plt.yscale("log")
+    # plt.legend(loc="upper right")
+    # plt.grid(alpha=0.2)
+    # plt.xticks(np.arange(1,len(lambd_probs)+1,1))
+    # plt.tight_layout()
+    # plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.png")
+    # plt.savefig(plotsDir + "n_lambda_probability_distribution_expx_logy.pdf")
 
 
     x = min(11, len(lambd_probs))
