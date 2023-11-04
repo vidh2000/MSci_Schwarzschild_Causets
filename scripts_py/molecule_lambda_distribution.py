@@ -9,6 +9,22 @@ from scipy.optimize import curve_fit
 from scipy.stats import chisquare, pearsonr
 
 
+params = {'text.usetex' : True,
+          'font.size' : 25,
+          'font.family' : 'Times New Roman',
+          'axes.labelsize': 28,
+          'legend.fontsize': 20,
+          'xtick.labelsize': 22,
+          'ytick.labelsize': 22,
+          'figure.figsize': [8.5, 6.5], 
+          }
+plt.rcParams['axes.prop_cycle'] = plt.cycler(color = [plt.get_cmap("plasma")(v)
+                                                for v in np.linspace(0,1, 13)])
+#plt.rcParams['text.latex.preamble']=r"\usepackage{lmodern}"
+plt.rcParams.update(params)
+del params
+
+
 ##############################################################################
 # 0. SET USER VARIABLES
 ##############################################################################
@@ -21,27 +37,10 @@ use_selected_masses = True #gives equal spacing
 #stef_txt_in_file = 1 #used when _stef.txt was added from Stef's jobs
 
 
-plot_histogram_Nreps = 0
+plot_histogram_Nreps = 1
 plot_boundaries = 0
-plot_molecules = 1
-do_also_not_main_plots = 0 #those NOT for poster
-
-
-#plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
-#Optionss
-params = {'text.usetex' : True,
-          'font.size' : 25,
-          'font.family' : 'Times New Roman',
-          'axes.labelsize': 28,
-          'legend.fontsize': 20,
-          'xtick.labelsize': 22,
-          'ytick.labelsize': 22,
-          'figure.figsize': [8.5, 6.5], 
-          'axes.prop_cycle':plt.cycler(color=
-                            plt.rcParams['axes.prop_cycle'].by_key()['color']
-                            +['magenta'])
-          }
-plt.rcParams.update(params)
+plot_molecules = 0
+do_also_not_main_plots = 0 #those NOT for poster nor thesis
 
 
 
@@ -77,8 +76,8 @@ selected_masses = np.array([
                             2.86, 2.88, 2.91, 2.93, 2.95, 2.98, 3.0,
                             3.02, 3.05, 3.07, 3.09,
                             3.12, 3.14, 3.16, 3.18, 3.20, 3.23,
-                            3.25, 3.27, 3.29, 3.31, #3.3337, 3.3547,
-                            #3.3756, 3.3964, 3.417, 3.4375,
+                            3.25, 3.27, 3.29, 3.31, 3.3337, 3.3547,
+                            3.3756, 3.3964, 3.417, 3.4375,
                             ])
 
 
