@@ -27,7 +27,8 @@ The C++ modules(classes) in src/cpp (but also in their prior version in scripts_
 - shapes.cpp(Shape): it handles the definition of the aforementioned implemented shapes*. 
 - spacetime.cpp(Spacetime): it handles the definition and properties of a the spacetime metrics*.
 
-* some methods in the shapes and spacetime classes have been inspired by Cristoph Minz's work, whose code can be found at [https://github.com/c-minz/Python-causets](https://github.com/c-minz/Python-causets) and for which we cite "C. J. Fewster, E. Hawkins, C. Minz, and K. Rejzner, Local structure of sprinkled causal sets, Phys. Rev. D 103, 086020 (2021)" ([https://doi.org/10.1103/PhysRevD.103.086020](https://doi.org/10.1103/PhysRevD.103.086020)). Also the inheritance structure Causet>EmbeddedCauset>SprinkledCuaset was inspired by his work.
+*
+some methods in the shapes and spacetime classes have been inspired by Cristoph Minz's work, whose code can be found at [https://github.com/c-minz/Python-causets](https://github.com/c-minz/Python-causets) and for which we cite "C. J. Fewster, E. Hawkins, C. Minz, and K. Rejzner, Local structure of sprinkled causal sets, Phys. Rev. D 103, 086020 (2021)" ([https://doi.org/10.1103/PhysRevD.103.086020](https://doi.org/10.1103/PhysRevD.103.086020)). Also the inheritance structure Causet>EmbeddedCauset>SprinkledCuaset was inspired by his work.
 
 The python modules in src/pythin (but also in their prior version in scripts_py/causets_py):
 
