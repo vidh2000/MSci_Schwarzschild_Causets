@@ -78,7 +78,7 @@ If you wish to contribute to the project, please get in contact via email:
 <vid.homsak19@imperial.ac.uk>
 
 If you use the code for your project, please cite:
-"Homsak V, Veroni S. Framework for Causet Coding. 2022."
+"Homsak V, Veroni S. Framework for Causet Coding. 2022. Available at https://github.com/vidh2000/MSci_Schwarzschild_Causets."
 
 The source code is published under the BSD 3-Clause License, see [license file](LICENSE.md).
 Copyright (c) 2020-2022, Stefano Veroni, Vid Homsak
