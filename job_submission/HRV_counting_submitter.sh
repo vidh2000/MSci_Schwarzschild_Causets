@@ -10,12 +10,11 @@
 homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
-cpp_file_to_run="'count_HRVs.cpp'"  # need 'filename.cpp' inside the string!
+cpp_file_to_run="'get_HRVs.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
 Rho=5000
-N_reps=25
-N_reps=25
+N_reps=50
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
@@ -26,8 +25,7 @@ runtime="08:00:00" #format: "hh:mm:ss"
 
 # SET MASSES YOU WANT TO SIMULATE
 # FIRST ROUND MASSES - 1k ...
-# [0.53 0.75 0.92  
-# 1.06 1.19 1.30 1.40 1.50 
+# [0.53 0.75 0.92 1.06 1.19 1.30 1.40 1.50 
 # 1.59 1.68 1.76 1.84 1.91 1.98 
 # 2.05 2.12 2.19 2.25 2.31 2.37 ] 
 # SECOND ROUND MASSES - 1.5k ...
@@ -37,13 +35,18 @@ runtime="08:00:00" #format: "hh:mm:ss"
 # HUUUUGE ONES
 # 2.43 2.46 2.49 2.52 2.54 2.57 2.6 2.63 2.65 2.68 2.7 2.73
 # 2.76 2.78 2.81 2.83 2.86 2.88 2.91 2.93 2.95 2.98
-counter=0 
-# 0.53 0.75 0.92 1.06 1.19 
-#1.30 1.40 1.50 1.59 1.68 1.76 1.84 1.91 1.98 
-#2.05 2.12 2.19 2.25 2.31 2.37 2.43
-#$(seq 2.3 .1 2.5)  2.05 2.12 2.19 2.25 2.31 2.37 - 5 reps 920gb. 1.59 1.68 1.76 1.84 1.91 1.98 - 10 reps 512gb
 
-for mass in 2.02 2.09 2.15 2.22 2.28 2.34 2.4 2.05 2.12 2.19 2.25 2.31 2.37 2.43
+# 0.20 0.53 0.65 0.75 0.84 0.92 0.99 1.06 1.13 1.19 1.24 1.30 1.35 1.40 1.45
+# 1.50 1.55 1.59 1.63 1.68 
+# 1.72 1.76 1.80 1.84 1.88 1.91 1.95 1.98 2.02 2.05 2.09 2.12 
+# 2.15 2.19 2.22 2.25 2.28 2.31 2.35 2.37 2.40 
+# 2.43 2.46 2.49 2.52 2.54 2.57 2.6 2.63 2.65 2.68 
+# 2.7 2.73 2.76 2.78 2.81 2.83 2.86 2.88 2.91 2.93 2.95 2.98
+
+counter=0 
+for mass in 2.40
+# 
+#2.05 2.12 2.19 2.25 2.31 2.37 2.02 2.09 2.15 2.22 2.28 2.34 2.4
 do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#

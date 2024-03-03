@@ -26,14 +26,14 @@ using namespace std::chrono;//can't use duration
 
 
 // Sprinkled causet parameters
-std::vector<int> cards = {10000};
+std::vector<int> cards (100, 10000);
 std::vector<const char*> names = {"cylinder"};// "ball", "cylinder", "cube", "cuboid"};
 int dim = 4;
 std::vector<double> center (dim, 0.0);
-double hollow = 0.5;
-double coeff = 4 / 3 * 3.1415 * (1-hollow*hollow*hollow);
+double hollow = 0.9;
+double coeff = 4 / 3 * 3.1415926535 * (1-hollow*hollow*hollow);
 
-double edge = 1.5;
+double edge = 4;
 std::vector<double> edges = {1,2,3,4};
 
 // For BH
@@ -41,7 +41,7 @@ double mass = 0.5;
 
 
 // Sprinkling Parameters
-bool poisson = false;
+bool poisson = true;
 bool make_matrix = false;
 bool special = false;
 bool use_transitivity = false;
@@ -57,10 +57,11 @@ int main(){
     //card = (want_coords || want_matrix)? 10 : card;
     for (const char* name : names)
     {
+    int counter = 0;
     for (int card : cards)
     {
-        double myduration = std::pow(card/coeff, 0.5);
-        double radius = std::pow(myduration, 0.33333333);
+        double myduration = 0.5;// std::pow(card/coeff, 0.5);
+        double radius = 4;//std::pow(myduration, 0.33333333);
 
         auto start = high_resolution_clock::now();
 
@@ -69,7 +70,7 @@ int main(){
         
 
         Spacetime S = Spacetime();
-        S.BlackHoleSpacetime(dim, mass);
+        S.BlackHoleSpacetime(dim);
         std::cout<<"\nSet Spacetime\n";
 
         SprinkledCauset C(card, S, shape, poisson,
@@ -80,18 +81,24 @@ int main(){
         std::stringstream rstream;
         rstream << std::fixed << std::setprecision(2) << radius;
         std::string redge_s = rstream.str();
+        
         std::stringstream hstream;
         hstream << std::fixed << std::setprecision(2) << hollow;
         std::string h_s = hstream.str();
+        
+        std::stringstream cstream;
+        cstream << std::fixed << counter;
+        std::string c_s = cstream.str();
 
         std::string filename = "../../../scripts_py/tests/test_poisson_cylinder_"
                             + std::to_string(dim)
                             + "D_N" + std::to_string(card)
                             + "_redge" + redge_s
                             + "_h" + h_s
-                            +  ".txt";
+                            + "_c" + c_s + ".txt";
         const char* path_file = filename.c_str();
         C.save_causet(path_file);
+        counter += 1;
 
 
         auto stop = high_resolution_clock::now();

@@ -40,7 +40,7 @@ using namespace std::chrono;
 vector<int> dims = {3};
 double t_f = 0;
 double r_S = 2;
-double deltaphi = 2*3.1415 / (2*1440);
+double deltaphi = 2*3.1415926535 / (2*1440);
 std::vector<int> cards = {50, 60, 75, 90, 100, 125}; 
 
 // Sprinkle Parameters
@@ -95,7 +95,7 @@ int main()
         rstream << std::fixed << std::setprecision(2) << R;
         std::string redge_s = rstream.str();
         std::stringstream phistream;
-        phistream << std::fixed << std::setprecision(2) << deltaphi / (3.1415) * 180;
+        phistream << std::fixed << std::setprecision(2) << deltaphi / (3.1415926535) * 180;
         std::string phi_s = phistream.str();
         // std::stringstream hstream;
         // hstream << std::fixed << std::setprecision(2) << h;

@@ -9,39 +9,51 @@
 homeDir="${HOME}/MSci_Schwarzschild_Causets/"
 job_submissionsDir="${homeDir}job_submission/"
 submitted_jobsDir="${job_submissionsDir}submitted_jobs/"
-cpp_file_to_run="'count_lambdas_4D.cpp'"  # need 'filename.cpp' inside the string! #count_lambdas_ND...
+cpp_file_to_run="'count_lambdas.cpp'"  # need 'filename.cpp' inside the string!
 
 # CPP VARIABLES
-Rho=5000
-N_reps=20
+Rho=10000
+N_reps=50
 
 
 # CLUSTER JOB RESOURCE REQUIREMENTS
 ncpus=256
-mem=4000
-runtime="24:00:00" #format: "hh:mm:ss"
+mem=900
+runtime="08:00:00" #format: "hh:mm:ss"
 
+##############################################################################
+# WITH RHO = 5000 and Bounds T in 4 ell, r 3 ell
+# FIRST ROUND MASSES 
+# [0.53 0.75 0.92 1.06 1.19 0.65 0.84 0.99 1.13 1.24      (N100, mem 300, 3h)
+# 1.30 1.40 1.50 1.35 1.45 1.55                           (N100, mem 500, 6h)
+# 1.59 1.68 1.76 1.84 1.91 1.98 1.63 1.72 1.80 1.88 1.95  (N50,  mem 800, 8h)
+# 2.02 2.05 2.12 2.19 2.09 2.15  (N25,  mem 920, 8h)
+# 2.22 2.28 2.34 2.25 2.31 2.37  (N20,  mem 920, 8h)
 
-# SET MASSES YOU WANT TO SIMULATE
-# FIRST ROUND MASSES - 1k ...
-# [0.53 0.75 0.92 1.06 1.19 
-# 1.30 1.40 1.50 
-# 1.59 1.68 1.76 1.84 1.91 1.98 
-# 2.05 2.12 2.19 2.25 2.31 2.37] 
-# SECOND ROUND MASSES - 1.5k ...
-# [0.65 0.84 0.99 1.13 1.24 1.35 1.45 
-#  1.55 1.63 1.72 1.88 1.95
-#  1.8 
-#  2.02 2.09 2.15 2.22 2.28 2.34 2.4
-#  ]
-# THIRD ROUND MASSES - 500 increments
-# 2.43 2.46 2.49 2.52 2.54 2.57 2.6 2.63 2.65 2.68  (N50, mem1500, 24h) -- finished 200reps
-# 2.7 2.73 2.76 2.78 2.81 2.83 2.86 2.88 2.91 2.93 2.9533 2.977 3.0005 (N40, mem2000, 24h) -- finished submtting 200reps
-# 3.0239 3.047 3.07 3.0929 (N30, mem3000, 24h) -- 90 reps submitted for 3.0239-3.07, 60reps submitted for 3.0929
+# LARGEST
+# 2.43 2.46 2.49 2.52 2.54 2.57 2.6 2.63 2.65 2.68  (N50, mem1500, 24h)
+# 2.7 2.73 2.76 2.78 2.81 2.83 2.86 2.88 2.91       (N40, mem2000, 24h)
+# 2.93 2.9533 2.977 3.0005                          (N40, mem2500, 24h)
+# 3.0239 3.047 3.07 3.0929                          (N30, mem3000, 24h)
 # 3.1155 3.138 3.1604 3.1825 3.2046 3.2264 3.2482 3.2697 3.2912 3.3125 3.3337 3.3547 3.3756 3.3964 3.417 3.4375 (N20, mem4000, 24h)
-counter=0 #2.05 mass took 3300sec for 5 reps.
-for mass in 3.2264 3.2482 3.2697 3.2912 3.3125
-do
+
+##############################################################################
+# WITH RHO = 10,000 and Bounds T in 6 ell, r 6 ell
+# FIRST ROUND MASSES 
+# [0.446 0.5463 0.6308 0.7052 0.7725 0.8344  (N100, mem 300, 3h)
+#  0.8921 0.9462 0.9974                      (N100, mem 600, 7h)
+#  1.046 1.0925 1.1372                       (N50,  mem 800, 8h)
+
+# LARGEST 
+# 1.1801 1.2215 1.2616 1.3004  (N50, mem1500, 24h)
+# 1.3381 1.3748                (N40, mem2000, 24h)
+# 1.4105 1.4453 1.4793         (N40, mem2500, 24h)
+# 1.5126 1.5451                (N30, mem3000, 24h)
+# 1.577 1.6082 1.6388 1.6689   (N20, mem4000, 24h)
+
+counter=0 
+for mass in 0.9974 1.046 1.0925 1.1372
+do 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
@@ -107,7 +119,7 @@ echo "" >> $sh_run_file
 ###############################################################################
 #______________________________________________________________________________
 ##### Write the submit file based on variables used and run_file.sh to submit
-submitfile="${submitted_jobsDir}submit_files/subLambda_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}.pbs"
+submitfile="${submitted_jobsDir}submit_files/subLambda_mass_${mass}_Rho_${Rho}_N_reps_${N_reps}_Nth${Nth}.pbs"
 
 echo "#!/bin/sh" > $submitfile
 echo "#PBS -lselect=1:ncpus=${ncpus}:mem=${mem}gb" >> $submitfile

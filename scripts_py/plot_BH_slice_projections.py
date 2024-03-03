@@ -3,18 +3,60 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os 
 
-ps = {"text.usetex": True,
-      "font.size" : 16,
-      "font.family" : "lmodern",
-      "axes.labelsize": 22,
-      "legend.fontsize": 20,
-      "xtick.labelsize": 20,
-      "ytick.labelsize": 20,
-      "figure.figsize": [7.5, 7.5],
-      "mathtext.default": "default"
-       }
-plt.rcParams.update(ps)
-del ps
+# ps = {"text.usetex": True,
+#       "font.size" : 20,
+#       "font.family" : "lmodern",
+#       "axes.labelsize": 22,
+#       "legend.fontsize": 20,
+#       "xtick.labelsize": 20,
+#       "ytick.labelsize": 20,
+#       "figure.figsize": [7.5, 7.5],
+#       "mathtext.default": "default"
+#        }
+# plt.rcParams.update(ps)
+# del ps
+rcParams = {}
+font_size = 20
+rcParams["text.usetex"] = True
+rcParams["font.family"] = "Times New Roman"
+rcParams["font.serif"] = "Times New Roman"
+rcParams["font.monospace"] = "Times New Roman"
+rcParams["font.size"] = font_size
+rcParams["axes.labelsize"] = font_size + 8
+rcParams["axes.labelweight"] = "bold"
+rcParams["axes.titlesize"] = font_size
+rcParams["xtick.labelsize"] = font_size
+rcParams["ytick.labelsize"] = font_size
+rcParams["legend.fontsize"] = font_size
+rcParams["figure.titlesize"] = font_size
+
+ticks_size = 2
+rcParams["xtick.direction"] = "in"
+rcParams["xtick.minor.visible"] = True
+rcParams["xtick.top"] = True   # draw ticks on the top side
+rcParams["ytick.direction"] = "in"
+rcParams["ytick.minor.visible"] = True
+rcParams["ytick.right"] = True   # draw ticks on the top side
+rcParams["xtick.major.size"] = 2*ticks_size
+rcParams["xtick.minor.size"] = ticks_size
+rcParams["ytick.major.size"] = 2*ticks_size
+rcParams["ytick.minor.size"] = ticks_size
+ticks_width_value = 1
+rcParams["axes.linewidth"] = ticks_width_value
+rcParams["xtick.major.width"] = ticks_width_value
+rcParams["xtick.minor.width"] = ticks_width_value
+rcParams["ytick.major.width"] = ticks_width_value
+rcParams["ytick.minor.width"] = ticks_width_value
+
+rcParams["legend.borderpad"] = 0.5
+rcParams["legend.frameon"] = False
+rcParams["legend.handletextpad"] = 0.3
+rcParams["legend.handlelength"] = 1.7
+rcParams["lines.linewidth"] = 2
+plt.rcParams['axes.prop_cycle'] = plt.cycler(color=plt.rcParams['axes.prop_cycle'].by_key()['color'][:10] + ['indigo'])
+# plt.rcParams['text.latex.preamble']=r"\usepackage{lmodern}"
+plt.rcParams.update(rcParams)
+del rcParams
 
 
 #%% 
@@ -133,6 +175,6 @@ ys = ax.set_ylim()
 r_S = 2
 ax.vlines(r_S, ys[0], ys[1], ls = "--", color = "red", label = "Horizon")
 ax.set_ylim(ys)
-plt.legend()
+#plt.legend()
 plt.show()
 # %%

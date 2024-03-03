@@ -75,9 +75,9 @@ int main()
         double h = (do_hollow)? ((r>0)? r/R : 0.) : 0.;
         int card = 0;
         if (dim == 4)
-        card += rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
+        card += rho * (4*3.1415926535/3) * (R*R*R-r*r*r) * T;
         else if (dim == 3)
-        card += rho * (3.1415) * (R*R-r*r) * T;
+        card += rho * (3.1415926535) * (R*R-r*r) * T;
         card = card/1000 * 1000; //make it multiple of 1000
         card = 1000;
         std::cout << "\nDim = " << dim << std::endl;

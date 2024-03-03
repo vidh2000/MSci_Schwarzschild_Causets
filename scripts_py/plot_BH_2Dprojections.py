@@ -32,7 +32,7 @@ use_redge_in_name_file = 1 #the size is given by _redge<number> in filename
 use_h                  = 0 #there is the bit _ha.bd before .txt
 centre_cube_in_horizon = 0
 
-want_save_file = 1 #save file? (see line 100 for saving name)
+want_save_file = 0 #save file? (see line 100 for saving name)
 n_save_file_max = 50
 
 ##############################################################################

@@ -71,9 +71,9 @@ int main()
         double h = (r>0)? r/R : 0.;
         int card = 0;
         if (dim == 4)
-        card += rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
+        card += rho * (4*3.1415926535/3) * (R*R*R-r*r*r) * T;
         else if (dim == 3)
-        card += rho * (3.1415) * (R*R-r*r) * T;
+        card += rho * (3.1415926535) * (R*R-r*r) * T;
         std::cout << "\nDim = " << dim << std::endl;
         std::cout << "Rho  = " << rho << std::endl;
         std::cout << "Scal = " << scale << std::endl;

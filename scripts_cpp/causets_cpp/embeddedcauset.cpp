@@ -837,7 +837,11 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
     out<<"Shape,"<<_shape._name<<std::endl;
     out<<"Spacetime,"<<_spacetime._name<<std::endl;
 
-    if (strcmp(storage_option, "cmatrix")==0)
+    if (strcmp(storage_option, "coords")==0){
+        std::cout<<"Only Saving Coordinates"<<std::endl;
+    }
+
+    else if (strcmp(storage_option, "cmatrix")==0)
     {
         out<<"Matrix,"<<std::endl;
         for (auto row : _CMatrix) 
@@ -901,7 +905,7 @@ void EmbeddedCauset::save_causet(const char* path_file_ext,
     }
 
     else {
-        std::cout << "Please choose 'cmatrix' or 'sets' option\n";
+        std::cout << "Note, you have not chosen any 'cmatrix' or 'sets' option\n";
         throw std::invalid_argument("Choose right parameter");
     }
 
@@ -1151,7 +1155,7 @@ void EmbeddedCauset::make_cmatrix(const char* method,
                 }
             }
         }
-        else /*no transitivity*/
+        else 
         {
             #pragma omp parallel for schedule(dynamic)
             for(int i=0; i<_size-1; i++) //can skip the very last, i.e Nth
@@ -2153,6 +2157,7 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs(double& t_f,
             for (int i=0; i<_size-1; i++)
             {
                 if (i==_size-2) std::cout<<"-"<<i<<"/"<<_size<<"-";
+               
                 int n_futs_of_i = 0;
                 for (int j=i+1; j<_size; j++)
                 {
@@ -2400,9 +2405,9 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
                                     double t_f, double r_S,
                                     const char* molecule_option)
 {
-    std::fstream out;
+    std::ofstream out;
     out.open(path_file_ext);
-    std::cout<<"Is open? in save_molecules_only"<<out.is_open()<<std::endl;
+    std::cout<<"Is file open in save_molecules_only?"<<out.is_open()<<std::endl;
     //if (!out.is_open()) std::cout<<"It is not open"<<std::endl;
     out<<"Storage option," << "molecules only" << std::endl;
     out<<"Size,"<<_size<<std::endl;
@@ -2426,7 +2431,6 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
             {
                 all_points_involved.push_back(lambda_i.second[j]);
             }
-            if (i != N-1) out<<std::endl;
             i++;
         }
         std::sort(all_points_involved.begin(), all_points_involved.end());
@@ -2448,12 +2452,12 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
                 if (mu != _spacetime._dim -1)
                     out<<",";
             }
-            if (i != _size-1) 
-                out<<std::endl;
+            out<<std::endl;
         }
 
         // Print lambdas in new labels
-        out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
+        out<<"r_S," <<2*_spacetime._mass<<std::endl;
+        i = 1;
         for (std::pair<int,std::vector<int>> lambda_i : lambdas)
         {
             out<<"Lambda"<<i<<",";
@@ -2464,7 +2468,7 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
                 if (j != lambda_i.second.size()-1)
                     out<<",";
             }
-            if (i != N-1) out<<std::endl;
+            out<<std::endl;
             i++;
         }
     }
@@ -2477,24 +2481,27 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
         auto HRVs = get_HRVs(t_f, r_S);
         int N = HRVs.size();
 
-        // Create and sort a vector of all points involved
+        // Create and sort a vector of all points involved (with no duplicates)
         std::vector<int> all_points_involved;
+        std::cout<<"Number of HRVs "<<N
+                 <<std::endl;
         for (std::pair<int,std::vector<int>> hrv_i : HRVs)
         {
             all_points_involved.push_back(hrv_i.first);
-            for (int j = 0; j < hrv_i.second.size(); j++)
+            for (int j = 0; j < 2; j++)
             {
                 all_points_involved.push_back(hrv_i.second[j]);
             }
-            if (i != N-1) out<<std::endl;
-            i++;
         }
         std::sort(all_points_involved.begin(), all_points_involved.end());
+        all_points_involved.erase( unique( all_points_involved.begin(), 
+                                           all_points_involved.end() ), 
+                                   all_points_involved.end() );
 
         // Create map from old label to new
         std::map<int, int> old_to_new_label;
-        for (int i=0; i<all_points_involved.size(); i++){
-            old_to_new_label[all_points_involved[i]] = i;
+        for (int n=0; n<all_points_involved.size(); n++){
+            old_to_new_label[all_points_involved[n]] = n;
         }
 
         // Print coordinats
@@ -2508,12 +2515,14 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
                 if (mu != _spacetime._dim -1)
                     out<<",";
             }
-            if (i != _size-1) 
-                out<<std::endl;
+            out<<std::endl;
         }
 
+        // Print r_S
+        out<<"r_S," <<2*_spacetime._mass<<std::endl;
+        
         // Print HRVs in new labels
-        out<<std::endl<<"r_S," <<2*_spacetime._mass<<std::endl;
+        i = 1;
         for (std::pair<int,std::vector<int>> hrv_i : HRVs)
         {
             out<<"HRV"<<i<<",";
@@ -2524,7 +2533,7 @@ void EmbeddedCauset::save_molecules_only(const char* path_file_ext,
                 if (j != hrv_i.second.size()-1)
                     out<<",";
             }
-            if (i != N-1) out<<std::endl;
+            out<<std::endl;
             i++;
         }
     }
@@ -2742,7 +2751,9 @@ std::map<int,std::vector<int>> EmbeddedCauset::get_HRVs_from_futs
             int a = (ab[0] < ab[1])? ab[0] : ab[1];
             int b = (ab[0] < ab[1])? ab[1] : ab[0];
 
-            HRVs[p] = {a,b};
+            if ( (_coords[a][1] <= r_S && _coords[b][1] > r_S)
+              || (_coords[b][1] <= r_S && _coords[a][1] > r_S) ){
+                HRVs[p] = {a,b};}
         }
     }
     return HRVs;

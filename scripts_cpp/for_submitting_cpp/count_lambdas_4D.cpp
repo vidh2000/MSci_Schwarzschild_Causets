@@ -93,7 +93,7 @@ double T = 4*scale;
 std::cout << "T done"<< std::endl;
 double h = r/R;
 std::cout << "h done"<< std::endl;
-int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T;
+int N = Rho * (4*3.1415926535/3) * (R*R*R-r*r*r) * T;
 std::cout << "N done"<< std::endl;
 radii.push_back(R);
 std::cout << "r pushed back"<< std::endl;

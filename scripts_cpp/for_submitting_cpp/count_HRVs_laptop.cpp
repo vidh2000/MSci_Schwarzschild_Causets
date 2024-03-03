@@ -85,7 +85,7 @@ double R = 1.5*2*mass;
 double r = 0.5*2*mass;
 double T = mass;
 double h = r/R;
-int N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T; 
+int N = Rho * (4*3.1415926535/3) * (R*R*R-r*r*r) * T; 
 radii.push_back(R);
 hollow_vals.push_back(h);
 durations.push_back(T); // since min(t_min) ~ -3.5, 4 is adequate

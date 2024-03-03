@@ -13,7 +13,7 @@ for mass in masses:
     r = 2*mass-3*scale
     T = 4*scale
     h = r/R
-    N = Rho * (4*3.1415/3) * (R*R*R-r*r*r) * T
+    N = Rho * (4*3.1415926535/3) * (R*R*R-r*r*r) * T
     print(f"M = {mass}")
     print([int(n) for n in N])
 

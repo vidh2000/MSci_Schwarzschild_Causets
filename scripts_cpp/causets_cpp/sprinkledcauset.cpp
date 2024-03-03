@@ -88,7 +88,59 @@ SprinkledCauset::SprinkledCauset(int card,
                      make_sets, make_links, sets_type);
 }
 
+/**
+ * @brief Construct a new Sprinkled Causet object. Note: if shape has 
+ * _deltaphi in (0,2pi), then it will restrict to that deltaphi region,
+ * where phi is the angle on the xy plane.
+ * 
+ * @param card: int, number of events to sprinkle
+ * @param spacetime: FlatSpacetime.
+ * @param shape: CoordinateShape.
+ * @param poisson: bool, if true card is used as average of a Poisson
+ * distribution to get a new cardinality, otherwise card is used.
+ * @param make_matrix: bool, if true make matrix.
+ * @param special: bool, if true (and make_matrix) make special Cmatrix
+ * @param use_transitivity: bool, if true use also transitivity to establish
+ * causality relations. 
+ * @param make_sets: bool, if true make set (see sets_type)
+ * @param make_links: bool, if true make links (see sets_type)
+ * @param sets_type: const char* specifying the type of set:
+ * - "past": make _past_links
+ * - "future": make _future_links
+ * @param seed: int, for coordinate generation. Default 0, i.e. no seed.
+ * @param seed: int, for N generation ffrom Poisson. Default 0, i.e. no seed.
+ */
+SprinkledCauset::SprinkledCauset(double card,
+                                 Spacetime spacetime, 
+                                 CoordinateShape shape, 
+                                 bool poisson,// = true,
+                                 bool make_matrix,// = true,
+                                 bool special,// = false,
+                                 bool use_transitivity,// = true,
+                                 bool make_sets,// = false,
+                                 bool make_links,// = false,
+                                 const char* sets_type,// = "past",
+                                 int seed, //=0
+                                 int poisson_seed) //=0
+                                : EmbeddedCauset()
+{
+    _spacetime = spacetime;
+    _shape = shape; 
 
+    if (poisson)
+        {_intensity = card*1;}
+    _coords = sprinkle(card, shape, poisson, seed, poisson_seed);
+
+    _size = _coords.size();
+
+    if (strcmp(spacetime._name, "BlackHole")==0){
+        Spacetime::CarttoSpherical(_coords);
+    }
+
+    this->sort_coords(0, false);
+    this->make_attrs("coordinates", make_matrix, special, use_transitivity,
+                     make_sets, make_links, sets_type);
+}
 
 
 
@@ -107,6 +159,50 @@ SprinkledCauset::SprinkledCauset(int card,
  * of ith point.
  */
 vector<vector<double>> SprinkledCauset::sprinkle( int card, 
+                                                    CoordinateShape shape,
+                                                    bool poisson,// = true,
+                                                    int seed, // = 0,
+                                                    int poisson_seed)// = 0)
+{
+    if (card<0)
+    {   
+        std::cout<<"The sprinkle cardinality has to be a\
+            non-negative integer."<<std::endl;
+        throw std::invalid_argument(
+            "The sprinkle cardinality has to be a non-negative integer.");
+    }
+    if (poisson)
+    {
+        if (poisson_seed==0){
+            poisson_seed = std::chrono::system_clock::now()
+                                                    .time_since_epoch().count();
+        }
+        
+        std::mt19937 gen(poisson_seed);
+        std::poisson_distribution<int> distribution(card);
+        card = distribution(gen);
+    }
+    vector<vector<double>> coords = SprinkledCauset::sprinkle_coords
+                                                      (card,shape,seed); 
+    return coords;
+} 
+
+
+/**
+ * @brief Determines number of points to sprinkle via Poisson distribution or
+ *        set as a constant integer and calls the sprinkle_coords method with
+ *        the given parameters.
+ * 
+ * @param card : number (or average) number of points to sprinkle.
+ * @param shape : CoordinateShape where to sprinkle
+ * @param poisson : bool, if true count is average of Poisson distribution
+ * from which get the effective count
+ * @param seed : int. Seed for coordinates. Default 0 means no seed.
+ * @param poisson_seed : int. Seed for Poisson. Default 0 means no seed.
+ * @return vector<vector<double>> coordinates, with ith entry being coordinates
+ * of ith point.
+ */
+vector<vector<double>> SprinkledCauset::sprinkle( double card, 
                                                     CoordinateShape shape,
                                                     bool poisson,// = true,
                                                     int seed, // = 0,

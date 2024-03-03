@@ -48,6 +48,18 @@ class SprinkledCauset: public EmbeddedCauset
         double _intensity = -1;
        
         // CONSTRUCTOR
+        SprinkledCauset(double card,
+                        Spacetime spacetime, 
+                        CoordinateShape shape, 
+                        bool poisson = true,
+                        bool make_matrix = true,
+                        bool special = false,
+                        bool use_transitivity = true,
+                        bool make_sets = false,
+                        bool make_links = true,
+                        const char* sets_type = "future",
+                        int seed = 0,
+                        int poisson_seed = 0);
 
         SprinkledCauset(int card,
                         Spacetime spacetime, 
@@ -64,8 +76,12 @@ class SprinkledCauset: public EmbeddedCauset
 
 
         // METHODS
-
         static std::vector<std::vector<double>> sprinkle(int card, 
+                                                        CoordinateShape shape, 
+                                                        bool poisson = true,
+                                                        int seed = 0,
+                                                        int poisson_seed = 0);
+        static std::vector<std::vector<double>> sprinkle(double card, 
                                                         CoordinateShape shape, 
                                                         bool poisson = true,
                                                         int seed = 0,

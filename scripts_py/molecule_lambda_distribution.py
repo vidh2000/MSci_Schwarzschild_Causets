@@ -20,7 +20,8 @@ params = {'text.usetex' : True,
           }
 plt.rcParams['axes.prop_cycle'] = plt.cycler(color = [plt.get_cmap("plasma")(v)
                                                 for v in np.linspace(0,1, 13)])
-#plt.rcParams['text.latex.preamble']=r"\usepackage{lmodern}"
+plt.rcParams['axes.prop_cycle'] = plt.rcParams['axes.prop_cycle'] + plt.cycler(color=["magenta"])
+plt.rcParams['text.latex.preamble']=r"\usepackage{lmodern}"
 plt.rcParams.update(params)
 del params
 
