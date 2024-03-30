@@ -647,6 +647,93 @@ inversefunc Spacetime::ToInEF_original(std::vector<std::vector<double>>&coords)
 
 
 /**
+ * @brief Convert from cartesian to spherical coordinates.
+ */
+void Spacetime::CarttoSpherical (std::vector<double>& xvec)
+{
+    if (xvec.size()==3)
+    {
+        double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+        double phi = std::atan2(xvec[2],xvec[1]);
+        xvec[1] = r;
+        xvec[2] = phi;
+    }
+    else if (xvec.size()==4)
+    {
+        double rho = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+        double r = std::sqrt(rho*rho + xvec[3]*xvec[3]);
+        double theta = std::atan2(rho, xvec[3]);
+        double phi = std::atan2(xvec[2],xvec[1]);
+        xvec[1] = r;
+        xvec[2] = theta;
+        xvec[3] = phi;
+    }
+}
+
+
+/**
+ * @brief Convert from cartesian to spherical coordinates.
+ */
+void Spacetime::CarttoSpherical (std::vector<std::vector<double>>& coords)
+{
+    if (coords[0].size()==3)
+    {
+        for (auto & xvec : coords)
+        {
+            double r = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+            double phi = std::atan2(xvec[2],xvec[1]);
+            xvec[1] = r;
+            xvec[2] = (phi>0)? phi : phi + 2*M_PI;
+        }
+    }
+    else if (coords[0].size()==4)
+    {
+        for (auto & xvec : coords)
+        {
+            double rho = std::sqrt(xvec[1]*xvec[1] + xvec[2]*xvec[2]);
+            double r = std::sqrt(rho*rho + xvec[3]*xvec[3]);
+            double theta = std::atan2(rho, xvec[3]);
+            double phi = std::atan2(xvec[2],xvec[1]);
+            xvec[1] = r;
+            xvec[2] = theta;
+            xvec[3] = (phi>0)? phi : phi + 2*M_PI;
+        }
+    }
+}
+
+/**
+ * @brief Convert spherical to cartesian coordinates
+ * 
+ * @param coords coordinates in spherical coord.syst (t,r,theta,phi) 
+ */
+void Spacetime::SphericaltoCart(std::vector<std::vector<double>>& coords)
+{
+    if (coords[0].size()==3)
+    {
+        for (auto & xvec : coords)
+        {
+            double x = xvec[1]*std::cos(xvec[2]);
+            double y = xvec[1]*std::sin(xvec[2]);
+            xvec[1] = x;
+            xvec[2] = y;
+        }
+    }
+    else if (coords[0].size()==4)
+    {
+        for (auto & xvec : coords)
+        {
+            double x = xvec[1]*std::sin(xvec[2])*std::cos(xvec[3]);
+            double y = xvec[1]*std::sin(xvec[2])*std::sin(xvec[3]);
+            double z = xvec[1]*std::cos(xvec[2]);
+            xvec[1] = x;
+            xvec[2] = y;
+            xvec[3] = z;
+        }
+    }
+}
+
+
+/**
  * @brief Turn ingoing Eddington Finkelstein coordinates into Schwarzschild.
  * 
  * @param xvec std::vector<double>& : vector which gets changed

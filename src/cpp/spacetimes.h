@@ -170,6 +170,10 @@ class Spacetime
         (std::vector<std::vector<double>>& coords, double mass, 
          const char* EFtype);
         inversefunc ToInEF_original(std::vector<std::vector<double>> &coords);
+
+        static void CarttoSpherical (std::vector<double>& xvec);
+        static void CarttoSpherical (std::vector<std::vector<double>>& coords);
+        static void SphericaltoCart (std::vector<std::vector<double>>& coords);
         
         static void InEFtoS (std::vector<double>& xvec, double mass = 1,
                              const char* EFtype = "original");

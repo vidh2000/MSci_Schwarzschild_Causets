@@ -64,14 +64,6 @@ std::vector<std::vector<int>> Causet::CMatrix(std::vector<int> labels)
 }
 
 
-int Causet::size() 
-    {return _size;}
-bool Causet::is_CMatrix_special()
-    {return _special_matrix;}
-bool Causet::is_Cij_special()
-    {return _special_matrix;}
-
-
 void Causet::saveC(const char* path_file_ext)
 {
     std::ofstream out;

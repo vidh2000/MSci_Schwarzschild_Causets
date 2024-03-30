@@ -4,6 +4,8 @@
 Created on 4 Jan 2022
 
 @author: Stefano Veroni, Vid Homsak
+
+Inspired by work by Cristoph Minz https://github.com/c-minz/Python-causets
 '''
 import numpy as np
 import matplotlib.pyplot as plt

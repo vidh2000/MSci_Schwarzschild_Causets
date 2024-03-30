@@ -66,7 +66,7 @@ class Causet
         bool is_Cij_special();
 
 
-        // RELATIONS
+        // RELATIONS (not supported anymore I think as trivial)
 
         bool areTimelike(int a, int b);
         bool AprecB(int a, int b);
