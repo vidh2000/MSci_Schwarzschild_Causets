@@ -77,7 +77,7 @@ Then, the main results of our work: the distribution of n-lambda molecules acros
 
 If you wish to contribute to the project, please get in contact via email:
 <stefanoveroni00@gmail.com>,
-<vid.homsak19@imperial.ac.uk>
+<vid.homsak@physics.ox.ac.uk>
 
 If you use the code for your project, please cite:
 "Homsak V, Veroni S. Framework for Causet Coding. 2022. Available at https://github.com/vidh2000/MSci_Schwarzschild_Causets."
