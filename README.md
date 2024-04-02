@@ -40,7 +40,9 @@ The modules (classes and functions) are extensively documented.
 
 ## Requirements
 
-The C++ boost library is required for integration and equation solving. We used boost_1_80_0, which should be available at this link here [https://www.boost.org/users/history/version_1_80_0.html](https://www.boost.org/users/history/version_1_80_0.html) The boost/numeric/odeint/integrate/integrate.hpp file was modified, adding the following at line 59:
+The C++ boost library is required for integration and equation solving. We used boost_1_80_0, which should be available at this link here [https://www.boost.org/users/history/version_1_80_0.html](https://www.boost.org/users/history/version_1_80_0.html) 
+The paths to the Boost library and C++ and Python versions can be edited in [.vscdode/c_cpp_properties.json](https://github.com/vidh2000/MSci_Schwarzschild_Causets/blob/main/.vscode/c_cpp_properties.json).
+The boost/numeric/odeint/integrate/integrate.hpp file was modified, adding the following at line 59:
 
 ```c++
 //I PUT THIS
